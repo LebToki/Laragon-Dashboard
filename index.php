@@ -295,7 +295,7 @@ if (!empty($_GET['q'])) {
 
         /* Force varying heights to simulate dynamic content */
         .card:first-child {
-            height: 485px;
+            height: 300px;
         }
 
         .card:nth-child(2) {
