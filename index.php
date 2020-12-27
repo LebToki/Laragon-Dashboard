@@ -509,10 +509,10 @@ if (!empty($_GET['q'])) {
         foreach ($folders as $host) {
             echo ' <div class="overviewcard_sites">
                    <div class="overviewcard_icon">
-                   <a href="' . $url . '://' . $host . '.test/wp-admin>"> ' . $host . ' </a>
+                   <a href="' . $url . '://' . $host . '.test"> ' . $host . ' </a>
                    </div>
                    <div class="overviewcard_info">
-                   <a href="' . $url . '://' . $host . '.test/wp-admin>"> Admin<br><small style="font-size: 8px; color: #00c4ff;">Wordpress ?</small> </a>
+                   <a href="' . $url . '://' . $host . '.test/wp-admin"> Admin<br><small style="font-size: 8px; color: #00c4ff;">Wordpress ?</small> </a>
                    </div>
                    </div>';
         }
