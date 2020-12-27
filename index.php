@@ -36,7 +36,7 @@ function getServerExtensions($server)
 function getPhpVersion()
 {
     // get last version from php.net
-    $json = @file_get_contents("https://www.php.net/releases/index.php?json&version=7.4");
+    $json = @file_get_contents("https://www.php.net/releases/index.php?json&version=7.2.34");
     $data = json_decode($json);
     $lastVersion = $data->version;
 
@@ -218,8 +218,16 @@ if (!empty($_GET['q'])) {
             margin: 0;
             padding: 0;
             color: #fff;
-            font-family: 'Open Sans', Helvetica, sans-serif;
+            font-family: 'Rubik', sans-serif;
             box-sizing: border-box;
+        }
+
+        a {
+            font-family: "Rubik", Sans-serif, serif;
+            text-transform: uppercase;
+            font-size: 16px!important;
+            color: #FFFFFF!important;
+            text-decoration: none;
         }
 
         /* Assign grid instructions to our parent grid container, mobile-first (hide the sidenav) */
@@ -231,7 +239,6 @@ if (!empty($_GET['q'])) {
             height: 100vh;
         }
 
-        
 
         /* Give every child element its grid name */
         .header {
@@ -240,13 +247,14 @@ if (!empty($_GET['q'])) {
             align-items: center;
             justify-content: space-between;
             padding: 0 16px;
-            color: aliceblue;
-            background-color: #30336b;
+            color: #ffffff;
+            font-family: "Rubik", Sans-serif;
+            background-color: #1d3557;
         }
 
         .main {
             grid-area: main;
-            background-color: #34495e;
+            background-color: #e5e5e5;
         }
 
         .main-header {
@@ -255,8 +263,8 @@ if (!empty($_GET['q'])) {
             margin: 20px;
             padding: 20px;
             height: 150px;
-            background-color: #e3e4e6;
-            color: #c0392b;
+            background-color: #fca311;
+            color: #14213d;
         }
 
         .main-overview {
@@ -272,9 +280,36 @@ if (!empty($_GET['q'])) {
             align-items: center;
             justify-content: space-between;
             padding: 20px;
-            background-color: #d3d3;
+            background-color: #03045e;
+            font-family: "Rubik", Sans-serif, serif;
+            font-size: 16px;
+            color: #FFFFFF;
         }
 
+        .overviewcard_sites {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 20px;
+            background-color: #023e8a;
+            font-family: "Rubik", Sans-serif, serif;
+            font-size: 16px;
+            color: #FFFFFF;
+        }
+
+        .overviewcard_info {
+            font-family: "Rubik", Sans-serif, serif;
+            text-transform: uppercase;
+            font-size: 16px!important;
+            color: #FFFFFF!important;
+        }
+
+        .overviewcard_icon {
+            font-family: "Rubik", Sans-serif, serif;
+            text-transform: uppercase;
+            font-size: 16px!important;
+            color: #FFFFFF!important;
+        }
         .main-cards {
             column-count: 0;
             column-gap: 20px;
@@ -286,7 +321,7 @@ if (!empty($_GET['q'])) {
             flex-direction: column;
             align-items: center;
             width: 100%;
-            background-color: #2c3e50;
+            background-color: #f1faee;
             margin-bottom: 20px;
             -webkit-column-break-inside: avoid;
             padding: 24px;
@@ -308,23 +343,28 @@ if (!empty($_GET['q'])) {
 
         .sites {
             display: grid;
-            grid-template-columns: 275px 275px 275px 275px;
-            grid-gap: 24px;
+            grid-template-columns: repeat(auto-fit, minmax(275px, 1fr));
+            grid-gap: 20px;
+            margin: 20px;
         }
 
         .sites li {
-            display: block;
-            background: #323845;
-            box-shadow: 0 0 10px 0 #ccc;
-            height: 48px;
-            line-height: 48px;
-            width: 275px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            background: #560bad;
+            color: #ffffff;
+            font-family: 'Rubik', sans-serif;
+            font-size: 14px;
             text-align: left;
             text-transform: uppercase;
-            font-family: 'Open Sans', sans-serif;
-            font-size: 16px;
-            transition: box-shadow 250ms ease-in-out;
+            margin-bottom: 20px;
+            -webkit-column-break-inside: avoid;
+            padding: 24px;
+            box-sizing: border-box;
         }
+
 
         .sites li:hover {
             box-shadow: 0 0 15px 0 #bbb;
@@ -367,7 +407,8 @@ if (!empty($_GET['q'])) {
             align-items: center;
             justify-content: space-between;
             padding: 0 16px;
-            background-color: #c0392b;
+            background-color: #000000;
+            color: #ffffff;
         }
 
         /* Non-mobile styles, 750px breakpoint */
@@ -407,26 +448,26 @@ if (!empty($_GET['q'])) {
 
         <div class="main-overview">
             <div class="overviewcard">
-                <div class="overviewcard__icon"></div>
-                <div class="overviewcard__info"><?php print($_SERVER['SERVER_SOFTWARE']); ?></div>
+                <div class="overviewcard_icon"></div>
+                <div class="overviewcard_info"><?php print($_SERVER['SERVER_SOFTWARE']); ?></div>
             </div>
             <div class="overviewcard">
-                <div class="overviewcard__icon"></div>
-                <div class="overviewcard__info"><?= $serverInfo['openSsl']; ?></div>
+                <div class="overviewcard_icon"></div>
+                <div class="overviewcard_info"><?= $serverInfo['openSsl']; ?></div>
             </div>
             <div class="overviewcard">
-                <div class="overviewcard__icon">PHP</div>
-                <div class="overviewcard__info"><?php print phpversion(); ?></div>
+                <div class="overviewcard_icon">PHP</div>
+                <div class="overviewcard_info"><?php print phpversion(); ?></div>
             </div>
             <div class="overviewcard">
-                <div class="overviewcard__icon">Document Root</div>
-                <div class="overviewcard__info"><?php print ($_SERVER['DOCUMENT_ROOT']); ?></div>
+                <div class="overviewcard_icon">Document Root</div>
+                <div class="overviewcard_info"><?php print ($_SERVER['DOCUMENT_ROOT']); ?></div>
             </div>
         </div>
         <div class="main-overview">
             <div class="overviewcard">
-                <div class="overviewcard__icon">MySQL</div>
-                <div class="overviewcard__info"><?php
+                <div class="overviewcard_icon">MySQL</div>
+                <div class="overviewcard_info"><?php
                     error_reporting(0);
 
                     $laraconfig = parse_ini_file('../usr/laragon.ini');
@@ -443,49 +484,47 @@ if (!empty($_GET['q'])) {
             </div>
 
             <div class="overviewcard">
-                <div class="overviewcard__icon">.</div>
-                <div class="overviewcard__info">.</div>
+                <div class="overviewcard_icon">.</div>
+                <div class="overviewcard_info">.</div>
             </div>
 
             <div class="overviewcard">
-                <div class="overviewcard__icon">.</div>
-                <div class="overviewcard__info">.</div>
+                <div class="overviewcard_icon">.</div>
+                <div class="overviewcard_info">.</div>
             </div>
 
             <div class="overviewcard">
-                <div class="overviewcard__icon">Laragon</div>
-                <div class="overviewcard__info">Full 4.0.11</div>
+                <div class="overviewcard_icon">Laragon</div>
+                <div class="overviewcard_info">Full 4.0.15</div>
             </div>
         </div>
 
+        <div class="main-overview">
+        <?php
+        $folders = array_filter(glob('*'), 'is_dir');
 
-        <div class="main-cards">
-            <div class="card">
-                <div class="opt">
-                    <?php
-                    $folders = array_filter(glob('*'), 'is_dir');
+        if ($laraconfig['SSLEnabled'] == 0 || $laraconfig['Port'] == 80) $url = 'http';
+        else $url = 'https';
 
-                    if ($laraconfig['SSLEnabled'] == 0 || $laraconfig['Port'] == 80) $url = 'http';
-                    else $url = 'https';
+        foreach ($folders as $host) {
+            echo ' <div class="overviewcard_sites">
+                   <div class="overviewcard_icon">
+                   <a href="' . $url . '://' . $host . '.test/wp-admin>"> ' . $host . ' </a>
+                   </div>
+                   <div class="overviewcard_info">
+                   <a href="' . $url . '://' . $host . '.test/wp-admin>"> Admin<br><small style="font-size: 8px; color: #00c4ff;">Wordpress ?</small> </a>
+                   </div>
+                   </div>';
+        }
+        ?>
+</div>
+</main>
 
-                    echo '<ul class="sites">';
-                    foreach ($folders as $host) {
-                        if (file_exists($host . '/favicon.png')) $favicon = '<img src="./' . $host . '/favicon.png" width="32" height="32"/>';
-                        elseif (file_exists($host . '/favicon.ico')) $favicon = '<img src="./' . $host . '/favicon.ico" width="32" height="32"/>';
-                        else $favicon = '<svg width="16px" height="16px" viewBox="0 0 19 19" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:1.41421;"><path d="M6.073,1.44l-1.206,1.206l6.853,6.854l-6.853,6.852l1.206,1.207l8.06,-8.059l-8.06,-8.06Z" style="fill-rule:nonzero;"/></svg>';
-                        echo '<li><a href="' . $url . '://' . $host . '.oo">' . $favicon . ' ' . $host . '</a></li>';
-                    }
-                    echo '</ul>';
-                    ?>
-                </div>
-            </div>
 
-    </main>
-
-    <footer class="footer">
-        <div class="footer__copyright">&copy; 2020 Tarek Tarabichi</div>
-        <div class="footer__signature">Made with love and powered by Laragon</div>
-    </footer>
+<footer class="footer">
+    <div class="footer__copyright">&copy; 2020 Tarek Tarabichi</div>
+    <div class="footer__signature">Made with love and powered by Laragon</div>
+</footer>
 </div>
 </body>
 </html>
