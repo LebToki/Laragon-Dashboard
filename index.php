@@ -239,7 +239,6 @@ if (!empty($_GET['q'])) {
             height: 100vh;
         }
 
-
         /* Give every child element its grid name */
         .header {
             grid-area: header;
@@ -254,7 +253,12 @@ if (!empty($_GET['q'])) {
 
         .main {
             grid-area: main;
-            background-color: #e5e5e5;
+            /* background-color: #e5e5e5; */
+            background: url(background.png) no-repeat center center fixed; 
+            -webkit-background-size: cover;
+            -moz-background-size: cover;
+            -o-background-size: cover;
+            background-size: cover;
         }
 
         .main-header {
@@ -273,6 +277,13 @@ if (!empty($_GET['q'])) {
             grid-auto-rows: 94px;
             grid-gap: 20px;
             margin: 20px;
+        }
+
+
+        .wrapper {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
         }
 
         .overviewcard {
@@ -499,7 +510,7 @@ if (!empty($_GET['q'])) {
             </div>
         </div>
 
-        <div class="main-overview">
+        <div class="main-overview wrapper">
         <?php
         $folders = array_filter(glob('*'), 'is_dir');
 
