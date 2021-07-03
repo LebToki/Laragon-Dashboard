@@ -533,7 +533,7 @@ if (!empty($_GET['q'])) {
 
 
 <footer class="footer">
-    <div class="footer__copyright">&copy; 2020 Tarek Tarabichi</div>
+    <div class="footer__copyright">&copy; 2021 Tarek Tarabichi</div>
     <div class="footer__signature">Made with love and powered by Laragon</div>
 </footer>
 </div>
