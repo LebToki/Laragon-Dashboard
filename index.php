@@ -36,7 +36,7 @@ function getServerExtensions($server)
 function getPhpVersion()
 {
     // get last version from php.net
-    $json = @file_get_contents("https://www.php.net/releases/index.php?json&version=7.2.34");
+    $json = @file_get_contents('https://www.php.net/releases/index.php?json&version=7.2.34');
     $data = json_decode($json);
     $lastVersion = $data->version;
 
@@ -44,14 +44,14 @@ function getPhpVersion()
     $phpVersion = phpversion();
 
     // Remove dot character from version ex: 1.2.3 to 123 and convert string to integer
-    $intLastVersion = (int)str_replace('.', '', $lastVersion);
-    $intCurVersion = (int)str_replace('.', '', $phpVersion);
+    $intLastVersion = (int) str_replace('.', '', $lastVersion);
+    $intCurVersion = (int) str_replace('.', '', $phpVersion);
 
     return [
         'lastVersion' => $lastVersion,
         'currentVersion' => $phpVersion,
         'intLastVer' => $intLastVersion,
-        'intCurVer' => $intCurVersion
+        'intCurVer' => $intCurVersion,
     ];
 }
 
@@ -75,28 +75,29 @@ function getSQLVersion()
 {
     $output = shell_exec('mysql -V');
     preg_match('@[0-9]+\.[0-9]+\.[0-9-\w]+@', $output, $version);
+
     return $version[0];
 }
 
 // PHP links
 function phpDlLink($version)
 {
-    $changelog = 'https://www.php.net/ChangeLog-7.php#' . $version;
-    $downLink = 'https://windows.php.net/downloads/releases/php-' . $version . '-Win32-VC15-x64.zip';
+    $changelog = 'https://www.php.net/ChangeLog-7.php#'.$version;
+    $downLink = 'https://windows.php.net/downloads/releases/php-'.$version.'-Win32-VC15-x64.zip';
 
     return [
         'changeLog' => $changelog,
-        'downLink' => $downLink
+        'downLink' => $downLink,
     ];
 }
 
 // define sites-enabled directory
 function getSiteDir()
 {
-    if (preg_match("/^Apache/", $_SERVER['SERVER_SOFTWARE'])) {
-        return "../laragon/etc/apache2/sites-enabled";
+    if (preg_match('/^Apache/', $_SERVER['SERVER_SOFTWARE'])) {
+        return '../laragon/etc/apache2/sites-enabled';
     } else {
-        return "../laragon/etc/nginx/sites-enabled";
+        return '../laragon/etc/nginx/sites-enabled';
     }
 }
 
@@ -111,7 +112,7 @@ function getLocalSites()
     $rmItems = [
         '.',
         '..',
-        '00-default.conf'
+        '00-default.conf',
     ];
 
     foreach ($rmItems as $key => $value) {
@@ -128,24 +129,23 @@ function renderLinks()
     ob_start();
 
     foreach (getLocalSites() as $value) {
-
         $start = preg_split('/^auto./', $value);
         $end = preg_split('/.conf$/', $start[1]);
         unset($end[1]);
 
         foreach ($end as $link) {
-            $contentHttp = '<a href="http://' . $link . '">';
-            $contentHttp .= 'http://' . $link;
+            $contentHttp = '<a href="http://'.$link.'">';
+            $contentHttp .= 'http://'.$link;
             $contentHttp .= '</a>';
-            $contentHttps = '<a href="https://' . $link . '">';
-            $contentHttps .= 'https://' . $link;
+            $contentHttps = '<a href="https://'.$link.'">';
+            $contentHttps .= 'https://'.$link;
             $contentHttps .= '</a>';
 
             echo '
             <div class="row w800 my-2">
-                <div class="col-md-5 text-truncate tr">' . $contentHttp . ' </div>
+                <div class="col-md-5 text-truncate tr">'.$contentHttp.' </div>
                 <div class="col-2 arrows">&xlArr; &sext; &xrArr;</div>
-                <div class="col-md-5 text-truncate tl">' . $contentHttps . '</div>
+                <div class="col-md-5 text-truncate tl">'.$contentHttps.'</div>
             </div>
             <hr>
         ';
@@ -171,7 +171,6 @@ isset($_GET['q']) ? getQ($_GET['q']) : null;
 
 $phpVer = getPhpVersion();
 $serverInfo = serverInfo();
-
 
 if (!empty($_GET['q'])) {
     switch ($_GET['q']) {
@@ -240,21 +239,21 @@ if (!empty($_GET['q'])) {
         }
 
         /* Give every child element its grid name */
-        .header {
-            grid-area: header;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0 16px;
-            color: #ffffff;
-            font-family: "Rubik", Sans-serif;
-            background-color: #1d3557;
-        }
+       .header {
+    grid-area: header;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 16px;
+    color: #ffffff;
+    font-family: "Rubik", Sans-serif;
+   background-color: #0b162c;
+}
 
         .main {
             grid-area: main;
             /* background-color: #e5e5e5; */
-            background: url(background.png) no-repeat center center fixed; 
+            background: url(background2.jpg) no-repeat center center fixed; 
             -webkit-background-size: cover;
             -moz-background-size: cover;
             -o-background-size: cover;
@@ -271,13 +270,13 @@ if (!empty($_GET['q'])) {
             color: #14213d;
         }
 
-        .main-overview {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(265px, 1fr));
-            grid-auto-rows: 94px;
-            grid-gap: 20px;
-            margin: 20px;
-        }
+     .main-overview {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(265px, 1fr));
+    grid-auto-rows: 71px;
+    grid-gap: 20px;
+    margin: 10px;
+}
 
 
         .wrapper {
@@ -286,26 +285,32 @@ if (!empty($_GET['q'])) {
             gap: 10px;
         }
 
-        .overviewcard {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 20px;
-            background-color: #03045e;
-            font-family: "Rubik", Sans-serif, serif;
-            font-size: 16px;
-            color: #FFFFFF;
-        }
+.overviewcard {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 15px;
+    background-color: #00adef; /*-----00adef    -----*/
+    font-family: "Rubik", Sans-serif, serif;
+    border-radius: 5px 5px;
+    font-size: 16px;
+    color: #FFFFFF!important;
+    line-height: 1;
+    height: 31px;
+}
 
         .overviewcard_sites {
             display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 20px;
-            background-color: #023e8a;
-            font-family: "Rubik", Sans-serif, serif;
-            font-size: 16px;
-            color: #FFFFFF;
+    align-items: center;
+    justify-content: space-between;
+    padding: 15px;
+    background-color: #023e8a; /*-----00adef    -----*/
+    font-family: "Rubik", Sans-serif, serif;
+    border-radius: 5px 5px;
+    font-size: 16px;
+    color: #FFFFFF!important;
+    line-height: 1;
+    height: 31px;
         }
 
         .overviewcard_info {
@@ -418,7 +423,7 @@ if (!empty($_GET['q'])) {
             align-items: center;
             justify-content: space-between;
             padding: 0 16px;
-            background-color: #000000;
+            background-color: #0b162c;
             color: #ffffff;
         }
 
@@ -460,7 +465,7 @@ if (!empty($_GET['q'])) {
         <div class="main-overview">
             <div class="overviewcard">
                 <div class="overviewcard_icon"></div>
-                <div class="overviewcard_info"><?php print($_SERVER['SERVER_SOFTWARE']); ?></div>
+                <div class="overviewcard_info"><?php echo $_SERVER['SERVER_SOFTWARE']; ?></div>
             </div>
             <div class="overviewcard">
                 <div class="overviewcard_icon"></div>
@@ -468,11 +473,11 @@ if (!empty($_GET['q'])) {
             </div>
             <div class="overviewcard">
                 <div class="overviewcard_icon">PHP</div>
-                <div class="overviewcard_info"><?php print phpversion(); ?></div>
+                <div class="overviewcard_info"><?php echo phpversion(); ?></div>
             </div>
             <div class="overviewcard">
                 <div class="overviewcard_icon">Document Root</div>
-                <div class="overviewcard_info"><?php print ($_SERVER['DOCUMENT_ROOT']); ?></div>
+                <div class="overviewcard_info"><?php echo $_SERVER['DOCUMENT_ROOT']; ?></div>
             </div>
         </div>
         <div class="main-overview">
@@ -484,7 +489,9 @@ if (!empty($_GET['q'])) {
                     $laraconfig = parse_ini_file('../usr/laragon.ini');
 
                     $link = mysqli_connect('localhost', 'root', $laraconfig['MySQLRootPassword']);
-                    if (!$link) $link = mysqli_connect('localhost', 'root', 'ADD PASSWORD HERE');
+                    if (!$link) {
+                        $link = mysqli_connect('localhost', 'root', 'ADD PASSWORD HERE');
+                    }
                     if (!$link) {
                         echo 'MySQL not running!';
                     } else {
@@ -500,13 +507,13 @@ if (!empty($_GET['q'])) {
             </div>
 
             <div class="overviewcard">
-                <div class="overviewcard_icon">.</div>
-                <div class="overviewcard_info">.</div>
+                <div class="overviewcard_icon">PhpMyAdmin</div>
+                <div class="overviewcard_info"><a href="http://localhost/phpmyadmin">Manage MySQL</a></div>
             </div>
 
             <div class="overviewcard">
                 <div class="overviewcard_icon">Laragon</div>
-                <div class="overviewcard_info">Full 4.0.15</div>
+                <div class="overviewcard_info">Full 5.0.0</div>
             </div>
         </div>
 
@@ -514,16 +521,19 @@ if (!empty($_GET['q'])) {
         <?php
         $folders = array_filter(glob('*'), 'is_dir');
 
-        if ($laraconfig['SSLEnabled'] == 0 || $laraconfig['Port'] == 80) $url = 'http';
-        else $url = 'https';
+        if ($laraconfig['SSLEnabled'] == 0 || $laraconfig['Port'] == 80) {
+            $url = 'http';
+        } else {
+            $url = 'https';
+        }
 
         foreach ($folders as $host) {
             echo ' <div class="overviewcard_sites">
                    <div class="overviewcard_icon">
-                   <a href="' . $url . '://' . $host . '.test"> ' . $host . ' </a>
+                   <a href="'.$url.'://'.$host.'.test"> '.$host.' </a>
                    </div>
                    <div class="overviewcard_info">
-                   <a href="' . $url . '://' . $host . '.test/wp-admin"> Admin<br><small style="font-size: 8px; color: #00c4ff;">Wordpress ?</small> </a>
+                   <a href="'.$url.'://'.$host.'.test/wp-admin"> Admin<br><small style="font-size: 8px; color: #00c4ff;">Wordpress ?</small> </a>
                    </div>
                    </div>';
         }
@@ -534,7 +544,7 @@ if (!empty($_GET['q'])) {
 
 <footer class="footer">
     <div class="footer__copyright">&copy; 2021 Tarek Tarabichi</div>
-    <div class="footer__signature">Made with love and powered by Laragon</div>
+    <div class="footer__signature">Made with <span style="color: #e25555;">&hearts;</span> and powered by Laragon</div>
 </footer>
 </div>
 </body>
