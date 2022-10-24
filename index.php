@@ -513,7 +513,7 @@ if (!empty($_GET['q'])) {
 
             <div class="overviewcard">
                 <div class="overviewcard_icon">Laragon</div>
-                <div class="overviewcard_info">Full 5.0.0</div>
+                <div class="overviewcard_info">Full 6.0.0</div>
             </div>
         </div>
 
@@ -543,7 +543,7 @@ if (!empty($_GET['q'])) {
 
 
 <footer class="footer">
-    <div class="footer__copyright">&copy; 2021 Tarek Tarabichi</div>
+    <div class="footer__copyright">&copy; 2022 Tarek Tarabichi</div>
     <div class="footer__signature">Made with <span style="color: #e25555;">&hearts;</span> and powered by Laragon</div>
 </footer>
 </div>
