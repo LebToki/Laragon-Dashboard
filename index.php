@@ -184,8 +184,8 @@ if (!empty($_GET['q'])) {
 <html>
 <head>
     <title>My Development Server</title>
-    <link href="https://fonts.googleapis.com/css?family=Open+Sans&display=swap" rel="stylesheet">
-
+    <link href="https://fonts.googleapis.com/css?family=Pt+Sans&display=swap" rel="stylesheet">
+ <link rel="icon" type="image/x-icon" href="favicon.ico">
     <script>
         const menuIconEl = $('.menu-icon');
         const sidenavEl = $('.sidenav');
@@ -520,6 +520,8 @@ if (!$link) {
         <div class="main-overview wrapper">
         
         <?php
+
+$ignored = array('favicon_io'); // Add more directories or files to ignore here
 $folders = array_filter(glob('*'), 'is_dir');
 
 if ($laraconfig['SSLEnabled'] == 0 || $laraconfig['Port'] == 80) {
@@ -529,6 +531,10 @@ if ($laraconfig['SSLEnabled'] == 0 || $laraconfig['Port'] == 80) {
 }
 
 foreach ($folders as $host) {
+    if (in_array($host, $ignored)) {
+        continue;
+    } // Skip ignored directories or files
+
     $wp_admin_link = '';
     if (file_exists($host.'/wp-admin')) {
         $wp_admin_link = '<a href="'.$url.'://'.$host.'.local/wp-admin"> Admin<br><small style="font-size: 8px; color: #00c4ff;">Wordpress ?</small> </a>';
