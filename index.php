@@ -486,18 +486,18 @@ if (!empty($_GET['q'])) {
                 <div class="overviewcard_info"><?php
                     error_reporting(0);
 
-                    $laraconfig = parse_ini_file('../usr/laragon.ini');
+$laraconfig = parse_ini_file('../usr/laragon.ini');
 
-                    $link = mysqli_connect('localhost', 'root', $laraconfig['MySQLRootPassword']);
-                    if (!$link) {
-                        $link = mysqli_connect('localhost', 'root', 'ADD PASSWORD HERE');
-                    }
-                    if (!$link) {
-                        echo 'MySQL not running!';
-                    } else {
-                        printf("server version: %s\n", mysqli_get_server_info($link));
-                    }
-                    ?>
+$link = mysqli_connect('localhost', 'root', $laraconfig['MySQLRootPassword']);
+if (!$link) {
+    $link = mysqli_connect('localhost', 'root', 'ADD PASSWORD HERE');
+}
+if (!$link) {
+    echo 'MySQL not running!';
+} else {
+    printf("server version: %s\n", mysqli_get_server_info($link));
+}
+?>
                 </div>
             </div>
 
@@ -518,32 +518,39 @@ if (!empty($_GET['q'])) {
         </div>
 
         <div class="main-overview wrapper">
+        
         <?php
-        $folders = array_filter(glob('*'), 'is_dir');
+$folders = array_filter(glob('*'), 'is_dir');
 
-        if ($laraconfig['SSLEnabled'] == 0 || $laraconfig['Port'] == 80) {
-            $url = 'http';
-        } else {
-            $url = 'https';
-        }
+if ($laraconfig['SSLEnabled'] == 0 || $laraconfig['Port'] == 80) {
+    $url = 'http';
+} else {
+    $url = 'https';
+}
 
-        foreach ($folders as $host) {
-            echo ' <div class="overviewcard_sites">
+foreach ($folders as $host) {
+    $wp_admin_link = '';
+    if (file_exists($host.'/wp-admin')) {
+        $wp_admin_link = '<a href="'.$url.'://'.$host.'.local/wp-admin"> Admin<br><small style="font-size: 8px; color: #00c4ff;">Wordpress ?</small> </a>';
+    }
+    echo ' <div class="overviewcard_sites">
                    <div class="overviewcard_icon">
-                   <a href="'.$url.'://'.$host.'.test"> '.$host.' </a>
+                   <a href="'.$url.'://'.$host.'.local"> '.$host.' </a>
                    </div>
                    <div class="overviewcard_info">
-                   <a href="'.$url.'://'.$host.'.test/wp-admin"> Admin<br><small style="font-size: 8px; color: #00c4ff;">Wordpress ?</small> </a>
+
+                   '.$wp_admin_link.'
                    </div>
                    </div>';
-        }
-        ?>
+}
+?>
+
 </div>
 </main>
 
 
 <footer class="footer">
-    <div class="footer__copyright">&copy; 2022 Tarek Tarabichi</div>
+    <div class="footer__copyright">&copy; 2023 Tarek Tarabichi</div>
     <div class="footer__signature">Made with <span style="color: #e25555;">&hearts;</span> and powered by Laragon</div>
 </footer>
 </div>
