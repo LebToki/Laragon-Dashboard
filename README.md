@@ -18,11 +18,11 @@ We're confident that our Laragon root directory index page will enhance your dev
 # Features
 Our index page replaces the vanilla Laragon server index page, and offers several key features that make it an essential tool for developers:
 
-*Visually appealing interface: Our index page provides a clean and modern design that is both easy on the eyes and easy to navigate.
+**Visually appealing interface:** Our index page provides a clean and modern design that is both easy on the eyes and easy to navigate.
 
-*Intuitive project management: With our UI, you can quickly navigate through your projects and directories, making it easy to find the files you need and manage your server more effectively.
+**Intuitive project management:** With our UI, you can quickly navigate through your projects and directories, making it easy to find the files you need and manage your server more effectively.
 
-*Responsive design: Our index page is designed to work seamlessly on any device, from desktop computers to mobile phones.
+**Responsive design:** Our index page is designed to work seamlessly on any device, from desktop computers to mobile phones.
 
 # How to Use
 1. To use our index page, simply replace the default index.php file in your Laragon root directory with our customized index.php file. Once you've done that, you'll be able to access our UI by navigating to the root directory of your Laragon server.
