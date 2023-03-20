@@ -4,7 +4,7 @@
  * Main Index File
  * Description: This is the main index file for the Laragon server.
  * Author: Tarek Tarabichi <tarek@2tinteractive.com>
- * Version: 1.0
+ * Version: 1.2
  */
 
 
