@@ -6,8 +6,7 @@
  * Author: Tarek Tarabichi <tarek@2tinteractive.com>
  * Version: 1.2
  */
-
-
+// ---------------------------------------------------------------
 /*-
 * get page for phpinfo
 *
@@ -15,6 +14,13 @@
 *   The function now uses a "switch" statement for better readability.
 *   If the query parameter is not valid, an exception is thrown.
 *   The function is called from a conditional statement that checks whether the "q" parameter is set in the URL
+*/
+// ---------------------------------------------------------------
+/* The handleQueryParameter function uses a switch statement to check the value of the
+parameter passed as an argument. If the value is 'info', it calls the phpinfo function,
+which outputs information about the PHP configuration on the server.
+If the value is not 'info', it throws an exception with a message indicating
+that the parameter is invalid.
 */
 
 function handleQueryParameter($param)
@@ -24,14 +30,14 @@ function handleQueryParameter($param)
             phpinfo();
             exit;
         default:
-            throw new InvalidArgumentException('Invalid query parameter: ' . $param);
+            throw new \InvalidArgumentException('Invalid query parameter: ' . $param);
     }
 }
 
 if (isset($_GET['q'])) {
     handleQueryParameter($_GET['q']);
 }
-
+// ---------------------------------------------------------------
 /*-
 * Get PHP extensions
 *
@@ -68,10 +74,14 @@ function getServerExtensions(string $server): array
 // $extensions = getServerExtensions(SERVER_PHP);
 // print_r($extensions);
 
-
-// ----
-// Check PHP version
-// ----
+// ---------------------------------------------------------------
+/*
+* Check PHP version
+* This function fetches the releases page using file_get_contents,
+* and then uses a regular expression to extract the latest version number from the page.
+* The regular expression matches the version number in the filename of the latest release
+* (e.g., php-7.4.33-Latest.tar.gz), and captures the version number using a group (([\d.]+)).
+ */
 
 function getPhpVersion()
 {
@@ -94,10 +104,18 @@ function getPhpVersion()
         'intCurVer' => $intCurVersion,
     ];
 }
-
-// ----
-// Httpd Versions
-// ----
+// ---------------------------------------------------------------
+/*
+Retrieves information about the server environment.
+Returns an associative array with the following keys:
+httpdVer: the version of the HTTP server software.
+openSsl: the version of the OpenSSL library, if available.
+phpVer: the version of PHP installed on the server.
+xDebug: the version of the Xdebug extension, if installed.
+docRoot: the path to the server's document root.
+serverName: the name of the HTTP-HOST
+@return array An associative array containing server information.
+*/
 
 function serverInfo()
 {
@@ -110,13 +128,14 @@ function serverInfo()
         'phpVer' => getPhpVersion()['currentVersion'],
         'xDebug' => phpversion('xdebug'),
         'docRoot' => $_SERVER['DOCUMENT_ROOT'],
+        'serverName' => $_SERVER['HTTP_HOST']
     ];
 }
 
+// ---------------------------------------------------------------
 // ----
 // get SQL version
 // ----
-
 function getSQLVersion()
 {
     $output = shell_exec('mysql -V');
@@ -125,10 +144,10 @@ function getSQLVersion()
     return $version[0];
 }
 
+// ---------------------------------------------------------------
 // ----
 // PHP links
 // ----
-
 function phpDlLink($version)
 {
     $changelog = 'https://www.php.net/ChangeLog-7.php#'.$version;
@@ -140,19 +159,7 @@ function phpDlLink($version)
     ];
 }
 
-// ----
-// define sites-enabled directory
-// ----
-
-// function getSiteDir()
-// {
-//     if (preg_match('/^Apache/', $_SERVER['SERVER_SOFTWARE'])) {
-//         return '../laragon/etc/apache2/sites-enabled';
-//     } else {
-//         return '../laragon/etc/nginx/sites-enabled';
-//     }
-// }
-
+// ---------------------------------------------------------------
 function getSiteDir()
 {
     $rootDir = realpath(__DIR__ . '/../');
@@ -163,11 +170,14 @@ function getSiteDir()
     }
 }
 
+// ---------------------------------------------------------------
+
 // This implementation allows the caller to specify the server type as an optional argument,
 // and also allows the caller to specify an array of filenames to ignore.
 // It also returns more information about each website, including the domain name and document root.
 // Note that this implementation assumes that each configuration file contains exactly one ServerName directive
 // and one DocumentRoot directive, which may not always be the case.
+
 
 function getLocalSites($server = 'apache', $ignoredFiles = ['.', '..', '00-default.conf'])
 {
@@ -176,7 +186,9 @@ function getLocalSites($server = 'apache', $ignoredFiles = ['.', '..', '00-defau
         $sitesDir = '../laragon/etc/apache2/sites-enabled';
     } elseif ($server === 'nginx') {
         $sitesDir = '../laragon/etc/nginx/sites-enabled';
-    } else {
+    }
+
+    if (!isset($sitesDir)) {
         throw new InvalidArgumentException("Unsupported server type: $server");
     }
 
@@ -213,7 +225,7 @@ function getLocalSites($server = 'apache', $ignoredFiles = ['.', '..', '00-defau
 
     return $sites;
 }
-
+// ---------------------------------------------------------------
 // This function renderLinks() generates HTML links for each local site in the sites-enabled directory.
 // For each site, it generates two links: one with http:// and another with https://.
 // It uses the getLocalSites() function to get a list of all the sites in the sites-enabled directory,
@@ -242,12 +254,14 @@ function renderLinks()
                 <div class="col-md-5 text-truncate tl">'.$contentHttps.'</div>
             </div>
             <hr>
-        ';
+            ';
         }
     }
 
     return ob_get_clean();
 }
+
+// ---------------------------------------------------------------
 //  This function checks if the server software running on the current server is Apache or not.
 //  It takes one parameter $server which is expected to be a string containing the name of the server,
 //  and returns a boolean value.
@@ -287,7 +301,11 @@ if (!empty($_GET['q'])) {
 <head>
     <title>My Development Server</title>
     <link href="https://fonts.googleapis.com/css?family=Pt+Sans&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/assets/style.css">
     <link rel="icon" type="image/x-icon" href="assets/favicon.ico">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+
     <script>
         const menuIconEl = $('.menu-icon');
         const sidenavEl = $('.sidenav');
@@ -312,297 +330,6 @@ if (!empty($_GET['q'])) {
             toggleClassName(sidenavEl, 'active');
         });
     </script>
-
-    <style>
-        body {
-            margin: 0;
-            padding: 0;
-            color: #fff;
-            font-family: 'Rubik', sans-serif;
-            box-sizing: border-box;
-        }
-
-        a {
-            font-family: "Rubik", Sans-serif, serif;
-            text-transform: uppercase;
-            font-size: 16px !important;
-            color: #FFFFFF !important;
-            text-decoration: none;
-        }
-
-        /* Assign grid instructions to our parent grid container, mobile-first (hide the sidenav) */
-        .grid-container {
-            display: grid;
-            grid-template-columns: 1fr;
-            grid-template-rows: 50px 1fr 50px;
-            grid-template-areas: 'header' 'main' 'footer';
-            height: 100vh;
-        }
-
-        /* Give every child element its grid name */
-        .header {
-            grid-area: header;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0 16px;
-            color: #ffffff;
-            font-family: "Rubik", Sans-serif;
-            background-color: #0b162c;
-        }
-
-        .main {
-            grid-area: main;
-            /* background-color: #e5e5e5; */
-            background: url(assets/background2.jpg) no-repeat center center fixed;
-            -webkit-background-size: cover;
-            -moz-background-size: cover;
-            -o-background-size: cover;
-            background-size: cover;
-        }
-
-        .main-header {
-            display: flex;
-            justify-content: space-between;
-            margin: 20px;
-            padding: 20px;
-            height: 150px;
-            background-color: #fca311;
-            color: #14213d;
-        }
-
-        .main-overview {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(265px, 1fr));
-            grid-auto-rows: 71px;
-            grid-gap: 20px;
-            margin: 10px;
-        }
-
-
-        .wrapper {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 10px;
-        }
-
-        .overviewcard {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 15px;
-            background-color: #00adef;
-            /*-----00adef    -----*/
-            font-family: "Rubik", Sans-serif, serif;
-            border-radius: 5px 5px;
-            font-size: 16px;
-            color: #FFFFFF !important;
-            line-height: 1;
-            height: 31px;
-        }
-
-        .overviewcard_sites {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 15px;
-            background-color: #023e8a;
-            /*-----00adef    -----*/
-            font-family: "Rubik", Sans-serif, serif;
-            border-radius: 5px 5px;
-            font-size: 16px;
-            color: #FFFFFF !important;
-            line-height: 1;
-            height: 31px;
-        }
-
-        .overviewcard_info {
-            font-family: "Rubik", Sans-serif, serif;
-            text-transform: uppercase;
-            font-size: 16px !important;
-            color: #FFFFFF !important;
-        }
-
-        .overviewcard_icon {
-            font-family: "Rubik", Sans-serif, serif;
-            text-transform: uppercase;
-            font-size: 16px !important;
-            color: #FFFFFF !important;
-        }
-
-
-        .overviewcard4 {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 15px;
-            background-color: #031A24;
-            /*-----00adef    -----*/
-            font-family: "Rubik", Sans-serif, serif;
-            border-radius: 5px 5px;
-            font-size: 16px;
-            color: #FFFFFF !important;
-            line-height: 1;
-            height: 31px;
-        }
-
-        .main-cards {
-            column-count: 0;
-            column-gap: 20px;
-            margin: 20px;
-        }
-
-        .card {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            width: 100%;
-            background-color: #f1faee;
-            margin-bottom: 20px;
-            -webkit-column-break-inside: avoid;
-            padding: 24px;
-            box-sizing: border-box;
-        }
-
-        /* Force varying heights to simulate dynamic content */
-        .card:first-child {
-            height: 300px;
-        }
-
-        .card:nth-child(2) {
-            height: 200px;
-        }
-
-        .card:nth-child(3) {
-            height: 265px;
-        }
-
-        /*Image Filter styles*/
-        .saturate {
-            filter: saturate(3);
-        }
-
-        .grayscale {
-            filter: grayscale(100%);
-        }
-
-        .contrast {
-            filter: contrast(160%);
-        }
-
-        .brightness {
-            filter: brightness(0.25);
-        }
-
-        .blur {
-            filter: blur(3px);
-        }
-
-        .invert {
-            filter: invert(100%);
-        }
-
-        .sepia {
-            filter: sepia(100%);
-        }
-
-        .huerotate {
-            filter: hue-rotate(180deg);
-        }
-
-        .rss.opacity {
-            filter: opacity(50%);
-        }
-
-        .sites {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(275px, 1fr));
-            grid-gap: 20px;
-            margin: 20px;
-        }
-
-        .sites li {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            width: 100%;
-            background: #560bad;
-            color: #ffffff;
-            font-family: 'Rubik', sans-serif;
-            font-size: 14px;
-            text-align: left;
-            text-transform: uppercase;
-            margin-bottom: 20px;
-            -webkit-column-break-inside: avoid;
-            padding: 24px;
-            box-sizing: border-box;
-        }
-
-
-        .sites li:hover {
-            box-shadow: 0 0 15px 0 #bbb;
-        }
-
-        .sites li:hover svg {
-            fill: #ffffff;
-        }
-
-        .sites li:hover a {
-            color: #ffffff;
-        }
-
-        .sites li a {
-            display: block;
-            padding-left: 48px;
-            color: #f2f2f2;
-            transition: color 250ms ease-in-out;
-        }
-
-        .sites img {
-            position: absolute;
-            margin: 8px;
-            margin-left: -40px;
-            fill: #f2f2f2;
-            transition: fill 250ms ease-in-out;
-        }
-
-        .sites svg {
-            position: absolute;
-            margin: 16px;
-            margin-left: -40px;
-            fill: #f2f2f2;
-            transition: fill 250ms ease-in-out;
-        }
-
-        .footer {
-            grid-area: footer;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0 16px;
-            background-color: #0b162c;
-            color: #ffffff;
-        }
-
-        /* Non-mobile styles, 750px breakpoint */
-        @media only screen and (min-width: 46.875em) {
-            /* Show the sidenav */
-            /*.grid-container {*/
-            /*    grid-template-columns: 240px 1fr;*/
-            /*    grid-template-areas: "sidenav header" "sidenav main" "sidenav footer";*/
-            /*}*/
-
-        }
-
-        /* Medium screens breakpoint (1050px) */
-        @media only screen and (min-width: 65.625em) {
-
-            /* Break out main cards into two columns */
-            .main-cards {
-                column-count: 1;
-            }
-        }
-    </style>
 </head>
 
 <body>
@@ -617,17 +344,17 @@ if (!empty($_GET['q'])) {
             <div class="header__avatar">Welcome Back!</div>
         </header>
 
-
+        <!--  -->
         <main class="main">
-
+            <!-- 1st row | systems-->
             <div class="main-overview">
 
                 <div class="overviewcard4">
                     <div class="overviewcard_icon">
                         <?php
 
-// Get the current time
-$currentTime = new DateTime();
+                            // Get the current time
+                            $currentTime = new DateTime();
 $hours = $currentTime->format('H');
 
 // Get the greeting based on the time of day
@@ -666,12 +393,13 @@ echo "<h4>" . $greeting . "!</h4>";
                 </div>
 
             </div>
+            <!-- 2nd row | sites loop-->
             <div class="main-overview">
                 <div class="overviewcard">
                     <div class="overviewcard_icon">MySQL</div>
-                    <div class="overviewcard_info"><?php
-                    error_reporting(0);
-
+                    <div class="overviewcard_info">
+                        <?php
+    error_reporting(0);
 $laraconfig = parse_ini_file('../usr/laragon.ini');
 
 $link = mysqli_connect('localhost', 'root', $laraconfig['MySQLRootPassword']);
@@ -690,7 +418,8 @@ if (!$link) {
                 <div class="overviewcard">
                     <div class="overviewcard_icon">Document Root</div>
                     <div class="overviewcard_info">
-                        <?php echo $_SERVER['DOCUMENT_ROOT']; ?>
+                        <?php echo $_SERVER['DOCUMENT_ROOT']; ?><br>
+                        <small><span><?php echo $_SERVER['HTTP_HOST']; ?></span></small>
                     </div>
                 </div>
 
@@ -716,8 +445,12 @@ if (!$link) {
             <div class="main-overview wrapper">
 
                 <?php
-
-$ignored = array('favicon_io'); // Add more directories or files to ignore here
+/*
+* Detects the web application framework of the specified host folders and returns its details.
+* @return array An array containing details of the detected framework for each folder
+* @throws Exception If an error occurs during the detection process
+*/
+                $ignored = array('favicon_io'); // Add more directories or files to ignore here
 $folders = array_filter(glob('*'), 'is_dir');
 
 if ($laraconfig['SSLEnabled'] == 0 || $laraconfig['Port'] == 80) {
@@ -725,14 +458,10 @@ if ($laraconfig['SSLEnabled'] == 0 || $laraconfig['Port'] == 80) {
 } else {
     $url = 'https';
 }
-
-
 //----------------------------
 // WEB-APP FRAMEWORK DETECTION FUNCTION
 //----------------------------
-
 $ignore_dirs = array('.', '..', 'logs', 'access-logs', 'vendor', 'favicon_io', 'ablepro-90','assets');
-
 foreach ($folders as $host) {
     if (in_array($host, $ignore_dirs) || !is_dir($host)) {
         continue;
@@ -748,28 +477,27 @@ foreach ($folders as $host) {
             $app_name = ' Wordpress ';
             $avatar = 'assets/Wordpress.png';
             $admin_link = '
-                <a href="'.$url.'://'.$host.'.local/wp-admin" target="_blank">
-                    <small style="font-size: 8px; color: #cccccc;">
-                        '.$app_name.'
-                    </small>
-                    <br>
-                    Admin
-                </a>';
+                                <a href="'.$url.'://'.$host.'.local/wp-admin" target="_blank">
+                                    <small style="font-size: 8px; color: #cccccc;">
+                                        '.$app_name.'
+                                    </small>
+                                    <br>
+                                    Admin
+                                </a>';
             break;
 
             // LARAVEL
-
         case file_exists($host.'/public/index.php') && is_dir($host.'/app') && file_exists($host.'/.env'):
             $app_name = ' Laravel ';
             $avatar = 'assets/Laravel.png';
             $admin_link = '
-                <a href="'.$url.'://'.$host.'.local/admin" target="_blank">
-                    <small style="font-size: 8px; color: #cccccc;">
-                        '.$app_name.'
-                    </small>
-                    <br>
-                    Admin
-                </a>';
+                                <a href="'.$url.'://'.$host.'.local/admin" target="_blank">
+                                    <small style="font-size: 8px; color: #cccccc;">
+                                        '.$app_name.'
+                                    </small>
+                                    <br>
+                                    Admin
+                                </a>';
             break;
 
             // SYMFONY
@@ -777,13 +505,13 @@ foreach ($folders as $host) {
             $app_name = ' Symfony ';
             $avatar = 'assets/Symphony.png';
             $admin_link = '
-        <a href="'.$url.'://'.$host.'.local/admin" target="_blank"> 
-            <small style="font-size: 8px; color: #cccccc;">
-                '.$app_name.'
-            </small>
-            <br>
-            Admin
-        </a>';
+                        <a href="'.$url.'://'.$host.'.local/admin" target="_blank"> 
+                            <small style="font-size: 8px; color: #cccccc;">
+                                '.$app_name.'
+                            </small>
+                            <br>
+                            Admin
+                        </a>';
             break;
 
             // No recognized framework found
@@ -812,10 +540,12 @@ foreach ($folders as $host) {
             </div>
         </main>
 
-
+        <!-- FOOTER STARTS HERE -->
         <footer class="footer">
             <div class="footer__copyright">
-                &copy; 2023, Tarek Tarabichi
+                &copy; 2022 |
+                <?php echo date('Y'); ?>, Tarek
+                Tarabichi
             </div>
             <div class="footer__signature">
                 Made with
@@ -823,6 +553,9 @@ foreach ($folders as $host) {
                 and powered by Laragon
             </div>
         </footer>
+        <!--FOOTER END HERE -->
+
+        <!-- MAIN END  -->
     </div>
 </body>
 
