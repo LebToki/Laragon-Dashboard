@@ -31,7 +31,7 @@ Our index page replaces the vanilla Laragon server index page, and offers severa
 1. To use our index page, simply replace the default index.php file in your Laragon root directory with our customized index.php file. Once you've done that, you'll be able to access our UI by navigating to the root directory of your Laragon server.
 2. Make sure you change your development path (.local) - if you've named your path differently
 3. Make sure to upload the icons and css files to the assets directory (or simply import it as is) 
-4. Make sure to changetheignored directories or add the directories that you don't intend to expose publicly
+4. Make sure to change the ignored directories or add the directories that you don't intend to expose publicly
 
 **
 
