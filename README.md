@@ -12,7 +12,7 @@ We've gone the extra mile to provide a visually appealing and intuitive interfac
 
 To use our index page, simply replace the default index.php file in your Laragon root directory with our customized index.php file. And don't worry, we've taken care of cleaning up all PHP calls, providing error responses, and removing redundant codes.
 
-This is good enough to be the official index page of Lragon to replace the vanilla Laragon server index page, and offers several key features that make it an essential tool for developers:
+This is good enough to be the official index page of Laragon to replace the vanilla Laragon server index page, and offers several key features that make it an essential tool for developers:
 
 **
 
