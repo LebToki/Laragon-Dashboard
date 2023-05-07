@@ -545,6 +545,20 @@ foreach ($folders as $host) {
                         </a>';
             break;
 
+        // CAKEPHP
+        case file_exists($host.'/bin/cake'):
+            $app_name = ' CakePHP ';
+            $avatar = 'assets/CakePHP.png';
+            $admin_link = '
+                        <a href="'.$url.'://'.$host.'.local/admin" target="_blank"> 
+                            <small style="font-size: 8px; color: #cccccc;">
+                                '.$app_name.'
+                            </small>
+                            <br>
+                            Admin
+                        </a>';
+            break;
+
             // No recognized framework found
         default:
             $admin_link = '';
