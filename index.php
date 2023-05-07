@@ -486,7 +486,21 @@ foreach ($folders as $host) {
                                 </a>';
             break;
 
-            // LARAVEL
+        // JOOMLA
+        case file_exists($host.'/administrator'):
+            $app_name = ' Joomla ';
+            $avatar = 'assets/Joomla.png';
+            $admin_link = '
+                                <a href="'.$url.'://'.$host.'.local/administrator" target="_blank">
+                                    <small style="font-size: 8px; color: #cccccc;">
+                                        '.$app_name.'
+                                    </small>
+                                    <br>
+                                    Admin
+                                </a>';
+            break;
+    
+        // LARAVEL
         case file_exists($host.'/public/index.php') && is_dir($host.'/app') && file_exists($host.'/.env'):
             $app_name = ' Laravel ';
             $avatar = 'assets/Laravel.png';
