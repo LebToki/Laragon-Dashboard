@@ -503,7 +503,21 @@ foreach ($folders as $host) {
                                 </a>';
             break;
 
-            // LARAVEL
+        // JOOMLA
+        case file_exists($host.'/administrator'):
+            $app_name = ' Joomla ';
+            $avatar = 'assets/Joomla.png';
+            $admin_link = '
+                                <a href="'.$url.'://'.$host.'.local/administrator" target="_blank">
+                                    <small style="font-size: 8px; color: #cccccc;">
+                                        '.$app_name.'
+                                    </small>
+                                    <br>
+                                    Admin
+                                </a>';
+            break;
+    
+        // LARAVEL
         case file_exists($host.'/public/index.php') && is_dir($host.'/app') && file_exists($host.'/.env'):
             $app_name = ' Laravel ';
             $avatar = 'assets/Laravel.png';
@@ -520,7 +534,7 @@ foreach ($folders as $host) {
             // SYMFONY
         case file_exists($host.'/bin/console'):
             $app_name = ' Symfony ';
-            $avatar = 'assets/Symphony.png';
+            $avatar = 'assets/Symfony.png';
             $admin_link = '
                         <a href="'.$url.'://'.$host.'.local/admin" target="_blank"> 
                             <small style="font-size: 8px; color: #cccccc;">
