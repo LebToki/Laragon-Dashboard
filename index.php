@@ -4,7 +4,8 @@
  * Main Index File
  * Description: This is the main index file for the Laragon server.
  * Author: Tarek Tarabichi <tarek@2tinteractive.com>
- * Version: 1.2
+ * Contributors: LrkDev
+ * Version: 1.2.1
  */
 // ---------------------------------------------------------------
 /*-
@@ -590,7 +591,7 @@ foreach ($folders as $host) {
             <div class="footer__copyright">
                 &copy; 2022 |
                 <?php echo date('Y'); ?>, Tarek
-                Tarabichi
+                Tarabichi | <small> with contributions from LrkDev </small>
             </div>
             <div class="footer__signature">
                 Made with
