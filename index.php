@@ -503,7 +503,7 @@ foreach ($folders as $host) {
             // SYMFONY
         case file_exists($host.'/bin/console'):
             $app_name = ' Symfony ';
-            $avatar = 'assets/Symphony.png';
+            $avatar = 'assets/Symfony.png';
             $admin_link = '
                         <a href="'.$url.'://'.$host.'.local/admin" target="_blank"> 
                             <small style="font-size: 8px; color: #cccccc;">
