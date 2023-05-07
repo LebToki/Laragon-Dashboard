@@ -472,6 +472,23 @@ foreach ($folders as $host) {
     $avatar = '';
 
     switch (true) {
+        // DRUPAL
+        case (
+            file_exists($host.'/core')  // legacy drupal 8.7 and earlier
+            || file_exists($host.'/web/core') // drupal 8.8 and later
+            ):
+            $app_name = ' Drupal ';
+            $avatar = 'assets/Drupal.svg';
+            $admin_link = '
+                                <a href="'.$url.'://'.$host.'.local/user" target="_blank">
+                                    <small style="font-size: 8px; color: #cccccc;">
+                                        '.$app_name.'
+                                    </small>
+                                    <br>
+                                    Admin
+                                </a>';
+            break;
+
         // WORDPRESS
         case file_exists($host.'/wp-admin'):
             $app_name = ' Wordpress ';
