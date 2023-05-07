@@ -370,7 +370,7 @@ if ($hours < 12) {
 echo "<h4>" . $greeting . "!</h4>";
 ?>
                     </div>
-                    <div class="overviewcard_info"><img src="favicon_io/2065203.png" style="width:64px;"></div>
+                    <div class="overviewcard_info"><img src="assets/apps.png" style="width:64px;"></div>
                 </div>
 
                 <div class="overviewcard">
