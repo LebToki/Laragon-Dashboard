@@ -5,7 +5,7 @@
  * Description: This is the main index file for the Laragon server.
  * Author: Tarek Tarabichi <tarek@2tinteractive.com>
  * Contributors: LrkDev
- * Version: 1.2.1
+ * Version: 1.2.2
  */
 // ---------------------------------------------------------------
 /*-
