@@ -38,7 +38,7 @@ a {
 .main {
     grid-area: main;
     /* background-color: #e5e5e5; */
-    background: url(assets/background2.jpg) no-repeat center center fixed;
+    background: url(background2.jpg) no-repeat center center fixed;
     -webkit-background-size: cover;
     -moz-background-size: cover;
     -o-background-size: cover;
