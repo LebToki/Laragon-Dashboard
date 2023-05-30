@@ -31,14 +31,14 @@ a {
     justify-content: space-between;
     padding: 0 16px;
     color: #ffffff;
-    font-family: "Rubik", Sans-serif;
+    font-family: "Rubik", Sans-serif, serif;
     background-color: #0b162c;
 }
 
 .main {
     grid-area: main;
     /* background-color: #e5e5e5; */
-    background: url(/background2.jpg) no-repeat center center fixed;
+    background: url(assets/background2.jpg) no-repeat center center fixed;
     -webkit-background-size: cover;
     -moz-background-size: cover;
     -o-background-size: cover;
@@ -76,7 +76,6 @@ a {
     justify-content: space-between;
     padding: 15px;
     background-color: #00adef;
-    /*-----00adef    -----*/
     font-family: "Rubik", Sans-serif, serif;
     border-radius: 5px 5px;
     font-size: 16px;
@@ -244,16 +243,14 @@ a {
 
 .sites img {
     position: absolute;
-    margin: 8px;
-    margin-left: -40px;
+    margin: 8px 8px 8px -40px;
     fill: #f2f2f2;
     transition: fill 250ms ease-in-out;
 }
 
 .sites svg {
     position: absolute;
-    margin: 16px;
-    margin-left: -40px;
+    margin: 16px 16px 16px -40px;
     fill: #f2f2f2;
     transition: fill 250ms ease-in-out;
 }
@@ -270,31 +267,31 @@ a {
 
 /* Styles for screens smaller than 600px */
 @media (max-width: 600px) {
-  /* Adjust the menu icon size */
-  .menu-icon {
-    font-size: 30px;
-  }
+    /* Adjust the menu icon size */
+    .menu-icon {
+        font-size: 30px;
+    }
 
-  /* Hide the sidenav */
-  .sidenav {
-    display: none;
-  }
+    /* Hide the sidenav */
+    .sidenav {
+        display: none;
+    }
 
-  /* Show the sidenav when it's active */
-  .sidenav.active {
-    display: block;
-  }
+    /* Show the sidenav when it's active */
+    .sidenav.active {
+        display: block;
+    }
 }
 
 /* Styles for screens larger than 600px */
 @media (min-width: 601px) {
-  /* Adjust the menu icon size */
-  .menu-icon {
-    font-size: 40px;
-  }
+    /* Adjust the menu icon size */
+    .menu-icon {
+        font-size: 40px;
+    }
 
-  /* Show the sidenav */
-  .sidenav {
-    display: block;
-  }
+    /* Show the sidenav */
+    .sidenav {
+        display: block;
+    }
 }
