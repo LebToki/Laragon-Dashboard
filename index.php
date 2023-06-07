@@ -5,7 +5,7 @@
  * Description: This is the main index file for the Laragon server.
  * Author: Tarek Tarabichi <tarek@2tinteractive.com>
  * Contributors: LrkDev
- * Version: 1.2.2
+ * Version: 1.2.3
  */
 // ---------------------------------------------------------------
 /*-
@@ -545,6 +545,37 @@ foreach ($folders as $host) {
                             Admin
                         </a>';
             break;
+
+            // PYTHON Based Projects
+            case (file_exists($host . '/') && is_dir($host . '/app.py') && is_dir($host . '/static') && file_exists($host . '/.env')):
+                $app_name = ' Python ';
+                $avatar = 'assets/Python.png';
+                $admin_link = '
+                    <a href="' . $url . '://' . $host . '.local/Public" target="_blank">
+                        <small style="font-size: 8px; color: #cccccc;">
+                            ' . $app_name . '
+                        </small>
+                        <br>
+                        Public Folder
+                    </a>';
+            
+                // Execute the command to run the Python application
+                $command = 'python ' . $host . '/app.py'; // Replace 'app.py' with the actual file name
+                exec($command, $output, $returnStatus);
+            
+                // Check the return status to ensure the command executed successfully
+                if ($returnStatus === 0) {
+                    // Command executed successfully
+                    // Process any output or perform further actions if needed
+                } else {
+                    // Command execution failed
+                    // Handle the error appropriately
+                }
+            
+                break;
+            
+
+    
 
         // CAKEPHP
         case file_exists($host.'/bin/cake'):
