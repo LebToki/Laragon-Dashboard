@@ -42,19 +42,19 @@ Don't forget to star the project to stay up-to-date on future improvements, and 
 **
 # Changelog:
 
-- Version 1.2.3 (Latest):
+- Version 2.1.3 (Latest):
 
 Added Python based project detection case: The switch case for detecting Python based projects has been implemented, allowing the system to recognize Python projects within the Laragon root directory. This enables specific handling and customization for Python projects.
 
 Added Python project icon to the assets: A new icon representing Python projects has been added to the assets directory. This icon enhances the visual representation and differentiation of Python projects within the Laragon Server Index Page.
 
-- Version 1.2.2:
+- Version 2.1.2:
 
 Updated UI for enhanced user experience: The user interface of the Laragon Server Index Page has been refined with improved styling, layout adjustments, and optimized visual elements. These enhancements aim to provide a more user-friendly and visually appealing experience for developers.
 
 Performance optimizations: Several optimizations have been implemented to improve the overall performance and loading speed of the Laragon Server Index Page. These optimizations ensure faster navigation and smoother interactions within the index page.
 
-- Version 1.2.1:
+- Version 2.1.1:
 
 Added search functionality: A search bar has been integrated into the index page, allowing developers to search for specific projects or files within the Laragon root directory. This feature provides a convenient way to locate and access desired resources quickly.
 
