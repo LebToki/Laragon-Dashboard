@@ -41,7 +41,9 @@ Don't forget to star the project to stay up-to-date on future improvements, and 
 
 **
 # Changelog:
+
 - Version 2.1.5 (latest)
+
 Security: Added input validation and output escaping to prevent XSS and other security vulnerabilities.
 Error Handling: Improved error handling with try-catch blocks and better error checking for file operations.
 Readability: Refactored some functions for better readability and maintainability.
