@@ -41,8 +41,13 @@ Don't forget to star the project to stay up-to-date on future improvements, and 
 
 **
 # Changelog:
+- Version 2.1.5 (latest)
+Security: Added input validation and output escaping to prevent XSS and other security vulnerabilities.
+Error Handling: Improved error handling with try-catch blocks and better error checking for file operations.
+Readability: Refactored some functions for better readability and maintainability.
+Modularity: Made the code more modular and easy to extend or modify.
 
-- Version 2.1.3 (Latest):
+- Version 2.1.3:
 
 Added Python based project detection case: The switch case for detecting Python based projects has been implemented, allowing the system to recognize Python projects within the Laragon root directory. This enables specific handling and customization for Python projects.
 
