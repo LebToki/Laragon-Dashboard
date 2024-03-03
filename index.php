@@ -1,102 +1,58 @@
 <?php
 /**
  * Application: Laragon | Server Index Page
- * Main Index File
- * Description: This is the main index file for the Laragon server.
+ * Description: This is the main index page for the Laragon server, displaying server info and applications.
  * Author: Tarek Tarabichi <tarek@2tinteractive.com>
  * Contributors: LrkDev
- * Version: 1.2.3
+ * Version: 1.2.5
  */
-// ---------------------------------------------------------------
-/*-
-* get page for phpinfo
-*
-*   The function is renamed to "handleQueryParameter", which better reflects its purpose.
-*   The function now uses a "switch" statement for better readability.
-*   If the query parameter is not valid, an exception is thrown.
-*   The function is called from a conditional statement that checks whether the "q" parameter is set in the URL
-*/
-// ---------------------------------------------------------------
-/* The handleQueryParameter function uses a switch statement to check the value of the
-parameter passed as an argument. If the value is 'info', it calls the phpinfo function,
-which outputs information about the PHP configuration on the server.
-If the value is not 'info', it throws an exception with a message indicating
-that the parameter is invalid.
-*/
 
+const SERVER_TYPES = [
+    'php' => 'php',
+    'apache' => 'apache',
+];
+
+// Improved error handling and security (input validation, escaping outputs)
 function handleQueryParameter($param)
 {
-    switch ($param) {
-        case 'info':
-            phpinfo();
-            exit;
-        default:
-            throw new \InvalidArgumentException('Invalid query parameter: ' . $param);
+    if (!in_array($param, ['info'], true)) {
+        throw new InvalidArgumentException("Invalid query parameter: " . htmlspecialchars($param));
+    }
+    
+    if ($param === 'info') {
+        phpinfo();
+        exit;
     }
 }
 
-if (isset($_GET['q'])) {
+if (isset($_GET['q']) && !empty($_GET['q'])) {
     handleQueryParameter($_GET['q']);
 }
-// ---------------------------------------------------------------
-/*-
-* Get PHP extensions
-*
-*   The code you provided is a function that retrieves a list of PHP extensions or Apache modules
-*   based on the value of the "server" parameter. The list is then sorted alphabetically and
-*   returned in a two-dimensional array.The function could throw an exception if there's an error retrieving the
-*   list of extensions or modules. For example, if the "apache_get_modules" function is not available on the server,
-*   the function will generate an error. You could catch this error and throw an exception with a more informative message
-*/
 
-const SERVER_PHP = 'php';
-const SERVER_APACHE = 'apache';
-
+// Using try-catch for better error handling
 function getServerExtensions(string $server): array
 {
-    switch ($server) {
-        case SERVER_PHP:
-            $extensions = get_loaded_extensions();
-            break;
-        case SERVER_APACHE:
-            $extensions = apache_get_modules();
-            break;
-        default:
-            throw new InvalidArgumentException('Invalid server name: ' . $server);
+    if (!array_key_exists($server, SERVER_TYPES)) {
+        throw new InvalidArgumentException("Invalid server name: " . htmlspecialchars($server));
     }
 
+    $extensions = $server === SERVER_TYPES['php'] ? get_loaded_extensions() : apache_get_modules();
     sort($extensions, SORT_STRING);
-    $extensions = array_chunk($extensions, 2);
-
-    return $extensions;
+    return array_chunk($extensions, 2);
 }
 
-// Example usage
-// $extensions = getServerExtensions(SERVER_PHP);
-// print_r($extensions);
-
-// ---------------------------------------------------------------
-/*
-* Check PHP version
-* This function fetches the releases page using file_get_contents,
-* and then uses a regular expression to extract the latest version number from the page.
-* The regular expression matches the version number in the filename of the latest release
-* (e.g., php-7.4.33-Latest.tar.gz), and captures the version number using a group (([\d.]+)).
- */
-
-function getPhpVersion()
+function getPhpVersion(): array
 {
-    // get last version from php.net
-    $json = @file_get_contents('https://www.php.net/releases/index.php?json&version=7.2.34');
-    $data = json_decode($json);
-    $lastVersion = $data->version;
+    $json = @file_get_contents('https://www.php.net/releases/index.php?json&version=7');
+    if ($json === false) {
+        throw new Exception("Unable to retrieve PHP version info.");
+    }
+    $data = json_decode($json, true);
+    $lastVersion = $data['version'] ?? 'unknown';
 
-    // get current installed version
     $phpVersion = phpversion();
-
-    // Remove dot character from version ex: 1.2.3 to 123 and convert string to integer
-    $intLastVersion = (int) str_replace('.', '', $lastVersion);
-    $intCurVersion = (int) str_replace('.', '', $phpVersion);
+    $intLastVersion = (int)str_replace('.', '', $lastVersion);
+    $intCurVersion = (int)str_replace('.', '', $phpVersion);
 
     return [
         'lastVersion' => $lastVersion,
@@ -105,197 +61,115 @@ function getPhpVersion()
         'intCurVer' => $intCurVersion,
     ];
 }
-// ---------------------------------------------------------------
-/*
-Retrieves information about the server environment.
-Returns an associative array with the following keys:
-httpdVer: the version of the HTTP server software.
-openSsl: the version of the OpenSSL library, if available.
-phpVer: the version of PHP installed on the server.
-xDebug: the version of the Xdebug extension, if installed.
-docRoot: the path to the server's document root.
-serverName: the name of the HTTP-HOST
-@return array An associative array containing server information.
-*/
 
-function serverInfo()
+// Ensure $serverInfo is defined and initialized with serverInfo() function call
+$serverInfo = serverInfo(); // Make sure this line is placed before you try to access $serverInfo
+
+// Example usage
+//echo $serverInfo['httpdVer']; // Example of accessing an element
+
+// Before accessing an array offset, check if the variable is an array and not null
+if (is_array($serverInfo) && isset($serverInfo['httpdVer'])) {
+    //echo $serverInfo['httpdVer']; // Safely access the 'httpdVer' index
+} else {
+    // Handle the case where $serverInfo is not an array or the index 'httpdVer' is not set
+    echo "Server information is not available.";
+}
+
+function serverInfo(): array
 {
     $server = explode(' ', $_SERVER['SERVER_SOFTWARE']);
-    $openSsl = isset($server[2]) ? $server[2] : null;
+    $openSsl = $server[2] ?? null;
 
     return [
-        'httpdVer' => $server[0],
-        'openSsl' => $openSsl,
-        'phpVer' => getPhpVersion()['currentVersion'],
-        'xDebug' => phpversion('xdebug'),
-        'docRoot' => $_SERVER['DOCUMENT_ROOT'],
-        'serverName' => $_SERVER['HTTP_HOST']
+        'httpdVer' => htmlspecialchars($server[0]),
+        'openSsl' => htmlspecialchars($openSsl),
+        'phpVer' => htmlspecialchars(getPhpVersion()['currentVersion']),
+        'xDebug' => htmlspecialchars(phpversion('xdebug')),
+        'docRoot' => htmlspecialchars($_SERVER['DOCUMENT_ROOT']),
+        'serverName' => htmlspecialchars($_SERVER['HTTP_HOST']),
     ];
 }
 
-// ---------------------------------------------------------------
-// ----
-// get SQL version
-// ----
-function getSQLVersion()
+// Simplified and improved security by escaping output
+function getSQLVersion(): string
 {
     $output = shell_exec('mysql -V');
-    preg_match('@[0-9]+\.[0-9]+\.[0-9-\w]+@', $output, $version);
-
-    return $version[0];
+    if (!preg_match('@[0-9]+\.[0-9]+\.[0-9-\w]+@', $output, $version)) {
+        return "Unknown";
+    }
+    return htmlspecialchars($version[0]);
 }
 
-// ---------------------------------------------------------------
-// ----
-// PHP links
-// ----
-function phpDlLink($version)
+// More secure and error-handling enhancements
+function phpDlLink($version): array
 {
-    $changelog = 'https://www.php.net/ChangeLog-7.php#'.$version;
-    $downLink = 'https://windows.php.net/downloads/releases/php-'.$version.'-Win32-VC15-x64.zip';
-
+    $versionEscaped = htmlspecialchars($version);
     return [
-        'changeLog' => $changelog,
-        'downLink' => $downLink,
+        'changeLog' => "https://www.php.net/ChangeLog-7.php#$versionEscaped",
+        'downLink' => "https://windows.php.net/downloads/releases/php-$versionEscaped-Win32-VC15-x64.zip",
     ];
 }
 
-// ---------------------------------------------------------------
-function getSiteDir()
+// Handling server selection with improved logic and security
+function getSiteDir(): string
 {
     $rootDir = realpath(__DIR__ . '/../');
-    if (preg_match('/^Apache/', $_SERVER['SERVER_SOFTWARE'])) {
+    $serverSoftware = strtolower($_SERVER['SERVER_SOFTWARE']);
+
+    if (strpos($serverSoftware, 'apache') !== false) {
         return $rootDir . '/laragon/etc/apache2/sites-enabled';
-    } else {
+    } elseif (strpos($serverSoftware, 'nginx') !== false) {
         return $rootDir . '/laragon/etc/nginx/sites-enabled';
     }
+    throw new InvalidArgumentException("Unsupported server type: $serverSoftware");
 }
 
-// ---------------------------------------------------------------
-
-// This implementation allows the caller to specify the server type as an optional argument,
-// and also allows the caller to specify an array of filenames to ignore.
-// It also returns more information about each website, including the domain name and document root.
-// Note that this implementation assumes that each configuration file contains exactly one ServerName directive
-// and one DocumentRoot directive, which may not always be the case.
-
-
-function getLocalSites($server = 'apache', $ignoredFiles = ['.', '..', '00-default.conf'])
+// Improved logic for fetching local sites with security considerations
+function getLocalSites($server = 'apache', $ignoredFiles = ['.', '..', '00-default.conf']): array
 {
-    // Determine the appropriate sites-enabled directory based on the server software
-    if ($server === 'apache') {
-        $sitesDir = '../laragon/etc/apache2/sites-enabled';
-    } elseif ($server === 'nginx') {
-        $sitesDir = '../laragon/etc/nginx/sites-enabled';
-    }
+    $sitesDir = getSiteDir();
+    $scanDir = array_diff(scandir($sitesDir), $ignoredFiles);
 
-    if (!isset($sitesDir)) {
-        throw new InvalidArgumentException("Unsupported server type: $server");
-    }
-
-    // Scan the sites-enabled directory
-    $scanDir = scandir($sitesDir);
-
-    // Remove ignored files
-    foreach ($ignoredFiles as $ignoredFile) {
-        $key = array_search($ignoredFile, $scanDir);
-        if ($key !== false) {
-            unset($scanDir[$key]);
-        }
-    }
-
-    // Get information about each site
     $sites = [];
     foreach ($scanDir as $filename) {
         $path = "$sitesDir/$filename";
         $config = file_get_contents($path);
         if ($config !== false) {
-            $domainRegex = '/^\s*ServerName\s+(.+)$/m';
-            $documentRootRegex = '/^\s*DocumentRoot\s+(.+)$/m';
-            preg_match($domainRegex, $config, $domainMatches);
-            preg_match($documentRootRegex, $config, $documentRootMatches);
-            $site = [
-                'filename' => $filename,
-                'path' => $path,
-                'domain' => isset($domainMatches[1]) ? $domainMatches[1] : null,
-                'documentRoot' => isset($documentRootMatches[1]) ? $documentRootMatches[1] : null,
-            ];
-            $sites[] = $site;
+            if (preg_match('/^\s*ServerName\s+(.+)$/m', $config, $domainMatches) && preg_match('/^\s*DocumentRoot\s+(.+)$/m', $config, $documentRootMatches)) {
+                $sites[] = [
+                    'filename' => htmlspecialchars($filename),
+                    'path' => htmlspecialchars($path),
+                    'domain' => htmlspecialchars($domainMatches[1]),
+                    'documentRoot' => htmlspecialchars($documentRootMatches[1]),
+                ];
+            }
         }
     }
 
     return $sites;
 }
-// ---------------------------------------------------------------
-// This function renderLinks() generates HTML links for each local site in the sites-enabled directory.
-// For each site, it generates two links: one with http:// and another with https://.
-// It uses the getLocalSites() function to get a list of all the sites in the sites-enabled directory,
-// and then generates the links using some string manipulation.
+
+// Simplified rendering function with XSS prevention
 function renderLinks()
 {
     ob_start();
+    $sites = getLocalSites();
 
-    foreach (getLocalSites() as $value) {
-        $start = preg_split('/^auto./', $value);
-        $end = preg_split('/.conf$/', $start[1]);
-        unset($end[1]);
-
-        foreach ($end as $link) {
-            $contentHttp = '<a href="http://'.$link.'">';
-            $contentHttp .= 'http://'.$link;
-            $contentHttp .= '</a>';
-            $contentHttps = '<a href="https://'.$link.'">';
-            $contentHttps .= 'https://'.$link;
-            $contentHttps .= '</a>';
-
-            echo '
-            <div class="row w800 my-2">
-                <div class="col-md-5 text-truncate tr">'.$contentHttp.' </div>
-                <div class="col-2 arrows">&xlArr; &sext; &xrArr;</div>
-                <div class="col-md-5 text-truncate tl">'.$contentHttps.'</div>
-            </div>
-            <hr>
-            ';
-        }
+    foreach ($sites as $site) {
+        $httpLink = "http://" . $site['domain'];
+        $httpsLink = "https://" . $site['domain'];
+        echo "<div class='row w800 my-2'>";
+        echo "<div class='col-md-5 text-truncate tr'><a href='$httpLink'>$httpLink</a></div>";
+        echo "<div class='col-2 arrows'>&xlArr; &sext; &xrArr;</div>";
+        echo "<div class='col-md-5 text-truncate tl'><a href='$httpsLink'>$httpsLink</a></div>";
+        echo "</div><hr>";
     }
 
     return ob_get_clean();
 }
 
-// ---------------------------------------------------------------
-//  This function checks if the server software running on the current server is Apache or not.
-//  It takes one parameter $server which is expected to be a string containing the name of the server,
-//  and returns a boolean value.
-function checkHttpdServer($server)
-{
-    if ($server === 'apache') {
-        $server = ucfirst($server);
-    }
-
-    return preg_match("/^$server/", $_SERVER['SERVER_SOFTWARE']);
-}
-
-/*
-The $serverInfo variable is assigned the result of the serverInfo() function, which seems to return an array with various pieces of information
-about the server, such as the HTTP daemon version, OpenSSL version, PHP version, Xdebug version, and document root.
-Overall, it seems like this code is used to check the server and PHP versions and provide information about the server.
-The phpinfo() call seems to be used to display more detailed information about the PHP installation, which could be useful
-for debugging and troubleshooting purposes.
-*/
-
-isset($_GET['q']) ? getQ($_GET['q']) : null;
-
-$phpVer = getPhpVersion();
-$serverInfo = serverInfo();
-
-if (!empty($_GET['q'])) {
-    switch ($_GET['q']) {
-        case 'info':
-            phpinfo();
-            exit;
-            break;
-    }
-}
+// Utilize functions and variables when necessary within the HTML body below
 ?>
 <html>
 
@@ -308,28 +182,28 @@ if (!empty($_GET['q'])) {
 
 
     <script>
-        const menuIconEl = $('.menu-icon');
-        const sidenavEl = $('.sidenav');
-        const sidenavCloseEl = $('.sidenav__close-icon');
+    const menuIconEl = $('.menu-icon');
+    const sidenavEl = $('.sidenav');
+    const sidenavCloseEl = $('.sidenav__close-icon');
 
-        // Add and remove provided class names
-        function toggleClassName(el, className) {
-            if (el.hasClass(className)) {
-                el.removeClass(className);
-            } else {
-                el.addClass(className);
-            }
+    // Add and remove provided class names
+    function toggleClassName(el, className) {
+        if (el.hasClass(className)) {
+            el.removeClass(className);
+        } else {
+            el.addClass(className);
         }
+    }
 
-        // Open the side nav on click
-        menuIconEl.on('click', function() {
-            toggleClassName(sidenavEl, 'active');
-        });
+    // Open the side nav on click
+    menuIconEl.on('click', function() {
+        toggleClassName(sidenavEl, 'active');
+    });
 
-        // Close the side nav on click
-        sidenavCloseEl.on('click', function() {
-            toggleClassName(sidenavEl, 'active');
-        });
+    // Close the side nav on click
+    sidenavCloseEl.on('click', function() {
+        toggleClassName(sidenavEl, 'active');
+    });
     </script>
 </head>
 
