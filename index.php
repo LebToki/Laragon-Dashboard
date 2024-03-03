@@ -4,7 +4,7 @@
  * Description: This is the main index page for the Laragon server, displaying server info and applications.
  * Author: Tarek Tarabichi <tarek@2tinteractive.com>
  * Contributors: LrkDev
- * Version: 1.2.5
+ * Version: 2.1.5
  */
 
 const SERVER_TYPES = [
