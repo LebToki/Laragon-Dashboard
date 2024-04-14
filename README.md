@@ -42,7 +42,31 @@ Don't forget to star the project to stay up-to-date on future improvements, and 
 **
 # Changelog:
 
-- Version 2.1.5 (latest)
+- version 2.2 (latest)
+**Code Organization**
+Separation of Concerns: Functions related to server status, PHP version checks, and other utilities have been suggested to be moved to separate files, enhancing maintainability and readability.
+**Error Handling**
+Robust Error Management: Enhanced error handling across the script, including the use of try-catch blocks for operations prone to failure, such as file access and external API calls.
+Database Connection Handling: Improved the management of database connections by introducing exception handling to gracefully manage connection errors and prevent the application from crashing.
+**Security Enhancements**
+Input Sanitization: Strengthened the sanitization and validation of user inputs and external data manipulations, especially in URLs, file paths, and database queries, to prevent security vulnerabilities like SQL injection and XSS.
+Sensitive Information: Increased caution around the display of sensitive information, ensuring that debugging and sensitive data are not exposed in the production environment.
+**Performance Considerations**
+Data Caching: Introduced caching strategies for frequently accessed data that doesn't change often, reducing the load on the server and speeding up response times.
+Lazy Loading: Recommended lazy loading for non-critical resources to improve initial page load times.
+**Front-end Enhancements**
+JavaScript Graceful Degradation: Ensured that essential functionalities of the web application do not rely solely on JavaScript and work even when JavaScript is disabled.
+**Accessibility and Usability**
+WCAG Compliance: Improved accessibility by ensuring that the user interface complies with WCAG guidelines, including screen reader support, keyboard navigability, and proper contrast ratios.
+Alt Attributes: Added alt attributes to all images for better accessibility.
+**Responsive Design**
+Ensured that the web application's layout is responsive and performs well across different devices using media queries.
+**Modern PHP Features**
+PHP 7.4 + Features: Leveraged modern PHP features such as typed properties, arrow functions, and null coalescing assignment operators where appropriate.
+**Specific Code Refactoring**
+These updates collectively enhance the security, performance, maintainability, and user experience of your Laragon server index page.
+
+- Version 2.1.5 
 
 Security: Added input validation and output escaping to prevent XSS and other security vulnerabilities.
 Error Handling: Improved error handling with try-catch blocks and better error checking for file operations.
