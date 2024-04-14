@@ -43,6 +43,7 @@ Don't forget to star the project to stay up-to-date on future improvements, and 
 # Changelog:
 
 - version 2.2 (latest)
+
 **Code Organization**
 Separation of Concerns: Functions related to server status, PHP version checks, and other utilities have been suggested to be moved to separate files, enhancing maintainability and readability.
 **Error Handling**
