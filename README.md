@@ -40,9 +40,23 @@ We're confident that our Laragon root directory index page will enhance your dev
 Don't forget to star the project to stay up-to-date on future improvements, and please share your feedback with us. We're always looking for ways to make our index page even better for you.
 
 **
-# Changelog:
+# Changelog:(latest)
 
-- version 2.2 (latest)
+**Changes in Version 2.2.1:**
+- Improved Error Handling and Security:
+- Enhanced handleQueryParameter function with input validation and escaping of outputs to prevent XSS attacks.
+
+**Updates and Enhancements:**
+- Improved getServerExtensions function to handle Apache modules correctly.
+- Updated getPhpVersion function to retrieve the latest PHP version from the official PHP website.
+- Improved getSQLVersion function to handle MySQL version retrieval correctly.
+- Enhanced getLocalSites function to ignore specific directories and files.
+- Updated renderLinks function to prevent XSS attacks.
+- Improved getSiteDir function to handle server software detection correctly.
+- Removed the check for wp-admin when detecting Laravel.
+- Removed the "Admin" link from the HTML output for Laravel applications.
+
+**Changes in Version 2.2:**
 
 **Code Organization**
 Separation of Concerns: Functions related to server status, PHP version checks, and other utilities have been suggested to be moved to separate files, enhancing maintainability and readability.
@@ -75,38 +89,38 @@ PHP 7.4 + Features: Leveraged modern PHP features such as typed properties, arro
 **Specific Code Refactoring**
 These updates collectively enhance the security, performance, maintainability, and user experience of your Laragon server index page.
 
-- Version 2.1.5 
+**Chnages in Version 2.1.5 **
 
 Security: Added input validation and output escaping to prevent XSS and other security vulnerabilities.
 Error Handling: Improved error handling with try-catch blocks and better error checking for file operations.
 Readability: Refactored some functions for better readability and maintainability.
 Modularity: Made the code more modular and easy to extend or modify.
 
-- Version 2.1.3:
+**Changes in Version 2.1.3:**
 
 Added Python based project detection case: The switch case for detecting Python based projects has been implemented, allowing the system to recognize Python projects within the Laragon root directory. This enables specific handling and customization for Python projects.
 
 Added Python project icon to the assets: A new icon representing Python projects has been added to the assets directory. This icon enhances the visual representation and differentiation of Python projects within the Laragon Server Index Page.
 
-- Version 2.1.2:
+**Changes Version 2.1.2:**
 
 Updated UI for enhanced user experience: The user interface of the Laragon Server Index Page has been refined with improved styling, layout adjustments, and optimized visual elements. These enhancements aim to provide a more user-friendly and visually appealing experience for developers.
 
 Performance optimizations: Several optimizations have been implemented to improve the overall performance and loading speed of the Laragon Server Index Page. These optimizations ensure faster navigation and smoother interactions within the index page.
 
-- Version 2.1.1:
+**Changes Version 2.1.1:**
 
 Added search functionality: A search bar has been integrated into the index page, allowing developers to search for specific projects or files within the Laragon root directory. This feature provides a convenient way to locate and access desired resources quickly.
 
 Sorting and filtering options: Sorting and filtering options have been introduced, enabling developers to organize and manage their projects based on various criteria such as name, date modified, size, or framework type. This facilitates efficient project management and simplifies navigation.
 
-- Version 1.2.0:
+**Changes in Version 1.2.0:**
 
 Customizable themes: The Laragon Server Index Page now supports customizable themes. Users can select different themes or apply custom CSS styles to personalize the visual appearance of the index page according to their preferences.
 
 Improved framework detection: The framework detection algorithm has been enhanced to automatically detect popular frameworks such as Laravel, Symfony, and WordPress within the Laragon root directory. This results in more accurate identification and tailored handling of framework-specific projects.
 
-- Version 1.1.0:
+**Initial Version 1.1.0:**
 
 Initial release: The Laragon Server Index Page was initially introduced, providing a user-friendly and efficient interface for managing projects within the Laragon server environment. The index page included features like project visualization, basic file operations, and framework detection for Laravel.
 
