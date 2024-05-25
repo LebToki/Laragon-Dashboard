@@ -4,7 +4,7 @@
  * Description: This is the main index page for the Laragon server, displaying server info and applications.
  * Author: Tarek Tarabichi <tarek@2tinteractive.com>
  * Contributors: LrkDev in v.2.1.2
- * Version: 2.2
+ * Version: 2.2.1
  */
 
 const SERVER_TYPES = [
@@ -24,17 +24,17 @@ function showServerStatus(): void
     // Display server uptime
     $uptime = shell_exec('uptime');
     echo '<h2>Uptime</h2>';
-    echo '<p>' . $uptime . '</p>';
+    echo '<p>' . htmlspecialchars($uptime) . '</p>';
 
     // Display memory usage
     $free = shell_exec('free -m'); // memory in MB
     echo '<h2>Memory Usage (in MB)</h2>';
-    echo '<pre>' . $free . '</pre>';
+    echo '<pre>' . htmlspecialchars($free) . '</pre>';
 
     // Display disk usage
     $df = shell_exec('df -h'); // disk usage in human-readable format
     echo '<h2>Disk Usage</h2>';
-    echo '<pre>' . $df . '</pre>';
+    echo '<pre>' . htmlspecialchars($df) . '</pre>';
 }
 
 // Improved error handling and security (input validation, escaping outputs)
@@ -56,7 +56,7 @@ function handleQueryParameter(string $param): void
             showServerStatus();
             break;
         default:
-            throw new InvalidArgumentException("Unsupported parameter: $param");
+            throw new InvalidArgumentException("Unsupported parameter: " . htmlspecialchars($param));
     }
 }
 
@@ -66,7 +66,7 @@ if (isset($_GET['q'])) {
     try {
         handleQueryParameter($queryParam);
     } catch (InvalidArgumentException $e) {
-        echo 'Error: ' . $e->getMessage();
+        echo 'Error: ' . htmlspecialchars($e->getMessage());
     }
 }
 
@@ -97,7 +97,7 @@ function getServerExtensions(string $server, int $columns = 2): array
             }
             break;
         default:
-            throw new InvalidArgumentException('Invalid server name: ' . $server);
+            throw new InvalidArgumentException('Invalid server name: ' . htmlspecialchars($server));
     }
 
     sort($extensions, SORT_STRING);
@@ -105,6 +105,7 @@ function getServerExtensions(string $server, int $columns = 2): array
 
     return $extensions;
 }
+
 /**
  * Fetches the latest PHP version from the official PHP website and compares it with the current PHP version running on the server.
  *
@@ -134,17 +135,14 @@ function getPhpVersion(): array
     $currentVersion = phpversion();
 
     return [
-        'lastVersion' => $lastVersion,
-        'currentVersion' => $currentVersion,
+        'lastVersion' => htmlspecialchars($lastVersion),
+        'currentVersion' => htmlspecialchars($currentVersion),
         'isUpToDate' => version_compare($currentVersion, $lastVersion, '>='),
     ];
 }
 
 // Ensure $serverInfo is defined and initialized with serverInfo() function call
 $serverInfo = serverInfo(); // Make sure this line is placed before you try to access $serverInfo
-
-// Example usage
-//echo $serverInfo['httpdVer']; // Example of accessing an element
 
 // Before accessing an array offset, check if the variable is an array and not null
 if (is_array($serverInfo) && isset($serverInfo['httpdVer'])) {
@@ -245,7 +243,7 @@ function getSiteDir(): string
         return $rootDir . '/laragon/etc/nginx/sites-enabled';
     }
 
-    throw new InvalidArgumentException("Unsupported server type: $serverSoftware");
+    throw new InvalidArgumentException("Unsupported server type: " . htmlspecialchars($serverSoftware));
 }
 
 /**
@@ -255,16 +253,13 @@ function getSiteDir(): string
  * @param array $ignoredFiles Files and directories to ignore during the scan.
  * @return array An array of sites with their configuration details.
  */
-
-
-
 function getLocalSites($server = 'apache', $ignoredFiles = ['.', '..', '00-default.conf']): array
 {
     try {
         $sitesDir = getSiteDir(); // Assume getSiteDir() throws an exception if unable to determine the directory
         $files = scandir($sitesDir);
         if ($files === false) {
-            throw new Exception("Failed to scan directory: $sitesDir");
+            throw new Exception("Failed to scan directory: " . htmlspecialchars($sitesDir));
         }
     } catch (Exception $e) {
         error_log($e->getMessage()); // Log the error to PHP's error log
@@ -274,19 +269,16 @@ function getLocalSites($server = 'apache', $ignoredFiles = ['.', '..', '00-defau
     $scanDir = array_diff($files, $ignoredFiles);
     $sites = [];
 
-// Define $ignore_dirs as an array with directories to ignore
-	$ignore_dirs = array('.', '..', 'logs', 'access-logs', 'vendor', 'favicon_io', 'ablepro-90', 'assets');
+    $ignore_dirs = array('.', '..', 'logs', 'access-logs', 'vendor', 'favicon_io', 'ablepro-90', 'assets');
+    $folders = array_filter(glob('*'), 'is_dir');
 
-// Now you can safely use $ignore_dirs in your script
-	$folders = array_filter(glob('*'), 'is_dir');
-	
-	foreach ($folders as $host) {
-		if (in_array($host, $ignore_dirs) || !is_dir($host)) {
-			continue; // Skip ignored directories or files
-		}
-		// Process each directory that is not in the ignore list
-		// Your code for processing directories here
-	}
+    foreach ($folders as $host) {
+        if (in_array($host, $ignore_dirs) || !is_dir($host)) {
+            continue; // Skip ignored directories or files
+        }
+        // Process each directory that is not in the ignore list
+        // Your code for processing directories here
+    }
 
     foreach ($scanDir as $filename) {
         $path = realpath("$sitesDir/$filename");
@@ -344,18 +336,11 @@ $ignore_dirs = array('.', '..', 'logs', 'access-logs', 'vendor', 'favicon_io', '
 
 foreach ($folders as $folderPath) {
     $host = basename($folderPath);
-    // Assume $ignored contains an array of directories to ignore
     if (in_array($host, $ignore_dirs)) {
         continue; // Skip ignored directories
     }
-
-    // Secure way to determine if a directory contains a specific app
-//    if (file_exists($folderPath . '/wp-admin')) {
-//        // WordPress detected
-//        echo '<div>WordPress site detected at ' . htmlspecialchars($host) . '</div>';
-//    }
-    // Additional checks for other frameworks...
 }
+
 ?>
 <html>
 
@@ -365,7 +350,6 @@ foreach ($folders as $folderPath) {
     <link rel="stylesheet" href="/assets/style.css">
     <link rel="icon" type="image/x-icon" href="assets/favicon.ico">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-
 
     <script>
     const menuIconEl = $('.menu-icon');
@@ -415,22 +399,22 @@ foreach ($folders as $folderPath) {
                     <div class="overviewcard_icon">
                         <?php
 
-// Get the current time
-$currentTime = new DateTime();
-$hours = $currentTime->format('H');
+                        // Get the current time
+                        $currentTime = new DateTime();
+                        $hours = $currentTime->format('H');
 
-// Get the greeting based on the time of day
-if ($hours < 12) {
-    $greeting = "Good morning";
-} elseif ($hours < 18) {
-    $greeting = "Good afternoon";
-} else {
-    $greeting = "Good evening";
-}
+                        // Get the greeting based on the time of day
+                        if ($hours < 12) {
+                            $greeting = "Good morning";
+                        } elseif ($hours < 18) {
+                            $greeting = "Good afternoon";
+                        } else {
+                            $greeting = "Good evening";
+                        }
 
-// Display the greeting
-echo "<h4>" . $greeting . "!</h4>";
-?>
+                        // Display the greeting
+                        echo "<h4>" . $greeting . "!</h4>";
+                        ?>
                     </div>
                     <div class="overviewcard_info"><img src="assets/apps.png" style="width:64px;"></div>
                 </div>
@@ -438,19 +422,19 @@ echo "<h4>" . $greeting . "!</h4>";
                 <div class="overviewcard">
                     <div class="overviewcard_icon"></div>
                     <div class="overviewcard_info">
-                        <?php echo $_SERVER['SERVER_SOFTWARE']; ?>
+                        <?php echo htmlspecialchars($_SERVER['SERVER_SOFTWARE']); ?>
                     </div>
                 </div>
                 <div class="overviewcard">
                     <div class="overviewcard_icon"></div>
                     <div class="overviewcard_info">
-                        <?=$serverInfo['openSsl'];?>
+                        <?= $serverInfo['openSsl']; ?>
                     </div>
                 </div>
                 <div class="overviewcard">
                     <div class="overviewcard_icon">PHP</div>
                     <div class="overviewcard_info">
-                        <?php echo phpversion(); ?>
+                        <?php echo htmlspecialchars(phpversion()); ?>
                     </div>
                 </div>
 
@@ -461,27 +445,27 @@ echo "<h4>" . $greeting . "!</h4>";
                     <div class="overviewcard_icon">MySQL</div>
                     <div class="overviewcard_info">
                         <?php
-error_reporting(0);
-$laraconfig = parse_ini_file('../usr/laragon.ini');
+                        error_reporting(0);
+                        $laraconfig = parse_ini_file('../usr/laragon.ini');
 
-$link = mysqli_connect('localhost', 'root', $laraconfig['MySQLRootPassword']);
-if (!$link) {
-    $link = mysqli_connect('localhost', 'root', '');
-}
-if (!$link) {
-    echo 'MySQL not running!';
-} else {
-    printf("server version: %s\n", mysqli_get_server_info($link));
-}
-?>
+                        $link = mysqli_connect('localhost', 'root', $laraconfig['MySQLRootPassword']);
+                        if (!$link) {
+                            $link = mysqli_connect('localhost', 'root', '');
+                        }
+                        if (!$link) {
+                            echo 'MySQL not running!';
+                        } else {
+                            printf("server version: %s\n", htmlspecialchars(mysqli_get_server_info($link)));
+                        }
+                        ?>
                     </div>
                 </div>
 
                 <div class="overviewcard">
                     <div class="overviewcard_icon">Document Root</div>
                     <div class="overviewcard_info">
-                        <?php echo $_SERVER['DOCUMENT_ROOT']; ?><br>
-                        <small><span><?php echo $_SERVER['HTTP_HOST']; ?></span></small>
+                        <?php echo htmlspecialchars($_SERVER['DOCUMENT_ROOT']); ?><br>
+                        <small><span><?php echo htmlspecialchars($_SERVER['HTTP_HOST']); ?></span></small>
                     </div>
                 </div>
 
@@ -507,170 +491,162 @@ if (!$link) {
             <div class="main-overview wrapper">
 
                 <?php
-/*
- * Detects the web application framework of the specified host folders and returns its details.
- * @return array An array containing details of the detected framework for each folder
- * @throws Exception If an error occurs during the detection process
- */
-$ignored = array('favicon_io'); // Add more directories or files to ignore here
-$folders = array_filter(glob('*'), 'is_dir');
+                /*
+                 * Detects the web application framework of the specified host folders and returns its details.
+                 * @return array An array containing details of the detected framework for each folder
+                 * @throws Exception If an error occurs during the detection process
+                 */
+                $ignored = array('favicon_io'); // Add more directories or files to ignore here
+                $folders = array_filter(glob('*'), 'is_dir');
 
-if ($laraconfig['SSLEnabled'] == 0 || $laraconfig['Port'] == 80) {
-    $url = 'http';
-} else {
-    $url = 'https';
-}
-//----------------------------
-// WEB-APP FRAMEWORK DETECTION FUNCTION
-//----------------------------
-$ignore_dirs = array('.', '..', 'logs', 'access-logs', 'vendor', 'favicon_io', 'ablepro-90', 'assets');
-foreach ($folders as $host) {
-    if (in_array($host, $ignore_dirs) || !is_dir($host)) {
-        continue;
-    } // Skip ignored directories or files
+                if ($laraconfig['SSLEnabled'] == 0 || $laraconfig['Port'] == 80) {
+                    $url = 'http';
+                } else {
+                    $url = 'https';
+                }
+                //----------------------------
+                // WEB-APP FRAMEWORK DETECTION FUNCTION
+                //----------------------------
+                $ignore_dirs = array('.', '..', 'logs', 'access-logs', 'vendor', 'favicon_io', 'ablepro-90', 'assets');
+                foreach ($folders as $host) {
+                    if (in_array($host, $ignore_dirs) || !is_dir($host)) {
+                        continue;
+                    } // Skip ignored directories or files
 
-    $admin_link = '';
-    $app_name = '';
-    $avatar = '';
+                    $admin_link = '';
+                    $app_name = '';
+                    $avatar = '';
 
-    switch (true) {
-        // DRUPAL
-        case (
-                file_exists($host . '/core') // legacy drupal 8.7 and earlier
-                || file_exists($host . '/web/core') // drupal 8.8 and later
-            ):
-            $app_name = ' Drupal ';
-            $avatar = 'assets/Drupal.svg';
-            $admin_link = '
-                                <a href="' . $url . '://' . $host . '.local/user" target="_blank">
+                    switch (true) {
+                        // DRUPAL
+                        case (
+                                file_exists($host . '/core') // legacy drupal 8.7 and earlier
+                                || file_exists($host . '/web/core') // drupal 8.8 and later
+                            ):
+                            $app_name = ' Drupal ';
+                            $avatar = 'assets/Drupal.svg';
+                            $admin_link = '
+                                <a href="' . $url . '://' . htmlspecialchars($host) . '.local/user" target="_blank">
                                     <small style="font-size: 8px; color: #cccccc;">
                                         ' . $app_name . '
                                     </small>
                                     <br>
                                     Admin
                                 </a>';
-            break;
+                            break;
 
-        // WORDPRESS
-        case file_exists($host . '/wp-admin'):
-            $app_name = ' Wordpress ';
-            $avatar = 'assets/Wordpress.png';
-            $admin_link = '
-                                <a href="' . $url . '://' . $host . '.local/wp-admin" target="_blank">
+                        // WORDPRESS
+                        case file_exists($host . '/wp-admin'):
+                            $app_name = ' Wordpress ';
+                            $avatar = 'assets/Wordpress.png';
+                            $admin_link = '
+                                <a href="' . $url . '://' . htmlspecialchars($host) . '.local/wp-admin" target="_blank">
                                     <small style="font-size: 8px; color: #cccccc;">
                                         ' . $app_name . '
                                     </small>
                                     <br>
                                     Admin
                                 </a>';
-            break;
+                            break;
 
-        // JOOMLA
-        case file_exists($host . '/administrator'):
-            $app_name = ' Joomla ';
-            $avatar = 'assets/Joomla.png';
-            $admin_link = '
-                                <a href="' . $url . '://' . $host . '.local/administrator" target="_blank">
+                        // JOOMLA
+                        case file_exists($host . '/administrator'):
+                            $app_name = ' Joomla ';
+                            $avatar = 'assets/Joomla.png';
+                            $admin_link = '
+                                <a href="' . $url . '://' . htmlspecialchars($host) . '.local/administrator" target="_blank">
                                     <small style="font-size: 8px; color: #cccccc;">
                                         ' . $app_name . '
                                     </small>
                                     <br>
                                     Admin
                                 </a>';
-            break;
+                            break;
 
-        // LARAVEL
-        case file_exists($host . '/public/index.php') && is_dir($host . '/app') && file_exists($host . '/.env'):
-            $app_name = ' Laravel ';
-            $avatar = 'assets/Laravel.png';
-            $admin_link = '
-                                <a href="' . $url . '://' . $host . '.local/admin" target="_blank">
+                        // LARAVEL
+                        case file_exists($host . '/public/index.php') && is_dir($host . '/app') && file_exists($host . '/.env'):
+                            $app_name = ' Laravel ';
+                            $avatar = 'assets/Laravel.png';
+                            $admin_link = ''; // No admin link for Laravel
+                            break;
+
+                        // SYMFONY
+                        case file_exists($host . '/bin/console'):
+                            $app_name = ' Symfony ';
+                            $avatar = 'assets/Symfony.png';
+                            $admin_link = '
+                                <a href="' . $url . '://' . htmlspecialchars($host) . '.local/admin" target="_blank">
                                     <small style="font-size: 8px; color: #cccccc;">
                                         ' . $app_name . '
                                     </small>
                                     <br>
                                     Admin
                                 </a>';
-            break;
+                            break;
 
-        // SYMFONY
-        case file_exists($host . '/bin/console'):
-            $app_name = ' Symfony ';
-            $avatar = 'assets/Symfony.png';
-            $admin_link = '
-                        <a href="' . $url . '://' . $host . '.local/admin" target="_blank">
-                            <small style="font-size: 8px; color: #cccccc;">
-                                ' . $app_name . '
-                            </small>
-                            <br>
-                            Admin
-                        </a>';
-            break;
+                        // PYTHON Based Projects
+                        case (file_exists($host . '/') && is_dir($host . '/app.py') && is_dir($host . '/static') && file_exists($host . '/.env')):
+                            $app_name = ' Python ';
+                            $avatar = 'assets/Python.png';
+                            $admin_link = '
+                                <a href="' . $url . '://' . htmlspecialchars($host) . '.local/Public" target="_blank">
+                                    <small style="font-size: 8px; color: #cccccc;">
+                                        ' . $app_name . '
+                                    </small>
+                                    <br>
+                                    Public Folder
+                                </a>';
 
-        // PYTHON Based Projects
-        case (file_exists($host . '/') && is_dir($host . '/app.py') && is_dir($host . '/static') && file_exists($host . '/.env')):
-            $app_name = ' Python ';
-            $avatar = 'assets/Python.png';
-            $admin_link = '
-                    <a href="' . $url . '://' . $host . '.local/Public" target="_blank">
-                        <small style="font-size: 8px; color: #cccccc;">
-                            ' . $app_name . '
-                        </small>
-                        <br>
-                        Public Folder
-                    </a>';
+                            // Execute the command to run the Python application
+                            $command = 'python ' . htmlspecialchars($host) . '/app.py'; // Replace 'app.py' with the actual file name
+                            exec($command, $output, $returnStatus);
 
-            // Execute the command to run the Python application
-            $command = 'python ' . $host . '/app.py'; // Replace 'app.py' with the actual file name
-            exec($command, $output, $returnStatus);
+                            // Check the return status to ensure the command executed successfully
+                            if ($returnStatus === 0) {
+                                // Command executed successfully
+                                // Process any output or perform further actions if needed
+                            } else {
+                                // Command execution failed
+                                // Handle the error appropriately
+                            }
 
-            // Check the return status to ensure the command executed successfully
-            if ($returnStatus === 0) {
-                // Command executed successfully
-                // Process any output or perform further actions if needed
-            } else {
-                // Command execution failed
-                // Handle the error appropriately
-            }
+                            break;
 
-            break;
+                        // CAKEPHP
+                        case file_exists($host . '/bin/cake'):
+                            $app_name = ' CakePHP ';
+                            $avatar = 'assets/CakePHP.png';
+                            $admin_link = '
+                                <a href="' . $url . '://' . htmlspecialchars($host) . '.local/admin" target="_blank">
+                                    <small style="font-size: 8px; color: #cccccc;">
+                                        ' . $app_name . '
+                                    </small>
+                                    <br>
+                                    Admin
+                                </a>';
+                            break;
 
-        // CAKEPHP
-        case file_exists($host . '/bin/cake'):
-            $app_name = ' CakePHP ';
-            $avatar = 'assets/CakePHP.png';
-            $admin_link = '
-                        <a href="' . $url . '://' . $host . '.local/admin" target="_blank">
-                            <small style="font-size: 8px; color: #cccccc;">
-                                ' . $app_name . '
-                            </small>
-                            <br>
-                            Admin
-                        </a>';
-            break;
+                        // No recognized framework found
+                        default:
+                            $admin_link = '';
+                            $avatar = 'assets/Unknown.png';
+                            break;
+                    }
 
-        // No recognized framework found
-        default:
-            $admin_link = '';
-            $avatar = 'assets/Unknown.png';
-
-            break;
-    }
-
-    echo '
-        <div class="overviewcard_sites">
-            <div class="overviewcard_avatar">
-                <img src="' . $avatar . '" style="width:20px; height:20px;">
-            </div>
-            <div class="overviewcard_icon">
-                <a href="' . $url . '://' . $host . '.local">' . $host . '</a>
-            </div>
-            <div class="overviewcard_info">
-                ' . $admin_link . '
-            </div>
-        </div>';
-}
-?>
+                    echo '
+                        <div class="overviewcard_sites">
+                            <div class="overviewcard_avatar">
+                                <img src="' . $avatar . '" style="width:20px; height:20px;">
+                            </div>
+                            <div class="overviewcard_icon">
+                                <a href="' . $url . '://' . htmlspecialchars($host) . '.local">' . htmlspecialchars($host) . '</a>
+                            </div>
+                            <div class="overviewcard_info">
+                                ' . $admin_link . '
+                            </div>
+                        </div>';
+                }
+                ?>
             </div>
         </main>
 
@@ -678,7 +654,7 @@ foreach ($folders as $host) {
         <footer class="footer">
             <div class="footer__copyright">
                 &copy; 2024
-                <?php echo date('Y'); ?>, Tarek
+                <?php echo htmlspecialchars(date('Y')); ?>, Tarek
                 Tarabichi
             </div>
             <div class="footer__signature">
