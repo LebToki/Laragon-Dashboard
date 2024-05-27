@@ -6,6 +6,7 @@ Attention developers! Are you tired of sifting through a cluttered directory to 
 # Welcome to the Laragon root directory index page!
 ![Screenshot of Laragon Server Index Page](assets/Laragon-Index-screenshot.jpg)
 ![Screenshot of Laragon Server Index Inbox Page](assets/Laragon-Index-Inbox-screenshot.png)
+![Screenshot of Laragon Server Index Inbox Message Modal](assets/Laragon-Index-Inbox-modal-screenshot.png)
 
 Our UI automatically detects any projects and directories within your root directory, making it easy to manage your work. Plus, we've included an automated auto-detection for popular frameworks like WordPress, Laravel, and Symfony.
 
