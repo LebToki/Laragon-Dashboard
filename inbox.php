@@ -79,10 +79,12 @@
           position: relative;
           flex: 1 1 auto;
           padding: var(--bs-modal-padding);
-          width: max-content;
+          width: 100%;
+          max-height: calc(100vh - 210px);
+          overflow-y: auto;
           background-color: white;
-          border-radius: 20px 20px 20px 20px;
-          border: black;
+          border-radius: 20px;
+          border: 1px solid black;
       }
 
       .modal-content {
@@ -155,7 +157,7 @@
       }
       .box-shadow {
           -webkit-box-shadow: 0px 0px 28px rgba(0, 0, 0, .08);
-          -moz-box-shadow: 0px 0px 28px rgba(0, 0, 0, .08);
+          -moz-box-shadow 0px 0px 28px rgba(0, 0, 0, .08);
           box-shadow: 0px 0px 28px rgba(0, 0, 0, .08);
       }
 
@@ -311,7 +313,7 @@
 		</div>
 		
 		<div class="modal fade" id="emailModal" tabindex="-1" role="dialog">
-			<div class="modal-dialog">
+			<div class="modal-dialog modal-lg">
 				<div class="modal-content">
 					<div class="modal-body"></div>
 				</div>
