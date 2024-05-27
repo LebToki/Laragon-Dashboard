@@ -8,7 +8,9 @@
 			if ($content === false) {
 				echo "Error reading email file.";
 			} else {
-				echo $content;  // Display content as HTML
+				// Decode and display content as HTML
+				$decodedContent = htmlspecialchars_decode($content, ENT_QUOTES);
+				echo nl2br($decodedContent);
 			}
 		} else {
 			echo "Email not found.";
