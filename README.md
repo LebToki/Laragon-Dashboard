@@ -40,9 +40,10 @@ function getLocalSites($server = 'apache', $ignoredFiles = ['.', '..', '00-defau
 4. Upload the icons and CSS files to the assets directory (or simply import them as is).
 5. Change the ignored directories or add the directories that you don't intend to expose publicly.
 
-```[php]
-$ignore_dirs = array('.', '..', 'logs', 'access-logs', 'vendor', 'favicon_io', 'assets');
+```[sh]
 whatever directory you don't to display publically (line 316) 
+$ignore_dirs = array('.', '..', 'logs', 'access-logs', 'vendor', 'favicon_io', 'assets');
+
 ```
 
 # ![Screenshot of Laragon Dashboard Logo](assets/favicon/favicon-32x32.png)  Feedback
