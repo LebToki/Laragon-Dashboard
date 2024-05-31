@@ -41,12 +41,33 @@ Don't forget to star the project to stay up-to-date on future improvements, and 
 **
 # Changelog:(latest)
 
-**Planned Changes in Version 2.3.0:**
-- Introduction of Language Files utilizing the existing /assets/ directory /assets/languages/en.json ++
-- Incorporate the Inbox (Integrated SendMail Inbox or Mail-Client) within with the reader in assets
-- Automatic Detection of Hostname Template so you avoid hardcoding your configuration in
-and a few more.
-- Language Maintainers are soon needed and we already have a Spanish version hopefully
+#Changes in Version 2.3.0:**
+
+**Introduced Language Translation Support**
+Implemented language translation support using JSON files.
+
+**Introduced Breadcrumbs and Tabs:**
+Introduced breadcrumb headers for each tab for better navigation.
+
+These tabs are not in place:
+- Servers Tab
+- Mailbox Tab
+- Server or Stack Vitals
+
+Updates:
+
+**HTML Structure:**
+Refactored HTML structure to include header for each tab within the tab content.
+Updated navigation tabs to include servers, mailbox, and vitals.
+**CSS Styling:**
+Improved overall styling with Bootstrap 5.
+Added custom styles for tabs, headers, and overview cards.
+**JavaScript Functionality:**
+Enhanced tab switching functionality with jQuery.
+Added language selector change event to reload the page with the selected language.
+**PHP Code Enhancements:**
+Refactored server information retrieval and display logic.
+Enhanced error handling for server vitals data retrieval.
 
 **Changes in Version 2.2.1:**
 - Improved Error Handling and Security:
