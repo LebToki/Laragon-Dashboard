@@ -3,7 +3,7 @@
 	 * Application: Laragon | Server Index Inbox Page
 	 * Description: This is the main index page for the Laragon server, displaying server info and applications.
 	 * Author: Tarek Tarabichi <tarek@2tinteractive.com>
-	 * Contributors: LrkDev in v.2.1.2
+	 * Contributors: LrkDev in v.2.3.3
 	 * Version: 2.3.2
 	 */
 	
@@ -682,7 +682,7 @@
             e.preventDefault();
             var email = $(this).data('email');
             $.ajax({
-                url: 'open_email.php',
+                url: 'assets/inbox/open_email.php',
                 data: { email: email },
                 success: function(data) {
                     $('#emailModal .modal-body').html(data);
