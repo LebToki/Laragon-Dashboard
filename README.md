@@ -78,7 +78,6 @@ Enhanced error handling for server vitals data retrieval.
 <details>
 <summary>Changes in Version 2.2.1</summary>
 
-**Changes in Version 2.2.1:**
 - Improved Error Handling and Security:
 - Enhanced handleQueryParameter function with input validation and escaping of outputs to prevent XSS attacks.
 
