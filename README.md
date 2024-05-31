@@ -32,18 +32,17 @@ Our UI automatically detects any projects and directories within your root direc
 # ![Screenshot of Laragon Dashboard Logo](assets/favicon/favicon-32x32.png)  How to use
 
 1. Replace the default index.php file in your Laragon root directory with our customized index.php file.
-2. your laragon hostname template (.local) will be automatically detected and served here
+2. your laragon hostname template (.local) will be automatically detected and served here (line 249 is your friend)
 
 ```[php]
-  line 249 is your friend --> function getLocalSites($server = 'apache', $ignoredFiles = ['.', '..', '00-default.conf']): array{}
+   function getLocalSites($server = 'apache', $ignoredFiles = ['.', '..', '00-default.conf']): array{}
 ```
 
 3. Upload the icons and CSS files to the assets directory (or simply import them as is).
 
-4. Change the ignored directories or add the directories that you don't intend to expose publicly.
+4. add whatever directories that you don't intend to expose publicly (line 316)
 
 ```[php]
-whatever directory you don't to display publically (line 316) 
 $ignore_dirs = array('.', '..', 'logs', 'access-logs', 'vendor', 'favicon_io', 'assets');
 ```
 
