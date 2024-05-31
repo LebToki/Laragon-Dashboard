@@ -1,22 +1,29 @@
 {
   "title": "Welcome sa Laragon Dashboard",
-  "header": "Inbox Integration",
-  "main_tab": "Pangunahin",
-  "inbox_tab": "Inbox",
-  "read_email_tab": "Basahin ang Email",
-  "main_content": "Ito ang pangunahing nilalaman ng proyekto.",
-  "footer": "Lahat ng karapatan ay nakalaan.",
+  "header": "Aking Development Server",
+  "welcome_back": "Maligayang Pagbabalik!",
+
+  "servers_tab": "Mga Server",
+  "inbox_tab": "Mailbox",
+  "vitals_tab": "Mga Vitals ng Server",
+  "settings_tab": "Mga Setting",
+
+  "breadcrumb_server_servers": "Aking Development Server Servers at Applications",
+  "breadcrumb_server_mailbox": "Aking Development Server Mailbox",
+  "breadcrumb_server_vitals": "My Development Server Vitals",
+
   "server_status": "Katayuan ng Server",
   "uptime": "Uptime",
   "memory_usage": "Paggamit ng Memorya (sa MB)",
   "disk_usage": "Paggamit ng Disk",
-  "development_server": "Aking Development Server",
-  "welcome_back": "Maligayang Pagbabalik!",
-  "Magandang umaga, magandang umaga,",
-  "good_afternoon": "Magandang hapon,",
-  "good_evening": "Magandang gabi,",
-  "magandang gabi magandang gabi,",
+
+  "Magandang umaga, magandang umaga",
+  "good_afternoon": "Magandang hapon",
+  "good_evening": "Magandang gabi",
+
   "document_root": "Dokumentong Root",
   "manage_mysql": "Pamahalaan ang MySQL",
-  "made_with_love": "Ginawa gamit ang ♥ at pinalakas ng Laragon"
+
+  "default_footer": "&copy; 2024 <?php echo htmlspecialchars(date('Y')); ?>, Tarek Tarabichi",
+  "made_with_love": "Ginawa gamit ang <span style=\"color: #e25555;\">&hearts;</span> at pinalakas ng Laragon"
 }

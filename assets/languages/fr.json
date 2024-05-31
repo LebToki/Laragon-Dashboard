@@ -1,22 +1,29 @@
 {
   "title": "Bienvenue sur le tableau de bord Laragon",
-  "header": "Intégration de la boîte de réception",
-  "main_tab": "Principal",
-  "inbox_tab": "Boîte de réception",
-  "read_email_tab": "Lire l'e-mail",
-  "main_content": "Ceci est le contenu principal du projet.",
-  "footer": "Tous droits réservés.",
+  "header": "Mon serveur de développement",
+  "welcome_back": "Bienvenue !",
+
+  "servers_tab": "Serveurs",
+  "inbox_tab": "Boîte aux lettres",
+  "vitals_tab": "Vitaux du serveur",
+  "settings_tab": "Paramètres",
+
+  "breadcrumb_server_servers": "Mes serveurs et applications de serveur de développement",
+  "breadcrumb_server_mailbox": "Ma boîte aux lettres du serveur de développement",
+  "breadcrumb_server_vitals": "Mon serveur de développement Vitals",
+
   "server_status": "Statut du serveur",
   "uptime": "Disponibilité",
   "memory_usage": "Utilisation de la mémoire (en Mo)",
   "disk_usage": "Utilisation du disque",
-  "development_server": "Mon serveur de développement",
-  "welcome_back": "Bienvenue !",
-  "Bonjour bonjour,",
+
+  "Bonjour bonjour",
   "good_afternoon": "Bon après-midi",
-  "Bonsoir bonsoir,",
-  "Bonne nuit Bonne nuit,",
+  "Bonsoir bonsoir",
+
   "document_root": "Racine du document",
   "manage_mysql": "Gérer MySQL",
-  "made_with_love": "Fabriqué avec ♥ et propulsé par Laragon"
+
+  "default_footer": "&copy; 2024 <?php echo htmlspecialchars(date('Y')); ?>, Tarek Tarabichi",
+  "made_with_love": "Fabriqué avec <span style=\"color: #e25555;\">&hearts;</span> et propulsé par Laragon"
 }
