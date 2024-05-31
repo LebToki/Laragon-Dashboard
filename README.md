@@ -39,9 +39,9 @@ We're confident that our Laragon root directory index page will enhance your dev
 Don't forget to star the project to stay up-to-date on future improvements, and please share your feedback with us. We're always looking for ways to make our index page even better for you.
 
 **
-# Changelog:(latest)
+# Changelog:(latest 2.3.0)
 
-#Changes in Version 2.3.0:**
+**Changes in Version 2.3.0:**
 
 **Introduced Language Translation Support**
 Implemented language translation support using JSON files.
@@ -69,6 +69,7 @@ Added language selector change event to reload the page with the selected langua
 Refactored server information retrieval and display logic.
 Enhanced error handling for server vitals data retrieval.
 
+# (Previous Versions)
 **Changes in Version 2.2.1:**
 - Improved Error Handling and Security:
 - Enhanced handleQueryParameter function with input validation and escaping of outputs to prevent XSS attacks.
