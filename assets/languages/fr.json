@@ -20,9 +20,9 @@
 	"memory_usage": "Utilisation de la mémoire (en Mo)",
 	"disk_usage": "Utilisation du disque",
 
-	"Bonjour bonjour",
+	"goof-morning": "Bonjour",
 	"good_afternoon": "Bon après-midi",
-	"Bonsoir bonsoir",
+	"goof-evening":"Bonsoir",
 
 	"document_root": "Racine du document",
 	"manage_mysql": "Gérer MySQL",
