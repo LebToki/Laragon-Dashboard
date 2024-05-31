@@ -36,6 +36,11 @@ Our UI automatically detects any projects and directories within your root direc
 3. Upload the icons and CSS files to the assets directory (or simply import them as is).
 4. Change the ignored directories or add the directories that you don't intend to expose publicly.
 
+```[php]
+$ignore_dirs = array('.', '..', 'logs', 'access-logs', 'vendor', 'favicon_io', 'assets');
+whatever directory you don't to display publically (line 316) 
+```
+
 # ![Screenshot of Laragon Dashboard Logo](assets/favicon/favicon-32x32.png)  Feedback
 - We're confident that our dashboard will enhance your development experience and streamline your workflow. Try it out today and let us know what you think! Join the discussions and let's make Laragon Dashboard the best it can be.
 - Don't forget to star the project to stay up-to-date on future improvements, and please share your feedback with us. We're always looking for ways to make our dashboard even better for you.
