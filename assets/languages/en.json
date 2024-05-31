@@ -27,7 +27,10 @@
 	"document_root": "Document Root",
 	"manage_mysql": "Manage MySQL",
 
-	"logged-messages": "Logged Messages",
+"logged-messages": "Logged Messages",
+ "email-list": "Email List",
+  "no-emails-found": "No Emails Found",
+ "delete": "Delete",
 
 	"default_footer": "&copy; 2024   <?php echo htmlspecialchars(date('Y')); ?>, Tarek Tarabichi",
 	"made_with_love": "Made with <span style=\"color: #e25555;\">&hearts;</span> and powered by Laragon"

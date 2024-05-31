@@ -30,7 +30,10 @@
 	"manage_mysql": "Pamahalaan ang MySQL",
 
 	"logged-messages": "Mga Naka-log na Mensahe",
-
+	"email-list": "Listahan ng Email",
+	"no-emails-found": "Walang Nahanap na mga Email",
+	"delete": "Burahin",
+	
 	"default_footer": "&copy; 2024    <?php echo htmlspecialchars(date('Y')); ?>, Tarek Tarabichi",
 	"made_with_love": "Ginawa gamit ang <span style=\"color: #e25555;\">&hearts;</span> at pinalakas ng Laragon"
 

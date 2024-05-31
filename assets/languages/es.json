@@ -27,7 +27,9 @@
 	"good_evening": "Buenas noches",
 
 	"logged-messages": "Mensajes registrados",
-
+	"email-list": "Lista de correo electrónico",
+	"no-emails-found": "No se encontraron correos electrónicos",
+	"delete": "Eliminar",
 
 	"document_root": "Raíz del documento",
 	"manage_mysql": "Administrar MySQL",

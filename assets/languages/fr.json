@@ -28,7 +28,9 @@
 	"manage_mysql": "Gérer MySQL",
 
 	"logged-messages": "Messages enregistrés",
-
+	"email-list": "Liste de diffusion",
+	"no-emails-found": "Aucun e-mail trouvé",
+	"delete": "Supprimer",
 
 	"default_footer": "&copy; 2024   <?php echo htmlspecialchars(date('Y')); ?>, Tarek Tarabichi",
 	"made_with_love": "Fabriqué avec <span style=\"color: #e25555;\">&hearts;</span> et propulsé par Laragon"
