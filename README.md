@@ -1,20 +1,9 @@
 # ![Screenshot of Laragon Dashboard Logo](assets/favicon/favicon-32x32.png)  Laragon Dashboard  
 
+# Welcome to the Laragon Dashboard ! 
 
-Our UI automatically detects any projects and directories within your root directory, making it easy to manage your projects and workload. Plus, we've included an automated auto-detection for popular frameworks like WordPress, Laravel, Symfony, CakePHP, Python and Drupal next to several other platforms and frameworks.
+Attention developers!Are you tired of sifting through a cluttered directory to find your projects and files? Look no further than our customized user interface designed specifically for your Laragon server.
 
-We also have gone the extra mile to provide a visually appealing and intuitive interface that's easy to navigate, so you can spend more time coding and less time searching for files. And with a responsive design, you can access our UI on any device.
-To use our dashboard, simply replace the default index.php file in your Laragon root directory with our customized index.php file and the assets directory that comes along with it. 
-
-And don't worry, we've taken care of cleaning up all PHP calls, providing error responses, and removing redundant codes.
-
-This is good enough to be the official index page of Laragon to replace the vanilla Laragon server index page, and offers several key features that make it an essential tool for developers:
-
-Stay ahead of the curve with Laragon Dashboard and connect with me and with the other contributors of the Laragon Dashboard project. We now support language files so feel free to contribute and send us your translations to include them in the next upcoming releases.
-
-We're confident that our dashboard will enhance your development experience and streamline your workflow. Try it out today and let us know what you think!
-
-Don't forget to star the project to stay up-to-date on future improvements, and please share your feedback with us. We're always looking for ways to make our index page even better for you.
 
 🚀 Pros & Devs love [Laragon](https://laragon.org) and for sure will love our [laragon Dashboard](https://github.com/LebToki/Laragon-Dashboard) since the combination of that stack makes it unbeatable!
 
@@ -26,20 +15,30 @@ Don't forget to star the project to stay up-to-date on future improvements, and 
 ![Screenshot of Laragon Dashboard Server Vitals](assets/03-Server-Vitals.png)
 
 <br>
+Our UI automatically detects any projects and directories within your root directory, making it easy to manage your work. Plus, we've included an automated auto-detection for popular frameworks like WordPress, Laravel, and Symfony. We've gone the extra mile to provide a visually appealing and intuitive interface that's easy to navigate, so you can spend more time coding and less time searching for files. And with a responsive design, you can access our UI on any device.
 
-# ![Screenshot of Laragon Dashboard Logo](assets/favicon/favicon-32x32.png)  Features
+# ![Screenshot of Laragon Dashboard Logo](assets/favicon/favicon-32x32.png)  Key Features
 
-Our Laragon Dashboard (index page) replaces the vanilla Laragon server index page, and offers several key features that make it an essential tool for developers:
+| Clean and Modern Design | Efficient Management |   Seamless on Any Device | Auto-Detection |  
+|--------------------------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------|
+| Provides a clean and modern design that is both easy on the eyes and easy to navigate. | Automated auto-detection for popular frameworks like WordPress, Laravel, and Symfony. | Designed to work seamlessly on any device, from desktop computers to mobile phones.   | Automated auto-detection for popular frameworks like WordPress, Laravel, and Symfony.                                     
 
-**Visually appealing interface:** Our index page provides a clean and modern design that is both easy on the eyes and easy to navigate.
-
-**Intuitive project management:** With our UI, you can quickly navigate through your projects and directories, making it easy to find the files you need and manage your server more effectively.
-
-**Responsive design:** Our index page is designed to work seamlessly on any device, from desktop computers to mobile phones.
-
-
+<br>
 
 > Note: bigger better features coming soon just waiting for the next release of Laragon
+
+<br>
+
+# ![Screenshot of Laragon Dashboard Logo](assets/favicon/favicon-32x32.png)  How to use
+
+1. Replace the default index.php file in your Laragon root directory with our customized index.php file.
+2. Change your development path (.local) if you've named your path differently.
+3. Upload the icons and CSS files to the assets directory (or simply import them as is).
+4. Change the ignored directories or add the directories that you don't intend to expose publicly.
+
+# ![Screenshot of Laragon Dashboard Logo](assets/favicon/favicon-32x32.png)  Feedback
+- We're confident that our dashboard will enhance your development experience and streamline your workflow. Try it out today and let us know what you think! Join the discussions and let's make Laragon Dashboard the best it can be.
+- Don't forget to star the project to stay up-to-date on future improvements, and please share your feedback with us. We're always looking for ways to make our dashboard even better for you.
 
 # ![Screenshot of Laragon Dashboard Logo](assets/favicon/favicon-32x32.png)  Changelog
 ### What's New in 3.3.3 · May 31, 2024 
@@ -170,29 +169,23 @@ Modularity: Made the code more modular and easy to extend or modify.
 
 For full details and former releases, check out the [changelog](changelog.md).
 
-# ![Screenshot of Laragon Dashboard Logo](assets/favicon/favicon-32x32.png)  Key Features
-
-| Clean and Modern Design | Efficient Management |   Seamless on Any Device | Auto-Detection |  
-|--------------------------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------|
-| Provides a clean and modern design that is both easy on the eyes and easy to navigate. | Automated auto-detection for popular frameworks like WordPress, Laravel, and Symfony. | Designed to work seamlessly on any device, from desktop computers to mobile phones.   | Automated auto-detection for popular frameworks like WordPress, Laravel, and Symfony.                                     
-
 
 <br/>
+And don't worry, we've taken care of cleaning up all PHP calls, providing error responses, and removing redundant codes.
 
-# ![Screenshot of Laragon Dashboard Logo](assets/favicon/favicon-32x32.png)  Installation
+This is good enough to be the official index page of Laragon to replace the vanilla Laragon server index page, and offers several key features that make it an essential tool for developers:
 
-1. To use our dashboard, simply replace the default index.php file in your Laragon root directory with our customized index.php file and upload along the complimenting /assets/ directory. Once you've done that, you'll be able to access our UI by navigating to the root directory of your Laragon server.
-2. open your browser and visit localhost and that's it! your adventure will start from there.
-3. Make sure to upload the icons and css files, icons and language files to the assets directory (or simply import it as is)
-4. Make sure to change the ignored directories or add the directories that you don't intend to expose publicly
+Stay ahead of the curve with Laragon Dashboard and connect with me and with the other contributors of the Laragon Dashboard project. We now support language files so feel free to contribute and send us your translations to include them in the next upcoming releases.
 
-Whether you're a developer, system integrator, or enterprise user, you can trust that we did everything possible to make it as smooth and easy as 1,2,3 to set up our laragon Dashboard.
+We're confident that our dashboard will enhance your development experience and streamline your workflow. Try it out today and let us know what you think!
 
+Don't forget to star the project to stay up-to-date on future improvements, and please share your feedback with us. We're always looking for ways to make our index page even better for you.
 
 <br/>
 
 # ![Screenshot of Laragon Dashboard Logo](assets/favicon/favicon-32x32.png)  Get Involved
 
+Whether you're a developer, system integrator, or enterprise user, you can trust that we did everything possible to make it as smooth and easy as 1,2,3 to set up our laragon Dashboard.
 
 - [ ] ⭐ **Give us a star** on GitHub 👆
 - [ ] ⭐ **Fork the project** on GitHub and contribute👆
