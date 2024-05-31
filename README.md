@@ -1,4 +1,4 @@
-# Laragon Server Index Page
+# Laragon Dashboard
 
 Welcome to the Laragon root directory index page! 
 Attention developers! Are you tired of sifting through a cluttered directory to find your projects and files? Look no further than our customized user interface designed specifically for your Laragon server.
