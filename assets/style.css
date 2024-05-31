@@ -267,31 +267,31 @@ a {
 
 /* Styles for screens smaller than 600px */
 @media (max-width: 600px) {
-    /* Adjust the menu icon size */
-    .menu-icon {
-        font-size: 30px;
-    }
+  /* Adjust the menu icon size */
+  .menu-icon {
+    font-size: 30px;
+  }
 
-    /* Hide the sidenav */
-    .sidenav {
-        display: none;
-    }
+  /* Hide the sidenav */
+  .sidenav {
+    display: none;
+  }
 
-    /* Show the sidenav when it's active */
-    .sidenav.active {
-        display: block;
-    }
+  /* Show the sidenav when it's active */
+  .sidenav.active {
+    display: block;
+  }
 }
 
 /* Styles for screens larger than 600px */
 @media (min-width: 601px) {
-    /* Adjust the menu icon size */
-    .menu-icon {
-        font-size: 40px;
-    }
+  /* Adjust the menu icon size */
+  .menu-icon {
+    font-size: 40px;
+  }
 
-    /* Show the sidenav */
-    .sidenav {
-        display: block;
-    }
+  /* Show the sidenav */
+  .sidenav {
+    display: block;
+  }
 }
