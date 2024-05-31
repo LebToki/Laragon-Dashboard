@@ -16,7 +16,7 @@ This is good enough to be the official index page of Laragon to replace the vani
 **
 
 # Features
-Our index page replaces the vanilla Laragon server index page, and offers several key features that make it an essential tool for developers:
+Our Laragon Dashboard (index page) replaces the vanilla Laragon server index page, and offers several key features that make it an essential tool for developers:
 
 **Visually appealing interface:** Our index page provides a clean and modern design that is both easy on the eyes and easy to navigate.
 
@@ -35,16 +35,18 @@ Our index page replaces the vanilla Laragon server index page, and offers severa
 **
 
 # Feedback
-We're confident that our Laragon root directory index page will enhance your development experience and streamline your workflow. Try it out today and let us know what you think!
+We're confident that our dashboard will enhance your development experience and streamline your workflow. Try it out today and let us know what you think!
+
 Don't forget to star the project to stay up-to-date on future improvements, and please share your feedback with us. We're always looking for ways to make our index page even better for you.
 
 **
-# Changelog:(latest 2.3.0)
+# Changelog:(latest 2.3.3)
 
-**Changes in Version 2.3.0:**
+**Changes in Version 2.3.3:**
 
 **Introduced Language Translation Support**
 Implemented language translation support using JSON files.
+Fixed (de, en, es, fr, pt and tl for now)
 
 **Introduced Breadcrumbs and Tabs:**
 Introduced breadcrumb headers for each tab for better navigation.
