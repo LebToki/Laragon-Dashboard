@@ -4,7 +4,7 @@
 	 * Description: This is the main index page for the Laragon server, displaying server info and applications.
 	 * Author: Tarek Tarabichi <tarek@2tinteractive.com>
 	 * Contributors: LrkDev in v.2.1.2
-	 * Version: 2.2.1
+	 * Version: 2.3.2
 	 */
 	
 	// Set the directory path (modify as needed)
@@ -64,13 +64,13 @@
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<link rel="icon" type="image/x-icon" href="assets/favicon.ico">
+	<link rel="icon" type="image/x-icon" href="./../favicon.ico">
 	<title><?php echo $translations['title'] ?? 'Welcome to the Laragon Dashboard'; ?></title>
 	
 	<link href="https://fonts.googleapis.com/css?family=Pt+Sans&display=swap" rel="stylesheet">
 	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,700&display=swap">
 	
-	<link rel="stylesheet" href="./assets/style.css">
+	<link rel="stylesheet" href="./../style.css">
 	
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/css/bootstrap.min.css">
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/css/bootstrap-grid.min.css"/>
@@ -572,11 +572,6 @@
 		<i class="fas fa-bars header__menu"></i>
 	</div>
 	
-	<header class="header">
-		<div class="header__search">My Development Server Mailbox</div>
-		<div class="header__avatar">Welcome Back!</div>
-	</header>
-	
 	<main class="main">
 		<!-- Server Info Section -->
 		<div class="main-overview">
@@ -592,7 +587,7 @@
 								</div>
 							</div>
 							<div class="widget-data">
-								<div class="weight-600 font-18">Logged Messages</div>
+								<div class="weight-600 font-18"><?php echo $translations['logged-messages'] ?? 'Logged Messages'; ?></div>
 								<div class="weight-500">
 									<a href="#" style="margin-top: 10px;color: #000;!important">
 									<span style=" color:#000; font-size: 44px; font-weight: bold;"><?php echo count(getEmails(EML_FILE_PATH)) ?></span>
@@ -649,10 +644,10 @@
 		<br><br><br>
 		<!-- Email List Section -->
 		<div class="container mt-5" style="width: 1440px!important;background-color: #f8f9fa;padding: 20px;border-radius: 5px;color=#000000">
-			<h1 style="text-align: center;color: #000000">Email List</h1>
+			<h1 style="text-align: center;color: #000000"><?php echo $translations['email-list'] ?? 'Logged Messages'; ?></h1>
 			
 			<?php if (empty($emails)): ?>
-				<div class="alert alert-info" style="color: #000000">No emails found.</div>
+				<div class="alert alert-info" style="color: #000000"><?php echo $translations['no-emails-found'] ?? 'No Emails Found'; ?></div>
 			<?php else: ?>
 				<ul class="list-group" style="color: #000000">
 					<?php foreach ($emails as $email): ?>
@@ -660,7 +655,7 @@
 							<a href="#" class="email-link" style="color: #000000" data-email="<?= $email ?>"><?= $email ?></a>
 							<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="get" class="d-inline">
 								<input type="hidden" name="delete" value="<?= $email ?>">
-								<button type="submit" class="btn btn-sm btn-danger">Delete</button>
+								<button type="submit" class="btn btn-sm btn-danger"><?php echo $translations['delete'] ?? 'Delete'; ?></button>
 							</form>
 						</li>
 					<?php endforeach; ?>
