@@ -2,7 +2,8 @@
 
 
 Our UI automatically detects any projects and directories within your root directory, making it easy to manage your projects and workload. Plus, we've included an automated auto-detection for popular frameworks like WordPress, Laravel, Symfony, CakePHP, Python and Drupal next to several other platforms and frameworks.
-We've gone the extra mile to provide a visually appealing and intuitive interface that's easy to navigate, so you can spend more time coding and less time searching for files. And with a responsive design, you can access our UI on any device.
+
+We also have gone the extra mile to provide a visually appealing and intuitive interface that's easy to navigate, so you can spend more time coding and less time searching for files. And with a responsive design, you can access our UI on any device.
 To use our dashboard, simply replace the default index.php file in your Laragon root directory with our customized index.php file and the assets directory that comes along with it. 
 
 And don't worry, we've taken care of cleaning up all PHP calls, providing error responses, and removing redundant codes.
