@@ -32,7 +32,7 @@ Our UI automatically detects any projects and directories within your root direc
 # ![Screenshot of Laragon Dashboard Logo](assets/favicon/favicon-32x32.png)  How to use
 
 1. Replace the default index.php file in your Laragon root directory with our customized index.php file.
-2. Change your development path (.local) if you've named your path differently.
+2. your laragon hostname template (.local) will be automatically detected and served here
 
 ```[php]
   line 249 is your friend --> function getLocalSites($server = 'apache', $ignoredFiles = ['.', '..', '00-default.conf']): array{}
