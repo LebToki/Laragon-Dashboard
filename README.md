@@ -88,7 +88,7 @@ PHP 7.4 + Features: Leveraged modern PHP features such as typed properties, arro
 **Specific Code Refactoring**
 These updates collectively enhance the security, performance, maintainability, and user experience of your Laragon server index page.
 
-**Chnages in Version 2.1.5 **
+**Chnages in Version 2.1.5**
 
 Security: Added input validation and output escaping to prevent XSS and other security vulnerabilities.
 Error Handling: Improved error handling with try-catch blocks and better error checking for file operations.
