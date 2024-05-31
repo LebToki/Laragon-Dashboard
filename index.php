@@ -356,7 +356,16 @@ $activeTab = isset($_GET['tab']) ? $_GET['tab'] : 'servers';
 
     <!--- Chart.js v4.4.3 CDN----->
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
-
+     
+	<!--- Favicon -------->
+	<link rel="icon" href="assets/favicon/favicon.ico" type="image/x-icon">
+	<link rel="icon" type="image/png" href="assets/favicon/favicon-16x16.png" sizes="16x16">
+	<link rel="icon" type="image/png" href="assets/favicon/favicon-32x32.png" sizes="32x32">
+	<link rel="icon" type="image/png" href="assets/favicon/android-chrome-192x192.png" sizes="192x192">
+	<link rel="icon" type="image/png" href="assets/favicon/android-chrome-512x512.png" sizes="512x512">
+	<link rel="icon" type="apple-touch-icon" href="assets/favicon/apple-touch-icon.png">
+	<link rel="manifest" href="assets/favicon/site.webmanifest">
+	
     <script>
     $(document).ready(function() {
         $('.tab').click(function() {
