@@ -33,8 +33,12 @@ Our UI automatically detects any projects and directories within your root direc
 
 1. Replace the default index.php file in your Laragon root directory with our customized index.php file.
 2. Change your development path (.local) if you've named your path differently.
-3. Upload the icons and CSS files to the assets directory (or simply import them as is).
-4. Change the ignored directories or add the directories that you don't intend to expose publicly.
+3. ```[php]
+   it's automated but just in case then line 249 is your friend
+function getLocalSites($server = 'apache', $ignoredFiles = ['.', '..', '00-default.conf']): array{}
+   ```
+4. Upload the icons and CSS files to the assets directory (or simply import them as is).
+5. Change the ignored directories or add the directories that you don't intend to expose publicly.
 
 ```[php]
 $ignore_dirs = array('.', '..', 'logs', 'access-logs', 'vendor', 'favicon_io', 'assets');
