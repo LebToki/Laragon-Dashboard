@@ -5,9 +5,11 @@ Attention developers! Are you tired of sifting through a cluttered directory to 
 
 # Welcome to the Laragon Dashboard!  
 (root directory index page)
+![Screenshot of Laragon Dashboard Promo ](assets/LaragonDash.jpg)
 ![Screenshot of Laragon Dashboard Page](assets/01-Dashboard.png)
 ![Screenshot of Laragon Dashboard Mailbox](assets/02-MailBox.png)
 ![Screenshot of Laragon Dashboard Server Vitals](assets/03-Server-Vitals.png)
+
 
 Our UI automatically detects any projects and directories within your root directory, making it easy to manage your work. Plus, we've included an automated auto-detection for popular frameworks like WordPress, Laravel, and Symfony.
 We've gone the extra mile to provide a visually appealing and intuitive interface that's easy to navigate, so you can spend more time coding and less time searching for files. And with a responsive design, you can access our UI on any device.
