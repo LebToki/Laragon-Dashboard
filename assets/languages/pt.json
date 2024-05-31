@@ -22,8 +22,8 @@
 	"memory_usage": "Uso de memória (em MB)",
 	"disk_usage": "Uso do disco",
 
-	"bom Dia bom dia",
-	"boa tarde boa tarde",
+	"good-morning": "Bom dia",
+	"good_afternoon": "Boa tarde",
 	"good_evening": "Boa noite",
 
 	"document_root": "Raiz do Documento",
