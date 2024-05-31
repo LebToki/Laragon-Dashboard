@@ -1,0 +1,22 @@
+{
+  "title": "Willkommen beim Laragon Dashboard",
+  "header": "Posteingangsintegration",
+  "main_tab": "Haupt",
+  "inbox_tab": "Posteingang",
+  "read_email_tab": "E-Mail lesen",
+  "main_content": "Dies ist der Hauptinhalt des Projekts.",
+  "footer": "Alle Rechte vorbehalten.",
+  "server_status": "Serverstatus",
+  "uptime": "Betriebszeit",
+  "memory_usage": "Speichernutzung (in MB)",
+  "disk_usage": "Festplattennutzung",
+  "development_server": "Mein Entwicklungsserver",
+  "welcome_back": "Willkommen zurück!",
+  "good_morning": "Guten Morgen",
+  "good_afternoon": "Guten Tag",
+  "good_evening": "Guten Abend",
+  "good_night": "Gute Nacht",
+  "document_root": "Dokumentenstamm",
+  "manage_mysql": "MySQL verwalten",
+  "made_with_love": "Mit ♥ gemacht und betrieben von Laragon"
+}

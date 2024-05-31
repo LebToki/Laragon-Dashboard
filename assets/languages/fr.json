@@ -1,0 +1,22 @@
+{
+  "title": "Bienvenue sur le tableau de bord Laragon",
+  "header": "Intégration de la boîte de réception",
+  "main_tab": "Principal",
+  "inbox_tab": "Boîte de réception",
+  "read_email_tab": "Lire l'e-mail",
+  "main_content": "Ceci est le contenu principal du projet.",
+  "footer": "Tous droits réservés.",
+  "server_status": "Statut du serveur",
+  "uptime": "Disponibilité",
+  "memory_usage": "Utilisation de la mémoire (en Mo)",
+  "disk_usage": "Utilisation du disque",
+  "development_server": "Mon serveur de développement",
+  "welcome_back": "Bienvenue !",
+  "Bonjour bonjour,",
+  "good_afternoon": "Bon après-midi",
+  "Bonsoir bonsoir,",
+  "Bonne nuit Bonne nuit,",
+  "document_root": "Racine du document",
+  "manage_mysql": "Gérer MySQL",
+  "made_with_love": "Fabriqué avec ♥ et propulsé par Laragon"
+}

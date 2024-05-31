@@ -1,0 +1,22 @@
+{
+  "title": "Welcome sa Laragon Dashboard",
+  "header": "Inbox Integration",
+  "main_tab": "Pangunahin",
+  "inbox_tab": "Inbox",
+  "read_email_tab": "Basahin ang Email",
+  "main_content": "Ito ang pangunahing nilalaman ng proyekto.",
+  "footer": "Lahat ng karapatan ay nakalaan.",
+  "server_status": "Katayuan ng Server",
+  "uptime": "Uptime",
+  "memory_usage": "Paggamit ng Memorya (sa MB)",
+  "disk_usage": "Paggamit ng Disk",
+  "development_server": "Aking Development Server",
+  "welcome_back": "Maligayang Pagbabalik!",
+  "Magandang umaga, magandang umaga,",
+  "good_afternoon": "Magandang hapon,",
+  "good_evening": "Magandang gabi,",
+  "magandang gabi magandang gabi,",
+  "document_root": "Dokumentong Root",
+  "manage_mysql": "Pamahalaan ang MySQL",
+  "made_with_love": "Ginawa gamit ang ♥ at pinalakas ng Laragon"
+}

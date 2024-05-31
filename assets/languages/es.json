@@ -1,0 +1,22 @@
+{
+  "title": "Bienvenido al Panel de Laragon",
+  "header": "Integración de la bandeja de entrada",
+  "main_tab": "Principal",
+  "inbox_tab": "Bandeja de entrada",
+  "read_email_tab": "Leer correo electrónico",
+  "main_content": "Este es el contenido principal del proyecto.",
+  "footer": "Todos los derechos reservados.",
+  "server_status": "Estado del servidor",
+  "tiempo de actividad": "Tiempo de actividad",
+  "memory_usage": "Uso de memoria (en MB)",
+  "disk_usage": "Uso del disco",
+  "development_server": "Mi servidor de desarrollo",
+  "welcome_back": "¡Bienvenido de nuevo!",
+  "Buenos días, buenos días,",
+  "good_afternoon": "Buenas tardes",
+  "good_evening": "Buenas noches",
+  "Buenas noches buenas noches,",
+  "document_root": "Raíz del documento",
+  "manage_mysql": "Administrar MySQL",
+  "made_with_love": "Hecho con ♥ y desarrollado por Laragon"
+}
