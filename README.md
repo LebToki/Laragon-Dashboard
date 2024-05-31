@@ -52,7 +52,7 @@ $ignore_dirs = array('.', '..', 'logs', 'access-logs', 'vendor', 'favicon_io', '
 - Don't forget to star the project to stay up-to-date on future improvements, and please share your feedback with us. We're always looking for ways to make our dashboard even better for you.
 
 # ![Screenshot of Laragon Dashboard Logo](assets/favicon/favicon-32x32.png)  Changelog
-### What's New in 3.3.3 · May 31, 2024 
+### What's New in 2.3.3 · May 31, 2024 
 (major release re-written ground-up with languages support, mailbox and stack's Vitals )
 
 **Introduced Language Translation Support**
