@@ -2,7 +2,8 @@
 
 # Welcome to the Laragon Dashboard ! 
 
-Attention developers!Are you tired of sifting through a cluttered directory to find your projects and files? Look no further than our customized user interface designed specifically for your Laragon server.
+Attention developers!
+Are you tired of sifting through a cluttered directory to find your projects and files? Look no further than our customized user interface designed specifically for your Laragon server.
 
 
 🚀 Pros & Devs love [Laragon](https://laragon.org) and for sure will love our [laragon Dashboard](https://github.com/LebToki/Laragon-Dashboard) since the combination of that stack makes it unbeatable!
