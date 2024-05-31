@@ -9,11 +9,8 @@ Attention developers! Are you tired of sifting through a cluttered directory to 
 ![Screenshot of Laragon Server Index Inbox Message Modal](assets/Laragon-Index-Inbox-modal-screenshot.png)
 
 Our UI automatically detects any projects and directories within your root directory, making it easy to manage your work. Plus, we've included an automated auto-detection for popular frameworks like WordPress, Laravel, and Symfony.
-
 We've gone the extra mile to provide a visually appealing and intuitive interface that's easy to navigate, so you can spend more time coding and less time searching for files. And with a responsive design, you can access our UI on any device.
-
 To use our index page, simply replace the default index.php file in your Laragon root directory with our customized index.php file. And don't worry, we've taken care of cleaning up all PHP calls, providing error responses, and removing redundant codes.
-
 This is good enough to be the official index page of Laragon to replace the vanilla Laragon server index page, and offers several key features that make it an essential tool for developers:
 
 **
