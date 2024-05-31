@@ -41,6 +41,13 @@ Don't forget to star the project to stay up-to-date on future improvements, and 
 **
 # Changelog:(latest)
 
+**Planned Changes in Version 2.3.0:**
+- Introduction of Language Files utilizing the existing /assets/ directory /assets/languages/en.json ++
+- Incorporate the Inbox (Integrated SendMail Inbox or Mail-Client) within with the reader in assets
+- Automatic Detection of Hostname Template so you avoid hardcoding your configuration in
+and a few more.
+- Language Maintainers are soon needed and we already have a Spanish version hopefully
+
 **Changes in Version 2.2.1:**
 - Improved Error Handling and Security:
 - Enhanced handleQueryParameter function with input validation and escaping of outputs to prevent XSS attacks.
