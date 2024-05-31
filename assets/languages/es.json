@@ -1,4 +1,9 @@
 {
+
+
+
+
+
 	"title": "Bienvenido al Panel de Laragon",
 	"header": "Mi servidor de desarrollo",
 	"welcome_back": "¡Bienvenido de nuevo!",
@@ -21,9 +26,17 @@
 	"good_afternoon": "Buenas tardes",
 	"good_evening": "Buenas noches",
 
+	"logged-messages": "Mensajes registrados",
+
+
 	"document_root": "Raíz del documento",
 	"manage_mysql": "Administrar MySQL",
 
-	"default_footer": "&copy; 2024    <?php echo htmlspecialchars(fecha('Y')); ?>, Tarek Tarabichi",
+	"default_footer": "&copy; 2024        <?php echo htmlspecialchars(fecha('Y')); ?>, Tarek Tarabichi",
 	"made_with_love": "Hecho con <span style=\"color: #e25555;\">&hearts;</span> y desarrollado por Laragon"
+
+
+
+
+
 }
