@@ -51,6 +51,8 @@ $ignore_dirs = array('.', '..', 'logs', 'access-logs', 'vendor', 'favicon_io', '
 - We're confident that our dashboard will enhance your development experience and streamline your workflow. Try it out today and let us know what you think! Join the discussions and let's make Laragon Dashboard the best it can be.
 - Don't forget to star the project to stay up-to-date on future improvements, and please share your feedback with us. We're always looking for ways to make our dashboard even better for you.
 
+📢️ Thanks everyone for your support and words of love for Laragon Dashboard, I am committed to creating the best Stack Dashboard to support the ever growing community of Laragon
+
 # ![Screenshot of Laragon Dashboard Logo](assets/favicon/favicon-32x32.png)  Changelog
 ### What's New in 2.3.4 June 06,2024
 - Language Loading and Selection: Added functionality to load language files and detect user language preference.
@@ -98,7 +100,7 @@ Added language selector change event to reload the page with the selected langua
 Refactored server information retrieval and display logic.
 Enhanced error handling for server vitals data retrieval.
 </details>
-📢️ Thanks everyone for your support and words of love for Laragon Dashboard, I am committed to creating the best Stack Dashboard to support the ever growing community of Laragon
+
 
 
 
