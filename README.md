@@ -56,15 +56,15 @@ $ignore_dirs = array('.', '..', 'logs', 'access-logs', 'vendor', 'favicon_io', '
 # ![Screenshot of Laragon Dashboard Logo](assets/favicon/favicon-32x32.png)  Changelog
 ### What's New in 2.3.4 June 06,2024
 - Language Loading and Selection: Added functionality to load language files and detect user language preference.
--Server Status Display: Added functions to display server uptime, memory usage, and disk usage.
--Query Parameter Handling: Improved handling of incoming query parameters.
+- Server Status Display: Added functions to display server uptime, memory usage, and disk usage.
+- Query Parameter Handling: Improved handling of incoming query parameters.
 - PHP and Apache Extension Retrieval: Added functionality to retrieve PHP extensions and Apache modules.
 - PHP Version Checking: Fetches the latest PHP version and compares it with the current version running on the server.
 - Server Information Retrieval: Gathers information about the server environment, including versions of HTTP server, OpenSSL, PHP, and Xdebug.
 - MySQL Version Retrieval: Added function to retrieve the MySQL version.
 - PHP Download Links: Generates download and changelog links for specific PHP versions.
 - Site Directory Determination: Determines the directory path for server-specific site configuration based on the server software.
-- WordPress Update Detection: Added functionality to detect if WordPress has any updates.
+- WordPress Core Update Detection: Added functionality to detect if WordPress has any updates. (Plugins and Themes in the next version)
 - Local Sites Retrieval: Fetches configuration details for local sites based on server configuration files.
 - HTML Links Rendering: Renders HTML links for local sites with XSS prevention and includes control buttons for starting and stopping applications.
 
