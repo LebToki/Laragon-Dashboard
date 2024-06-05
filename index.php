@@ -12,11 +12,11 @@
 //-----------------------------------------------------------------------------------
 function loadLanguage($lang)
 {
-	$langFile = __DIR__ . "/assets/languages/{$lang}.json";
-	if (file_exists($langFile)) {
-		return json_decode(file_get_contents($langFile), true);
-	}
-	return [];
+    $langFile = __DIR__ . "/assets/languages/{$lang}.json";
+    if (file_exists($langFile)) {
+        return json_decode(file_get_contents($langFile), true);
+    }
+    return [];
 }
 
 //-----------------------------------------------------------------------------------
@@ -26,29 +26,30 @@ $lang = isset($_GET['lang']) ? $_GET['lang'] : 'en';
 $translations = loadLanguage($lang);
 
 const SERVER_TYPES = [
-	'php' => 'php',
-	'apache' => 'apache',
+    'php' => 'php',
+    'apache' => 'apache',
 ];
+
 //-----------------------------------------------------------------------------------
 // Displays server status including uptime, memory usage, and disk usage.
 //-----------------------------------------------------------------------------------
 function showServerStatus(): void
 {
-	echo '<h1>Server Status</h1>';
-	// Display server uptime
-	$uptime = shell_exec('uptime');
-	echo '<h2>Uptime</h2>';
-	echo '<p>' . htmlspecialchars($uptime) . '</p>';
+    echo '<h1>Server Status</h1>';
+    // Display server uptime
+    $uptime = shell_exec('uptime');
+    echo '<h2>Uptime</h2>';
+    echo '<p>' . htmlspecialchars($uptime) . '</p>';
 
-	// Display memory usage
-	$free = shell_exec('free -m'); // memory in MB
-	echo '<h2>Memory Usage (in MB)</h2>';
-	echo '<pre>' . htmlspecialchars($free) . '</pre>';
+    // Display memory usage
+    $free = shell_exec('free -m'); // memory in MB
+    echo '<h2>Memory Usage (in MB)</h2>';
+    echo '<pre>' . htmlspecialchars($free) . '</pre>';
 
-	// Display disk usage
-	$df = shell_exec('df -h'); // disk usage in human-readable format
-	echo '<h2>Disk Usage</h2>';
-	echo '<pre>' . htmlspecialchars($df) . '</pre>';
+    // Display disk usage
+    $df = shell_exec('df -h'); // disk usage in human-readable format
+    echo '<h2>Disk Usage</h2>';
+    echo '<pre>' . htmlspecialchars($df) . '</pre>';
 }
 
 //-----------------------------------------------------------------------------------
@@ -56,54 +57,55 @@ function showServerStatus(): void
 //-----------------------------------------------------------------------------------
 function handleQueryParameter(string $param): void
 {
-	switch ($param) {
-		case 'info':
-			phpinfo();
-			break;
-		case 'status':
-			showServerStatus();
-			break;
-		default:
-			throw new InvalidArgumentException("Unsupported parameter: " . htmlspecialchars($param));
-	}
+    switch ($param) {
+        case 'info':
+            phpinfo();
+            break;
+        case 'status':
+            showServerStatus();
+            break;
+        default:
+            throw new InvalidArgumentException("Unsupported parameter: " . htmlspecialchars($param));
+    }
 }
 
 // Check if 'q' parameter is set and sanitize it
 if (isset($_GET['q'])) {
-	$queryParam = filter_input(INPUT_GET, 'q', FILTER_SANITIZE_STRING);
-	try {
-		handleQueryParameter($queryParam);
-	} catch (InvalidArgumentException $e) {
-		echo 'Error: ' . htmlspecialchars($e->getMessage());
-	}
+    $queryParam = filter_input(INPUT_GET, 'q', FILTER_SANITIZE_STRING);
+    try {
+        handleQueryParameter($queryParam);
+    } catch (InvalidArgumentException $e) {
+        echo 'Error: ' . htmlspecialchars($e->getMessage());
+    }
 }
 
 const SERVER_PHP = 'php';
 const SERVER_APACHE = 'apache';
+
 //-----------------------------------------------------------------------------------
 // Retrieves a list of PHP extensions or Apache modules based on the specified server type.
 //-----------------------------------------------------------------------------------
 function getServerExtensions(string $server, int $columns = 2): array
 {
-	switch ($server) {
-		case SERVER_PHP:
-			$extensions = get_loaded_extensions();
-			break;
-		case SERVER_APACHE:
-			if (function_exists('apache_get_modules')) {
-				$extensions = apache_get_modules();
-			} else {
-				throw new Exception('Apache modules are not available on this server.');
-			}
-			break;
-		default:
-			throw new InvalidArgumentException('Invalid server name: ' . htmlspecialchars($server));
-	}
+    switch ($server) {
+        case SERVER_PHP:
+            $extensions = get_loaded_extensions();
+            break;
+        case SERVER_APACHE:
+            if (function_exists('apache_get_modules')) {
+                $extensions = apache_get_modules();
+            } else {
+                throw new Exception('Apache modules are not available on this server.');
+            }
+            break;
+        default:
+            throw new InvalidArgumentException('Invalid server name: ' . htmlspecialchars($server));
+    }
 
-	sort($extensions, SORT_STRING);
-	$extensions = array_chunk($extensions, $columns);
+    sort($extensions, SORT_STRING);
+    $extensions = array_chunk($extensions, $columns);
 
-	return $extensions;
+    return $extensions;
 }
 
 //-----------------------------------------------------------------------------------
@@ -111,31 +113,31 @@ function getServerExtensions(string $server, int $columns = 2): array
 //-----------------------------------------------------------------------------------
 function getPhpVersion(): array
 {
-	$url = 'https://www.php.net/releases/index.php?json&version=7';
-	$options = [
-		"ssl" => [
-			"verify_peer" => false,
-			"verify_peer_name" => false,
-		],
-	];
-	$json = file_get_contents($url, false, stream_context_create($options));
-	if ($json === false) {
-		throw new Exception("Unable to retrieve PHP version info from the official PHP site.");
-	}
+    $url = 'https://www.php.net/releases/index.php?json&version=7';
+    $options = [
+        "ssl" => [
+            "verify_peer" => false,
+            "verify_peer_name" => false,
+        ],
+    ];
+    $json = file_get_contents($url, false, stream_context_create($options));
+    if ($json === false) {
+        throw new Exception("Unable to retrieve PHP version info from the official PHP site.");
+    }
 
-	$data = json_decode($json, true);
-	if ($data === null || !isset($data['version'])) {
-		throw new Exception("Invalid JSON or 'version' missing in the data.");
-	}
+    $data = json_decode($json, true);
+    if ($data === null || !isset($data['version'])) {
+        throw new Exception("Invalid JSON or 'version' missing in the data.");
+    }
 
-	$lastVersion = $data['version'];
-	$currentVersion = phpversion();
+    $lastVersion = $data['version'];
+    $currentVersion = phpversion();
 
-	return [
-		'lastVersion' => htmlspecialchars($lastVersion),
-		'currentVersion' => htmlspecialchars($currentVersion),
-		'isUpToDate' => version_compare($currentVersion, $lastVersion, '>='),
-	];
+    return [
+        'lastVersion' => htmlspecialchars($lastVersion),
+        'currentVersion' => htmlspecialchars($currentVersion),
+        'isUpToDate' => version_compare($currentVersion, $lastVersion, '>='),
+    ];
 }
 
 //-----------------------------------------------------------------------------------
@@ -145,10 +147,10 @@ $serverInfo = serverInfo(); // Make sure this line is placed before you try to a
 
 // Before accessing an array offset, check if the variable is an array and not null
 if (is_array($serverInfo) && isset($serverInfo['httpdVer'])) {
-	//echo $serverInfo['httpdVer']; // Safely access the 'httpdVer' index
+    //echo $serverInfo['httpdVer']; // Safely access the 'httpdVer' index
 } else {
-	// Handle the case where $serverInfo is not an array or the index 'httpdVer' is not set
-	echo "Server information is not available.";
+    // Handle the case where $serverInfo is not an array or the index 'httpdVer' is not set
+    echo "Server information is not available.";
 }
 
 //-----------------------------------------------------------------------------------
@@ -156,23 +158,23 @@ if (is_array($serverInfo) && isset($serverInfo['httpdVer'])) {
 //-----------------------------------------------------------------------------------
 function serverInfo(): array
 {
-	$serverSoftware = $_SERVER['SERVER_SOFTWARE'] ?? 'Unknown Server Software';
-	$serverParts = explode(' ', $serverSoftware);
+    $serverSoftware = $_SERVER['SERVER_SOFTWARE'] ?? 'Unknown Server Software';
+    $serverParts = explode(' ', $serverSoftware);
 
-	$httpdVer = $serverParts[0] ?? 'Unknown';
-	$openSslVer = isset($serverParts[2]) && strpos($serverParts[2], 'OpenSSL/') === 0 ? substr($serverParts[2], 8) : 'Not available';
+    $httpdVer = $serverParts[0] ?? 'Unknown';
+    $openSslVer = isset($serverParts[2]) && strpos($serverParts[2], 'OpenSSL/') === 0 ? substr($serverParts[2], 8) : 'Not available';
 
-	$phpInfo = getPhpVersion();
-	$xdebugVersion = extension_loaded('xdebug') ? phpversion('xdebug') : 'Not installed';
+    $phpInfo = getPhpVersion();
+    $xdebugVersion = extension_loaded('xdebug') ? phpversion('xdebug') : 'Not installed';
 
-	return [
-		'httpdVer' => htmlspecialchars($httpdVer),
-		'openSsl' => htmlspecialchars($openSslVer),
-		'phpVer' => htmlspecialchars($phpInfo['currentVersion']),
-		'xDebug' => htmlspecialchars($xdebugVersion),
-		'docRoot' => htmlspecialchars($_SERVER['DOCUMENT_ROOT'] ?? '/var/www/html'),
-		'serverName' => htmlspecialchars($_SERVER['HTTP_HOST'] ?? 'localhost'),
-	];
+    return [
+        'httpdVer' => htmlspecialchars($httpdVer),
+        'openSsl' => htmlspecialchars($openSslVer),
+        'phpVer' => htmlspecialchars($phpInfo['currentVersion']),
+        'xDebug' => htmlspecialchars($xdebugVersion),
+        'docRoot' => htmlspecialchars($_SERVER['DOCUMENT_ROOT'] ?? '/var/www/html'),
+        'serverName' => htmlspecialchars($_SERVER['HTTP_HOST'] ?? 'localhost'),
+    ];
 }
 
 //-----------------------------------------------------------------------------------
@@ -180,16 +182,16 @@ function serverInfo(): array
 //-----------------------------------------------------------------------------------
 function getSQLVersion(): string
 {
-	$output = shell_exec('mysql -V');
-	if ($output === null) {
-		return "Unknown"; // Command failed to execute, possibly not installed or not in PATH
-	}
+    $output = shell_exec('mysql -V');
+    if ($output === null) {
+        return "Unknown"; // Command failed to execute, possibly not installed or not in PATH
+    }
 
-	if (preg_match('@[0-9]+\.[0-9]+\.[0-9-\w]+@', $output, $version)) {
-		return htmlspecialchars($version[0]);
-	}
+    if (preg_match('@[0-9]+\.[0-9]+\.[0-9-\w]+@', $output, $version)) {
+        return htmlspecialchars($version[0]);
+    }
 
-	return "Unknown";
+    return "Unknown";
 }
 
 //-----------------------------------------------------------------------------------
@@ -197,14 +199,14 @@ function getSQLVersion(): string
 //-----------------------------------------------------------------------------------
 function phpDlLink(string $version, string $branch = '7', string $architecture = 'x64'): array
 {
-	$versionEscaped = htmlspecialchars($version, ENT_QUOTES, 'UTF-8');
-	$branchEscaped = htmlspecialchars($branch, ENT_QUOTES, 'UTF-8');
-	$architectureEscaped = htmlspecialchars($architecture, ENT_QUOTES, 'UTF-8');
+    $versionEscaped = htmlspecialchars($version, ENT_QUOTES, 'UTF-8');
+    $branchEscaped = htmlspecialchars($branch, ENT_QUOTES, 'UTF-8');
+    $architectureEscaped = htmlspecialchars($architecture, ENT_QUOTES, 'UTF-8');
 
-	return [
-		'changeLog' => "https://www.php.net/ChangeLog-$branchEscaped.php#$versionEscaped",
-		'downLink' => "https://windows.php.net/downloads/releases/php-$versionEscaped-Win32-VC15-$architectureEscaped.zip",
-	];
+    return [
+        'changeLog' => "https://www.php.net/ChangeLog-$branchEscaped.php#$versionEscaped",
+        'downLink' => "https://windows.php.net/downloads/releases/php-$versionEscaped-Win32-VC15-$architectureEscaped.zip",
+    ];
 }
 
 //-----------------------------------------------------------------------------------
@@ -212,35 +214,53 @@ function phpDlLink(string $version, string $branch = '7', string $architecture =
 //-----------------------------------------------------------------------------------
 function getSiteDir(): string
 {
-	// Check if laragon is installed on C or D drive and this then checks whichever works and uses it
-	// so it would be $rootDir = 'C:/laragon/etc/apache2/sites-enabled'; or $rootDir = 'D:/laragon/etc/apache2/sites-enabled';
-	$drive = strtoupper(substr(PHP_OS, 0, 1));
-	$rootDir = $drive . ':/laragon/etc/apache2/sites-enabled';
-	if (strpos(strtolower($rootDir), 'c:') !== false) {
-		$laragonDir = str_replace('D:', 'C:', $rootDir);
-	} else {
-		$laragonDir = $rootDir;
-	}
-	$rootDir = 'D:/laragon/etc/apache2/sites-enabled';
+    // Check if laragon is installed on C or D drive and this then checks whichever works and uses it
+    // so it would be $rootDir = 'C:/laragon/etc/apache2/sites-enabled'; or $rootDir = 'D:/laragon/etc/apache2/sites-enabled';
+    $drive = strtoupper(substr(PHP_OS, 0, 1));
+    $rootDir = $drive . ':/laragon/etc/apache2/sites-enabled';
+    if (strpos(strtolower($rootDir), 'c:') !== false) {
+        $laragonDir = str_replace('D:', 'C:', $rootDir);
+    } else {
+        $laragonDir = $rootDir;
+    }
+    $rootDir = 'D:/laragon/etc/apache2/sites-enabled';
 
-	if ($rootDir === false) {
-		throw new RuntimeException("Unable to determine the root directory.");
-	}
+    if ($rootDir === false) {
+        throw new RuntimeException("Unable to determine the root directory.");
+    }
 
-	// Ensures that SERVER_SOFTWARE is set and not empty
-	if (!isset($_SERVER['SERVER_SOFTWARE']) || trim($_SERVER['SERVER_SOFTWARE']) === '') {
-		throw new InvalidArgumentException("Server software is not defined in the server environment.");
-	}
+    // Ensures that SERVER_SOFTWARE is set and not empty
+    if (!isset($_SERVER['SERVER_SOFTWARE']) || trim($_SERVER['SERVER_SOFTWARE']) === '') {
+        throw new InvalidArgumentException("Server software is not defined in the server environment.");
+    }
 
-	$serverSoftware = strtolower($_SERVER['SERVER_SOFTWARE']);
+    $serverSoftware = strtolower($_SERVER['SERVER_SOFTWARE']);
 
-	if (strpos($serverSoftware, 'apache') !== false) {
-		return $rootDir;
-	} elseif (strpos($serverSoftware, 'nginx') !== false) {
-		return $rootDir; // Adjust this if needed
-	}
+    if (strpos($serverSoftware, 'apache') !== false) {
+        return $rootDir;
+    } elseif (strpos($serverSoftware, 'nginx') !== false) {
+        return $rootDir; // Adjust this if needed
+    }
 
-	throw new InvalidArgumentException("Unsupported server type: " . htmlspecialchars($serverSoftware));
+    throw new InvalidArgumentException("Unsupported server type: " . htmlspecialchars($serverSoftware));
+}
+
+//-----------------------------------------------------------------------------------
+// Detect WordPress updates
+//-----------------------------------------------------------------------------------
+function checkWordPressUpdates($wpPath)
+{
+    // Run WP-CLI command to check for updates
+    $command = "cd $wpPath && wp core check-update --format=json";
+    $output = shell_exec($command);
+
+    if ($output) {
+        $updates = json_decode($output, true);
+        if (!empty($updates)) {
+            return true; // Updates are available
+        }
+    }
+    return false; // No updates available
 }
 
 //-----------------------------------------------------------------------------------
@@ -248,45 +268,59 @@ function getSiteDir(): string
 //-----------------------------------------------------------------------------------
 function getLocalSites($server = 'apache', $ignoredFiles = ['.', '..', '00-default.conf']): array
 {
-	try {
-		$sitesDir = getSiteDir(); // Assume getSiteDir() throws an exception if unable to determine the directory
-		$files = scandir($sitesDir);
-		if ($files === false) {
-			throw new Exception("Failed to scan directory: " . htmlspecialchars($sitesDir));
-		}
-	} catch (Exception $e) {
-		error_log($e->getMessage()); // Log the error to PHP's error log
-		return []; // Return an empty array to indicate failure gracefully
-	}
+    try {
+        $sitesDir = getSiteDir(); // Assume getSiteDir() throws an exception if unable to determine the directory
+        $files = scandir($sitesDir);
+        if ($files === false) {
+            throw new Exception("Failed to scan directory: " . htmlspecialchars($sitesDir));
+        }
+    } catch (Exception $e) {
+        error_log($e->getMessage()); // Log the error to PHP's error log
+        return []; // Return an empty array to indicate failure gracefully
+    }
 
-	$scanDir = array_diff($files, $ignoredFiles);
-	$sites = [];
+    $scanDir = array_diff($files, $ignoredFiles);
+    $sites = [];
 
-	foreach ($scanDir as $filename) {
-		$path = realpath("$sitesDir/$filename");
-		if ($path === false || !is_file($path)) {
-			continue; // Skip invalid paths or directories
-		}
+    foreach ($scanDir as $filename) {
+        $path = realpath("$sitesDir/$filename");
+        if ($path === false || !is_file($path)) {
+            continue; // Skip invalid paths or directories
+        }
 
-		$config = file_get_contents($path);
-		if ($config === false) {
-			continue; // Skip files that can't be read
-		}
+        $config = file_get_contents($path);
+        if ($config === false) {
+            continue; // Skip files that can't be read
+        }
 
-		if (
-			preg_match('/^\s*ServerName\s+(.+)$/m', $config, $domainMatches) &&
-			preg_match('/^\s*DocumentRoot\s+(.+)$/m', $config, $documentRootMatches)
-		) {
-			$sites[] = [
-				'filename' => htmlspecialchars($filename),
-				'path' => htmlspecialchars($path),
-				'domain' => htmlspecialchars(str_replace(['auto.', '.conf'], '', $domainMatches[1])),
-				'documentRoot' => htmlspecialchars($documentRootMatches[1]),
-			];
-		}
-	}
+        if (
+            preg_match('/^\s*ServerName\s+(.+)$/m', $config, $domainMatches) &&
+            preg_match('/^\s*DocumentRoot\s+(.+)$/m', $config, $documentRootMatches)
+        ) {
+            $site = [
+                'filename' => htmlspecialchars($filename),
+                'path' => htmlspecialchars($path),
+                'domain' => htmlspecialchars(str_replace(['auto.', '.conf'], '', $domainMatches[1])),
+                'documentRoot' => htmlspecialchars($documentRootMatches[1]),
+            ];
 
-	return $sites;
+            // Detect WordPress and check for updates
+            if (file_exists($documentRootMatches[1] . '/wp-admin')) {
+                $site['framework'] = 'WordPress';
+                $site['hasUpdates'] = checkWordPressUpdates($documentRootMatches[1]);
+            } elseif (file_exists($documentRootMatches[1] . '/app.py')) {
+                $site['framework'] = 'Flask';
+            } elseif (file_exists($documentRootMatches[1] . '/package.json')) {
+                $site['framework'] = 'Node.js';
+            } else {
+                $site['framework'] = 'Unknown';
+            }
+
+            $sites[] = $site;
+        }
+    }
+
+    return $sites;
 }
 
 //--------------------------------------------------------
@@ -294,21 +328,32 @@ function getLocalSites($server = 'apache', $ignoredFiles = ['.', '..', '00-defau
 //--------------------------------------------------------
 function renderLinks(): string
 {
-	ob_start();
-	$sites = getLocalSites();
+    ob_start();
+    $sites = getLocalSites();
 
-	foreach ($sites as $site) {
-		$httpLink = "http://" . htmlspecialchars($site['domain'], ENT_QUOTES, 'UTF-8');
-		$httpsLink = "https://" . htmlspecialchars($site['domain'], ENT_QUOTES, 'UTF-8');
+    foreach ($sites as $site) {
+        $httpLink = "http://" . htmlspecialchars($site['domain'], ENT_QUOTES, 'UTF-8');
+        $httpsLink = "https://" . htmlspecialchars($site['domain'], ENT_QUOTES, 'UTF-8');
 
-		echo "<div class='row w800 my-2'>";
-		echo "<div class='col-md-5 text-truncate tr'><a href='" . $httpLink . "'>" . $httpLink . "</a></div>";
-		echo "<div class='col-2 arrows'>&xlArr; &sext; &xrArr;</div>";
-		echo "<div class='col-md-5 text-truncate tl'><a href='" . $httpsLink . "'>" . $httpsLink . "</a></div>";
-		echo "</div><hr>";
-	}
+        echo "<div class='row w800 my-2'>";
+        echo "<div class='col-md-5 text-truncate tr'><a href='" . $httpLink . "'>" . $httpLink . "</a></div>";
+        echo "<div class='col-2 arrows'>&xlArr; &sext; &xrArr;</div>";
+        echo "<div class='col-md-5 text-truncate tl'><a href='" . $httpsLink . "'>" . $httpsLink . "</a></div>";
 
-	return ob_get_clean();
+        if ($site['framework'] !== 'Unknown') {
+            echo "<div class='col-12'>";
+            if ($site['framework'] === 'WordPress' && $site['hasUpdates']) {
+                echo "<span class='badge bg-danger'>Update Available</span>";
+            }
+            echo "<a href='?controlApp&appPath=" . urlencode($site['documentRoot']) . "&framework=" . urlencode($site['framework']) . "&action=start' class='btn btn-success'>Start " . htmlspecialchars($site['framework']) . "</a>";
+            echo "<a href='?controlApp&appPath=" . urlencode($site['documentRoot']) . "&framework=" . urlencode($site['framework']) . "&action=stop' class='btn btn-danger'>Stop " . htmlspecialchars($site['framework']) . "</a>";
+            echo "</div>";
+        }
+
+        echo "</div><hr>";
+    }
+
+    return ob_get_clean();
 }
 
 $rootPath = realpath(__DIR__);
@@ -316,10 +361,10 @@ $folders = array_filter(glob($rootPath . '/*'), 'is_dir');
 $ignore_dirs = array('.', '..', 'logs', 'access-logs', 'vendor', 'favicon_io', 'ablepro-90', 'assets');
 
 foreach ($folders as $folderPath) {
-	$host = basename($folderPath);
-	if (in_array($host, $ignore_dirs)) {
-		continue; // Skip ignored directories
-	}
+    $host = basename($folderPath);
+    if (in_array($host, $ignore_dirs)) {
+        continue; // Skip ignored directories
+    }
 }
 
 // defaults and opens servers tab as default view on initialisation
@@ -356,16 +401,17 @@ $activeTab = isset($_GET['tab']) ? $_GET['tab'] : 'servers';
 
     <!--- Chart.js v4.4.3 CDN----->
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
-     
-	<!--- Favicon -------->
-	<link rel="icon" href="assets/favicon/favicon.ico" type="image/x-icon">
-	<link rel="icon" type="image/png" href="assets/favicon/favicon-16x16.png" sizes="16x16">
-	<link rel="icon" type="image/png" href="assets/favicon/favicon-32x32.png" sizes="32x32">
-	<link rel="icon" type="image/png" href="assets/favicon/android-chrome-192x192.png" sizes="192x192">
-	<link rel="icon" type="image/png" href="assets/favicon/android-chrome-512x512.png" sizes="512x512">
-	<link rel="icon" type="apple-touch-icon" href="assets/favicon/apple-touch-icon.png">
-	<link rel="manifest" href="assets/favicon/site.webmanifest">
-	
+
+    <!--- Favicon -------->
+    <link rel="icon" href="assets/favicon/favicon.ico" type="image/x-icon">
+    <link rel="icon" type="image/png" href="assets/favicon/favicon-16x16.png" sizes="16x16">
+    <link rel="icon" type="image/png" href="assets/favicon/favicon-32x32.png" sizes="32x32">
+    <link rel="icon" type="image/png" href="assets/favicon/android-chrome-192x192.png" sizes="192x192">
+    <link rel="icon" type="image/png" href="assets/favicon/android-chrome-512x512.png" sizes="512x512">
+    <link rel="icon" type="apple-touch-icon" href="assets/favicon/apple-touch-icon.png">
+    <link rel="manifest" href="assets/favicon/site.webmanifest">
+
+
     <script>
     $(document).ready(function() {
         $('.tab').click(function() {
@@ -719,33 +765,33 @@ $activeTab = isset($_GET['tab']) ? $_GET['tab'] : 'servers';
         <h4><?php echo $translations['header'] ?? 'Header'; ?></h4>
 
         <?php
-        // Get the current time
-        $currentTime = new DateTime();
-        $hours = $currentTime->format('H');
+// Get the current time
+$currentTime = new DateTime();
+$hours = $currentTime->format('H');
 
-        // Get the greeting based on the time of day
-        if ($hours < 12) {
-            $greeting = $translations['good_morning'] ?? 'Good morning';
-        } elseif ($hours < 18) {
-            $greeting = $translations['good_afternoon'] ?? 'Good afternoon';
-        } else {
-            $greeting = $translations['good_evening'] ?? 'Good evening';
-        }
+// Get the greeting based on the time of day
+if ($hours < 12) {
+    $greeting = $translations['good_morning'] ?? 'Good morning';
+} elseif ($hours < 18) {
+    $greeting = $translations['good_afternoon'] ?? 'Good afternoon';
+} else {
+    $greeting = $translations['good_evening'] ?? 'Good evening';
+}
 
-        // Display the greeting
-        echo "<h4>" . $greeting . "!</h4>";
-        ?>
+// Display the greeting
+echo "<h4>" . $greeting . "!</h4>";
+?>
 
         <div>
             <select id="language-selector">
                 <?php
-                $langFiles = glob(__DIR__ . "/assets/languages/*.json");
-                foreach ($langFiles as $file) {
-                    $langCode = basename($file, ".json");
-                    $selected = $lang === $langCode ? "selected" : "";
-                    echo "<option value='$langCode' $selected>$langCode</option>";
-                }
-                ?>
+$langFiles = glob(__DIR__ . "/assets/languages/*.json");
+foreach ($langFiles as $file) {
+    $langCode = basename($file, ".json");
+    $selected = $lang === $langCode ? "selected" : "";
+    echo "<option value='$langCode' $selected>$langCode</option>";
+}
+?>
             </select>
         </div>
     </header>
@@ -781,7 +827,7 @@ $activeTab = isset($_GET['tab']) ? $_GET['tab'] : 'servers';
                 <div class="overviewcard">
                     <div class="overviewcard_icon"></div>
                     <div class="overviewcard_info">
-                        <?= $serverInfo['openSsl']; ?>
+                        <?=$serverInfo['openSsl'];?>
                     </div>
                 </div>
                 <div class="overviewcard">
@@ -796,19 +842,19 @@ $activeTab = isset($_GET['tab']) ? $_GET['tab'] : 'servers';
                     <div class="overviewcard_icon">MySQL</div>
                     <div class="overviewcard_info">
                         <?php
-                        error_reporting(0);
-                        $laraconfig = parse_ini_file('../usr/laragon.ini');
+error_reporting(0);
+$laraconfig = parse_ini_file('../usr/laragon.ini');
 
-                        $link = mysqli_connect('localhost', 'root', $laraconfig['MySQLRootPassword']);
-                        if (!$link) {
-                            $link = mysqli_connect('localhost', 'root', '');
-                        }
-                        if (!$link) {
-                            echo 'MySQL not running!';
-                        } else {
-                            printf("server version: %s\n", htmlspecialchars(mysqli_get_server_info($link)));
-                        }
-                        ?>
+$link = mysqli_connect('localhost', 'root', $laraconfig['MySQLRootPassword']);
+if (!$link) {
+    $link = mysqli_connect('localhost', 'root', '');
+}
+if (!$link) {
+    echo 'MySQL not running!';
+} else {
+    printf("server version: %s\n", htmlspecialchars(mysqli_get_server_info($link)));
+}
+?>
                     </div>
                 </div>
 
@@ -841,72 +887,72 @@ $activeTab = isset($_GET['tab']) ? $_GET['tab'] : 'servers';
 
             <div class="main-overview wrapper">
                 <?php
-                $ignored = array('favicon_io');
-                $folders = array_filter(glob('*'), 'is_dir');
+$ignored = array('favicon_io');
+$folders = array_filter(glob('*'), 'is_dir');
 
-                if ($laraconfig['SSLEnabled'] == 0 || $laraconfig['Port'] == 80) {
-                    $url = 'http';
-                } else {
-                    $url = 'https';
-                }
-                $ignore_dirs = array('.', '..', 'logs', 'access-logs', 'vendor', 'favicon_io', 'ablepro-90', 'assets');
-                foreach ($folders as $host) {
-                    if (in_array($host, $ignore_dirs) || !is_dir($host)) {
-                        continue;
-                    }
+if ($laraconfig['SSLEnabled'] == 0 || $laraconfig['Port'] == 80) {
+    $url = 'http';
+} else {
+    $url = 'https';
+}
+$ignore_dirs = array('.', '..', 'logs', 'access-logs', 'vendor', 'favicon_io', 'ablepro-90', 'assets');
+foreach ($folders as $host) {
+    if (in_array($host, $ignore_dirs) || !is_dir($host)) {
+        continue;
+    }
 
-                    $admin_link = '';
-                    $app_name = '';
-                    $avatar = '';
+    $admin_link = '';
+    $app_name = '';
+    $avatar = '';
 
-                    switch (true) {
-                        case (file_exists($host . '/core') || file_exists($host . '/web/core')):
-                            $app_name = ' Drupal ';
-                            $avatar = 'assets/Drupal.svg';
-                            $admin_link = '<a href="' . $url . '://' . htmlspecialchars($host) . '.local/user" target="_blank"><small style="font-size: 8px; color: #cccccc;">' . $app_name . '</small><br>Admin</a>';
-                            break;
-                        case file_exists($host . '/wp-admin'):
-                            $app_name = ' Wordpress ';
-                            $avatar = 'assets/Wordpress.png';
-                            $admin_link = '<a href="' . $url . '://' . htmlspecialchars($host) . '.local/wp-admin" target="_blank"><small style="font-size: 8px; color: #cccccc;">' . $app_name . '</small><br>Admin</a>';
-                            break;
-                        case file_exists($host . '/administrator'):
-                            $app_name = ' Joomla ';
-                            $avatar = 'assets/Joomla.png';
-                            $admin_link = '<a href="' . $url . '://' . htmlspecialchars($host) . '.local/administrator" target="_blank"><small style="font-size: 8px; color: #cccccc;">' . $app_name . '</small><br>Admin</a>';
-                            break;
-                        case file_exists($host . '/public/index.php') && is_dir($host . '/app') && file_exists($host . '/.env'):
-                            $app_name = ' Laravel ';
-                            $avatar = 'assets/Laravel.png';
-                            $admin_link = '';
-                            break;
-                        case file_exists($host . '/bin/console'):
-                            $app_name = ' Symfony ';
-                            $avatar = 'assets/Symfony.png';
-                            $admin_link = '<a href="' . $url . '://' . htmlspecialchars($host) . '.local/admin" target="_blank"><small style="font-size: 8px; color: #cccccc;">' . $app_name . '</small><br>Admin</a>';
-                            break;
-                        case (file_exists($host . '/') && is_dir($host . '/app.py') && is_dir($host . '/static') && file_exists($host . '/.env')):
-                            $app_name = ' Python ';
-                            $avatar = 'assets/Python.png';
-                            $admin_link = '<a href="' . $url . '://' . htmlspecialchars($host) . '.local/Public" target="_blank"><small style="font-size: 8px; color: #cccccc;">' . $app_name . '</small><br>Public Folder</a>';
+    switch (true) {
+        case (file_exists($host . '/core') || file_exists($host . '/web/core')):
+            $app_name = ' Drupal ';
+            $avatar = 'assets/Drupal.svg';
+            $admin_link = '<a href="' . $url . '://' . htmlspecialchars($host) . '.local/user" target="_blank"><small style="font-size: 8px; color: #cccccc;">' . $app_name . '</small><br>Admin</a>';
+            break;
+        case file_exists($host . '/wp-admin'):
+            $app_name = ' Wordpress ';
+            $avatar = 'assets/Wordpress.png';
+            $admin_link = '<a href="' . $url . '://' . htmlspecialchars($host) . '.local/wp-admin" target="_blank"><small style="font-size: 8px; color: #cccccc;">' . $app_name . '</small><br>Admin</a>';
+            break;
+        case file_exists($host . '/administrator'):
+            $app_name = ' Joomla ';
+            $avatar = 'assets/Joomla.png';
+            $admin_link = '<a href="' . $url . '://' . htmlspecialchars($host) . '.local/administrator" target="_blank"><small style="font-size: 8px; color: #cccccc;">' . $app_name . '</small><br>Admin</a>';
+            break;
+        case file_exists($host . '/public/index.php') && is_dir($host . '/app') && file_exists($host . '/.env'):
+            $app_name = ' Laravel ';
+            $avatar = 'assets/Laravel.png';
+            $admin_link = '';
+            break;
+        case file_exists($host . '/bin/console'):
+            $app_name = ' Symfony ';
+            $avatar = 'assets/Symfony.png';
+            $admin_link = '<a href="' . $url . '://' . htmlspecialchars($host) . '.local/admin" target="_blank"><small style="font-size: 8px; color: #cccccc;">' . $app_name . '</small><br>Admin</a>';
+            break;
+        case (file_exists($host . '/') && is_dir($host . '/app.py') && is_dir($host . '/static') && file_exists($host . '/.env')):
+            $app_name = ' Python ';
+            $avatar = 'assets/Python.png';
+            $admin_link = '<a href="' . $url . '://' . htmlspecialchars($host) . '.local/Public" target="_blank"><small style="font-size: 8px; color: #cccccc;">' . $app_name . '</small><br>Public Folder</a>';
 
-                            $command = 'python ' . htmlspecialchars($host) . '/app.py';
-                            exec($command, $output, $returnStatus);
-                            break;
-                        case file_exists($host . '/bin/cake'):
-                            $app_name = ' CakePHP ';
-                            $avatar = 'assets/CakePHP.png';
-                            $admin_link = '<a href="' . $url . '://' . htmlspecialchars($host) . '.local/admin" target="_blank"><small style="font-size: 8px; color: #cccccc;">' . $app_name . '</small><br>Admin</a>';
-                            break;
-                        default:
-                            $admin_link = '';
-                            $avatar = 'assets/Unknown.png';
-                            break;
-                    }
+            $command = 'python ' . htmlspecialchars($host) . '/app.py';
+            exec($command, $output, $returnStatus);
+            break;
+        case file_exists($host . '/bin/cake'):
+            $app_name = ' CakePHP ';
+            $avatar = 'assets/CakePHP.png';
+            $admin_link = '<a href="' . $url . '://' . htmlspecialchars($host) . '.local/admin" target="_blank"><small style="font-size: 8px; color: #cccccc;">' . $app_name . '</small><br>Admin</a>';
+            break;
+        default:
+            $admin_link = '';
+            $avatar = 'assets/Unknown.png';
+            break;
+    }
 
-                    echo '<div class="overviewcard_sites"><div class="overviewcard_avatar"><img src="' . $avatar . '" style="width:20px; height:20px;"></div><div class="overviewcard_icon"><a href="' . $url . '://' . htmlspecialchars($host) . '.local">' . htmlspecialchars($host) . '</a></div><div class="overviewcard_info">' . $admin_link . '</div></div>';
-                }
-                ?>
+    echo '<div class="overviewcard_sites"><div class="overviewcard_avatar"><img src="' . $avatar . '" style="width:20px; height:20px;"></div><div class="overviewcard_icon"><a href="' . $url . '://' . htmlspecialchars($host) . '.local">' . htmlspecialchars($host) . '</a></div><div class="overviewcard_info">' . $admin_link . '</div></div>';
+}
+?>
             </div>
         </div>
 
@@ -918,7 +964,7 @@ $activeTab = isset($_GET['tab']) ? $_GET['tab'] : 'servers';
                 <div class="header__search"><?php echo $translations['breadcrumb_server_mailbox'] ?? 'My Development Server Mailbox'; ?></div>
                 <div class="header__avatar"><?php echo $translations['welcome_back'] ?? 'Welcome Back!'; ?></div>
             </header>
-            <?php include 'assets/inbox/inbox.php'; ?>
+            <?php include 'assets/inbox/inbox.php';?>
         </div>
 
         <!--------------------------------------------->
@@ -927,7 +973,7 @@ $activeTab = isset($_GET['tab']) ? $_GET['tab'] : 'servers';
         <div class="tab-content <?php echo $activeTab === 'vitals' ? 'active' : ''; ?>" id="vitals">
             <header class="header">
                 <div class="header__search"><?php echo $translations['breadcrumb_server_vitals'] ?? 'My Development Server Vitals'; ?></div>
-                <div class="header__avatar"><?php echo $translations['welcome_back'] ?? 'Welcome Back'; ?></div>
+                <div class="header__avatar"><?php echo $translations['welcome_back'] ?? 'Welcome Back!'; ?></div>
             </header>
             <div class="container mt-5" style="width: 1440px!important;background-color: #f8f9fa;padding: 20px;border-radius: 5px;color=#000000">
                 <h1 style="text-align: center;color: #000000">Server's Vitals</h1>
@@ -972,8 +1018,6 @@ $activeTab = isset($_GET['tab']) ? $_GET['tab'] : 'servers';
             <?php echo $translations['made_with_love'] ?? "Made with <span style=\"color: #e25555;\">&hearts;</span> and powered by Laragon"; ?>
         </div>
     </footer>
-
-
 
     <script>
     // Sample data for uptime, memory usage, and disk usage charts
