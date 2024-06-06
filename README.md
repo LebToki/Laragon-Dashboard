@@ -54,7 +54,13 @@ $ignore_dirs = array('.', '..', 'logs', 'access-logs', 'vendor', 'favicon_io', '
 📢️ Thanks everyone for your support and words of love for Laragon Dashboard, I am committed to creating the best Stack Dashboard to support the ever growing community of Laragon
 
 # ![Screenshot of Laragon Dashboard Logo](assets/favicon/favicon-32x32.png)  Changelog
-### What's New in 2.3.4 June 06,2024
+### What's New in 2.3.5 June 06,2024
+- Dynamic Host Configuration fine-tuned #19
+- Dynamic Emails Directory Detection #19
+- Removed secondary Header from the Mailbox 
+
+<details>
+<summary> Version 2.3.4 June 06,2024</summary>
 - Language Loading and Selection: Added functionality to load language files and detect user language preference.
 - Server Status Display: Added functions to display server uptime, memory usage, and disk usage.
 - Query Parameter Handling: Improved handling of incoming query parameters.
@@ -67,6 +73,7 @@ $ignore_dirs = array('.', '..', 'logs', 'access-logs', 'vendor', 'favicon_io', '
 - WordPress Core Update Detection: Added functionality to detect if WordPress has any updates. (Plugins and Themes in the next version)
 - Local Sites Retrieval: Fetches configuration details for local sites based on server configuration files.
 - HTML Links Rendering: Renders HTML links for local sites with XSS prevention and includes control buttons for starting and stopping applications.
+</details>
 
 <details>
 <summary>Version in 2.3.3 · May 31, 2024</summary>
