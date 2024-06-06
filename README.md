@@ -47,6 +47,17 @@ Our UI automatically detects any projects and directories within your root direc
 $ignore_dirs = array('.', '..', 'logs', 'access-logs', 'vendor', 'favicon_io', 'assets');
 ```
 
+```[php]
+$domainSuffix = '.test'; // Set this according to user preference or configuration
+
+switch (true) {
+    case file_exists($host . '/wp-admin'):
+        $app_name = ' Wordpress ';
+        $avatar = 'assets/Wordpress.png';
+        $admin_link = '<a href="' . $url . '://' . htmlspecialchars($host) . $domainSuffix . '/wp-admin" target="_blank"><small style="font-size: 8px; color: #cccccc;">' . $app_name . '</small><br>Admin</a>';
+        break;
+```
+
 # ![Screenshot of Laragon Dashboard Logo](assets/favicon/favicon-32x32.png)  Feedback
 - We're confident that our dashboard will enhance your development experience and streamline your workflow. Try it out today and let us know what you think! Join the discussions and let's make Laragon Dashboard the best it can be.
 - Don't forget to star the project to stay up-to-date on future improvements, and please share your feedback with us. We're always looking for ways to make our dashboard even better for you.
