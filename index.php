@@ -3,8 +3,15 @@
 /**
  * Application: Laragon | Server Index Page
  * Description: This is the main index page for the Laragon server, displaying server info, server vitals, sendmail
- * mailbox and applications Author: Tarek Tarabichi <tarek@2tinteractive.com> Contributors: @LrkDev in v.2.1.2
- * improved CakePHP and Joomla detection Contributors: @luisAntonioLAGS in v.2.2.1 Spanish Language Version: 2.3.0
+ * mailbox and applications Author: Tarek Tarabichi <tarek@2tinteractive.com> 
+ * improved CakePHP and Joomla detection 
+ 
+ Contributors: 
+ - @LrkDev in v.2.1.2
+ - @luisAntonioLAGS in v.2.2.1 Spanish 
+ - @martic in 2.3.5 Dynamic Hostname Detection
+
+ Language Version: 2.3.5
  */
 
 //-----------------------------------------------------------------------------------
