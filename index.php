@@ -11,7 +11,7 @@
  - @luisAntonioLAGS in v.2.2.1 Spanish 
  - @martic in 2.3.5 Dynamic Hostname Detection
 
- Language Version: 2.3.5
+ Application Version: 2.3.6
  */
 
 //-----------------------------------------------------------------------------------
@@ -390,6 +390,7 @@ $activeTab = isset($_GET['tab']) ? $_GET['tab'] : 'servers';
     <link href="https://fonts.googleapis.com/css?family=Pt+Sans&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,700&display=swap">
     <link rel="stylesheet" href="assets/style.css">
+    <link rel="stylesheet" href="assets/custom.css">
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/css/bootstrap-grid.min.css" />
@@ -436,6 +437,35 @@ $activeTab = isset($_GET['tab']) ? $_GET['tab'] : 'servers';
             window.location.href = "?lang=" + lang;
         });
     });
+    function fetchServerVitals() {
+        $.ajax({
+            url: 'server_vitals.php',
+            method: 'GET',
+            dataType: 'json',
+            success: function(data) {
+                $('#uptime').text(data.uptime);
+                $('#memory-usage').text(data.memoryUsage);
+                $('#disk-usage').text(data.diskUsage);
+
+                // Update charts
+                uptimeChart.data.labels = data.uptimeLabels;
+                uptimeChart.data.datasets[0].data = data.uptimeData;
+                uptimeChart.update();
+
+                memoryUsageChart.data.labels = data.memoryUsageLabels;
+                memoryUsageChart.data.datasets[0].data = data.memoryUsageData;
+                memoryUsageChart.update();
+
+                diskUsageChart.data.labels = data.diskUsageLabels;
+                diskUsageChart.data.datasets[0].data = data.diskUsageData;
+                diskUsageChart.update();
+            }
+        });
+    }
+
+    // Fetch server vitals every 5 seconds
+    setInterval(fetchServerVitals, 5000);
+    fetchServerVitals();
     </script>
     <style>
     /*----------------------------------------*/
@@ -893,6 +923,11 @@ if (!$link) {
             </div>
 
             <div class="main-overview wrapper">
+                <div class="card-custom">
+                    <h2>Server Controls</h2>
+                    <button class="btn-custom" onclick="startServer()">Start Server</button>
+                    <button class="btn-custom" onclick="stopServer()">Stop Server</button>
+                </div>
                 <?php
 $ignored = array('favicon_io');
 $folders = array_filter(glob('*'), 'is_dir');
@@ -989,13 +1024,13 @@ foreach ($folders as $host) {
 
                     <div class="col-md-6">
                         <h2><?php echo $translations['uptime'] ?? 'Uptime'; ?></h2>
-                        <p><?php echo htmlspecialchars(shell_exec('uptime')); ?></p>
+                        <p id="uptime"><?php echo htmlspecialchars(shell_exec('uptime')); ?></p>
                         <canvas id="uptimeChart"></canvas>
                     </div>
 
                     <div class="col-md-6">
                         <h2><?php echo $translations['memory_usage'] ?? 'Memory Usage (in MB)'; ?></h2>
-                        <pre><?php echo htmlspecialchars(shell_exec('free -m')); ?></pre>
+                        <pre id="memory-usage"><?php echo htmlspecialchars(shell_exec('free -m')); ?></pre>
                         <canvas id="memoryUsageChart"></canvas>
                     </div>
 
@@ -1005,7 +1040,7 @@ foreach ($folders as $host) {
 
                     <div class="col-md-6">
                         <h2><?php echo $translations['disk_usage'] ?? 'Disk Usage'; ?></h2>
-                        <pre><?php echo htmlspecialchars(shell_exec('df -h')); ?></pre>
+                        <pre id="disk-usage"><?php echo htmlspecialchars(shell_exec('df -h')); ?></pre>
                         <!--				<canvas id="diskUsageChart"></canvas>-->
                     </div>
 
@@ -1014,6 +1049,18 @@ foreach ($folders as $host) {
             </div>
         </div>
     </div>
+
+    <script>
+    function startServer() {
+        alert('Starting server...');
+        // Add your server start logic here
+    }
+
+    function stopServer() {
+        alert('Stopping server...');
+        // Add your server stop logic here
+    }
+    </script>
     <!--------------------------------------------->
     <!-------------- Footer ------------->
     <!--------------------------------------------->
