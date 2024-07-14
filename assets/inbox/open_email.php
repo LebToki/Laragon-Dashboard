@@ -25,7 +25,7 @@ if (isset($_GET['email'])) {
         } else {
             // Decode and display content as HTML
             $decodedContent = htmlspecialchars_decode($content, ENT_QUOTES);
-            echo nl2br($decodedContent);
+            echo '<div class="email-content">' . nl2br($decodedContent) . '</div>';
         }
     } else {
         echo "Email not found.";
