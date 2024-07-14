@@ -4,7 +4,7 @@
 	 * Description: This is the main index page for the Laragon server, displaying server info and applications.
 	 * Author: Tarek Tarabichi <tarek@2tinteractive.com>
 	 * Contributors: LrkDev in v.2.3.3
-	 * Version: 2.3.2
+	 * Version: 2.3.6
 	 */
 	
 	// Set the directory path (modify as needed)
@@ -101,6 +101,12 @@
       });
 	</script>
 	<style>
+	.modal-custom {
+	    background-color: #ffffff;
+	    border-radius: 10px;
+	    padding: 20px;
+	    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+	}
       /*----------------------------------------*/
       /* ===== Scrollbar CSS ===== */
       /*----------------------------------------*/
@@ -664,6 +670,17 @@
 		</div>
 		
 		<div class="modal fade" id="emailModal" tabindex="-1" role="dialog">
+		    <div class="modal-dialog modal-lg">
+		        <div class="modal-content modal-custom">
+		            <div class="modal-header">
+		                <h5 class="modal-title">Email Content</h5>
+		                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+		                    <span aria-hidden="true">&times;</span>
+		                </button>
+		            </div>
+		            <div class="modal-body"></div>
+		        </div>
+		    </div>
 			<div class="modal-dialog modal-lg">
 				<div class="modal-content">
 					<div class="modal-body"></div>
