@@ -65,10 +65,34 @@ switch (true) {
 📢️ Thanks everyone for your support and words of love for Laragon Dashboard, I am committed to creating the best Stack Dashboard to support the ever growing community of Laragon
 
 # ![Screenshot of Laragon Dashboard Logo](assets/favicon/favicon-32x32.png)  Changelog
-### What's New in 2.3.5 June 06,2024
+### What's New in 2.3.6 July 14, 2024
+
+  ### Added
+ - Real-time server vitals fetching and dynamic UI updates (class anchors for now waiting for Laragon7 to see how this changes).
+ - New UI elements and functionality related to server controls in `index.php`.
+ - New styles for buttons, cards, and modals in `assets/style.css`.
+ - Added a class to start and stop the server (not yet functional)
+
+ ### Changed
+ - Refactored email handling in `assets/inbox/inbox.php` and `assets/inbox/open_email.php`.
+ - Updated JavaScript in `index.php` to dynamically update charts with real-time data.
+
+ ### Fixed
+ - Improved error handling for email file reading in `assets/inbox/open_email.php`.
+ - Corrected directory path handling in `assets/inbox/inbox.php`.
+
+ ### Removed
+ - Deprecated styles and unused CSS classes in `assets/style.css`.
+
+
+
+<details>
+<summary> Version 2.3.5 June 06,2024</summary>
+
 - Dynamic Host Configuration fine-tuned #19
 - Dynamic Emails Directory Detection #19
 - Removed secondary Header from the Mailbox 
+</details>
 
 <details>
 <summary> Version 2.3.4 June 06,2024</summary>
