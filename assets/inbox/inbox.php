@@ -79,6 +79,7 @@
       /* Your existing styles */
       .email-list {
           margin-top: 20px;
+          margin-bottom: 60px; /* Add space for footer */
       }
       .email-item {
           background-color: #f8f9fa;
@@ -100,6 +101,15 @@
       .email-date {
           font-size: 0.9em;
           color: #6c757d;
+      }
+      .footer {
+          position: fixed;
+          bottom: 0;
+          width: 100%;
+          background-color: #0b162c;
+          color: #ffffff;
+          text-align: center;
+          padding: 10px 0;
       }
 	</style>
 </head>
@@ -145,15 +155,26 @@
 				<div class="modal-content modal-custom">
 					<div class="modal-header">
 						<h5 class="modal-title">Email Content</h5>
-						<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-							<span aria-hidden="true">&times;</span>
-						</button>
+						<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 					</div>
 					<div class="modal-body"></div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+					</div>
 				</div>
 			</div>
 		</div>
 	</main>
+
+<!-- Footer -->
+<footer class="footer">
+	<div class="footer__copyright">
+		<?php echo $translations['default_footer'] ?? "&copy; " . date('Y') . " Tarek Tarabichi"; ?>
+	</div>
+	<div class="footer__signature">
+		<?php echo $translations['made_with_love'] ?? "Made with <span style=\"color: #e25555;\">&hearts;</span> and powered by Laragon"; ?>
+	</div>
+</footer>
 </div>
 
 
@@ -168,7 +189,8 @@
                 data: { email: email },
                 success: function(data) {
                     $('#emailModal .modal-body').html(data);
-                    $('#emailModal').modal('show');
+                    var emailModal = new bootstrap.Modal(document.getElementById('emailModal'));
+                    emailModal.show();
                 }
             });
         });
@@ -184,6 +206,13 @@
                 var text = $(this).text().toLowerCase();
                 $(this).toggle(text.indexOf(searchTerm) > -1);
             });
+        });
+
+        // Close modal when clicking outside
+        $(document).on('click', function(event) {
+            if ($(event.target).hasClass('modal')) {
+                $('#emailModal').modal('hide');
+            }
         });
     });
 </script>
