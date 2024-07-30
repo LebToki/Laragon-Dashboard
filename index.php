@@ -6,17 +6,18 @@
  * mailbox and applications
  * Author: Tarek Tarabichi <tarek@2tinteractive.com>
  * Improved CakePHP and Joomla detection
- * 
- * Contributors: 
+ *
+ * Contributors:
  * - @LrkDev in v.2.1.2
  * - @luisAntonioLAGS in v.2.2.1 Spanish
  * - @martic in 2.3.5 Dynamic Hostname Detection
- * 
- * Version: 2.3.6
+ *
+ * Version: 2.3.7
  */
 
 // Load language files
-function loadLanguage($lang) {
+function loadLanguage($lang)
+{
     $langFile = __DIR__ . "/assets/languages/{$lang}.json";
     if (file_exists($langFile)) {
         return json_decode(file_get_contents($langFile), true);
@@ -34,7 +35,8 @@ const SERVER_TYPES = [
 ];
 
 // Display server status
-function showServerStatus(): void {
+function showServerStatus(): void
+{
     echo '<h1>Server Status</h1>';
     // Display server uptime
     $uptime = shell_exec('uptime');
@@ -50,7 +52,8 @@ function showServerStatus(): void {
 }
 
 // Handle incoming query parameters
-function handleQueryParameter(string $param): void {
+function handleQueryParameter(string $param): void
+{
     switch ($param) {
         case 'info':
             phpinfo();
@@ -72,8 +75,14 @@ if (isset($_GET['q'])) {
     }
 }
 
+// Constants for clarity
+const SERVER_PHP = 'php';
+const SERVER_APACHE = 'apache';
+const SERVER_NGINX = 'nginx';
+
 // Retrieve server extensions
-function getServerExtensions(string $server, int $columns = 2): array {
+function getServerExtensions(string $server, int $columns = 2): array
+{
     switch ($server) {
         case SERVER_PHP:
             $extensions = get_loaded_extensions();
@@ -94,7 +103,8 @@ function getServerExtensions(string $server, int $columns = 2): array {
 }
 
 // Fetch PHP version
-function getPhpVersion(): array {
+function getPhpVersion(): array
+{
     $url = 'https://www.php.net/releases/index.php?json&version=7';
     $options = [
         "ssl" => [
@@ -123,31 +133,50 @@ function getPhpVersion(): array {
 }
 
 // Gather server information
-function serverInfo(): array {
-    $serverSoftware = $_SERVER['SERVER_SOFTWARE'] ?? 'Unknown Server Software';
-    $serverParts = explode(' ', $serverSoftware);
-
-    $httpdVer = $serverParts[0] ?? 'Unknown';
-    $openSslVer = isset($serverParts[2]) && strpos($serverParts[2], 'OpenSSL/') === 0 ? substr($serverParts[2], 8) : 'Not available';
-
-    $phpInfo = getPhpVersion();
-    $xdebugVersion = extension_loaded('xdebug') ? phpversion('xdebug') : 'Not installed';
-
-    return [
-        'httpdVer' => htmlspecialchars($httpdVer),
-        'openSsl' => htmlspecialchars($openSslVer),
-        'phpVer' => htmlspecialchars($phpInfo['currentVersion']),
-        'xDebug' => htmlspecialchars($xdebugVersion),
-        'docRoot' => htmlspecialchars($_SERVER['DOCUMENT_ROOT'] ?? '/var/www/html'),
-        'serverName' => htmlspecialchars($_SERVER['HTTP_HOST'] ?? 'localhost'),
-    ];
-}
+	function serverInfo(): array
+	{
+		$serverSoftware = $_SERVER['SERVER_SOFTWARE'] ?? 'Unknown Server Software';
+		$serverParts = explode(' ', $serverSoftware);
+		
+		$httpdVer = $serverParts[0] ?? 'Unknown';
+		$openSslVer = isset($serverParts[2]) && strpos($serverParts[2], 'OpenSSL/') === 0 ? substr($serverParts[2], 8) : 'Not available';
+		
+		$phpInfo = getPhpVersion();
+		$xdebugVersion = extension_loaded('xdebug') ? phpversion('xdebug') : 'Not installed';
+		
+		// Determine web server
+		$webServer = 'Unknown';
+		if (stripos($serverSoftware, 'apache') !== false) {
+			$webServer = 'Apache';
+		} elseif (stripos($serverSoftware, 'nginx') !== false) {
+			$webServer = 'Nginx';
+		} elseif (stripos($serverSoftware, 'litespeed') !== false) {
+			$webServer = 'LiteSpeed';
+		}
+		
+		// Determine PHP SAPI
+		$phpSapi = php_sapi_name();
+		$isFpm = (strpos($phpSapi, 'fpm') !== false);
+		
+		return [
+			'httpdVer' => htmlspecialchars($httpdVer),
+			'openSsl' => htmlspecialchars($openSslVer),
+			'phpVer' => htmlspecialchars($phpInfo['currentVersion']),
+			'xDebug' => htmlspecialchars($xdebugVersion),
+			'docRoot' => htmlspecialchars($_SERVER['DOCUMENT_ROOT'] ?? '/var/www/html'),
+			'serverName' => htmlspecialchars($_SERVER['HTTP_HOST'] ?? 'localhost'),
+			'webServer' => htmlspecialchars($webServer),
+			'phpSapi' => htmlspecialchars($phpSapi),
+			'isFpm' => $isFpm,
+		];
+	}
 
 // Retrieve MySQL version
-function getSQLVersion(): string {
+function getSQLVersion(): string
+{
     $output = shell_exec('mysql -V');
     if ($output === null) {
-        return "Unknown"; 
+        return "Unknown";
     }
 
     if (preg_match('@[0-9]+\.[0-9]+\.[0-9-\w]+@', $output, $version)) {
@@ -158,7 +187,8 @@ function getSQLVersion(): string {
 }
 
 // Generate PHP download and changelog links
-function phpDlLink(string $version, string $branch = '7', string $architecture = 'x64'): array {
+function phpDlLink(string $version, string $branch = '7', string $architecture = 'x64'): array
+{
     $versionEscaped = htmlspecialchars($version, ENT_QUOTES, 'UTF-8');
     $branchEscaped = htmlspecialchars($branch, ENT_QUOTES, 'UTF-8');
     $architectureEscaped = htmlspecialchars($architecture, ENT_QUOTES, 'UTF-8');
@@ -170,7 +200,8 @@ function phpDlLink(string $version, string $branch = '7', string $architecture =
 }
 
 // Determine site directory
-function getSiteDir(): string {
+function getSiteDir(): string
+{
     $drive = strtoupper(substr(PHP_OS, 0, 1));
     $rootDir = $drive . ':/laragon/etc/apache2/sites-enabled';
     if (strpos(strtolower($rootDir), 'c:') !== false) {
@@ -199,7 +230,8 @@ function getSiteDir(): string {
 }
 
 // Check for WordPress updates
-function checkWordPressUpdates($wpPath) {
+function checkWordPressUpdates($wpPath)
+{
     $command = "cd $wpPath && wp core check-update --format=json";
     $output = shell_exec($command);
 
@@ -213,7 +245,8 @@ function checkWordPressUpdates($wpPath) {
 }
 
 // Fetch local sites configuration
-function getLocalSites($server = 'apache', $ignoredFiles = ['.', '..', '00-default.conf']): array {
+function getLocalSites($server = 'apache', $ignoredFiles = ['.', '..', '00-default.conf']): array
+{
     try {
         $sitesDir = getSiteDir();
         $files = scandir($sitesDir);
@@ -269,7 +302,8 @@ function getLocalSites($server = 'apache', $ignoredFiles = ['.', '..', '00-defau
 }
 
 // Render HTML links for local sites
-function renderLinks(): string {
+function renderLinks(): string
+{
     ob_start();
     $sites = getLocalSites();
 
@@ -348,375 +382,375 @@ $activeTab = $_GET['tab'] ?? 'servers';
     <link rel="manifest" href="assets/favicon/site.webmanifest">
 
     <script>
-        $(document).ready(function() {
-            $('.tab').click(function() {
-                var tab_id = $(this).attr('data-tab');
+    $(document).ready(function() {
+        $('.tab').click(function() {
+            var tab_id = $(this).attr('data-tab');
 
-                $('.tab').removeClass('active');
-                $('.tab-content').removeClass('active');
+            $('.tab').removeClass('active');
+            $('.tab-content').removeClass('active');
 
-                $(this).addClass('active');
-                $("#" + tab_id).addClass('active');
-            });
-
-            $('#language-selector').change(function() {
-                var lang = $(this).val();
-                window.location.href = "?lang=" + lang;
-            });
+            $(this).addClass('active');
+            $("#" + tab_id).addClass('active');
         });
 
-        function fetchServerVitals() {
-            $.ajax({
-                url: 'server_vitals.php',
-                method: 'GET',
-                dataType: 'json',
-                success: function(data) {
-                    $('#uptime').text(data.uptime);
-                    $('#memory-usage').text(data.memoryUsage);
-                    $('#disk-usage').text(data.diskUsage);
+        $('#language-selector').change(function() {
+            var lang = $(this).val();
+            window.location.href = "?lang=" + lang;
+        });
+    });
 
-                    // Update charts
-                    uptimeChart.data.labels = data.uptimeLabels;
-                    uptimeChart.data.datasets[0].data = data.uptimeData;
-                    uptimeChart.update();
+    function fetchServerVitals() {
+        $.ajax({
+            url: 'server_vitals.php',
+            method: 'GET',
+            dataType: 'json',
+            success: function(data) {
+                $('#uptime').text(data.uptime);
+                $('#memory-usage').text(data.memoryUsage);
+                $('#disk-usage').text(data.diskUsage);
 
-                    memoryUsageChart.data.labels = data.memoryUsageLabels;
-                    memoryUsageChart.data.datasets[0].data = data.memoryUsageData;
-                    memoryUsageChart.update();
+                // Update charts
+                uptimeChart.data.labels = data.uptimeLabels;
+                uptimeChart.data.datasets[0].data = data.uptimeData;
+                uptimeChart.update();
 
-                    diskUsageChart.data.labels = data.diskUsageLabels;
-                    diskUsageChart.data.datasets[0].data = data.diskUsageData;
-                    diskUsageChart.update();
-                }
-            });
-        }
+                memoryUsageChart.data.labels = data.memoryUsageLabels;
+                memoryUsageChart.data.datasets[0].data = data.memoryUsageData;
+                memoryUsageChart.update();
 
-        // Fetch server vitals every 5 seconds
-        setInterval(fetchServerVitals, 5000);
-        fetchServerVitals();
+                diskUsageChart.data.labels = data.diskUsageLabels;
+                diskUsageChart.data.datasets[0].data = data.diskUsageData;
+                diskUsageChart.update();
+            }
+        });
+    }
+
+    // Fetch server vitals every 5 seconds
+    setInterval(fetchServerVitals, 5000);
+    fetchServerVitals();
     </script>
     <style>
-        /* Scrollbar CSS */
-        * {
-            scrollbar-width: auto;
-            scrollbar-color: #ec1c7e #ffffff;
+    /* Scrollbar CSS */
+    * {
+        scrollbar-width: auto;
+        scrollbar-color: #ec1c7e #ffffff;
+    }
+
+    *::-webkit-scrollbar {
+        width: 16px;
+    }
+
+    *::-webkit-scrollbar-track {
+        background: #ffffff;
+    }
+
+    *::-webkit-scrollbar-thumb {
+        background-color: #ec1c7e;
+        border-radius: 10px;
+        border: 3px solid #ffffff;
+    }
+
+    .grid-container {
+        grid-area: main;
+        background: url(assets/background2.jpg) no-repeat center center fixed;
+        background-size: cover;
+    }
+
+    nav {
+        grid-area: nav;
+        align-items: start;
+        justify-content: space-between;
+        padding: 0 20px;
+        background-color: #0B162C !important;
+        color: #ffffff !important;
+        font-family: "Poppins", Sans-serif, serif !important;
+    }
+
+    .tab {
+        align-items: center;
+        background-color: #0A66C2;
+        border: 0;
+        border-radius: 100px;
+        box-sizing: border-box;
+        color: #ffffff;
+        cursor: pointer;
+        display: inline-flex;
+        font-family: "Poppins", Sans-serif, serif !important;
+        font-size: 16px;
+        font-weight: 600;
+        justify-content: center;
+        line-height: 20px;
+        max-width: 480px;
+        min-height: 40px;
+        min-width: 0;
+        overflow: hidden;
+        padding: 0 20px;
+        text-align: center;
+        touch-action: manipulation;
+        transition: background-color 0.167s cubic-bezier(0.4, 0, 0.2, 1) 0s, box-shadow 0.167s cubic-bezier(0.4, 0, 0.2, 1) 0s, color 0.167s cubic-bezier(0.4, 0, 0.2, 1) 0s;
+        user-select: none;
+        -webkit-user-select: none;
+        vertical-align: middle;
+    }
+
+    .tab:hover,
+    .tab:focus {
+        background-color: #16437E;
+        color: #ffffff;
+    }
+
+    .tab:disabled {
+        cursor: not-allowed;
+        background: rgba(0, 0, 0, .08);
+        color: rgba(0, 0, 0, .3);
+    }
+
+    .tab.active {
+        background: #09223b;
+        color: rgb(255, 255, 255, .7);
+    }
+
+    .tab-content {
+        display: none;
+    }
+
+    .tab-content.active {
+        display: block;
+    }
+
+    select#language-selector {
+        background-color: #fff;
+        padding: 5px;
+        border-radius: 25px;
+        border: 1px solid #ccc;
+    }
+
+    .main-overview {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(265px, 1fr));
+        grid-auto-rows: 71px;
+        grid-gap: 20px;
+        margin: 10px;
+    }
+
+    .wrapper {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 10px;
+    }
+
+    .overviewcard {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 15px;
+        background-color: #00adef;
+        font-family: "Rubik", Sans-serif, serif;
+        border-radius: 5px 5px;
+        font-size: 16px;
+        color: #FFFFFF !important;
+        line-height: 1;
+        height: 31px;
+    }
+
+    .overviewcard_sites {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 15px;
+        background-color: #023e8a;
+        font-family: "Rubik", Sans-serif, serif;
+        border-radius: 5px 5px;
+        font-size: 16px;
+        color: #FFFFFF !important;
+        line-height: 1;
+        height: 31px;
+    }
+
+    .overviewcard_info {
+        font-family: "Rubik", Sans-serif, serif;
+        text-transform: uppercase;
+        font-size: 16px !important;
+        color: #FFFFFF !important;
+    }
+
+    .overviewcard_icon {
+        font-family: "Rubik", Sans-serif, serif;
+        text-transform: uppercase;
+        font-size: 16px !important;
+        color: #FFFFFF !important;
+    }
+
+    .overviewcard4 {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 15px;
+        background-color: #031A24;
+        font-family: "Rubik", Sans-serif, serif;
+        border-radius: 5px 5px;
+        font-size: 16px;
+        color: #FFFFFF !important;
+        line-height: 1;
+        height: 31px;
+    }
+
+    .main-cards {
+        column-count: 0;
+        column-gap: 20px;
+        margin: 20px;
+    }
+
+    .card {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 100%;
+        background-color: #f1faee;
+        margin-bottom: 20px;
+        -webkit-column-break-inside: avoid;
+        padding: 24px;
+        box-sizing: border-box;
+    }
+
+    .card:first-child {
+        height: 300px;
+    }
+
+    .card:nth-child(2) {
+        height: 200px;
+    }
+
+    .card:nth-child(3) {
+        height: 265px;
+    }
+
+    .saturate {
+        filter: saturate(3);
+    }
+
+    .grayscale {
+        filter: grayscale(100%);
+    }
+
+    .contrast {
+        filter: contrast(160%);
+    }
+
+    .brightness {
+        filter: brightness(0.25);
+    }
+
+    .blur {
+        filter: blur(3px);
+    }
+
+    .invert {
+        filter: invert(100%);
+    }
+
+    .sepia {
+        filter: sepia(100%);
+    }
+
+    .huerotate {
+        filter: hue-rotate(180deg);
+    }
+
+    .rss.opacity {
+        filter: opacity(50%);
+    }
+
+    .sites {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(275px, 1fr));
+        grid-gap: 20px;
+        margin: 20px;
+    }
+
+    .sites li {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 100%;
+        background: #560bad;
+        color: #ffffff;
+        font-family: 'Rubik', sans-serif;
+        font-size: 14px;
+        text-align: left;
+        text-transform: uppercase;
+        margin-bottom: 20px;
+        -webkit-column-break-inside: avoid;
+        padding: 24px;
+        box-sizing: border-box;
+    }
+
+    .sites li:hover {
+        box-shadow: 0 0 15px 0 #bbb;
+    }
+
+    .sites li:hover svg {
+        fill: #ffffff;
+    }
+
+    .sites li:hover a {
+        color: #ffffff;
+    }
+
+    .sites li a {
+        display: block;
+        padding-left: 48px;
+        color: #f2f2f2;
+        transition: color 250ms ease-in-out;
+    }
+
+    .sites img {
+        position: absolute;
+        margin: 8px 8px 8px -40px;
+        fill: #f2f2f2;
+        transition: fill 250ms ease-in-out;
+    }
+
+    .sites svg {
+        position: absolute;
+        margin: 16px 16px 16px -40px;
+        fill: #f2f2f2;
+        transition: fill 250ms ease-in-out;
+    }
+
+    .footer {
+        grid-area: footer;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 16px;
+        background-color: #0b162c;
+        color: #ffffff;
+    }
+
+    @media (max-width: 600px) {
+        .menu-icon {
+            font-size: 30px;
         }
 
-        *::-webkit-scrollbar {
-            width: 16px;
-        }
-
-        *::-webkit-scrollbar-track {
-            background: #ffffff;
-        }
-
-        *::-webkit-scrollbar-thumb {
-            background-color: #ec1c7e;
-            border-radius: 10px;
-            border: 3px solid #ffffff;
-        }
-
-        .grid-container {
-            grid-area: main;
-            background: url(assets/background2.jpg) no-repeat center center fixed;
-            background-size: cover;
-        }
-
-        nav {
-            grid-area: nav;
-            align-items: start;
-            justify-content: space-between;
-            padding: 0 20px;
-            background-color: #0B162C !important;
-            color: #ffffff !important;
-            font-family: "Poppins", Sans-serif, serif !important;
-        }
-
-        .tab {
-            align-items: center;
-            background-color: #0A66C2;
-            border: 0;
-            border-radius: 100px;
-            box-sizing: border-box;
-            color: #ffffff;
-            cursor: pointer;
-            display: inline-flex;
-            font-family: "Poppins", Sans-serif, serif !important;
-            font-size: 16px;
-            font-weight: 600;
-            justify-content: center;
-            line-height: 20px;
-            max-width: 480px;
-            min-height: 40px;
-            min-width: 0;
-            overflow: hidden;
-            padding: 0 20px;
-            text-align: center;
-            touch-action: manipulation;
-            transition: background-color 0.167s cubic-bezier(0.4, 0, 0.2, 1) 0s, box-shadow 0.167s cubic-bezier(0.4, 0, 0.2, 1) 0s, color 0.167s cubic-bezier(0.4, 0, 0.2, 1) 0s;
-            user-select: none;
-            -webkit-user-select: none;
-            vertical-align: middle;
-        }
-
-        .tab:hover,
-        .tab:focus {
-            background-color: #16437E;
-            color: #ffffff;
-        }
-
-        .tab:disabled {
-            cursor: not-allowed;
-            background: rgba(0, 0, 0, .08);
-            color: rgba(0, 0, 0, .3);
-        }
-
-        .tab.active {
-            background: #09223b;
-            color: rgb(255, 255, 255, .7);
-        }
-
-        .tab-content {
+        .sidenav {
             display: none;
         }
 
-        .tab-content.active {
+        .sidenav.active {
             display: block;
         }
+    }
 
-        select#language-selector {
-            background-color: #fff;
-            padding: 5px;
-            border-radius: 25px;
-            border: 1px solid #ccc;
+    @media (min-width: 601px) {
+        .menu-icon {
+            font-size: 40px;
         }
 
-        .main-overview {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(265px, 1fr));
-            grid-auto-rows: 71px;
-            grid-gap: 20px;
-            margin: 10px;
-        }
-
-        .wrapper {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 10px;
-        }
-
-        .overviewcard {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 15px;
-            background-color: #00adef;
-            font-family: "Rubik", Sans-serif, serif;
-            border-radius: 5px 5px;
-            font-size: 16px;
-            color: #FFFFFF !important;
-            line-height: 1;
-            height: 31px;
-        }
-
-        .overviewcard_sites {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 15px;
-            background-color: #023e8a;
-            font-family: "Rubik", Sans-serif, serif;
-            border-radius: 5px 5px;
-            font-size: 16px;
-            color: #FFFFFF !important;
-            line-height: 1;
-            height: 31px;
-        }
-
-        .overviewcard_info {
-            font-family: "Rubik", Sans-serif, serif;
-            text-transform: uppercase;
-            font-size: 16px !important;
-            color: #FFFFFF !important;
-        }
-
-        .overviewcard_icon {
-            font-family: "Rubik", Sans-serif, serif;
-            text-transform: uppercase;
-            font-size: 16px !important;
-            color: #FFFFFF !important;
-        }
-
-        .overviewcard4 {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 15px;
-            background-color: #031A24;
-            font-family: "Rubik", Sans-serif, serif;
-            border-radius: 5px 5px;
-            font-size: 16px;
-            color: #FFFFFF !important;
-            line-height: 1;
-            height: 31px;
-        }
-
-        .main-cards {
-            column-count: 0;
-            column-gap: 20px;
-            margin: 20px;
-        }
-
-        .card {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            width: 100%;
-            background-color: #f1faee;
-            margin-bottom: 20px;
-            -webkit-column-break-inside: avoid;
-            padding: 24px;
-            box-sizing: border-box;
-        }
-
-        .card:first-child {
-            height: 300px;
-        }
-
-        .card:nth-child(2) {
-            height: 200px;
-        }
-
-        .card:nth-child(3) {
-            height: 265px;
-        }
-
-        .saturate {
-            filter: saturate(3);
-        }
-
-        .grayscale {
-            filter: grayscale(100%);
-        }
-
-        .contrast {
-            filter: contrast(160%);
-        }
-
-        .brightness {
-            filter: brightness(0.25);
-        }
-
-        .blur {
-            filter: blur(3px);
-        }
-
-        .invert {
-            filter: invert(100%);
-        }
-
-        .sepia {
-            filter: sepia(100%);
-        }
-
-        .huerotate {
-            filter: hue-rotate(180deg);
-        }
-
-        .rss.opacity {
-            filter: opacity(50%);
-        }
-
-        .sites {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(275px, 1fr));
-            grid-gap: 20px;
-            margin: 20px;
-        }
-
-        .sites li {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            width: 100%;
-            background: #560bad;
-            color: #ffffff;
-            font-family: 'Rubik', sans-serif;
-            font-size: 14px;
-            text-align: left;
-            text-transform: uppercase;
-            margin-bottom: 20px;
-            -webkit-column-break-inside: avoid;
-            padding: 24px;
-            box-sizing: border-box;
-        }
-
-        .sites li:hover {
-            box-shadow: 0 0 15px 0 #bbb;
-        }
-
-        .sites li:hover svg {
-            fill: #ffffff;
-        }
-
-        .sites li:hover a {
-            color: #ffffff;
-        }
-
-        .sites li a {
+        .sidenav {
             display: block;
-            padding-left: 48px;
-            color: #f2f2f2;
-            transition: color 250ms ease-in-out;
         }
-
-        .sites img {
-            position: absolute;
-            margin: 8px 8px 8px -40px;
-            fill: #f2f2f2;
-            transition: fill 250ms ease-in-out;
-        }
-
-        .sites svg {
-            position: absolute;
-            margin: 16px 16px 16px -40px;
-            fill: #f2f2f2;
-            transition: fill 250ms ease-in-out;
-        }
-
-        .footer {
-            grid-area: footer;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0 16px;
-            background-color: #0b162c;
-            color: #ffffff;
-        }
-
-        @media (max-width: 600px) {
-            .menu-icon {
-                font-size: 30px;
-            }
-
-            .sidenav {
-                display: none;
-            }
-
-            .sidenav.active {
-                display: block;
-            }
-        }
-
-        @media (min-width: 601px) {
-            .menu-icon {
-                font-size: 40px;
-            }
-
-            .sidenav {
-                display: block;
-            }
-        }
+    }
     </style>
 </head>
 
@@ -725,30 +759,30 @@ $activeTab = $_GET['tab'] ?? 'servers';
         <h4><?php echo $translations['header'] ?? 'Header'; ?></h4>
 
         <?php
-        $currentTime = new DateTime();
-        $hours = $currentTime->format('H');
+$currentTime = new DateTime();
+$hours = $currentTime->format('H');
 
-        if ($hours < 12) {
-            $greeting = $translations['good_morning'] ?? 'Good morning';
-        } elseif ($hours < 18) {
-            $greeting = $translations['good_afternoon'] ?? 'Good afternoon';
-        } else {
-            $greeting = $translations['good_evening'] ?? 'Good evening';
-        }
+if ($hours < 12) {
+    $greeting = $translations['good_morning'] ?? 'Good morning';
+} elseif ($hours < 18) {
+    $greeting = $translations['good_afternoon'] ?? 'Good afternoon';
+} else {
+    $greeting = $translations['good_evening'] ?? 'Good evening';
+}
 
-        echo "<h4>" . $greeting . "!</h4>";
-        ?>
+echo "<h4>" . $greeting . "!</h4>";
+?>
 
         <div>
             <select id="language-selector">
                 <?php
-                $langFiles = glob(__DIR__ . "/assets/languages/*.json");
-                foreach ($langFiles as $file) {
-                    $langCode = basename($file, ".json");
-                    $selected = $lang === $langCode ? "selected" : "";
-                    echo "<option value='$langCode' $selected>$langCode</option>";
-                }
-                ?>
+$langFiles = glob(__DIR__ . "/assets/languages/*.json");
+foreach ($langFiles as $file) {
+    $langCode = basename($file, ".json");
+    $selected = $lang === $langCode ? "selected" : "";
+    echo "<option value='$langCode' $selected>$langCode</option>";
+}
+?>
             </select>
         </div>
     </header>
@@ -771,12 +805,22 @@ $activeTab = $_GET['tab'] ?? 'servers';
                     <div class="overviewcard_info"><img src="assets/Server.png" style="width:64px;"></div>
                 </div>
 
-                <div class="overviewcard">
+                <?php $serverInfo = serverInfo();?> <div class="overviewcard">
                     <div class="overviewcard_icon"></div>
                     <div class="overviewcard_info">
                         <?php echo htmlspecialchars($_SERVER['SERVER_SOFTWARE']); ?>
                     </div>
                 </div>
+							
+							<div class="overviewcard">
+								<div class="overviewcard_icon"><?php echo $translations['web_server'] ?? 'Web Server'; ?></div>
+								<div class="overviewcard_info"><?php echo $serverInfo['webServer']; ?></div>
+							</div>
+							<div class="overviewcard">
+								<div class="overviewcard_icon">PHP <?php echo ($serverInfo['isFpm']) ? 'FPM' : 'SAPI'; ?></div>
+								<div class="overviewcard_info"><?php echo $serverInfo['phpSapi']; ?></div>
+							</div>
+
                 <div class="overviewcard">
                     <div class="overviewcard_icon"></div>
                     <div class="overviewcard_info">
@@ -795,19 +839,19 @@ $activeTab = $_GET['tab'] ?? 'servers';
                     <div class="overviewcard_icon">MySQL</div>
                     <div class="overviewcard_info">
                         <?php
-                        error_reporting(0);
-                        $laraconfig = parse_ini_file('../usr/laragon.ini');
+error_reporting(0);
+$laraconfig = parse_ini_file('../usr/laragon.ini');
 
-                        $link = mysqli_connect('localhost', 'root', $laraconfig['MySQLRootPassword']);
-                        if (!$link) {
-                            $link = mysqli_connect('localhost', 'root', '');
-                        }
-                        if (!$link) {
-                            echo 'MySQL not running!';
-                        } else {
-                            printf("server version: %s\n", htmlspecialchars(mysqli_get_server_info($link)));
-                        }
-                        ?>
+$link = mysqli_connect('localhost', 'root', $laraconfig['MySQLRootPassword']);
+if (!$link) {
+    $link = mysqli_connect('localhost', 'root', '');
+}
+if (!$link) {
+    echo 'MySQL not running!';
+} else {
+    printf("server version: %s\n", htmlspecialchars(mysqli_get_server_info($link)));
+}
+?>
                     </div>
                 </div>
 
@@ -848,72 +892,72 @@ $activeTab = $_GET['tab'] ?? 'servers';
 
             <div class="main-overview wrapper">
                 <?php
-                $ignored = ['favicon_io'];
-                $folders = array_filter(glob('*'), 'is_dir');
+$ignored = ['favicon_io'];
+$folders = array_filter(glob('*'), 'is_dir');
 
-                if ($laraconfig['SSLEnabled'] == 0 || $laraconfig['Port'] == 80) {
-                    $url = 'http';
-                } else {
-                    $url = 'https';
-                }
-                $ignore_dirs = ['.', '..', 'logs', 'access-logs', 'vendor', 'favicon_io', 'ablepro-90', 'assets'];
-                foreach ($folders as $host) {
-                    if (in_array($host, $ignore_dirs) || !is_dir($host)) {
-                        continue;
-                    }
+if ($laraconfig['SSLEnabled'] == 0 || $laraconfig['Port'] == 80) {
+    $url = 'http';
+} else {
+    $url = 'https';
+}
+$ignore_dirs = ['.', '..', 'logs', 'access-logs', 'vendor', 'favicon_io', 'ablepro-90', 'assets'];
+foreach ($folders as $host) {
+    if (in_array($host, $ignore_dirs) || !is_dir($host)) {
+        continue;
+    }
 
-                    $admin_link = '';
-                    $app_name = '';
-                    $avatar = '';
+    $admin_link = '';
+    $app_name = '';
+    $avatar = '';
 
-                    switch (true) {
-                        case (file_exists($host . '/core') || file_exists($host . '/web/core')):
-                            $app_name = ' Drupal ';
-                            $avatar = 'assets/Drupal.svg';
-                            $admin_link = '<a href="' . $url . '://' . htmlspecialchars($host) . '.local/user" target="_blank"><small style="font-size: 8px; color: #cccccc;">' . $app_name . '</small><br>Admin</a>';
-                            break;
-                        case file_exists($host . '/wp-admin'):
-                            $app_name = ' Wordpress ';
-                            $avatar = 'assets/Wordpress.png';
-                            $admin_link = '<a href="' . $url . '://' . htmlspecialchars($host) . '.local/wp-admin" target="_blank"><small style="font-size: 8px; color: #cccccc;">' . $app_name . '</small><br>Admin</a>';
-                            break;
-                        case file_exists($host . '/administrator'):
-                            $app_name = ' Joomla ';
-                            $avatar = 'assets/Joomla.png';
-                            $admin_link = '<a href="' . $url . '://' . htmlspecialchars($host) . '.local/administrator" target="_blank"><small style="font-size: 8px; color: #cccccc;">' . $app_name . '</small><br>Admin</a>';
-                            break;
-                        case file_exists($host . '/public/index.php') && is_dir($host . '/app') && file_exists($host . '/.env'):
-                            $app_name = ' Laravel ';
-                            $avatar = 'assets/Laravel.png';
-                            $admin_link = '';
-                            break;
-                        case file_exists($host . '/bin/console'):
-                            $app_name = ' Symfony ';
-                            $avatar = 'assets/Symfony.png';
-                            $admin_link = '<a href="' . $url . '://' . htmlspecialchars($host) . '.local/admin" target="_blank"><small style="font-size: 8px; color: #cccccc;">' . $app_name . '</small><br>Admin</a>';
-                            break;
-                        case (file_exists($host . '/') && is_dir($host . '/app.py') && is_dir($host . '/static') && file_exists($host . '/.env')):
-                            $app_name = ' Python ';
-                            $avatar = 'assets/Python.png';
-                            $admin_link = '<a href="' . $url . '://' . htmlspecialchars($host) . '.local/Public" target="_blank"><small style="font-size: 8px; color: #cccccc;">' . $app_name . '</small><br>Public Folder</a>';
+    switch (true) {
+        case (file_exists($host . '/core') || file_exists($host . '/web/core')):
+            $app_name = ' Drupal ';
+            $avatar = 'assets/Drupal.svg';
+            $admin_link = '<a href="' . $url . '://' . htmlspecialchars($host) . '.local/user" target="_blank"><small style="font-size: 8px; color: #cccccc;">' . $app_name . '</small><br>Admin</a>';
+            break;
+        case file_exists($host . '/wp-admin'):
+            $app_name = ' Wordpress ';
+            $avatar = 'assets/Wordpress.png';
+            $admin_link = '<a href="' . $url . '://' . htmlspecialchars($host) . '.local/wp-admin" target="_blank"><small style="font-size: 8px; color: #cccccc;">' . $app_name . '</small><br>Admin</a>';
+            break;
+        case file_exists($host . '/administrator'):
+            $app_name = ' Joomla ';
+            $avatar = 'assets/Joomla.png';
+            $admin_link = '<a href="' . $url . '://' . htmlspecialchars($host) . '.local/administrator" target="_blank"><small style="font-size: 8px; color: #cccccc;">' . $app_name . '</small><br>Admin</a>';
+            break;
+        case file_exists($host . '/public/index.php') && is_dir($host . '/app') && file_exists($host . '/.env'):
+            $app_name = ' Laravel ';
+            $avatar = 'assets/Laravel.png';
+            $admin_link = '';
+            break;
+        case file_exists($host . '/bin/console'):
+            $app_name = ' Symfony ';
+            $avatar = 'assets/Symfony.png';
+            $admin_link = '<a href="' . $url . '://' . htmlspecialchars($host) . '.local/admin" target="_blank"><small style="font-size: 8px; color: #cccccc;">' . $app_name . '</small><br>Admin</a>';
+            break;
+        case (file_exists($host . '/') && is_dir($host . '/app.py') && is_dir($host . '/static') && file_exists($host . '/.env')):
+            $app_name = ' Python ';
+            $avatar = 'assets/Python.png';
+            $admin_link = '<a href="' . $url . '://' . htmlspecialchars($host) . '.local/Public" target="_blank"><small style="font-size: 8px; color: #cccccc;">' . $app_name . '</small><br>Public Folder</a>';
 
-                            $command = 'python ' . htmlspecialchars($host) . '/app.py';
-                            exec($command, $output, $returnStatus);
-                            break;
-                        case file_exists($host . '/bin/cake'):
-                            $app_name = ' CakePHP ';
-                            $avatar = 'assets/CakePHP.png';
-                            $admin_link = '<a href="' . $url . '://' . htmlspecialchars($host) . '.local/admin" target="_blank"><small style="font-size: 8px; color: #cccccc;">' . $app_name . '</small><br>Admin</a>';
-                            break;
-                        default:
-                            $admin_link = '';
-                            $avatar = 'assets/Unknown.png';
-                            break;
-                    }
+            $command = 'python ' . htmlspecialchars($host) . '/app.py';
+            exec($command, $output, $returnStatus);
+            break;
+        case file_exists($host . '/bin/cake'):
+            $app_name = ' CakePHP ';
+            $avatar = 'assets/CakePHP.png';
+            $admin_link = '<a href="' . $url . '://' . htmlspecialchars($host) . '.local/admin" target="_blank"><small style="font-size: 8px; color: #cccccc;">' . $app_name . '</small><br>Admin</a>';
+            break;
+        default:
+            $admin_link = '';
+            $avatar = 'assets/Unknown.png';
+            break;
+    }
 
-                    echo '<div class="overviewcard_sites"><div class="overviewcard_avatar"><img src="' . $avatar . '" style="width:20px; height:20px;"></div><div class="overviewcard_icon"><a href="' . $url . '://' . htmlspecialchars($host) . '.local">' . htmlspecialchars($host) . '</a></div><div class="overviewcard_info">' . $admin_link . '</div></div>';
-                }
-                ?>
+    echo '<div class="overviewcard_sites"><div class="overviewcard_avatar"><img src="' . $avatar . '" style="width:20px; height:20px;"></div><div class="overviewcard_icon"><a href="' . $url . '://' . htmlspecialchars($host) . '.local">' . htmlspecialchars($host) . '</a></div><div class="overviewcard_info">' . $admin_link . '</div></div>';
+}
+?>
             </div>
         </div>
 
@@ -964,15 +1008,15 @@ $activeTab = $_GET['tab'] ?? 'servers';
     </div>
 
     <script>
-        function startServer() {
-            alert('Starting server...');
-            // Add your server start logic here
-        }
+    function startServer() {
+        alert('Starting server...');
+        // Add your server start logic here
+    }
 
-        function stopServer() {
-            alert('Stopping server...');
-            // Add your server stop logic here
-        }
+    function stopServer() {
+        alert('Stopping server...');
+        // Add your server stop logic here
+    }
     </script>
 
     <footer class="footer">
@@ -985,86 +1029,86 @@ $activeTab = $_GET['tab'] ?? 'servers';
     </footer>
 
     <script>
-        const uptimeData = [ /* Add your uptime data here */ ];
-        const memoryUsageData = [ /* Add your memory usage data here */ ];
-        const diskUsageData = [ /* Add your disk usage data here */ ];
+    const uptimeData = [ /* Add your uptime data here */ ];
+    const memoryUsageData = [ /* Add your memory usage data here */ ];
+    const diskUsageData = [ /* Add your disk usage data here */ ];
 
-        const ctxUptime = document.getElementById('uptimeChart').getContext('2d');
-        const uptimeChart = new Chart(ctxUptime, {
-            type: 'line',
-            data: {
-                labels: ['Time1', 'Time2', 'Time3'],
-                datasets: [{
-                    label: 'Uptime',
-                    data: uptimeData,
-                    backgroundColor: 'rgba(54, 162, 235, 0.2)',
-                    borderColor: 'rgba(54, 162, 235, 1)',
-                    borderWidth: 1
-                }]
-            },
-            options: {
-                scales: {
-                    y: {
-                        beginAtZero: true
-                    }
+    const ctxUptime = document.getElementById('uptimeChart').getContext('2d');
+    const uptimeChart = new Chart(ctxUptime, {
+        type: 'line',
+        data: {
+            labels: ['Time1', 'Time2', 'Time3'],
+            datasets: [{
+                label: 'Uptime',
+                data: uptimeData,
+                backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                borderColor: 'rgba(54, 162, 235, 1)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true
                 }
             }
-        });
+        }
+    });
 
-        const ctxMemory = document.getElementById('memoryUsageChart').getContext('2d');
-        const memoryUsageChart = new Chart(ctxMemory, {
-            type: 'bar',
-            data: {
-                labels: ['Total', 'Used', 'Free'],
-                datasets: [{
-                    label: 'Memory Usage (MB)',
-                    data: memoryUsageData,
-                    backgroundColor: [
-                        'rgba(255, 99, 132, 0.2)',
-                        'rgba(54, 162, 235, 0.2)',
-                        'rgba(75, 192, 192, 0.2)'
-                    ],
-                    borderColor: [
-                        'rgba(255, 99, 132, 1)',
-                        'rgba(54, 162, 235, 1)',
-                        'rgba(75, 192, 192, 1)'
-                    ],
-                    borderWidth: 1
-                }]
-            },
-            options: {
-                scales: {
-                    y: {
-                        beginAtZero: true
-                    }
+    const ctxMemory = document.getElementById('memoryUsageChart').getContext('2d');
+    const memoryUsageChart = new Chart(ctxMemory, {
+        type: 'bar',
+        data: {
+            labels: ['Total', 'Used', 'Free'],
+            datasets: [{
+                label: 'Memory Usage (MB)',
+                data: memoryUsageData,
+                backgroundColor: [
+                    'rgba(255, 99, 132, 0.2)',
+                    'rgba(54, 162, 235, 0.2)',
+                    'rgba(75, 192, 192, 0.2)'
+                ],
+                borderColor: [
+                    'rgba(255, 99, 132, 1)',
+                    'rgba(54, 162, 235, 1)',
+                    'rgba(75, 192, 192, 1)'
+                ],
+                borderWidth: 1
+            }]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true
                 }
             }
-        });
+        }
+    });
 
-        const ctxDisk = document.getElementById('diskUsageChart').getContext('2d');
-        const diskUsageChart = new Chart(ctxDisk, {
-            type: 'doughnut',
-            data: {
-                labels: ['Used', 'Available'],
-                datasets: [{
-                    label: 'Disk Usage',
-                    data: diskUsageData,
-                    backgroundColor: [
-                        'rgba(255, 206, 86, 0.2)',
-                        'rgba(75, 192, 192, 0.2)'
-                    ],
-                    borderColor: [
-                        'rgba(255, 206, 86, 1)',
-                        'rgba(75, 192, 192, 1)'
-                    ],
-                    borderWidth: 1
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false
-            }
-        });
+    const ctxDisk = document.getElementById('diskUsageChart').getContext('2d');
+    const diskUsageChart = new Chart(ctxDisk, {
+        type: 'doughnut',
+        data: {
+            labels: ['Used', 'Available'],
+            datasets: [{
+                label: 'Disk Usage',
+                data: diskUsageData,
+                backgroundColor: [
+                    'rgba(255, 206, 86, 0.2)',
+                    'rgba(75, 192, 192, 0.2)'
+                ],
+                borderColor: [
+                    'rgba(255, 206, 86, 1)',
+                    'rgba(75, 192, 192, 1)'
+                ],
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false
+        }
+    });
     </script>
 
 </body>
