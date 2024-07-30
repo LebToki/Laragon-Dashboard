@@ -1,33 +1,92 @@
 <?php
 header('Content-Type: application/json');
 
-// Fetch uptime
-$uptime = shell_exec('uptime');
+// Function to safely execute shell commands
+function safeExec($command) {
+    $output = shell_exec($command);
+    return $output !== null ? trim($output) : "Command failed: $command";
+}
 
-// Fetch memory usage
-$memoryUsage = shell_exec('free -m');
+// Function to parse memory info
+function parseMemInfo($meminfo) {
+    $lines = explode("\n", $meminfo);
+    $data = [];
+    foreach ($lines as $line) {
+        if (preg_match('/^(\w+):\s+(\d+)\s+(\w+)$/', $line, $matches)) {
+            $data[$matches[1]] = [
+                'value' => (int)$matches[2],
+                'unit' => $matches[3]
+            ];
+        }
+    }
+    return $data;
+}
 
-// Fetch disk usage
-$diskUsage = shell_exec('df -h');
+// Function to parse disk usage
+function parseDiskUsage($diskinfo) {
+    $lines = explode("\n", $diskinfo);
+    $data = [];
+    foreach ($lines as $line) {
+        if (preg_match('/^\/dev\/\w+\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+)%\s+(.+)$/', $line, $matches)) {
+            $data[] = [
+                'filesystem' => $matches[5],
+                'total' => (int)$matches[1],
+                'used' => (int)$matches[2],
+                'available' => (int)$matches[3],
+                'use_percent' => (int)$matches[4]
+            ];
+        }
+    }
+    return $data;
+}
 
-// Prepare data for charts
-$uptimeData = [/* Add your uptime data here */];
-$uptimeLabels = ['Time1', 'Time2', 'Time3']; // Add your time labels here
+try {
+    // Fetch uptime
+    $uptime = safeExec('uptime -p');
 
-$memoryUsageData = [/* Add your memory usage data here */];
-$memoryUsageLabels = ['Total', 'Used', 'Free']; // Memory usage categories
+    // Fetch CPU usage
+    $cpuUsage = safeExec("top -bn1 | grep 'Cpu(s)' | sed 's/.*, *\\([0-9.]*\\)%* id.*/\\1/' | awk '{print 100 - $1\"%\"}'");
 
-$diskUsageData = [/* Add your disk usage data here */];
-$diskUsageLabels = ['Used', 'Available']; // Disk usage categories
+    // Fetch memory usage
+    $memoryInfo = safeExec('cat /proc/meminfo');
+    $parsedMemInfo = parseMemInfo($memoryInfo);
+    $totalMem = $parsedMemInfo['MemTotal']['value'] ?? 0;
+    $freeMem = $parsedMemInfo['MemFree']['value'] ?? 0;
+    $usedMem = $totalMem - $freeMem;
+    $memoryUsagePercent = round(($usedMem / $totalMem) * 100, 2);
 
-echo json_encode([
-    'uptime' => $uptime,
-    'memoryUsage' => $memoryUsage,
-    'diskUsage' => $diskUsage,
-    'uptimeData' => $uptimeData,
-    'uptimeLabels' => $uptimeLabels,
-    'memoryUsageData' => $memoryUsageData,
-    'memoryUsageLabels' => $memoryUsageLabels,
-    'diskUsageData' => $diskUsageData,
-    'diskUsageLabels' => $diskUsageLabels,
-]);
+    // Fetch disk usage
+    $diskInfo = safeExec('df -k');
+    $parsedDiskInfo = parseDiskUsage($diskInfo);
+
+    // Prepare data for charts
+    $currentTime = date('H:i:s');
+    $uptimeData = [$cpuUsage]; // You might want to store historical data for a real chart
+    $uptimeLabels = [$currentTime];
+    $memoryUsageData = [$totalMem, $usedMem, $freeMem];
+    $memoryUsageLabels = ['Total', 'Used', 'Free'];
+    $diskUsageData = array_map(function($disk) { return $disk['use_percent']; }, $parsedDiskInfo);
+    $diskUsageLabels = array_map(function($disk) { return $disk['filesystem']; }, $parsedDiskInfo);
+
+    echo json_encode([
+        'uptime' => $uptime,
+        'cpuUsage' => $cpuUsage,
+        'memoryUsage' => "$memoryUsagePercent%",
+        'memoryDetails' => [
+            'total' => $totalMem,
+            'used' => $usedMem,
+            'free' => $freeMem
+        ],
+        'diskUsage' => $parsedDiskInfo,
+        'uptimeData' => $uptimeData,
+        'uptimeLabels' => $uptimeLabels,
+        'memoryUsageData' => $memoryUsageData,
+        'memoryUsageLabels' => $memoryUsageLabels,
+        'diskUsageData' => $diskUsageData,
+        'diskUsageLabels' => $diskUsageLabels,
+    ]);
+
+} catch (Exception $e) {
+    http_response_code(500);
+    echo json_encode(['error' => $e->getMessage()]);
+}
