@@ -13,6 +13,8 @@ Are you tired of sifting through a cluttered directory to find your projects and
 ![Screenshot of Laragon Dashboard Promo ](assets/LaragonDash.jpg)
 ![Screenshot of Laragon Dashboard Page](assets/01-Dashboard.png)
 ![Screenshot of Laragon Dashboard Mailbox](https://github.com/user-attachments/assets/3ee3d5b5-fbd1-43fc-8565-ecc618e5e8a7)
+![Screenshot of Laragon Dashboard Mailbox Open Email](https://github.com/user-attachments/assets/f406aa92-fb9b-4036-b615-510e1c03e79c)
+
 ![Screenshot of Laragon Dashboard Server Vitals](assets/03-Server-Vitals.png)
 
 <br>
