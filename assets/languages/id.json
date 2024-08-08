@@ -1,0 +1,34 @@
+{
+  "title": "Selamat Datang di Dashboard Laragon",
+  "header": "Server Pengembangan Saya",
+  "welcome_back": "Selamat Datang Kembali!",
+
+  "servers_tab": "Server",
+  "inbox_tab": "Kotak Masuk",
+  "vitals_tab": "Vital Server",
+  "settings_tab": "Pengaturan",
+
+  "breadcrumb_server_servers": "Server & Aplikasi Pengembangan Saya",
+  "breadcrumb_server_mailbox": "Kotak Masuk Server Pengembangan Saya",
+  "breadcrumb_server_vitals": "Vital Server Pengembangan Saya",
+
+  "server_status": "Status Server",
+  "uptime": "Waktu Aktif",
+  "memory_usage": "Penggunaan Memori (dalam MB)",
+  "disk_usage": "Penggunaan Disk",
+
+  "good_morning": "Selamat pagi",
+  "good_afternoon": "Selamat siang",
+  "good_evening": "Selamat malam",
+
+  "document_root": "Akar Dokumen",
+  "manage_mysql": "Kelola MySQL",
+
+  "logged-messages": "Pesan yang Tercatat",
+  "email-list": "Daftar Email",
+  "no-emails-found": "Tidak Ada Email Ditemukan",
+  "delete": "Hapus",
+
+  "default_footer": "&copy; 2024<?php echo htmlspecialchars(date('Y')); ?>, Tarek Tarabichi",
+  "made_with_love": "Dibuat dengan <span style=\"color: #e25555;\">&hearts;</span> dan didukung oleh Laragon"
+}
