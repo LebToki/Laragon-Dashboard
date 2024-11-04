@@ -1,9 +1,8 @@
 <?php
-
 /**
  * Application: Laragon | Server Index Page
  * Description: This is the main index page for the Laragon server, displaying server info, server vitals, sendmail
- * mailbox and applications
+ * mailbox, and applications.
  * Author: Tarek Tarabichi <tarek@2tinteractive.com>
  * Improved CakePHP and Joomla detection
  *
@@ -12,7 +11,7 @@
  * - @luisAntonioLAGS in v.2.2.1 Spanish
  * - @martic in 2.3.5 Dynamic Hostname Detection
  *
- * Version: 2.3.7
+ * Version: 2.3.8
  */
 
 // Load language files
@@ -133,43 +132,43 @@ function getPhpVersion(): array
 }
 
 // Gather server information
-	function serverInfo(): array
-	{
-		$serverSoftware = $_SERVER['SERVER_SOFTWARE'] ?? 'Unknown Server Software';
-		$serverParts = explode(' ', $serverSoftware);
-		
-		$httpdVer = $serverParts[0] ?? 'Unknown';
-		$openSslVer = isset($serverParts[2]) && strpos($serverParts[2], 'OpenSSL/') === 0 ? substr($serverParts[2], 8) : 'Not available';
-		
-		$phpInfo = getPhpVersion();
-		$xdebugVersion = extension_loaded('xdebug') ? phpversion('xdebug') : 'Not installed';
-		
-		// Determine web server
-		$webServer = 'Unknown';
-		if (stripos($serverSoftware, 'apache') !== false) {
-			$webServer = 'Apache';
-		} elseif (stripos($serverSoftware, 'nginx') !== false) {
-			$webServer = 'Nginx';
-		} elseif (stripos($serverSoftware, 'litespeed') !== false) {
-			$webServer = 'LiteSpeed';
-		}
-		
-		// Determine PHP SAPI
-		$phpSapi = php_sapi_name();
-		$isFpm = (strpos($phpSapi, 'fpm') !== false);
-		
-		return [
-			'httpdVer' => htmlspecialchars($httpdVer),
-			'openSsl' => htmlspecialchars($openSslVer),
-			'phpVer' => htmlspecialchars($phpInfo['currentVersion']),
-			'xDebug' => htmlspecialchars($xdebugVersion),
-			'docRoot' => htmlspecialchars($_SERVER['DOCUMENT_ROOT'] ?? '/var/www/html'),
-			'serverName' => htmlspecialchars($_SERVER['HTTP_HOST'] ?? 'localhost'),
-			'webServer' => htmlspecialchars($webServer),
-			'phpSapi' => htmlspecialchars($phpSapi),
-			'isFpm' => $isFpm,
-		];
-	}
+function serverInfo(): array
+{
+    $serverSoftware = $_SERVER['SERVER_SOFTWARE'] ?? 'Unknown Server Software';
+    $serverParts = explode(' ', $serverSoftware);
+
+    $httpdVer = $serverParts[0] ?? 'Unknown';
+    $openSslVer = isset($serverParts[2]) && strpos($serverParts[2], 'OpenSSL/') === 0 ? substr($serverParts[2], 8) : 'Not available';
+
+    $phpInfo = getPhpVersion();
+    $xdebugVersion = extension_loaded('xdebug') ? phpversion('xdebug') : 'Not installed';
+
+    // Determine web server
+    $webServer = 'Unknown';
+    if (stripos($serverSoftware, 'apache') !== false) {
+        $webServer = 'Apache';
+    } elseif (stripos($serverSoftware, 'nginx') !== false) {
+        $webServer = 'Nginx';
+    } elseif (stripos($serverSoftware, 'litespeed') !== false) {
+        $webServer = 'LiteSpeed';
+    }
+
+    // Determine PHP SAPI
+    $phpSapi = php_sapi_name();
+    $isFpm = (strpos($phpSapi, 'fpm') !== false);
+
+    return [
+        'httpdVer' => htmlspecialchars($httpdVer),
+        'openSsl' => htmlspecialchars($openSslVer),
+        'phpVer' => htmlspecialchars($phpInfo['currentVersion']),
+        'xDebug' => htmlspecialchars($xdebugVersion),
+        'docRoot' => htmlspecialchars($_SERVER['DOCUMENT_ROOT'] ?? '/var/www/html'),
+        'serverName' => htmlspecialchars($_SERVER['HTTP_HOST'] ?? 'localhost'),
+        'webServer' => htmlspecialchars($webServer),
+        'phpSapi' => htmlspecialchars($phpSapi),
+        'isFpm' => $isFpm,
+    ];
+}
 
 // Retrieve MySQL version
 function getSQLVersion(): string
@@ -811,15 +810,15 @@ foreach ($langFiles as $file) {
                         <?php echo htmlspecialchars($_SERVER['SERVER_SOFTWARE']); ?>
                     </div>
                 </div>
-							
-							<div class="overviewcard">
-								<div class="overviewcard_icon"><?php echo $translations['web_server'] ?? 'Web Server'; ?></div>
-								<div class="overviewcard_info"><?php echo $serverInfo['webServer']; ?></div>
-							</div>
-							<div class="overviewcard">
-								<div class="overviewcard_icon">PHP <?php echo ($serverInfo['isFpm']) ? 'FPM' : 'SAPI'; ?></div>
-								<div class="overviewcard_info"><?php echo $serverInfo['phpSapi']; ?></div>
-							</div>
+
+                <div class="overviewcard">
+                    <div class="overviewcard_icon"><?php echo $translations['web_server'] ?? 'Web Server'; ?></div>
+                    <div class="overviewcard_info"><?php echo $serverInfo['webServer']; ?></div>
+                </div>
+                <div class="overviewcard">
+                    <div class="overviewcard_icon">PHP <?php echo ($serverInfo['isFpm']) ? 'FPM' : 'SAPI'; ?></div>
+                    <div class="overviewcard_info"><?php echo $serverInfo['phpSapi']; ?></div>
+                </div>
 
                 <div class="overviewcard">
                     <div class="overviewcard_icon"></div>
@@ -881,12 +880,10 @@ if (!$link) {
                     </div>
                 </div>
 
-                <div class="overviewcard">
-                    <div class="overviewcard_icon">Server Controls</div>
-                    <div class="overviewcard_info">
-                        <button class="btn-custom btn-success" onclick="startServer()">Start Server</button>
-                        <button class="btn-custom btn-danger" onclick="stopServer()">Stop Server</button>
-                    </div>
+                <div class="overviewcard_server_controls">
+                    <h3>Server Controls</h3>
+                    <button class="btn-custom btn-success" onclick="startServer()">Start Server</button>
+                    <button class="btn-custom btn-danger" onclick="stopServer()">Stop Server</button>
                 </div>
             </div>
 
