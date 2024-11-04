@@ -67,9 +67,17 @@ switch (true) {
 📢️ Thanks everyone for your support and words of love for Laragon Dashboard, I am committed to creating the best Stack Dashboard to support the ever growing community of Laragon
 
 # ![Screenshot of Laragon Dashboard Logo](assets/favicon/favicon-32x32.png)  Changelog
-### What's New in 2.3.6 July 14, 2024
-
-  ### Added
+### What's New in 2.3.9 November 04, 2024
+- The 2.3.9 update provides a refined, polished look to the Laragon Dashboard, emphasizing a cohesive design for server controls, a seamless background, and a footer that remains anchored at the bottom of the viewport. This update resolves previous issues with document loading and enhances the visual coherence of the interface, offering a more professional and user-friendly experience.
+- Footer and Layout Adjustments
+- Server Controls Card Redesign yet still dependent on the awaiting Laragon version release
+- Background Coverage Fix
+- Additional UI Enhancements
+- Version update to 2.3.9
+  
+<details>
+   <summary>Version 2.3.8 June 16,2024</summary>
+      ### Added
  - Real-time server vitals fetching and dynamic UI updates (class anchors for now waiting for Laragon7 to see how this changes).
  - New UI elements and functionality related to server controls in `index.php`.
  - New styles for buttons, cards, and modals in `assets/style.css`.
@@ -85,7 +93,7 @@ switch (true) {
 
  ### Removed
  - Deprecated styles and unused CSS classes in `assets/style.css`.
-
+</details>
 
 
 <details>
