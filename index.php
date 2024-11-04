@@ -11,7 +11,7 @@
  * - @luisAntonioLAGS in v.2.2.1 Spanish
  * - @martic in 2.3.5 Dynamic Hostname Detection
  *
- * Version: 2.3.8
+ * Version: 2.3.9
  */
 
 // Load language files
