@@ -1,3 +1,10 @@
+html,
+body {
+    height: 100%;
+    margin: 0;
+
+}
+
 body {
     margin: 0;
     padding: 0;
@@ -16,11 +23,12 @@ a {
 
 /* Assign grid instructions to our parent grid container, mobile-first (hide the sidenav) */
 .grid-container {
-    display: grid;
-    grid-template-columns: 1fr;
-    grid-template-rows: 50px 1fr 50px;
-    grid-template-areas: 'header''main''footer';
-    height: 100vh;
+    min-height: 100vh;
+    /* Ensures it covers the viewport height */
+    display: flex;
+    flex-direction: column;
+    background: url(assets/background2.jpg) no-repeat center center fixed;
+    background-size: cover;
 }
 
 /* Give every child element its grid name */
@@ -113,6 +121,22 @@ a {
     color: #FFFFFF !important;
 }
 
+.overviewcard_server_controls {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-color: #00adef;
+    padding: 20px;
+    border-radius: 5px;
+    font-family: "Rubik", Sans-serif, serif;
+    color: #FFFFFF;
+}
+
+.overviewcard_server_controls .btn-custom {
+    margin: 5px;
+    width: 80%;
+}
 
 .overviewcard4 {
     display: flex;
@@ -256,42 +280,42 @@ a {
 }
 
 .footer {
-    grid-area: footer;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0 16px;
+    width: 100%;
+    padding: 10px;
     background-color: #0b162c;
     color: #ffffff;
+    text-align: center;
 }
 
 /* Styles for screens smaller than 600px */
 @media (max-width: 600px) {
-  /* Adjust the menu icon size */
-  .menu-icon {
-    font-size: 30px;
-  }
 
-  /* Hide the sidenav */
-  .sidenav {
-    display: none;
-  }
+    /* Adjust the menu icon size */
+    .menu-icon {
+        font-size: 30px;
+    }
 
-  /* Show the sidenav when it's active */
-  .sidenav.active {
-    display: block;
-  }
+    /* Hide the sidenav */
+    .sidenav {
+        display: none;
+    }
+
+    /* Show the sidenav when it's active */
+    .sidenav.active {
+        display: block;
+    }
 }
 
 /* Styles for screens larger than 600px */
 @media (min-width: 601px) {
-  /* Adjust the menu icon size */
-  .menu-icon {
-    font-size: 40px;
-  }
 
-  /* Show the sidenav */
-  .sidenav {
-    display: block;
-  }
+    /* Adjust the menu icon size */
+    .menu-icon {
+        font-size: 40px;
+    }
+
+    /* Show the sidenav */
+    .sidenav {
+        display: block;
+    }
 }
