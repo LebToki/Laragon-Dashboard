@@ -11,7 +11,7 @@
  * - @luisAntonioLAGS in v.2.2.1 Spanish
  * - @martic in 2.3.5 Dynamic Hostname Detection
  *
- * Version: 2.3.9
+ * Version: 2.4.0
  */
 
 // Load language files
@@ -880,11 +880,12 @@ if (!$link) {
                     </div>
                 </div>
 
-                <div class="overviewcard_server_controls">
+                <!-- Until one day we can send exec commands
+<div class="overviewcard_server_controls">
                     <h3>Server Controls</h3>
                     <button class="btn-custom btn-success" onclick="startServer()">Start Server</button>
                     <button class="btn-custom btn-danger" onclick="stopServer()">Stop Server</button>
-                </div>
+                </div> -->
             </div>
 
             <div class="main-overview wrapper">
