@@ -363,7 +363,6 @@ $activeTab = $_GET['tab'] ?? 'servers';
     <link href="https://fonts.googleapis.com/css?family=Pt+Sans&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,700&display=swap">
     <link rel="stylesheet" href="assets/style.css">
-    <link rel="stylesheet" href="assets/custom.css">
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/css/bootstrap-grid.min.css" />
