@@ -209,14 +209,15 @@ function getSiteDir(): string
 {
     $drive = strtoupper(substr(PHP_OS, 0, 1));
     $rootDir = $drive . ':/laragon/etc/apache2/sites-enabled';
+
     if (strpos(strtolower($rootDir), 'c:') !== false) {
         $laragonDir = str_replace('D:', 'C:', $rootDir);
     } else {
         $laragonDir = $rootDir;
     }
 
-    if ($rootDir === false) {
-        throw new RuntimeException("Unable to determine the root directory.");
+    if ($laragonDir === false) {
+        throw new RuntimeException("Unable to determine the Laragon directory.");
     }
 
     if (!isset($_SERVER['SERVER_SOFTWARE']) || trim($_SERVER['SERVER_SOFTWARE']) === '') {
@@ -226,9 +227,9 @@ function getSiteDir(): string
     $serverSoftware = strtolower($_SERVER['SERVER_SOFTWARE']);
 
     if (strpos($serverSoftware, 'apache') !== false) {
-        return $rootDir;
+        return $laragonDir;
     } elseif (strpos($serverSoftware, 'nginx') !== false) {
-        return $rootDir;
+        return $laragonDir;
     }
 
     throw new InvalidArgumentException("Unsupported server type: " . htmlspecialchars($serverSoftware));
