@@ -210,7 +210,7 @@ These updates collectively enhance the security, performance, maintainability, a
 
 <details>
 <summary>Changes in Version 2.1.5</summary>
-ecurity: Added input validation and output escaping to prevent XSS and other security vulnerabilities.
+Security: Added input validation and output escaping to prevent XSS and other security vulnerabilities.
 Error Handling: Improved error handling with try-catch blocks and better error checking for file operations.
 Readability: Refactored some functions for better readability and maintainability.
 Modularity: Made the code more modular and easy to extend or modify.
