@@ -17,15 +17,21 @@
 // Load language files
 function loadLanguage($lang)
 {
+    $allowedLangs = ['en', 'de', 'es', 'fr', 'id', 'pt', 'tl'];
+    if (!in_array($lang, $allowedLangs, true)) {
+        $lang = 'en';
+    }
+
     $langFile = __DIR__ . "/assets/languages/{$lang}.json";
     if (file_exists($langFile)) {
         return json_decode(file_get_contents($langFile), true);
     }
+
     return [];
 }
 
-// Detect language preference (default to English)
-$lang = $_GET['lang'] ?? 'en';
+// Detect language preference (default to English) and sanitize input
+$lang = isset($_GET['lang']) ? strtolower($_GET['lang']) : 'en';
 $translations = loadLanguage($lang);
 
 const SERVER_TYPES = [
