@@ -1,4 +1,5 @@
 <?php
+        require_once __DIR__ . '/../../config.php';
 	/**
 	 * Application: Laragon | Server Index Inbox Page
 	 * Description: This is the main index page for the Laragon server, displaying server info and applications.
@@ -8,7 +9,7 @@
 	 */
 	
 	// Set the directory path (modify as needed)
-	const EML_FILE_PATH = 'D:/laragon/bin/sendmail/output/';
+        const EML_FILE_PATH = SENDMAIL_OUTPUT_DIR;
 	
 	function getEmailMetadata($filename) {
 		$content = file_get_contents(EML_FILE_PATH . $filename);
