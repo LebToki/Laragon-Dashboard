@@ -49,6 +49,8 @@ Our UI automatically detects any projects and directories within your root direc
 $ignore_dirs = array('.', '..', 'logs', 'access-logs', 'vendor', 'favicon_io', 'assets');
 ```
 
+5. Configure the mailbox directory by setting the `SENDMAIL_OUTPUT_DIR` environment variable or editing `config.php`.
+
 ```[php]
 $domainSuffix = '.test'; // Set this according to user preference or configuration
 

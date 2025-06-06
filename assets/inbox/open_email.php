@@ -1,9 +1,7 @@
 <?php
-// Define potential paths
-	$emailFilePaths = [
-		'C:/laragon/bin/sendmail/output/',
-		'D:/laragon/bin/sendmail/output/',
-	];
+        require_once __DIR__ . '/../../config.php';
+// Directory containing the email files
+        $emailFilePaths = [SENDMAIL_OUTPUT_DIR];
 	
 	function findEmailFile($filename, $paths)
 	{
