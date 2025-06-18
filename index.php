@@ -898,6 +898,7 @@ if (!$link) {
                 <?php
 $ignored = ['favicon_io'];
 $folders = array_filter(glob('*'), 'is_dir');
+sort($folders, SORT_NATURAL | SORT_FLAG_CASE);
 
 if ($laraconfig['SSLEnabled'] == 0 || $laraconfig['Port'] == 80) {
     $url = 'http';
@@ -978,7 +979,7 @@ foreach ($folders as $host) {
                 <div class="header__search"><?php echo $translations['breadcrumb_server_vitals'] ?? 'My Development Server Vitals'; ?></div>
                 <div class="header__avatar"><?php echo $translations['welcome_back'] ?? 'Welcome Back!'; ?></div>
             </header>
-            <div class="container mt-5" style="width: 1440px!important;background-color: #f8f9fa;padding: 20px;border-radius: 5px;color=#000000">
+            <div class="container mt-5" style="width: 1440px!important;background-color: #f8f9fa;padding: 20px;border-radius: 5px;color: #000000;">
                 <h1 style="text-align: center;color: #000000">Server's Vitals</h1>
 
                 <div class="row">
