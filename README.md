@@ -166,7 +166,6 @@ Enhanced error handling for server vitals data retrieval.
 
 **Updates and Enhancements:**
 - Improved getServerExtensions function to handle Apache modules correctly.
-- Updated getPhpVersion function to retrieve the latest PHP version from the official PHP website.
 - Improved getSQLVersion function to handle MySQL version retrieval correctly.
 - Enhanced getLocalSites function to ignore specific directories and files.
 - Updated renderLinks function to prevent XSS attacks.

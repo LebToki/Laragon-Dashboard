@@ -107,35 +107,6 @@ function getServerExtensions(string $server, int $columns = 2): array
     return array_chunk($extensions, $columns);
 }
 
-// Fetch PHP version
-function getPhpVersion(): array
-{
-    $url = 'https://www.php.net/releases/index.php?json&version=7';
-    $options = [
-        "ssl" => [
-            "verify_peer" => false,
-            "verify_peer_name" => false,
-        ],
-    ];
-    $json = file_get_contents($url, false, stream_context_create($options));
-    if ($json === false) {
-        throw new Exception("Unable to retrieve PHP version info from the official PHP site.");
-    }
-
-    $data = json_decode($json, true);
-    if ($data === null || !isset($data['version'])) {
-        throw new Exception("Invalid JSON or 'version' missing in the data.");
-    }
-
-    $lastVersion = $data['version'];
-    $currentVersion = phpversion();
-
-    return [
-        'lastVersion' => htmlspecialchars($lastVersion),
-        'currentVersion' => htmlspecialchars($currentVersion),
-        'isUpToDate' => version_compare($currentVersion, $lastVersion, '>='),
-    ];
-}
 
 // Gather server information
 function serverInfo(): array
@@ -146,7 +117,7 @@ function serverInfo(): array
     $httpdVer = $serverParts[0] ?? 'Unknown';
     $openSslVer = isset($serverParts[2]) && strpos($serverParts[2], 'OpenSSL/') === 0 ? substr($serverParts[2], 8) : 'Not available';
 
-    $phpInfo = getPhpVersion();
+    $phpVersion = phpversion();
     $xdebugVersion = extension_loaded('xdebug') ? phpversion('xdebug') : 'Not installed';
 
     // Determine web server
@@ -166,7 +137,7 @@ function serverInfo(): array
     return [
         'httpdVer' => htmlspecialchars($httpdVer),
         'openSsl' => htmlspecialchars($openSslVer),
-        'phpVer' => htmlspecialchars($phpInfo['currentVersion']),
+        'phpVer' => htmlspecialchars($phpVersion),
         'xDebug' => htmlspecialchars($xdebugVersion),
         'docRoot' => htmlspecialchars($_SERVER['DOCUMENT_ROOT'] ?? '/var/www/html'),
         'serverName' => htmlspecialchars($_SERVER['HTTP_HOST'] ?? 'localhost'),
@@ -191,18 +162,6 @@ function getSQLVersion(): string
     return "Unknown";
 }
 
-// Generate PHP download and changelog links
-function phpDlLink(string $version, string $branch = '7', string $architecture = 'x64'): array
-{
-    $versionEscaped = htmlspecialchars($version, ENT_QUOTES, 'UTF-8');
-    $branchEscaped = htmlspecialchars($branch, ENT_QUOTES, 'UTF-8');
-    $architectureEscaped = htmlspecialchars($architecture, ENT_QUOTES, 'UTF-8');
-
-    return [
-        'changeLog' => "https://www.php.net/ChangeLog-$branchEscaped.php#$versionEscaped",
-        'downLink' => "https://windows.php.net/downloads/releases/php-$versionEscaped-Win32-VC15-$architectureEscaped.zip",
-    ];
-}
 
 // Determine site directory
 function getSiteDir(): string
