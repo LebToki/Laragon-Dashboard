@@ -163,8 +163,7 @@
       }
 
       .tab:hover,
-      .tab:focus,
-      {
+      .tab:focus {
           background-color: #16437E;
           color: #ffffff;
 
