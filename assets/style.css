@@ -71,6 +71,12 @@ a {
     margin: 10px;
 }
 
+/* More compact layout for server info */
+.server-overview {
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    grid-auto-rows: 50px;
+}
+
 
 .wrapper {
     display: grid;

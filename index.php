@@ -402,6 +402,13 @@ $activeTab = $_GET['tab'] ?? 'servers';
             var lang = $(this).val();
             window.location.href = "?lang=" + lang;
         });
+
+        $('#project-search').on('input', function() {
+            var q = $(this).val();
+            $.get('project_search.php', {q: q}, function(data) {
+                $('#project-list').html(data);
+            });
+        });
     });
 
     function fetchServerVitals() {
@@ -804,7 +811,7 @@ foreach ($langFiles as $file) {
                 <div class="header__search"><?php echo $translations['breadcrumb_server_servers'] ?? 'My Development Server Servers & Applications'; ?></div>
                 <div class="header__avatar"><?php echo $translations['welcome_back'] ?? 'Welcome Back!'; ?></div>
             </header>
-            <div class="main-overview">
+            <div class="main-overview server-overview">
                 <div class="overviewcard4">
                     <div class="overviewcard_icon"></div>
                     <div class="overviewcard_info"><img src="assets/Server.png" style="width:64px;"></div>
@@ -839,7 +846,7 @@ foreach ($langFiles as $file) {
                     </div>
                 </div>
             </div>
-            <div class="main-overview">
+            <div class="main-overview server-overview">
                 <div class="overviewcard">
                     <div class="overviewcard_icon">MySQL</div>
                     <div class="overviewcard_info">
@@ -894,7 +901,9 @@ if (!$link) {
                 </div> -->
             </div>
 
-            <div class="main-overview wrapper">
+            <input type="text" id="project-search" placeholder="Search projects..." style="margin:10px 0;padding:5px;width:100%;max-width:400px;">
+
+            <div id="project-list" class="main-overview wrapper">
                 <?php
 $ignored = ['favicon_io'];
 $folders = array_filter(glob('*'), 'is_dir');
