@@ -35,7 +35,7 @@ Our UI automatically detects any projects and directories within your root direc
 # ![Screenshot of Laragon Dashboard Logo](assets/favicon/favicon-32x32.png)  How to use
 
 1. Replace the default index.php file in your Laragon root directory with our customized index.php file.
-2. Your Laragon hostname template (.local) will be automatically detected and served by the `getLocalSites()` function.
+2. The hostname suffix for your local sites is configurable using the `DOMAIN_SUFFIX` constant in `config.php` (default `.local`).
 
 ```[php]
    function getLocalSites($server = 'apache', $ignoredFiles = ['.', '..', '00-default.conf']): array{}
@@ -50,9 +50,10 @@ $ignore_dirs = array('.', '..', 'logs', 'access-logs', 'vendor', 'favicon_io', '
 ```
 
 5. Configure the mailbox directory by setting the `SENDMAIL_OUTPUT_DIR` environment variable or editing `config.php`.
+6. Additional settings such as `DOMAIN_SUFFIX`, `PHPMYADMIN_URL`, `MYSQL_HOST`, `MYSQL_USER`, and `MYSQL_PASSWORD` can also be adjusted via environment variables or `config.php`.
 
 ```[php]
-$domainSuffix = '.test'; // Set this according to user preference or configuration
+$domainSuffix = DOMAIN_SUFFIX; // Configurable domain suffix
 
 switch (true) {
     case file_exists($host . '/wp-admin'):
