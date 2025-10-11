@@ -11,8 +11,24 @@
  * - @luisAntonioLAGS in v.2.2.1 Spanish
  * - @martic in 2.3.5 Dynamic Hostname Detection
  *
- * Version: 2.4.0
+ * Version: 2.5.0
  */
+
+// Include required helpers
+require_once __DIR__ . '/includes/logger.php';
+require_once __DIR__ . '/includes/security.php';
+require_once __DIR__ . '/includes/database.php';
+require_once __DIR__ . '/includes/cache.php';
+
+// Performance monitoring
+$startTime = microtime(true);
+$startMemory = memory_get_usage(true);
+
+// Log dashboard access
+DashboardLogger::info("Dashboard page accessed", [
+    'user_agent' => $_SERVER['HTTP_USER_AGENT'] ?? 'unknown',
+    'ip' => $_SERVER['REMOTE_ADDR'] ?? 'unknown'
+]);
 
 // Load language files
 function loadLanguage($lang)
@@ -42,18 +58,21 @@ const SERVER_TYPES = [
 // Display server status
 function showServerStatus(): void
 {
-    echo '<h1>Server Status</h1>';
+    echo '<div class="server-status-container">';
+    echo '<strong><p class="status-title">Server Status</p></strong>';
+    
     // Display server uptime
-    $uptime = shell_exec('uptime');
-    echo '<h2>Uptime</h2><p>' . htmlspecialchars($uptime) . '</p>';
+    $uptime = shell_exec('wmic os get lastbootuptime /value');
+    echo '<strong><p>Uptime</p></strong><p>' . htmlspecialchars($uptime) . '</p>';
 
     // Display memory usage
-    $free = shell_exec('free -m');
-    echo '<h2>Memory Usage (in MB)</h2><pre>' . htmlspecialchars($free) . '</pre>';
+    $memoryInfo = shell_exec('wmic computersystem get TotalPhysicalMemory /value');
+    echo '<strong><p>Memory Usage</p></strong><pre>' . htmlspecialchars($memoryInfo) . '</pre>';
 
     // Display disk usage
-    $df = shell_exec('df -h');
-    echo '<h2>Disk Usage</h2><pre>' . htmlspecialchars($df) . '</pre>';
+    $diskInfo = shell_exec('wmic logicaldisk get size,freespace,caption /value');
+    echo '<strong><p>Disk Usage</p></strong><pre>' . htmlspecialchars($diskInfo) . '</pre>';
+    echo '</div>';
 }
 
 // Handle incoming query parameters
@@ -417,24 +436,71 @@ $activeTab = $_GET['tab'] ?? 'servers';
             method: 'GET',
             dataType: 'json',
             success: function(data) {
+                if (data.error) {
+                    console.error('Error fetching server vitals:', data.error);
+                    return;
+                }
+                
                 $('#uptime').text(data.uptime);
                 $('#memory-usage').text(data.memoryUsage);
-                $('#disk-usage').text(data.diskUsage);
+                $('#php-memory').text('Current: ' + formatBytes(data.phpMemory.current) + ' | Peak: ' + formatBytes(data.phpMemory.peak) + ' | Limit: ' + data.phpMemory.limit);
+                
+                // Format disk usage
+                let diskInfo = '';
+                if (data.diskUsage && data.diskUsage.length > 0) {
+                    data.diskUsage.forEach(function(disk) {
+                        if (disk.caption && disk.size && disk.freespace) {
+                            const used = disk.size - disk.freespace;
+                            const percent = Math.round((used / disk.size) * 100);
+                            diskInfo += disk.caption + ': ' + percent + '% used (' + formatBytes(used) + ' / ' + formatBytes(disk.size) + ')\n';
+                        }
+                    });
+                }
+                $('#disk-usage').text(diskInfo || 'No disk information available');
 
                 // Update charts
-                uptimeChart.data.labels = data.uptimeLabels;
-                uptimeChart.data.datasets[0].data = data.uptimeData;
-                uptimeChart.update();
+                if (uptimeChart && data.uptimeLabels && data.uptimeData) {
+                    uptimeChart.data.labels = data.uptimeLabels;
+                    uptimeChart.data.datasets[0].data = data.uptimeData;
+                    uptimeChart.update();
+                }
 
-                memoryUsageChart.data.labels = data.memoryUsageLabels;
-                memoryUsageChart.data.datasets[0].data = data.memoryUsageData;
-                memoryUsageChart.update();
+                if (memoryUsageChart && data.memoryUsageLabels && data.memoryUsageData) {
+                    memoryUsageChart.data.labels = data.memoryUsageLabels;
+                    memoryUsageChart.data.datasets[0].data = data.memoryUsageData;
+                    memoryUsageChart.update();
+                }
 
-                diskUsageChart.data.labels = data.diskUsageLabels;
-                diskUsageChart.data.datasets[0].data = data.diskUsageData;
-                diskUsageChart.update();
+                if (diskUsageChart && data.diskUsageLabels && data.diskUsageData) {
+                    diskUsageChart.data.labels = data.diskUsageLabels;
+                    diskUsageChart.data.datasets[0].data = data.diskUsageData;
+                    diskUsageChart.update();
+                }
+                
+                if (phpMemoryChart && data.phpMemory) {
+                    const currentMB = Math.round(data.phpMemory.current / (1024 * 1024));
+                    const peakMB = Math.round(data.phpMemory.peak / (1024 * 1024));
+                    phpMemoryChart.data.datasets[0].data = [currentMB, peakMB];
+                    phpMemoryChart.update();
+                }
+            },
+            error: function(xhr, status, error) {
+                console.error('AJAX Error:', error);
+                $('#uptime').text('Error loading uptime');
+                $('#memory-usage').text('Error loading memory usage');
+                $('#disk-usage').text('Error loading disk usage');
+                $('#php-memory').text('Error loading PHP memory');
             }
         });
+    }
+    
+    function formatBytes(bytes, decimals = 2) {
+        if (bytes === 0) return '0 Bytes';
+        const k = 1024;
+        const dm = decimals < 0 ? 0 : decimals;
+        const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+        return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
     }
 
     // Fetch server vitals every 5 seconds
@@ -990,19 +1056,19 @@ foreach ($folders as $host) {
                 <div class="header__avatar"><?php echo $translations['welcome_back'] ?? 'Welcome Back!'; ?></div>
             </header>
             <div class="container mt-5" style="width: 1440px!important;background-color: #f8f9fa;padding: 20px;border-radius: 5px;color: #000000;">
-                <h1 style="text-align: center;color: #000000">Server's Vitals</h1>
+                <strong><p style="text-align: center;color: #000000; font-size: 24px;">Server's Vitals</p></strong>
 
                 <div class="row">
 
                     <div class="col-md-6">
-                        <h2><?php echo $translations['uptime'] ?? 'Uptime'; ?></h2>
-                        <p id="uptime"><?php echo htmlspecialchars(shell_exec('uptime')); ?></p>
+                        <strong><p><?php echo $translations['uptime'] ?? 'Uptime'; ?></p></strong>
+                        <p id="uptime">Loading...</p>
                         <canvas id="uptimeChart"></canvas>
                     </div>
 
                     <div class="col-md-6">
-                        <h2><?php echo $translations['memory_usage'] ?? 'Memory Usage (in MB)'; ?></h2>
-                        <pre id="memory-usage"><?php echo htmlspecialchars(shell_exec('free -m')); ?></pre>
+                        <strong><p><?php echo $translations['memory_usage'] ?? 'Memory Usage'; ?></p></strong>
+                        <p id="memory-usage">Loading...</p>
                         <canvas id="memoryUsageChart"></canvas>
                     </div>
 
@@ -1011,9 +1077,15 @@ foreach ($folders as $host) {
                 <div class="row">
 
                     <div class="col-md-6">
-                        <h2><?php echo $translations['disk_usage'] ?? 'Disk Usage'; ?></h2>
-                        <pre id="disk-usage"><?php echo htmlspecialchars(shell_exec('df -h')); ?></pre>
-                        <!--				<canvas id="diskUsageChart"></canvas>-->
+                        <strong><p><?php echo $translations['disk_usage'] ?? 'Disk Usage'; ?></p></strong>
+                        <p id="disk-usage">Loading...</p>
+                        <canvas id="diskUsageChart"></canvas>
+                    </div>
+
+                    <div class="col-md-6">
+                        <strong><p>PHP Memory Usage</p></strong>
+                        <p id="php-memory">Loading...</p>
+                        <canvas id="phpMemoryChart"></canvas>
                     </div>
 
                 </div>
@@ -1041,6 +1113,17 @@ foreach ($folders as $host) {
         <div class="footer__signature">
             <?php echo $translations['made_with_love'] ?? "Made with <span style=\"color: #e25555;\">&hearts;</span> and powered by Laragon"; ?>
         </div>
+        <?php if (APP_DEBUG): ?>
+        <div class="footer__debug">
+            <?php 
+            $endTime = microtime(true);
+            $endMemory = memory_get_usage(true);
+            $executionTime = round(($endTime - $startTime) * 1000, 2);
+            $memoryUsed = round(($endMemory - $startMemory) / 1024, 2);
+            echo "Page loaded in {$executionTime}ms | Memory: {$memoryUsed}KB";
+            ?>
+        </div>
+        <?php endif; ?>
     </footer>
 
     <script>
@@ -1122,6 +1205,34 @@ foreach ($folders as $host) {
         options: {
             responsive: true,
             maintainAspectRatio: false
+        }
+    });
+
+    const ctxPhpMemory = document.getElementById('phpMemoryChart').getContext('2d');
+    const phpMemoryChart = new Chart(ctxPhpMemory, {
+        type: 'bar',
+        data: {
+            labels: ['Current', 'Peak'],
+            datasets: [{
+                label: 'PHP Memory Usage (MB)',
+                data: [0, 0],
+                backgroundColor: [
+                    'rgba(54, 162, 235, 0.2)',
+                    'rgba(255, 99, 132, 0.2)'
+                ],
+                borderColor: [
+                    'rgba(54, 162, 235, 1)',
+                    'rgba(255, 99, 132, 1)'
+                ],
+                borderWidth: 1
+            }]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
         }
     });
     </script>

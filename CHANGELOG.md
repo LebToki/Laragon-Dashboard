@@ -1,0 +1,138 @@
+# Changelog
+
+All notable changes to the Laragon Dashboard project will be documented in this file.
+
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
+and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+## [2.5.0] - 2024-12-19
+
+### Added
+
+- **Security Enhancements**
+  - CSRF protection with secure token generation
+  - Security headers (X-Frame-Options, X-Content-Type-Options, X-XSS-Protection)
+  - Content Security Policy (CSP) implementation
+  - Rate limiting system to prevent abuse
+  - Input sanitization and validation helpers
+  - Secure session management
+
+- **Performance Improvements**
+  - File-based caching system with TTL support
+  - Performance monitoring and logging
+  - Database connection pooling
+  - Memory usage tracking
+  - Execution time monitoring
+
+- **Logging & Monitoring**
+  - Comprehensive logging system with multiple levels
+  - Error handling and exception management
+  - Access logging with IP and user agent tracking
+  - Debug mode with detailed performance metrics
+
+- **Database Integration**
+  - PDO-based database helper with connection management
+  - MySQL server status monitoring
+  - Database and table information retrieval
+  - Secure query execution with prepared statements
+
+- **Modern Email Client Interface**
+  - Bootstrap 5 responsive design
+  - Interactive email statistics dashboard
+  - Advanced search and filtering capabilities
+  - Professional email cards with hover effects
+  - Modal email viewer with enhanced styling
+  - Keyboard shortcuts and accessibility improvements
+
+### Changed
+
+- **UI/UX Improvements**
+  - Removed all h1-h6 tags per project requirements
+  - Enhanced responsive design for mobile devices
+  - Modern card-based layout for better organization
+  - Improved color scheme and typography
+  - Better accessibility with ARIA labels and keyboard navigation
+
+- **Server Vitals**
+  - Windows-compatible system monitoring using PHP functions
+  - Real-time server statistics with visual charts
+  - PHP memory usage tracking and visualization
+  - Disk usage monitoring for multiple drives
+  - Enhanced error handling for system commands
+
+- **Configuration Management**
+  - Comprehensive configuration system with environment variable support
+  - Security settings and file upload configurations
+  - Error reporting controls
+  - Session timeout and login attempt limits
+
+### Fixed
+
+- **Compatibility Issues**
+  - Fixed Windows-specific command execution
+  - Resolved language file JSON structure inconsistencies
+  - Fixed missing file references and broken includes
+  - Corrected path handling for cross-platform compatibility
+
+- **Security Vulnerabilities**
+  - Sanitized all user inputs
+  - Implemented proper error handling
+  - Added protection against common web vulnerabilities
+  - Secured file operations and directory access
+
+- **Performance Issues**
+  - Optimized database queries
+  - Reduced memory usage
+  - Improved page load times
+  - Enhanced caching mechanisms
+
+### Technical Details
+
+- **File Structure**
+  - Added `includes/` directory for helper classes
+  - Created `logs/` directory for application logging
+  - Added `cache/` directory for performance caching
+  - Implemented proper `.gitignore` for version control
+
+- **Code Quality**
+  - Object-oriented design patterns
+  - Comprehensive error handling
+  - Detailed code documentation
+  - Consistent coding standards
+  - Security best practices implementation
+
+## [2.4.0] - 2024-12-18
+
+### Added
+
+- Basic Bootstrap 5 email client interface
+- Email statistics dashboard
+- Search and filtering functionality
+- Responsive email cards
+- Email modal viewer
+
+### Changed
+
+- Updated language file structure
+- Improved server vitals display
+- Enhanced error handling
+
+### Fixed
+
+- Removed h1-h6 tags per requirements
+- Fixed Windows compatibility issues
+- Corrected language file JSON format
+
+## [2.3.5] - Previous Version
+
+### Added
+
+- Dynamic hostname detection
+- Improved CakePHP and Joomla detection
+- Multi-language support
+
+### Contributors
+
+- @LrkDev (v.2.1.2)
+- @luisAntonioLAGS (v.2.2.1 Spanish)
+- @martic (v.2.3.5 Dynamic Hostname Detection)

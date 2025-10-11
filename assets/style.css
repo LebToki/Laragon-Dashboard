@@ -312,16 +312,114 @@ a {
     }
 }
 
-/* Styles for screens larger than 600px */
-@media (min-width: 601px) {
+/* Server Status Container */
+.server-status-container {
+    background-color: #f8f9fa;
+    padding: 20px;
+    border-radius: 10px;
+    margin: 20px 0;
+    color: #000000;
+}
 
-    /* Adjust the menu icon size */
-    .menu-icon {
-        font-size: 40px;
+.server-status-container strong p {
+    font-size: 18px;
+    margin-bottom: 10px;
+    color: #000000;
+}
+
+.server-status-container p {
+    margin-bottom: 15px;
+    color: #333333;
+}
+
+.server-status-container pre {
+    background-color: #ffffff;
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #dee2e6;
+    overflow-x: auto;
+}
+
+/* Status Title */
+.status-title {
+    font-size: 24px !important;
+    font-weight: bold;
+    margin-bottom: 20px;
+    color: #000000;
+}
+
+/* Email Content Styles */
+.email-content {
+    padding: 20px;
+}
+
+.email-headers {
+    background-color: #f8f9fa;
+    padding: 15px;
+    border-radius: 5px;
+    margin-bottom: 20px;
+    border: 1px solid #dee2e6;
+}
+
+.email-headers strong p {
+    font-size: 16px;
+    margin-bottom: 5px;
+    color: #000000;
+}
+
+.email-headers p {
+    margin-bottom: 10px;
+    color: #333333;
+}
+
+.email-body {
+    background-color: #ffffff;
+    padding: 15px;
+    border-radius: 5px;
+    border: 1px solid #dee2e6;
+}
+
+.email-body strong p {
+    font-size: 16px;
+    margin-bottom: 10px;
+    color: #000000;
+}
+
+.email-body-content {
+    background-color: #f8f9fa;
+    padding: 15px;
+    border-radius: 5px;
+    border: 1px solid #dee2e6;
+}
+
+.email-body-content pre {
+    background-color: transparent;
+    border: none;
+    padding: 0;
+    margin: 0;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+}
+
+/* Chart Container Improvements */
+canvas {
+    max-height: 300px;
+    margin-top: 10px;
+}
+
+/* Responsive improvements */
+@media (max-width: 768px) {
+    .container {
+        width: 100% !important;
+        padding: 10px !important;
     }
 
-    /* Show the sidenav */
-    .sidenav {
-        display: block;
+    .main-overview {
+        grid-template-columns: 1fr;
+        margin: 5px;
+    }
+
+    .wrapper {
+        grid-template-columns: 1fr;
     }
 }

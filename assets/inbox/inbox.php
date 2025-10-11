@@ -75,647 +75,431 @@
 <!DOCTYPE html>
 <html lang="<?php echo $lang ?? 'en'; ?>">
 <head>
-	<!-- Your existing head content -->
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title><?php echo $translations['email_list'] ?? 'Email Inbox'; ?> - Laragon Dashboard</title>
+	
+	<!-- Bootstrap 5 CSS -->
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+	<!-- Bootstrap Icons -->
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+	<!-- Font Awesome -->
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+	
 	<style>
-      .modal-custom {
-          background-color: #ffffff;
-          border-radius: 10px;
-          padding: 20px;
-          box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-      }
-      /*----------------------------------------*/
-      /* ===== Scrollbar CSS ===== */
-      /*----------------------------------------*/
-      /* Firefox */
-      * {
-          scrollbar-width: auto;
-          scrollbar-color: #ec1c7e #ffffff;
-      }
-
-      /* Chrome, Edge, and Safari */
-      *::-webkit-scrollbar {
-          width: 16px;
-      }
-
-      *::-webkit-scrollbar-track {
-          background: #ffffff;
-      }
-
-      *::-webkit-scrollbar-thumb {
-          background-color: #ec1c7e;
-          border-radius: 10px;
-          border: 3px solid #ffffff;
-      }
-
-      /*---------------------------*/
-      /* Main Page Container Styling */
-      /*---------------------------*/
-      .grid-container {
-          grid-area: main;
-          background: url(assets/background2.jpg) no-repeat center center fixed;
-          -webkit-background-size: cover;
-          -moz-background-size: cover;
-          -o-background-size: cover;
-          background-size: cover;
-      }
-
-      /*---------------------------*/
-      /* Navigation Styling */
-      /*---------------------------*/
-      nav {
-          grid-area: nav;
-          align-items: start;
-          justify-content: space-between;
-          padding: 0 20px;
-          background-color: #0B162C !important;
-          color: #ffffff !important;
-          font-family: "Poppins", Sans-serif, serif !important;
-      }
-
-      /*---------------------------*/
-      /* Tabs Styling */
-      /*---------------------------*/
-      .tab {
-          align-items: center;
-          background-color: #0A66C2;
-          border: 0;
-          border-radius: 100px;
-          box-sizing: border-box;
-          color: #ffffff;
-          cursor: pointer;
-          display: inline-flex;
-          font-family: "Poppins", Sans-serif, serif !important;
-          font-size: 16px;
-          font-weight: 600;
-          justify-content: center;
-          line-height: 20px;
-          max-width: 480px;
-          min-height: 40px;
-          min-width: 0;
-          overflow: hidden;
-          padding: 0 20px;
-          text-align: center;
-          touch-action: manipulation;
-          transition: background-color 0.167s cubic-bezier(0.4, 0, 0.2, 1) 0s, box-shadow 0.167s cubic-bezier(0.4, 0, 0.2, 1) 0s, color 0.167s cubic-bezier(0.4, 0, 0.2, 1) 0s;
-          user-select: none;
-          -webkit-user-select: none;
-          vertical-align: middle;
-      }
-
-      .tab:hover,
-      .tab:focus {
-          background-color: #16437E;
-          color: #ffffff;
-
-      }
-
-      .tab:disabled {
-          cursor: not-allowed;
-          background: rgba(0, 0, 0, .08);
-          color: rgba(0, 0, 0, .3);
-      }
-
-      .tab.active {
-          background: #09223b;
-          color: rgb(255, 255, 255, .7);
-      }
-
-      .tab-content {
-          display: none;
-      }
-
-      .tab-content.active {
-          display: block;
-      }
-
-      /*---------------------------*/
-      /* Language Selector Styling */
-      /*---------------------------*/
-      select#language-selector {
-          background-color: #fff;
-          padding: 5px;
-          border-radius: 25px;
-          border: 1px solid #ccc;
-      }
-
-      .main-overview {
-          display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(265px, 1fr));
-          grid-auto-rows: 71px;
-          grid-gap: 20px;
-          margin: 10px;
-      }
-
-
-      .wrapper {
-          display: grid;
-          grid-template-columns: repeat(4, 1fr);
-          gap: 10px;
-      }
-
-      /*----------------------------------------*/
-      /*-------OVERVIEW CARDS--------------*/
-      /*----------------------------------------*/
-      .overviewcard {
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-          padding: 15px;
-          background-color: #00adef;
-          font-family: "Rubik", Sans-serif, serif;
-          border-radius: 5px 5px;
-          font-size: 16px;
-          color: #FFFFFF !important;
-          line-height: 1;
-          height: 31px;
-      }
-
-      .overviewcard_sites {
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-          padding: 15px;
-          background-color: #023e8a;
-          /*-----00adef    -----*/
-          font-family: "Rubik", Sans-serif, serif;
-          border-radius: 5px 5px;
-          font-size: 16px;
-          color: #FFFFFF !important;
-          line-height: 1;
-          height: 31px;
-      }
-
-      .overviewcard_info {
-          font-family: "Rubik", Sans-serif, serif;
-          text-transform: uppercase;
-          font-size: 16px !important;
-          color: #FFFFFF !important;
-      }
-
-      .overviewcard_icon {
-          font-family: "Rubik", Sans-serif, serif;
-          text-transform: uppercase;
-          font-size: 16px !important;
-          color: #FFFFFF !important;
-      }
-
-
-      .overviewcard4 {
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-          padding: 15px;
-          background-color: #031A24;
-          /*-----00adef    -----*/
-          font-family: "Rubik", Sans-serif, serif;
-          border-radius: 5px 5px;
-          font-size: 16px;
-          color: #FFFFFF !important;
-          line-height: 1;
-          height: 31px;
-      }
-
-      /*----------------------------------------*/
-      /*------CARDS STYLING----------*/
-      /*----------------------------------------*/
-      .main-cards {
-          column-count: 0;
-          column-gap: 20px;
-          margin: 20px;
-      }
-
-      .card {
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          width: 100%;
-          background-color: #f1faee;
-          margin-bottom: 20px;
-          -webkit-column-break-inside: avoid;
-          padding: 24px;
-          box-sizing: border-box;
-      }
-
-      /* Force varying heights to simulate dynamic content */
-      .card:first-child {
-          height: 300px;
-      }
-
-      .card:nth-child(2) {
-          height: 200px;
-      }
-
-      .card:nth-child(3) {
-          height: 265px;
-      }
-
-      /*----------------------------------------*/
-      /*Image Filter styles*/
-      /*----------------------------------------*/
-      .saturate {
-          filter: saturate(3);
-      }
-
-      .grayscale {
-          filter: grayscale(100%);
-      }
-
-      .contrast {
-          filter: contrast(160%);
-      }
-
-      .brightness {
-          filter: brightness(0.25);
-      }
-
-      .blur {
-          filter: blur(3px);
-      }
-
-      .invert {
-          filter: invert(100%);
-      }
-
-      .sepia {
-          filter: sepia(100%);
-      }
-
-      .huerotate {
-          filter: hue-rotate(180deg);
-      }
-
-      .rss.opacity {
-          filter: opacity(50%);
-      }
-
-      /*----------------------------------------*/
-      /*-- Sites Styling -----*/
-      /*----------------------------------------*/
-      .sites {
-          display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(275px, 1fr));
-          grid-gap: 20px;
-          margin: 20px;
-      }
-
-      .sites li {
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          width: 100%;
-          background: #560bad;
-          color: #ffffff;
-          font-family: 'Rubik', sans-serif;
-          font-size: 14px;
-          text-align: left;
-          text-transform: uppercase;
-          margin-bottom: 20px;
-          -webkit-column-break-inside: avoid;
-          padding: 24px;
-          box-sizing: border-box;
-      }
-
-
-      .sites li:hover {
-          box-shadow: 0 0 15px 0 #bbb;
-      }
-
-      .sites li:hover svg {
-          fill: #ffffff;
-      }
-
-      .sites li:hover a {
-          color: #ffffff;
-      }
-
-      .sites li a {
-          display: block;
-          padding-left: 48px;
-          color: #f2f2f2;
-          transition: color 250ms ease-in-out;
-      }
-
-      .sites img {
-          position: absolute;
-          margin: 8px 8px 8px -40px;
-          fill: #f2f2f2;
-          transition: fill 250ms ease-in-out;
-      }
-
-      .sites svg {
-          position: absolute;
-          margin: 16px 16px 16px -40px;
-          fill: #f2f2f2;
-          transition: fill 250ms ease-in-out;
-      }
-
-
-      .modal-body {
-          position: relative;
-          flex: 1 1 auto;
-          padding: var(--bs-modal-padding);
-          --bs-modal-padding: 1.5rem;
-          width: 100%;
-          max-height: calc(100vh - 210px);
-          overflow-y: auto;
-          background-color: white;
-          border-radius: 20px;
-          border: 1px solid black;
-      }
-
-      .modal-content {
-          position: relative;
-          display: flex;
-          flex-direction: column;
-          width: 100%;
-          color: black;
-          pointer-events: auto;
-          background-color: #ffffff;
-          background-clip: padding-box;
-          border: 1px solid rgba(0, 0, 0, 0.2);
-          border-radius: 0.3rem;
-          outline: 0;
-      }
-
-      /* Common Class */
-      .pd-5 {padding: 5px;}
-      .pd-10 {padding: 10px;}
-      .pd-20 {padding: 20px;}
-      .pd-30 {padding: 30px;}
-      .pb-10 {padding-bottom: 10px;}
-      .pb-20 {padding-bottom: 20px;}
-      .pb-30 {padding-bottom: 30px;}
-      .pt-10 {padding-top: 10px;}
-      .pt-20 {padding-top: 20px;}
-      .pt-30 {padding-top: 30px;}
-      .pr-10 {padding-right: 10px;}
-      .pr-20 {padding-right: 20px;}
-      .pr-30 {padding-right: 30px;}
-      .pl-10 {padding-left: 10px;}
-      .pl-20 {padding-left: 20px;}
-      .pl-30 {padding-left: 30px;}
-      .px-30 {padding-left: 30px; padding-right: 30px;}
-      .px-20 {padding-left: 20px; padding-right: 20px;}
-      .py-30 {padding-top: 30px; padding-bottom: 30px;}
-      .py-20 {padding-top: 20px; padding-bottom: 20px;}
-      .mb-30 {margin-bottom: 30px;}
-      .mb-50 {margin-bottom: 50px;}
-
-      .font-30 {font-size: 30px; line-height: 1.46em;}
-      .font-24 {font-size: 24px; line-height: 1.5em;}
-      .font-20 {font-size: 20px; line-height: 1.5em;}
-      .font-18 {font-size: 18px; line-height: 1.6em;}
-      .font-16 {font-size: 16px; line-height: 1.75em;}
-      .font-14 {font-size: 14px; line-height: 1.85em;}
-      .font-12 {font-size: 12px; line-height: 2em;}
-
-      .weight-300 {font-weight: 300;}
-      .weight-400 {font-weight: 400;}
-      .weight-500 {font-weight: 500;}
-      .weight-600 {font-weight: 600;}
-      .weight-700 {font-weight: 700;}
-      .weight-800 {font-weight: 800;}
-
-      .text-blue {color: #1b00ff;}
-      .text-dark {color: #000000;}
-      .text-white {color: #ffffff;}
-      .height-100-p {height: 100%;}
-      .bg-white {background: #ffffff;}
-      .border-radius-10 {
-          -webkit-border-radius: 10px;
-          -moz-border-radius: 10px;
-          border-radius: 10px;
-      }
-      .border-radius-100 {
-          -webkit-border-radius: 100%;
-          -moz-border-radius: 100%;
-          border-radius: 100%;
-      }
-      .box-shadow {
-          -webkit-box-shadow: 0px 0px 28px rgba(0, 0, 0, .08);
-          -moz-box-shadow 0px 0px 28px rgba(0, 0, 0, .08);
-          box-shadow: 0px 0px 28px rgba(0, 0, 0, .08);
-      }
-
-      .gradient-style1 {
-          background-image: linear-gradient(135deg, #43CBFF 10%, #9708CC 100%);
-      }
-      .gradient-style2 {
-          background-image: linear-gradient(135deg, #72EDF2 10%, #5151E5 100%);
-      }
-      .gradient-style3 {
-          background-image: radial-gradient(circle 732px at 96.2% 89.9%, rgba(70,66,159,1) 0%, rgba(187,43,107,1) 92%);
-      }
-      .gradient-style4 {
-          background-image: linear-gradient(135deg, #FF9D6C 10%, #BB4E75 100%);
-      }
-
-      /* widget style 1 */
-      .widget-style1 {padding: 20px 10px;}
-      .widget-style1 .circle-icon {width: 60px;}
-      .widget-style1 .circle-icon .icon {
-          width: 60px;
-          height: 60px;
-          background: #ecf0f4;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-      }
-      .widget-style1 .widget-data {width: calc(100% - 150px);padding: 0 15px;}
-      .widget-style1 .progress-data {width: 90px;}
-      .widget-style1 .progress-data .apexcharts-canvas {margin: 0 auto;}
-
-      .widget-style2 .widget-data {padding: 20px;}
-
-      .widget-style3 {padding: 30px 20px;}
-      .widget-style3 .widget-data {width: calc(100% - 60px);}
-      .widget-style3 .widget-icon {
-          width: 60px;
-          font-size: 45px;
-          line-height: 1;
-      }
-
-      a.email-link {
-          color: black !important;
-          text-decoration: none;
-      }
-
-      .bg-white.box-shadow.border-radius-10.height-100-p.widget-style1 {
-          height: 140px !important;
-          overflow-y: scroll;
-      }
-      .email-list {
-          margin-top: 20px;
-          margin-bottom: 60px;
-      }
-      .email-item {
-          background-color: #f8f9fa;
-          border: 1px solid #dee2e6;
-          border-radius: 5px;
-          padding: 10px;
-          margin-bottom: 10px;
-          cursor: pointer;
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-      }
-      .email-item:hover {
-          background-color: #e9ecef;
-      }
-      .email-content {
-          flex-grow: 1;
-      }
-      .email-sender {
-          font-weight: bold;
-      }
-      .email-subject {
-          color: #495057;
-      }
-      .email-date {
-          font-size: 0.9em;
-          color: #6c757d;
-      }
-      .email-delete {
-          margin-left: 10px;
-      }
-      .footer {
-          position: fixed;
-          bottom: 0;
-          width: 100%;
-          background-color: #0b162c;
-          color: #ffffff;
-          text-align: center;
-          padding: 10px 0;
-      }
-      .btn-delete {
-          background-color: #dc3545;
-          color: white;
-      }
+		/* Custom scrollbar */
+		* {
+			scrollbar-width: thin;
+			scrollbar-color: #6c757d #f8f9fa;
+		}
+		
+		*::-webkit-scrollbar {
+			width: 8px;
+		}
+		
+		*::-webkit-scrollbar-track {
+			background: #f8f9fa;
+		}
+		
+		*::-webkit-scrollbar-thumb {
+			background-color: #6c757d;
+			border-radius: 4px;
+		}
+		
+		/* Email specific styles */
+		.email-card {
+			transition: all 0.3s ease;
+			border-left: 4px solid transparent;
+		}
+		
+		.email-card:hover {
+			transform: translateY(-2px);
+			box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+			border-left-color: #0d6efd;
+		}
+		
+		.email-card.unread {
+			border-left-color: #dc3545;
+			background-color: #fff5f5;
+		}
+		
+		.email-sender-avatar {
+			width: 40px;
+			height: 40px;
+			border-radius: 50%;
+			background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			color: white;
+			font-weight: bold;
+			font-size: 14px;
+		}
+		
+		.email-preview {
+			max-height: 60px;
+			overflow: hidden;
+			text-overflow: ellipsis;
+			display: -webkit-box;
+			-webkit-line-clamp: 2;
+			-webkit-box-orient: vertical;
+		}
+		
+		.email-actions {
+			opacity: 0;
+			transition: opacity 0.3s ease;
+		}
+		
+		.email-card:hover .email-actions {
+			opacity: 1;
+		}
+		
+		.stats-card {
+			background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+			color: white;
+			border-radius: 15px;
+		}
+		
+		.stats-card .card-body {
+			padding: 1.5rem;
+		}
+		
+		.search-container {
+			background: white;
+			border-radius: 15px;
+			box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+			padding: 1.5rem;
+			margin-bottom: 2rem;
+		}
+		
+		.email-modal .modal-content {
+			border-radius: 15px;
+			border: none;
+			box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+		}
+		
+		.email-modal .modal-header {
+			background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+			color: white;
+			border-radius: 15px 15px 0 0;
+		}
+		
+		.email-content-body {
+			background-color: #f8f9fa;
+			border-radius: 10px;
+			padding: 1.5rem;
+			margin-top: 1rem;
+		}
+		
+		.email-header-info {
+			background-color: #e9ecef;
+			border-radius: 10px;
+			padding: 1rem;
+			margin-bottom: 1rem;
+		}
+		
+		.badge-unread {
+			background-color: #dc3545;
+		}
+		
+		.badge-read {
+			background-color: #6c757d;
+		}
+		
+		/* Responsive improvements */
+		@media (max-width: 768px) {
+			.email-sender-avatar {
+				width: 35px;
+				height: 35px;
+				font-size: 12px;
+			}
+			
+			.email-actions {
+				opacity: 1;
+			}
+			
+			.stats-card .card-body {
+				padding: 1rem;
+			}
+		}
 	</style>
 </head>
-<body>
-<div class="grid-container">
-	<main class="main">
-		<!-- Your existing server info section -->
-		
-		<!-- Email List Section -->
-		<div class="container mt-5" style="width: 1440px!important;background-color: #f8f9fa;padding: 20px;border-radius: 5px;color:#000000">
-			<h1 style="text-align: center;color: #000000"><?php echo $translations['email-list'] ?? 'Logged Messages'; ?></h1>
-			
-			<!-- Search and Sort Options -->
-			<div class="mb-3">
-				<input type="text" id="emailSearchInput" class="form-control" placeholder="Search emails...">
+<body class="bg-light">
+	<div class="container-fluid py-4">
+		<!-- Header Section -->
+		<div class="row mb-4">
+			<div class="col-12">
+				<div class="d-flex justify-content-between align-items-center">
+					<div>
+						<strong><p class="h3 mb-1 text-dark"><?php echo $translations['email_list'] ?? 'Email Inbox'; ?></p></strong>
+						<p class="text-muted mb-0">Manage your development server emails</p>
+					</div>
+					<div class="d-flex gap-2">
+						<button class="btn btn-outline-primary" onclick="refreshEmails()">
+							<i class="bi bi-arrow-clockwise"></i> Refresh
+						</button>
+						<button class="btn btn-outline-danger" onclick="deleteAllEmails()">
+							<i class="bi bi-trash"></i> Clear All
+						</button>
+					</div>
+				</div>
 			</div>
-			<div class="mb-3">
-				<select id="emailSortSelect" class="form-select">
-					<option value="date">Sort by Date</option>
-					<option value="subject">Sort by Subject</option>
-					<option value="from">Sort by Sender</option>
-				</select>
+		</div>
+
+		<!-- Statistics Cards -->
+		<div class="row mb-4">
+			<div class="col-md-3 col-sm-6 mb-3">
+				<div class="card stats-card h-100">
+					<div class="card-body text-center">
+						<i class="bi bi-envelope-fill fs-1 mb-2"></i>
+						<strong><p class="h4 mb-1"><?php echo count($emails); ?></p></strong>
+						<p class="mb-0">Total Emails</p>
+					</div>
+				</div>
 			</div>
-			
-			<?php if (empty($emails)): ?>
-				<div class="alert alert-info" style="color: #000000"><?php echo $translations['no-emails-found'] ?? 'No Emails Found'; ?></div>
-			<?php else: ?>
-				<div class="email-list">
-					<?php foreach ($emails as $email): ?>
-						<div class="email-item">
-							<div class="email-content" data-email="<?= htmlspecialchars($email['filename']) ?>">
-								<div class="email-sender"><?= htmlspecialchars($email['from']) ?></div>
-								<div class="email-subject"><?= htmlspecialchars($email['subject']) ?></div>
-								<div class="email-date"><?= date('Y-m-d H:i:s', $email['date']) ?></div>
-							</div>
-							<button class="btn btn-sm btn-danger email-delete" data-email="<?= htmlspecialchars($email['filename']) ?>">Delete</button>
+			<div class="col-md-3 col-sm-6 mb-3">
+				<div class="card stats-card h-100">
+					<div class="card-body text-center">
+						<i class="bi bi-envelope-open-fill fs-1 mb-2"></i>
+						<strong><p class="h4 mb-1"><?php echo count(array_filter($emails, function($email) { return $email['date'] > (time() - 86400); })); ?></p></strong>
+						<p class="mb-0">Today</p>
+					</div>
+				</div>
+			</div>
+			<div class="col-md-3 col-sm-6 mb-3">
+				<div class="card stats-card h-100">
+					<div class="card-body text-center">
+						<i class="bi bi-calendar-week-fill fs-1 mb-2"></i>
+						<strong><p class="h4 mb-1"><?php echo count(array_filter($emails, function($email) { return $email['date'] > (time() - 604800); })); ?></p></strong>
+						<p class="mb-0">This Week</p>
+					</div>
+				</div>
+			</div>
+			<div class="col-md-3 col-sm-6 mb-3">
+				<div class="card stats-card h-100">
+					<div class="card-body text-center">
+						<i class="bi bi-folder-fill fs-1 mb-2"></i>
+						<strong><p class="h4 mb-1"><?php echo count(array_unique(array_column($emails, 'from'))); ?></p></strong>
+						<p class="mb-0">Unique Senders</p>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<!-- Search and Filter Section -->
+		<div class="search-container">
+			<div class="row">
+				<div class="col-md-8 mb-3">
+					<div class="input-group">
+						<span class="input-group-text"><i class="bi bi-search"></i></span>
+						<input type="text" id="emailSearchInput" class="form-control" placeholder="Search emails by sender, subject, or content...">
+					</div>
+				</div>
+				<div class="col-md-4 mb-3">
+					<div class="d-flex gap-2">
+						<select id="emailSortSelect" class="form-select">
+							<option value="date">Sort by Date</option>
+							<option value="subject">Sort by Subject</option>
+							<option value="from">Sort by Sender</option>
+						</select>
+						<button class="btn btn-outline-secondary" onclick="toggleView()">
+							<i class="bi bi-list-ul" id="viewToggleIcon"></i>
+						</button>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<!-- Email List -->
+		<div class="row">
+			<div class="col-12">
+				<?php if (empty($emails)): ?>
+					<div class="card">
+						<div class="card-body text-center py-5">
+							<i class="bi bi-inbox fs-1 text-muted mb-3"></i>
+							<strong><p class="h5 text-muted"><?php echo $translations['no_emails_found'] ?? 'No Emails Found'; ?></p></strong>
+							<p class="text-muted">Your inbox is empty. New emails will appear here when they arrive.</p>
 						</div>
-					<?php endforeach; ?>
-				</div>
-			<?php endif; ?>
+					</div>
+				<?php else: ?>
+					<div class="row" id="emailList">
+						<?php foreach ($emails as $index => $email): ?>
+							<div class="col-12 mb-3 email-item" data-email="<?= htmlspecialchars($email['filename']) ?>">
+								<div class="card email-card h-100">
+									<div class="card-body">
+										<div class="row align-items-center">
+											<div class="col-auto">
+												<div class="email-sender-avatar">
+													<?= strtoupper(substr($email['from'], 0, 1)) ?>
+												</div>
+											</div>
+											<div class="col">
+												<div class="d-flex justify-content-between align-items-start">
+													<div class="flex-grow-1">
+														<div class="d-flex align-items-center mb-1">
+															<strong><p class="mb-0 me-2"><?= htmlspecialchars($email['from']) ?></p></strong>
+															<span class="badge badge-unread">New</span>
+														</div>
+														<strong><p class="h6 mb-1 text-dark"><?= htmlspecialchars($email['subject']) ?></p></strong>
+														<p class="text-muted small mb-0">
+															<i class="bi bi-clock me-1"></i>
+															<?= date('M j, Y g:i A', $email['date']) ?>
+														</p>
+													</div>
+													<div class="email-actions">
+														<div class="btn-group" role="group">
+															<button class="btn btn-sm btn-outline-primary" onclick="viewEmail('<?= htmlspecialchars($email['filename']) ?>')">
+																<i class="bi bi-eye"></i>
+															</button>
+															<button class="btn btn-sm btn-outline-danger" onclick="deleteEmail('<?= htmlspecialchars($email['filename']) ?>')">
+																<i class="bi bi-trash"></i>
+															</button>
+														</div>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						<?php endforeach; ?>
+					</div>
+				<?php endif; ?>
+			</div>
 		</div>
-		
-		<!-- Email Modal -->
-		<div class="modal fade" id="emailModal" tabindex="-1" role="dialog">
-			<div class="modal-dialog modal-lg">
-				<div class="modal-content modal-custom">
-					<div class="modal-header">
-						<h5 class="modal-title">Email Content</h5>
-						<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-					</div>
-					<div class="modal-body"></div>
-					<div class="modal-footer">
-						<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-						<button type="button" class="btn btn-delete" id="modalDeleteButton">Delete</button>
-					</div>
+	</div>
+
+	<!-- Email Modal -->
+	<div class="modal fade email-modal" id="emailModal" tabindex="-1" role="dialog">
+		<div class="modal-dialog modal-lg">
+			<div class="modal-content">
+				<div class="modal-header">
+					<strong><p class="h5 mb-0">Email Details</p></strong>
+					<button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+				</div>
+				<div class="modal-body" id="emailModalBody">
+					<!-- Email content will be loaded here -->
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+					<button type="button" class="btn btn-danger" id="modalDeleteButton">Delete Email</button>
 				</div>
 			</div>
 		</div>
-	</main>
+	</div>
+
+	<!-- Bootstrap 5 JS -->
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+	<!-- jQuery -->
+	<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 	
-	<!-- Footer -->
-	<footer class="footer">
-		<div class="footer__copyright">
-			<?php echo $translations['default_footer'] ?? "&copy; " . date('Y') . " Tarek Tarabichi"; ?>
-		</div>
-		<div class="footer__signature">
-			<?php echo $translations['made_with_love'] ?? "Made with <span style=\"color: #e25555;\">&hearts;</span> and powered by Laragon"; ?>
-		</div>
-	</footer>
-</div>
+	<script>
+		let currentEmail = null;
+		let isListView = true;
 
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.bundle.min.js"></script>
-<script>
-    $(document).ready(function() {
-        let currentEmail;
+		// View email function
+		function viewEmail(email) {
+			currentEmail = email;
+			$.ajax({
+				url: 'assets/inbox/open_email.php',
+				data: { email: email },
+				success: function(data) {
+					$('#emailModalBody').html(data);
+					var emailModal = new bootstrap.Modal(document.getElementById('emailModal'));
+					emailModal.show();
+				},
+				error: function() {
+					alert('Error loading email content');
+				}
+			});
+		}
 
-        $('.email-content').click(function() {
-            var email = $(this).data('email');
-            currentEmail = email;
-            $.ajax({
-                url: 'assets/inbox/open_email.php',
-                data: { email: email },
-                success: function(data) {
-                    $('#emailModal .modal-body').html(data);
-                    var emailModal = new bootstrap.Modal(document.getElementById('emailModal'));
-                    emailModal.show();
-                }
-            });
-        });
+		// Delete email function
+		function deleteEmail(email) {
+			if (confirm('Are you sure you want to delete this email?')) {
+				$.ajax({
+					url: '<?php echo $_SERVER['PHP_SELF']; ?>',
+					data: { delete: email },
+					method: 'GET',
+					success: function() {
+						location.reload();
+					},
+					error: function() {
+						alert('Error deleting email');
+					}
+				});
+			}
+		}
 
-        $('.email-delete, #modalDeleteButton').click(function(e) {
-            e.stopPropagation();
-            var email = $(this).hasClass('email-delete') ? $(this).data('email') : currentEmail;
-            if (confirm('Are you sure you want to delete this email?')) {
-                $.ajax({
-                    url: '<?php echo $_SERVER['PHP_SELF']; ?>',
-                    data: { delete: email },
-                    method: 'GET',
-                    success: function() {
-                        location.reload();
-                    }
-                });
-            }
-        });
+		// Delete all emails
+		function deleteAllEmails() {
+			if (confirm('Are you sure you want to delete ALL emails? This action cannot be undone.')) {
+				<?php foreach ($emails as $email): ?>
+					$.ajax({
+						url: '<?php echo $_SERVER['PHP_SELF']; ?>',
+						data: { delete: '<?= $email['filename'] ?>' },
+						method: 'GET',
+						async: false
+					});
+				<?php endforeach; ?>
+				location.reload();
+			}
+		}
 
-        $('#emailSortSelect').change(function() {
-            var sortBy = $(this).val();
-            window.location.href = '?sort=' + sortBy;
-        });
+		// Refresh emails
+		function refreshEmails() {
+			location.reload();
+		}
 
-        $('#emailSearchInput').on('input', function() {
-            var searchTerm = $(this).val().toLowerCase();
-            $('.email-item').each(function() {
-                var text = $(this).text().toLowerCase();
-                $(this).toggle(text.indexOf(searchTerm) > -1);
-            });
-        });
+		// Toggle view
+		function toggleView() {
+			isListView = !isListView;
+			const icon = document.getElementById('viewToggleIcon');
+			if (isListView) {
+				icon.className = 'bi bi-list-ul';
+				// Switch to list view
+			} else {
+				icon.className = 'bi bi-grid-3x3-gap-fill';
+				// Switch to grid view
+			}
+		}
 
-        // Close modal when clicking outside
-        $(document).on('click', function(event) {
-            if ($(event.target).hasClass('modal')) {
-                $('#emailModal').modal('hide');
-            }
-        });
-    });
-</script>
+		// Search functionality
+		$('#emailSearchInput').on('input', function() {
+			const searchTerm = $(this).val().toLowerCase();
+			$('.email-item').each(function() {
+				const text = $(this).text().toLowerCase();
+				$(this).toggle(text.indexOf(searchTerm) > -1);
+			});
+		});
+
+		// Sort functionality
+		$('#emailSortSelect').change(function() {
+			const sortBy = $(this).val();
+			window.location.href = '?sort=' + sortBy;
+		});
+
+		// Modal delete button
+		$('#modalDeleteButton').click(function() {
+			if (currentEmail) {
+				deleteEmail(currentEmail);
+			}
+		});
+
+		// Click to view email
+		$('.email-item').click(function(e) {
+			if (!$(e.target).closest('.email-actions').length) {
+				const email = $(this).data('email');
+				viewEmail(email);
+			}
+		});
+
+		// Keyboard shortcuts
+		$(document).keydown(function(e) {
+			if (e.key === 'Escape') {
+				$('#emailModal').modal('hide');
+			}
+		});
+	</script>
 </body>
 </html>
