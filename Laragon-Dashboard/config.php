@@ -87,12 +87,31 @@ function getLaragonSendmailDir() {
     $laragonRoot = getLaragonRoot();
     $sendmailDir = $laragonRoot . '/bin/sendmail/output';
     
-    if (is_dir($sendmailDir)) {
+    // Create directory if it doesn't exist
+    if (!is_dir($sendmailDir)) {
+        $parentDir = dirname($sendmailDir);
+        if (!is_dir($parentDir)) {
+            @mkdir($parentDir, 0755, true);
+        }
+        @mkdir($sendmailDir, 0755, true);
+    }
+    
+    // Return the directory path (create it if needed)
+    if (is_dir($sendmailDir) || @mkdir($sendmailDir, 0755, true)) {
         return rtrim(str_replace('\\', '/', $sendmailDir), '/') . '/';
     }
     
-    // Fallback to default
-    return rtrim($laragonRoot, '/') . '/bin/sendmail/output/';
+    // Fallback to default (still try to create it)
+    $fallbackDir = rtrim($laragonRoot, '/') . '/bin/sendmail/output';
+    if (!is_dir($fallbackDir)) {
+        $parentDir = dirname($fallbackDir);
+        if (!is_dir($parentDir)) {
+            @mkdir($parentDir, 0755, true);
+        }
+        @mkdir($fallbackDir, 0755, true);
+    }
+    
+    return $fallbackDir . '/';
 }
 
 /**

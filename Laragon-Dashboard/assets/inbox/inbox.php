@@ -32,8 +32,15 @@
 	
 	function getEmails($directory) {
 		if (!is_dir($directory)) {
-			echo "<p>Directory does not exist: $directory</p>";
-			return [];
+			// Try to create the directory if it doesn't exist
+			$parentDir = dirname($directory);
+			if (!is_dir($parentDir)) {
+				@mkdir($parentDir, 0755, true);
+			}
+			if (!@mkdir($directory, 0755, true) && !is_dir($directory)) {
+				echo "<p>Directory does not exist and could not be created: $directory</p>";
+				return [];
+			}
 		}
 		$files = scandir($directory);
 		if ($files === false) {
