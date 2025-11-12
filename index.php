@@ -434,6 +434,13 @@ $activeTab = $_GET['tab'] ?? 'servers';
 
             $(this).addClass('active');
             $("#" + tab_id).addClass('active');
+            
+            // Hide servers container when other tabs are active
+            if (tab_id !== 'servers') {
+                $('#servers .container-fluid').hide();
+            } else {
+                $('#servers .container-fluid').show();
+            }
         });
 
         $('#language-selector').change(function() {
@@ -640,6 +647,16 @@ $activeTab = $_GET['tab'] ?? 'servers';
         display: flex;
         flex-direction: column;
         flex: 1;
+    }
+
+    /* Hide servers container when other tabs are active */
+    #servers .container-fluid:not(:first-of-type) {
+        display: none;
+    }
+
+    .tab-content:not(#servers).active ~ #servers .container-fluid,
+    .tab-content.active:not(#servers) ~ #servers {
+        display: none !important;
     }
 
     select#language-selector {
@@ -1071,23 +1088,7 @@ foreach ($langFiles as $file) {
                                 </a>
                             </div>
                         </div>
-                    </div>
-                </div>
-                <!-- Row 3: Search -->
-                <div class="row g-2 mb-2">
-                    <div class="col-3">
-                        <div class="project-search-card">
-                            <i class="fas fa-search" style="color: #666; margin-right: 10px;"></i>
-                            <input type="text" id="project-search" placeholder="Search projects...">
-                        </div>
-                    </div>
-                    <div class="col-9">
-                        <!-- Empty space -->
-                    </div>
-                </div>
-                <div class="row g-2 mb-2">
-                    <div class="col-3">
-                        <div class="overviewcard">
+                        <div class="overviewcard mt-2">
                             <div class="overviewcard_icon">Laragon</div>
                             <div class="overviewcard_info">
                                 <?php
@@ -1131,8 +1132,17 @@ echo htmlspecialchars($laragonVersion);
                             </div>
                         </div>
                     </div>
+                </div>
+                <!-- Row 3: Search -->
+                <div class="row g-2 mb-2">
                     <div class="col-3">
-                        <!-- Empty column for spacing -->
+                        <div class="project-search-card">
+                            <i class="fas fa-search" style="color: #666; margin-right: 10px;"></i>
+                            <input type="text" id="project-search" placeholder="Search projects...">
+                        </div>
+                    </div>
+                    <div class="col-9">
+                        <!-- Empty space -->
                     </div>
                 </div>
             </div>
