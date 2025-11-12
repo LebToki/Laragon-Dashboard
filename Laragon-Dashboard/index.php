@@ -393,12 +393,12 @@ $activeTab = $_GET['tab'] ?? 'servers';
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="icon" type="image/x-icon" href="Laragon-Dashboard/assets/favicon.ico">
+    <link rel="icon" type="image/x-icon" href="assets/favicon.ico">
     <title><?php echo $translations['title'] ?? 'Welcome to the Laragon Dashboard'; ?></title>
 
     <link href="https://fonts.googleapis.com/css?family=Pt+Sans&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,700&display=swap">
-    <link rel="stylesheet" href="Laragon-Dashboard/assets/style.css">
+    <link rel="stylesheet" href="assets/style.css">
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/css/bootstrap-grid.min.css" />
@@ -413,13 +413,13 @@ $activeTab = $_GET['tab'] ?? 'servers';
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/js/fontawesome.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
 
-    <link rel="icon" href="Laragon-Dashboard/assets/favicon/favicon.ico" type="image/x-icon">
-    <link rel="icon" type="image/png" href="Laragon-Dashboard/assets/favicon/favicon-16x16.png" sizes="16x16">
-    <link rel="icon" type="image/png" href="Laragon-Dashboard/assets/favicon/favicon-32x32.png" sizes="32x32">
-    <link rel="icon" type="image/png" href="Laragon-Dashboard/assets/favicon/android-chrome-192x192.png" sizes="192x192">
-    <link rel="icon" type="image/png" href="Laragon-Dashboard/assets/favicon/android-chrome-512x512.png" sizes="512x512">
-    <link rel="icon" type="apple-touch-icon" href="Laragon-Dashboard/assets/favicon/apple-touch-icon.png">
-    <link rel="manifest" href="Laragon-Dashboard/assets/favicon/site.webmanifest">
+    <link rel="icon" href="assets/favicon/favicon.ico" type="image/x-icon">
+    <link rel="icon" type="image/png" href="assets/favicon/favicon-16x16.png" sizes="16x16">
+    <link rel="icon" type="image/png" href="assets/favicon/favicon-32x32.png" sizes="32x32">
+    <link rel="icon" type="image/png" href="assets/favicon/android-chrome-192x192.png" sizes="192x192">
+    <link rel="icon" type="image/png" href="assets/favicon/android-chrome-512x512.png" sizes="512x512">
+    <link rel="icon" type="apple-touch-icon" href="assets/favicon/apple-touch-icon.png">
+    <link rel="manifest" href="assets/favicon/site.webmanifest">
 
     <script>
     $(document).ready(function() {
@@ -440,7 +440,7 @@ $activeTab = $_GET['tab'] ?? 'servers';
 
         $('#project-search').on('input', function() {
             var q = $(this).val();
-            $.get('Laragon-Dashboard/project_search.php', {q: q}, function(data) {
+            $.get('project_search.php', {q: q}, function(data) {
                 $('#project-list').html(data);
             });
         });
@@ -448,7 +448,7 @@ $activeTab = $_GET['tab'] ?? 'servers';
 
     function fetchServerVitals() {
         $.ajax({
-            url: 'Laragon-Dashboard/server_vitals.php',
+            url: 'server_vitals.php',
             method: 'GET',
             dataType: 'json',
             success: function(data) {
@@ -564,7 +564,7 @@ $activeTab = $_GET['tab'] ?? 'servers';
 
     .grid-container {
         grid-area: main;
-        background: url(Laragon-Dashboard/assets/background2.jpg) no-repeat center center fixed;
+        background: url(assets/background2.jpg) no-repeat center center fixed;
         background-size: cover;
         display: flex;
         flex-direction: column;
@@ -1201,7 +1201,7 @@ foreach ($folders as $host) {
             break;
     }
 
-    echo '<div class="col-3"><div class="overviewcard_sites"><div class="overviewcard_avatar"><img src="Laragon-Dashboard/' . $avatar . '" style="width:20px; height:20px;"></div><div class="overviewcard_icon"><a href="' . $url . '://' . htmlspecialchars($host) . DOMAIN_SUFFIX . '">' . htmlspecialchars($host) . '</a></div><div class="overviewcard_info">' . $admin_link . '</div></div></div>';
+    echo '<div class="col-3"><div class="overviewcard_sites"><div class="overviewcard_avatar"><img src="' . $avatar . '" style="width:20px; height:20px;"></div><div class="overviewcard_icon"><a href="' . $url . '://' . htmlspecialchars($host) . DOMAIN_SUFFIX . '">' . htmlspecialchars($host) . '</a></div><div class="overviewcard_info">' . $admin_link . '</div></div></div>';
 }
 ?>
             </div>
@@ -1472,7 +1472,7 @@ foreach ($folders as $host) {
     });
 
     function loadDatabases() {
-        $.get('Laragon-Dashboard/database_manager.php?action=list_databases', function(data) {
+        $.get('database_manager.php?action=list_databases', function(data) {
             if (data.success) {
                 const select = $('#database-select');
                 select.empty();
@@ -1493,7 +1493,7 @@ foreach ($folders as $host) {
     });
 
     function loadTables(database) {
-        $.get('Laragon-Dashboard/database_manager.php?action=get_tables&database=' + encodeURIComponent(database), function(data) {
+        $.get('database_manager.php?action=get_tables&database=' + encodeURIComponent(database), function(data) {
             if (data.success) {
                 const tbody = $('#tables-tbody');
                 tbody.empty();
@@ -1506,7 +1506,7 @@ foreach ($folders as $host) {
     }
 
     function getDatabaseSize(database) {
-        $.get('Laragon-Dashboard/database_manager.php?action=get_database_size&database=' + encodeURIComponent(database), function(data) {
+        $.get('database_manager.php?action=get_database_size&database=' + encodeURIComponent(database), function(data) {
             if (data.success) {
                 $('#database-size').text(data.size_mb + ' MB');
             }
@@ -1519,7 +1519,7 @@ foreach ($folders as $host) {
             alert('Please enter a query');
             return;
         }
-        $.post('Laragon-Dashboard/database_manager.php?action=execute_query', {query: query}, function(data) {
+        $.post('database_manager.php?action=execute_query', {query: query}, function(data) {
             if (data.success) {
                 let html = '<table class="table table-striped"><thead><tr>';
                 if (data.results.length > 0) {
@@ -1547,7 +1547,7 @@ foreach ($folders as $host) {
 
     // Services Manager Functions
     function loadServices() {
-        $.get('Laragon-Dashboard/services_manager.php?action=status', function(data) {
+        $.get('services_manager.php?action=status', function(data) {
             if (data.success) {
                 const container = $('#services-list');
                 container.empty();
@@ -1565,7 +1565,7 @@ foreach ($folders as $host) {
         if (!confirm('Are you sure you want to ' + action + ' ' + service + '?')) {
             return;
         }
-        $.get('Laragon-Dashboard/services_manager.php?action=' + action + '&service=' + encodeURIComponent(service), function(data) {
+        $.get('services_manager.php?action=' + action + '&service=' + encodeURIComponent(service), function(data) {
             if (data.success) {
                 alert('Service ' + action + ' command executed');
                 loadServices();
@@ -1576,7 +1576,7 @@ foreach ($folders as $host) {
     }
 
     function refreshPorts() {
-        $.get('Laragon-Dashboard/services_manager.php?action=get_ports', function(data) {
+        $.get('services_manager.php?action=get_ports', function(data) {
             if (data.success) {
                 let html = '<table class="table table-striped"><thead><tr><th>Address</th><th>Port</th></tr></thead><tbody>';
                 data.ports.forEach(function(port) {
@@ -1590,7 +1590,7 @@ foreach ($folders as $host) {
 
     // Log Viewer Functions
     function loadLogs() {
-        $.get('Laragon-Dashboard/log_viewer.php?action=list_logs', function(data) {
+        $.get('log_viewer.php?action=list_logs', function(data) {
             if (data.success) {
                 const select = $('#log-select');
                 select.empty();
@@ -1609,7 +1609,7 @@ foreach ($folders as $host) {
             alert('Please select a log file');
             return;
         }
-        $.get('Laragon-Dashboard/log_viewer.php?action=read_log&path=' + encodeURIComponent(logPath) + '&lines=' + lines, function(data) {
+        $.get('log_viewer.php?action=read_log&path=' + encodeURIComponent(logPath) + '&lines=' + lines, function(data) {
             if (data.success) {
                 $('#log-text').text(data.lines.join('\n'));
             } else {
@@ -1627,7 +1627,7 @@ foreach ($folders as $host) {
         if (!confirm('Are you sure you want to clear this log file?')) {
             return;
         }
-        $.get('Laragon-Dashboard/log_viewer.php?action=clear_log&path=' + encodeURIComponent(logPath), function(data) {
+        $.get('log_viewer.php?action=clear_log&path=' + encodeURIComponent(logPath), function(data) {
             if (data.success) {
                 alert('Log cleared successfully');
                 loadLog();
@@ -1639,7 +1639,7 @@ foreach ($folders as $host) {
 
     // Quick Tools Functions
     function clearCache() {
-        $.post('Laragon-Dashboard/quick_tools.php', {action: 'clear_cache'}, function(data) {
+        $.post('quick_tools.php', {action: 'clear_cache'}, function(data) {
             if (data.success) {
                 alert('Cache cleared successfully');
             } else {
@@ -1657,7 +1657,7 @@ foreach ($folders as $host) {
         if (!confirm('This may take a while. Continue?')) {
             return;
         }
-        $.post('Laragon-Dashboard/quick_tools.php', {action: 'optimize_database', database: database}, function(data) {
+        $.post('quick_tools.php', {action: 'optimize_database', database: database}, function(data) {
             if (data.success) {
                 alert('Database optimized successfully. Tables optimized: ' + data.optimized_tables.length);
             } else {
@@ -1713,7 +1713,7 @@ foreach ($folders as $host) {
             alert('Please select a project');
             return;
         }
-        $.post('Laragon-Dashboard/quick_tools.php', {action: 'git_status', project_path: projectPath}, function(data) {
+        $.post('quick_tools.php', {action: 'git_status', project_path: projectPath}, function(data) {
             if (data.success) {
                 $('#tools-output').html('<div class="alert alert-info"><strong>Git Status:</strong><pre>' + data.status + '</pre><strong>Branch:</strong> ' + data.branch + '</div>');
             } else {
@@ -1731,7 +1731,7 @@ foreach ($folders as $host) {
         if (!confirm('Run composer install? This may take a while.')) {
             return;
         }
-        $.post('Laragon-Dashboard/quick_tools.php', {action: 'composer_command', project_path: projectPath, command: 'install'}, function(data) {
+        $.post('quick_tools.php', {action: 'composer_command', project_path: projectPath, command: 'install'}, function(data) {
             $('#tools-output').html('<div class="alert alert-info"><strong>Composer Output:</strong><pre>' + (data.output || '') + '</pre></div>');
         });
     }
@@ -1745,13 +1745,13 @@ foreach ($folders as $host) {
         if (!confirm('Run npm install? This may take a while.')) {
             return;
         }
-        $.post('Laragon-Dashboard/quick_tools.php', {action: 'npm_command', project_path: projectPath, command: 'install'}, function(data) {
+        $.post('quick_tools.php', {action: 'npm_command', project_path: projectPath, command: 'install'}, function(data) {
             $('#tools-output').html('<div class="alert alert-info"><strong>NPM Output:</strong><pre>' + (data.output || '') + '</pre></div>');
         });
     }
 
     function showPhpInfo() {
-        $.get('Laragon-Dashboard/quick_tools.php?action=php_info', function(data) {
+        $.get('quick_tools.php?action=php_info', function(data) {
             if (data.success) {
                 const win = window.open('', 'phpinfo', 'width=800,height=600');
                 win.document.write(data.phpinfo);
@@ -1760,7 +1760,7 @@ foreach ($folders as $host) {
     }
 
     function viewTableStructure(database, table) {
-        $.get('Laragon-Dashboard/database_manager.php?action=get_table_structure&database=' + encodeURIComponent(database) + '&table=' + encodeURIComponent(table), function(data) {
+        $.get('database_manager.php?action=get_table_structure&database=' + encodeURIComponent(database) + '&table=' + encodeURIComponent(table), function(data) {
             if (data.success) {
                 let html = '<table class="table table-striped"><thead><tr><th>Column</th><th>Type</th><th>Nullable</th><th>Key</th><th>Default</th><th>Extra</th></tr></thead><tbody>';
                 data.columns.forEach(function(col) {
@@ -1775,7 +1775,7 @@ foreach ($folders as $host) {
     // Self-Update Functions
     function checkForUpdates() {
         $('#update-status').html('<div class="alert alert-info">Checking for updates...</div>');
-        $.get('Laragon-Dashboard/update_manager.php?action=check', function(data) {
+        $.get('update_manager.php?action=check', function(data) {
             if (data.success) {
                 if (data.update_available) {
                     let statusHtml = '<div class="alert alert-success">' +
@@ -1824,7 +1824,7 @@ foreach ($folders as $host) {
 
         const csrfToken = '<?php echo SecurityHelper::getCSRFToken(); ?>';
         
-        $.post('Laragon-Dashboard/update_manager.php?action=install', {
+        $.post('update_manager.php?action=install', {
             csrf_token: csrfToken
         }, function(data) {
             if (data.success) {
