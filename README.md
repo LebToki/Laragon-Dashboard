@@ -158,10 +158,6 @@ A modern, feature-rich dashboard for Laragon development environment with advanc
 
 Edit `Laragon-Dashboard/config.php` to customize your setup:
 
-### Configuration
-
-Edit `Laragon-Dashboard/config.php` to customize your setup:
-
 ```php
 // Database Configuration
 define('MYSQL_HOST', 'localhost');
