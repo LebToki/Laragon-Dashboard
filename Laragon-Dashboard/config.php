@@ -156,10 +156,28 @@ function getAppVersion() {
 // Get Laragon root path
 $LARAGON_ROOT = getLaragonRoot();
 
+// Auto-detect BASE_URL
+function getBaseUrl() {
+    $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
+    $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
+    $scriptName = $_SERVER['SCRIPT_NAME'] ?? '';
+    $scriptDir = dirname($scriptName);
+    
+    // If script is in root, base URL is just the host
+    if ($scriptDir === '/' || $scriptDir === '\\' || $scriptDir === '.') {
+        $baseUrl = $protocol . '://' . $host . '/';
+    } else {
+        $baseUrl = $protocol . '://' . $host . rtrim($scriptDir, '/') . '/';
+    }
+    
+    return $baseUrl;
+}
+
 // Auto-detect configuration values
 define('SENDMAIL_OUTPUT_DIR', getenv('SENDMAIL_OUTPUT_DIR') ?: getLaragonSendmailDir());
 define('DOMAIN_SUFFIX', getenv('DOMAIN_SUFFIX') ?: getLaragonDomainSuffix());
 define('APP_VERSION', getenv('APP_VERSION') ?: getAppVersion());
+define('BASE_URL', getenv('BASE_URL') ?: getBaseUrl());
 
 // URL to access PhpMyAdmin. Override with the PHPMYADMIN_URL environment variable.
 define('PHPMYADMIN_URL', getenv('PHPMYADMIN_URL') ?: 'http://localhost/phpmyadmin');

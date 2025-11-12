@@ -378,7 +378,7 @@
 	function viewEmail(email) {
 		currentEmail = email;
 		$.ajax({
-			url: 'Laragon-Dashboard/assets/inbox/open_email.php',
+			url: '<?php echo rtrim(BASE_URL, '/') . '/'; ?>Laragon-Dashboard/assets/inbox/open_email.php',
 			data: { email: email },
 			success: function(data) {
 				$('#emailModalBody').html(data);
@@ -454,7 +454,8 @@
 		// Sort functionality
 		$('#emailSortSelect').change(function() {
 			const sortBy = $(this).val();
-			window.location.href = window.location.pathname + '?tab=mailbox&sort=' + sortBy;
+			const baseUrl = '<?php echo BASE_URL; ?>';
+			window.location.href = baseUrl + (baseUrl.endsWith('/') ? '' : '/') + '?tab=mailbox&sort=' + sortBy;
 		});
 
 		// Modal delete button
