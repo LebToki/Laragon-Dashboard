@@ -39,7 +39,7 @@ function getLaragonRoot() {
 function getLaragonDomainSuffix() {
     $laragonRoot = getLaragonRoot();
     
-    // Check laragon.ini file - look for HostnameFormat
+    // Check laragon.ini file - look for HostnameFormat first
     $iniFile = $laragonRoot . '/usr/laragon.ini';
     if (file_exists($iniFile)) {
         $config = @parse_ini_file($iniFile);
@@ -87,12 +87,31 @@ function getLaragonSendmailDir() {
     $laragonRoot = getLaragonRoot();
     $sendmailDir = $laragonRoot . '/bin/sendmail/output';
     
-    if (is_dir($sendmailDir)) {
+    // Create directory if it doesn't exist
+    if (!is_dir($sendmailDir)) {
+        $parentDir = dirname($sendmailDir);
+        if (!is_dir($parentDir)) {
+            @mkdir($parentDir, 0755, true);
+        }
+        @mkdir($sendmailDir, 0755, true);
+    }
+    
+    // Return the directory path (create it if needed)
+    if (is_dir($sendmailDir) || @mkdir($sendmailDir, 0755, true)) {
         return rtrim(str_replace('\\', '/', $sendmailDir), '/') . '/';
     }
     
-    // Fallback to default
-    return rtrim($laragonRoot, '/') . '/bin/sendmail/output/';
+    // Fallback to default (still try to create it)
+    $fallbackDir = rtrim($laragonRoot, '/') . '/bin/sendmail/output';
+    if (!is_dir($fallbackDir)) {
+        $parentDir = dirname($fallbackDir);
+        if (!is_dir($parentDir)) {
+            @mkdir($parentDir, 0755, true);
+        }
+        @mkdir($fallbackDir, 0755, true);
+    }
+    
+    return $fallbackDir . '/';
 }
 
 /**
@@ -117,12 +136,8 @@ function getAppVersion() {
         $version = @shell_exec($command);
         if ($version) {
             $version = trim($version);
-            // Remove 'v' prefix if present and clean up (e.g., "v2.6.0-14-g877daad" -> "2.6.0")
+            // Remove 'v' prefix if present
             $version = preg_replace('/^v/', '', $version);
-            // Extract just the version number if it contains commit info
-            if (preg_match('/^(\d+\.\d+\.\d+)/', $version, $matches)) {
-                return $matches[1];
-            }
             return $version;
         }
         
