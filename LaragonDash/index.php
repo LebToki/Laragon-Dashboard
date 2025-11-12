@@ -509,29 +509,50 @@ $activeTab = $_GET['tab'] ?? 'servers';
     </script>
     <style>
     /* Scrollbar CSS */
-    * {
-        scrollbar-width: auto;
-        scrollbar-color: #ec1c7e #ffffff;
-    }
-
+    /* Custom Scrollbar - Magenta/Pink Theme */
     *::-webkit-scrollbar {
-        width: 16px;
+        width: 12px;
+        height: 12px;
     }
 
     *::-webkit-scrollbar-track {
-        background: #ffffff;
+        background: rgba(11, 22, 44, 0.8);
+        border-radius: 10px;
     }
 
     *::-webkit-scrollbar-thumb {
-        background-color: #ec1c7e;
+        background: linear-gradient(135deg, #e91e63 0%, #f06292 50%, #ec407a 100%);
         border-radius: 10px;
-        border: 3px solid #ffffff;
+        border: 2px solid rgba(11, 22, 44, 0.8);
+        transition: background 0.3s ease;
+    }
+
+    *::-webkit-scrollbar-thumb:hover {
+        background: linear-gradient(135deg, #c2185b 0%, #e91e63 50%, #d81b60 100%);
+    }
+
+    *::-webkit-scrollbar-corner {
+        background: rgba(11, 22, 44, 0.8);
+    }
+
+    /* Firefox Scrollbar */
+    * {
+        scrollbar-width: thin;
+        scrollbar-color: #e91e63 rgba(11, 22, 44, 0.8);
+    }
+
+    /* Smooth scrolling */
+    html {
+        scroll-behavior: smooth;
     }
 
     .grid-container {
         grid-area: main;
         background: url(LaragonDash/assets/background2.jpg) no-repeat center center fixed;
         background-size: cover;
+        display: flex;
+        flex-direction: column;
+        min-height: calc(100vh - 120px);
     }
 
     nav {
@@ -590,10 +611,16 @@ $activeTab = $_GET['tab'] ?? 'servers';
 
     .tab-content {
         display: none;
+        flex: 1;
+        flex-direction: column;
+        overflow-y: auto;
+        overflow-x: hidden;
     }
 
     .tab-content.active {
-        display: block;
+        display: flex;
+        flex-direction: column;
+        flex: 1;
     }
 
     select#language-selector {
@@ -615,6 +642,12 @@ $activeTab = $_GET['tab'] ?? 'servers';
         display: grid;
         grid-template-columns: repeat(4, 1fr);
         gap: 10px;
+    }
+
+    /* Bootstrap row gap utility for card layouts */
+    .row.g-2 {
+        --bs-gutter-x: 0.5rem;
+        --bs-gutter-y: 0.5rem;
     }
 
     .overviewcard {
@@ -671,6 +704,44 @@ $activeTab = $_GET['tab'] ?? 'servers';
         color: #FFFFFF !important;
         line-height: 1;
         height: 31px;
+    }
+
+    .project-search-card {
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+        padding: 15px 20px;
+        background-color: #ffffff;
+        border-radius: 10px;
+        font-family: "Rubik", Sans-serif, serif;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        transition: box-shadow 0.3s ease;
+    }
+
+    .project-search-card:hover {
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    .project-search-card i {
+        font-size: 18px;
+        color: #666;
+        flex-shrink: 0;
+    }
+
+    .project-search-card input {
+        background: transparent;
+        border: none;
+        outline: none;
+        color: #333 !important;
+        font-family: "Rubik", Sans-serif, serif;
+        font-size: 16px;
+        width: 100%;
+        padding: 0;
+        margin-left: 10px;
+    }
+
+    .project-search-card input::placeholder {
+        color: rgba(102, 102, 102, 0.6) !important;
     }
 
     .main-cards {
@@ -804,6 +875,11 @@ $activeTab = $_GET['tab'] ?? 'servers';
         padding: 0 16px;
         background-color: #0b162c;
         color: #ffffff;
+        margin-top: auto;
+        position: sticky;
+        bottom: 0;
+        z-index: 100;
+        width: 100%;
     }
 
     @media (max-width: 600px) {
@@ -874,107 +950,167 @@ foreach ($langFiles as $file) {
         <div class="tab <?php echo $activeTab === 'tools' ? 'active' : ''; ?>" data-tab="tools"><?php echo $translations['tools_tab'] ?? 'Tools'; ?></div>
     </nav>
 
-    <div class="grid-container">
+    <div class="grid-container" style="flex: 1; display: flex; flex-direction: column; min-height: calc(100vh - 140px);">
 
-        <div class="tab-content <?php echo $activeTab === 'servers' ? 'active' : ''; ?>" id="servers">
+        <div class="tab-content <?php echo $activeTab === 'servers' ? 'active' : ''; ?>" id="servers" style="flex: 1; display: flex; flex-direction: column; overflow-y: auto;">
             <header class="header">
                 <div class="header__search"><?php echo $translations['breadcrumb_server_servers'] ?? 'My Development Server Servers & Applications'; ?></div>
                 <div class="header__avatar"><?php echo $translations['welcome_back'] ?? 'Welcome Back!'; ?></div>
             </header>
-            <div class="main-overview server-overview">
-                <div class="overviewcard4">
-                    <div class="overviewcard_icon"></div>
-                    <div class="overviewcard_info"><img src="LaragonDash/assets/Server.png" style="width:64px;"></div>
-                </div>
-
-                <?php $serverInfo = serverInfo();?> <div class="overviewcard">
-                    <div class="overviewcard_icon"></div>
-                    <div class="overviewcard_info">
-                        <?php echo htmlspecialchars($_SERVER['SERVER_SOFTWARE']); ?>
+            <div class="container-fluid px-3">
+                <?php 
+                $serverInfo = serverInfo();
+                // Strip PHP version from SERVER_SOFTWARE
+                $serverSoftware = $_SERVER['SERVER_SOFTWARE'] ?? '';
+                $serverSoftware = preg_replace('/\s+PHP\/[0-9.]+/', '', $serverSoftware);
+                
+                // Get MySQL version
+                error_reporting(0);
+                $laraconfig = parse_ini_file('../usr/laragon.ini');
+                $mysqlPassword = getenv('MYSQL_PASSWORD') ?: ($laraconfig['MySQLRootPassword'] ?? '');
+                $link = mysqli_connect(MYSQL_HOST, MYSQL_USER, $mysqlPassword);
+                if (!$link) {
+                    $link = mysqli_connect(MYSQL_HOST, MYSQL_USER, '');
+                }
+                $mysqlVersion = 'MySQL not running!';
+                if ($link) {
+                    $mysqlVersion = htmlspecialchars(mysqli_get_server_info($link));
+                }
+                ?>
+                <!-- Row 1: Core Server Info -->
+                <div class="row g-2 mb-2">
+                    <div class="col-3">
+                        <div class="overviewcard">
+                            <div class="overviewcard_icon"><?php echo $translations['web_server'] ?? 'Web Server'; ?></div>
+                            <div class="overviewcard_info"><?php echo $serverInfo['webServer']; ?></div>
+                        </div>
+                    </div>
+                    <div class="col-3">
+                        <div class="overviewcard">
+                            <div class="overviewcard_icon">PHP</div>
+                            <div class="overviewcard_info">
+                                <?php echo htmlspecialchars(phpversion()); ?>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-3">
+                        <div class="overviewcard">
+                            <div class="overviewcard_icon">MySQL</div>
+                            <div class="overviewcard_info">
+                                <?php echo $mysqlVersion; ?>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-3">
+                        <div class="overviewcard">
+                            <div class="overviewcard_icon">OpenSSL</div>
+                            <div class="overviewcard_info">
+                                <?=$serverInfo['openSsl'];?>
+                            </div>
+                        </div>
                     </div>
                 </div>
-
-                <div class="overviewcard">
-                    <div class="overviewcard_icon"><?php echo $translations['web_server'] ?? 'Web Server'; ?></div>
-                    <div class="overviewcard_info"><?php echo $serverInfo['webServer']; ?></div>
-                </div>
-                <div class="overviewcard">
-                    <div class="overviewcard_icon">PHP <?php echo ($serverInfo['isFpm']) ? 'FPM' : 'SAPI'; ?></div>
-                    <div class="overviewcard_info"><?php echo $serverInfo['phpSapi']; ?></div>
-                </div>
-
-                <div class="overviewcard">
-                    <div class="overviewcard_icon"></div>
-                    <div class="overviewcard_info">
-                        <?=$serverInfo['openSsl'];?>
+                <!-- Row 2: Server Details -->
+                <div class="row g-2 mb-2">
+                    <div class="col-3">
+                        <div class="overviewcard">
+                            <div class="overviewcard_icon">PHP <?php echo ($serverInfo['isFpm']) ? 'FPM' : 'SAPI'; ?></div>
+                            <div class="overviewcard_info"><?php echo $serverInfo['phpSapi']; ?></div>
+                        </div>
+                    </div>
+                    <div class="col-3">
+                        <div class="overviewcard">
+                            <div class="overviewcard_icon"><?php echo $translations['document_root'] ?? 'Document Root'; ?></div>
+                            <div class="overviewcard_info">
+                                <?php echo htmlspecialchars($_SERVER['DOCUMENT_ROOT']); ?>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-3">
+                        <div class="overviewcard">
+                            <div class="overviewcard_icon">Host</div>
+                            <div class="overviewcard_info">
+                                <?php echo htmlspecialchars($_SERVER['HTTP_HOST']); ?>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-3">
+                        <div class="overviewcard">
+                            <div class="overviewcard_icon">PhpMyAdmin</div>
+                            <div class="overviewcard_info">
+                                <a href="<?php echo PHPMYADMIN_URL; ?>" target="_blank">
+                                    <?php echo $translations['manage_mysql'] ?? 'Manage MySQL'; ?>
+                                </a>
+                            </div>
+                        </div>
                     </div>
                 </div>
-                <div class="overviewcard">
-                    <div class="overviewcard_icon">PHP</div>
-                    <div class="overviewcard_info">
-                        <?php echo htmlspecialchars(phpversion()); ?>
+                <!-- Row 3: Search -->
+                <div class="row g-2 mb-2">
+                    <div class="col-3">
+                        <div class="project-search-card">
+                            <i class="fas fa-search" style="color: #666; margin-right: 10px;"></i>
+                            <input type="text" id="project-search" placeholder="Search projects...">
+                        </div>
+                    </div>
+                    <div class="col-9">
+                        <!-- Empty space -->
                     </div>
                 </div>
-            </div>
-            <div class="main-overview server-overview">
-                <div class="overviewcard">
-                    <div class="overviewcard_icon">MySQL</div>
-                    <div class="overviewcard_info">
-                        <?php
-error_reporting(0);
-$laraconfig = parse_ini_file('../usr/laragon.ini');
+                <div class="row g-2 mb-2">
+                    <div class="col-3">
+                        <div class="overviewcard">
+                            <div class="overviewcard_icon">Laragon</div>
+                            <div class="overviewcard_info">
+                                <?php
+$laragonVersion = 'Unknown';
+// Try to get version from laragon.exe file properties
+// Detect Laragon root directory from document root
+$docRoot = $_SERVER['DOCUMENT_ROOT'] ?? '';
+$laragonRoot = 'C:/laragon'; // Default fallback
 
-$mysqlPassword = getenv('MYSQL_PASSWORD') ?: ($laraconfig['MySQLRootPassword'] ?? '');
-$link = mysqli_connect(MYSQL_HOST, MYSQL_USER, $mysqlPassword);
-if (!$link) {
-    $link = mysqli_connect(MYSQL_HOST, MYSQL_USER, '');
+// Try to extract Laragon root from document root (e.g., C:/laragon/www -> C:/laragon)
+if (strpos($docRoot, 'laragon') !== false) {
+    $parts = explode('laragon', $docRoot);
+    if (!empty($parts[0])) {
+        $laragonRoot = $parts[0] . 'laragon';
+    }
 }
-if (!$link) {
-    echo 'MySQL not running!';
-} else {
-    printf("server version: %s\n", htmlspecialchars(mysqli_get_server_info($link)));
+
+$laragonExePath = str_replace('/', DIRECTORY_SEPARATOR, $laragonRoot . '/laragon.exe');
+
+if (file_exists($laragonExePath)) {
+    // Use PowerShell to get file version
+    $command = 'powershell -Command "(Get-Item \'' . str_replace("'", "''", $laragonExePath) . '\').VersionInfo.FileVersion"';
+    $version = shell_exec($command);
+    if ($version && trim($version) !== '') {
+        // Extract version number (e.g., "8.3.0.1009" -> "8.3.0")
+        $versionParts = explode('.', trim($version));
+        if (count($versionParts) >= 3) {
+            $laragonVersion = $versionParts[0] . '.' . $versionParts[1] . '.' . $versionParts[2];
+        } else {
+            $laragonVersion = trim($version);
+        }
+    }
 }
+// Fallback to ini file if exe method fails
+if ($laragonVersion === 'Unknown' && file_exists('../usr/laragon.ini')) {
+    $laraconfig = parse_ini_file('../usr/laragon.ini');
+    $laragonVersion = $laraconfig['Version'] ?? 'Unknown';
+}
+echo htmlspecialchars($laragonVersion);
 ?>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-3">
+                        <!-- Empty column for spacing -->
                     </div>
                 </div>
-
-                <div class="overviewcard">
-                    <div class="overviewcard_icon"><?php echo $translations['document_root'] ?? 'Document Root'; ?></div>
-                    <div class="overviewcard_info">
-                        <?php echo htmlspecialchars($_SERVER['DOCUMENT_ROOT']); ?><br>
-                        <small><span><?php echo htmlspecialchars($_SERVER['HTTP_HOST']); ?></span></small>
-                    </div>
-                </div>
-
-                <div class="overviewcard">
-                    <div class="overviewcard_icon">PhpMyAdmin</div>
-                    <div class="overviewcard_info">
-                        <a href="<?php echo PHPMYADMIN_URL; ?>" target="_blank">
-                            <?php echo $translations['manage_mysql'] ?? 'Manage MySQL'; ?>
-                        </a>
-                    </div>
-                </div>
-
-                <div class="overviewcard">
-                    <div class="overviewcard_icon">
-                        Laragon
-                    </div>
-                    <div class="overviewcard_info">
-                        Full 6.0.220916
-                    </div>
-                </div>
-
-                <!-- Until one day we can send exec commands
-<div class="overviewcard_server_controls">
-                    <h3>Server Controls</h3>
-                    <button class="btn-custom btn-success" onclick="startServer()">Start Server</button>
-                    <button class="btn-custom btn-danger" onclick="stopServer()">Stop Server</button>
-                </div> -->
             </div>
 
-            <input type="text" id="project-search" placeholder="Search projects..." style="margin:10px 0;padding:5px;width:100%;max-width:400px;">
-
-            <div id="project-list" class="main-overview wrapper">
+            <div class="container-fluid px-3">
+                <div id="project-list" class="row g-2">
                 <?php
 $ignored = ['favicon_io'];
 $folders = array_filter(glob('*'), 'is_dir');
@@ -1040,7 +1176,7 @@ foreach ($folders as $host) {
             break;
     }
 
-    echo '<div class="overviewcard_sites"><div class="overviewcard_avatar"><img src="' . $avatar . '" style="width:20px; height:20px;"></div><div class="overviewcard_icon"><a href="' . $url . '://' . htmlspecialchars($host) . DOMAIN_SUFFIX . '">' . htmlspecialchars($host) . '</a></div><div class="overviewcard_info">' . $admin_link . '</div></div>';
+    echo '<div class="col-3"><div class="overviewcard_sites"><div class="overviewcard_avatar"><img src="LaragonDash/' . $avatar . '" style="width:20px; height:20px;"></div><div class="overviewcard_icon"><a href="' . $url . '://' . htmlspecialchars($host) . DOMAIN_SUFFIX . '">' . htmlspecialchars($host) . '</a></div><div class="overviewcard_info">' . $admin_link . '</div></div></div>';
 }
 ?>
             </div>
@@ -1059,8 +1195,12 @@ foreach ($folders as $host) {
                 <div class="header__search"><?php echo $translations['breadcrumb_server_vitals'] ?? 'My Development Server Vitals'; ?></div>
                 <div class="header__avatar"><?php echo $translations['welcome_back'] ?? 'Welcome Back!'; ?></div>
             </header>
-            <div class="container mt-5" style="width: 1440px!important;background-color: #f8f9fa;padding: 20px;border-radius: 5px;color: #000000;">
-                <strong><p style="text-align: center;color: #000000; font-size: 24px;">Server's Vitals</p></strong>
+            <div class="container-fluid px-3 py-4">
+                <div class="row">
+                    <div class="col-12">
+                        <strong><p style="text-align: center;color: #fff; font-size: 24px;">Server's Vitals</p></strong>
+                    </div>
+                </div>
 
                 <div class="row">
 
@@ -1103,23 +1243,28 @@ foreach ($folders as $host) {
                 <div class="header__search"><?php echo $translations['breadcrumb_server_databases'] ?? 'My Development Server Databases'; ?></div>
                 <div class="header__avatar"><?php echo $translations['welcome_back'] ?? 'Welcome Back!'; ?></div>
             </header>
-            <div class="container mt-5" style="width: 1440px!important;background-color: #f8f9fa;padding: 20px;border-radius: 5px;color: #000000;">
+            <div class="container-fluid px-3 py-4">
+                <div class="row">
+                    <div class="col-12">
+                        <strong><p style="text-align: center;color: #fff; font-size: 24px;"><?php echo $translations['databases_tab'] ?? 'Databases'; ?></p></strong>
+                    </div>
+                </div>
                 <div id="database-manager">
                     <div class="row mb-3">
                         <div class="col-md-6">
-                            <strong><p style="color: #000000;"><?php echo $translations['select_database'] ?? 'Select Database'; ?></p></strong>
+                            <strong><p style="color: #fff;"><?php echo $translations['select_database'] ?? 'Select Database'; ?></p></strong>
                             <select id="database-select" class="form-select">
                                 <option value=""><?php echo $translations['loading'] ?? 'Loading...'; ?></option>
                             </select>
                         </div>
                         <div class="col-md-6">
-                            <strong><p style="color: #000000;"><?php echo $translations['database_size'] ?? 'Database Size'; ?></p></strong>
+                            <strong><p style="color: #fff;"><?php echo $translations['database_size'] ?? 'Database Size'; ?></p></strong>
                             <p id="database-size">-</p>
                         </div>
                     </div>
                     <div class="row mb-3">
                         <div class="col-12">
-                            <strong><p style="color: #000000;"><?php echo $translations['tables'] ?? 'Tables'; ?></p></strong>
+                            <strong><p style="color: #fff;"><?php echo $translations['tables'] ?? 'Tables'; ?></p></strong>
                             <div id="tables-list" class="table-responsive">
                                 <table class="table table-striped">
                                     <thead>
@@ -1139,7 +1284,7 @@ foreach ($folders as $host) {
                     </div>
                     <div class="row">
                         <div class="col-12">
-                            <strong><p style="color: #000000;"><?php echo $translations['run_query'] ?? 'Run Query'; ?></p></strong>
+                            <strong><p style="color: #fff;"><?php echo $translations['run_query'] ?? 'Run Query'; ?></p></strong>
                             <textarea id="query-input" class="form-control" rows="5" placeholder="SELECT * FROM table_name LIMIT 10;"></textarea>
                             <button class="btn btn-primary mt-2" onclick="executeQuery()"><?php echo $translations['execute'] ?? 'Execute'; ?></button>
                             <div id="query-results" class="mt-3"></div>
@@ -1155,14 +1300,18 @@ foreach ($folders as $host) {
                 <div class="header__search"><?php echo $translations['breadcrumb_server_services'] ?? 'My Development Server Services'; ?></div>
                 <div class="header__avatar"><?php echo $translations['welcome_back'] ?? 'Welcome Back!'; ?></div>
             </header>
-            <div class="container mt-5" style="width: 1440px!important;background-color: #f8f9fa;padding: 20px;border-radius: 5px;color: #000000;">
-                <strong><p style="text-align: center;color: #000000; font-size: 24px;"><?php echo $translations['services_management'] ?? 'Services Management'; ?></p></strong>
-                <div id="services-list" class="row">
+            <div class="container-fluid px-3 py-4">
+                <div class="row">
+                    <div class="col-12">
+                        <strong><p style="text-align: center;color: #fff; font-size: 24px;"><?php echo $translations['services_management'] ?? 'Services Management'; ?></p></strong>
+                    </div>
+                </div>
+                <div id="services-list" class="row g-2">
                     <!-- Services will be loaded here -->
                 </div>
                 <div class="row mt-4">
                     <div class="col-12">
-                        <strong><p style="color: #000000;"><?php echo $translations['port_monitor'] ?? 'Port Monitor'; ?></p></strong>
+                        <strong><p style="color: #fff;"><?php echo $translations['port_monitor'] ?? 'Port Monitor'; ?></p></strong>
                         <button class="btn btn-info" onclick="refreshPorts()"><?php echo $translations['refresh_ports'] ?? 'Refresh Ports'; ?></button>
                         <div id="ports-list" class="mt-3"></div>
                     </div>
@@ -1176,17 +1325,21 @@ foreach ($folders as $host) {
                 <div class="header__search"><?php echo $translations['breadcrumb_server_logs'] ?? 'My Development Server Logs'; ?></div>
                 <div class="header__avatar"><?php echo $translations['welcome_back'] ?? 'Welcome Back!'; ?></div>
             </header>
-            <div class="container mt-5" style="width: 1440px!important;background-color: #f8f9fa;padding: 20px;border-radius: 5px;color: #000000;">
-                <strong><p style="text-align: center;color: #000000; font-size: 24px;"><?php echo $translations['log_viewer'] ?? 'Log Viewer'; ?></p></strong>
+            <div class="container-fluid px-3 py-4">
+                <div class="row">
+                    <div class="col-12">
+                        <strong><p style="text-align: center;color: #fff; font-size: 24px;"><?php echo $translations['log_viewer'] ?? 'Log Viewer'; ?></p></strong>
+                    </div>
+                </div>
                 <div class="row mb-3">
                     <div class="col-md-6">
-                        <strong><p style="color: #000000;"><?php echo $translations['select_log'] ?? 'Select Log File'; ?></p></strong>
+                        <strong><p style="color: #fff;"><?php echo $translations['select_log'] ?? 'Select Log File'; ?></p></strong>
                         <select id="log-select" class="form-select">
                             <option value=""><?php echo $translations['loading'] ?? 'Loading...'; ?></option>
                         </select>
                     </div>
                     <div class="col-md-6">
-                        <strong><p style="color: #000000;"><?php echo $translations['lines_to_show'] ?? 'Lines to Show'; ?></p></strong>
+                        <strong><p style="color: #fff;"><?php echo $translations['lines_to_show'] ?? 'Lines to Show'; ?></p></strong>
                         <input type="number" id="log-lines" class="form-control" value="100" min="10" max="1000">
                     </div>
                 </div>
@@ -1194,7 +1347,7 @@ foreach ($folders as $host) {
                     <div class="col-12">
                         <button class="btn btn-primary" onclick="loadLog()"><?php echo $translations['load_log'] ?? 'Load Log'; ?></button>
                         <button class="btn btn-danger" onclick="clearLog()"><?php echo $translations['clear_log'] ?? 'Clear Log'; ?></button>
-                        <div id="log-content" class="mt-3" style="background-color: #000000;color: #00ff00;padding: 15px;border-radius: 5px;font-family: monospace;max-height: 600px;overflow-y: auto;">
+                        <div id="log-content" class="mt-3" style="background-color: #fff;color: #00ff00;padding: 15px;border-radius: 5px;font-family: monospace;max-height: 600px;overflow-y: auto;">
                             <pre id="log-text"></pre>
                         </div>
                     </div>
@@ -1208,18 +1361,22 @@ foreach ($folders as $host) {
                 <div class="header__search"><?php echo $translations['breadcrumb_server_tools'] ?? 'My Development Server Tools'; ?></div>
                 <div class="header__avatar"><?php echo $translations['welcome_back'] ?? 'Welcome Back!'; ?></div>
             </header>
-            <div class="container mt-5" style="width: 1440px!important;background-color: #f8f9fa;padding: 20px;border-radius: 5px;color: #000000;">
-                <strong><p style="text-align: center;color: #000000; font-size: 24px;"><?php echo $translations['quick_tools'] ?? 'Quick Tools'; ?></p></strong>
+            <div class="container-fluid px-3 py-4">
+                <div class="row">
+                    <div class="col-12">
+                        <strong><p style="text-align: center;color: #fff; font-size: 24px;"><?php echo $translations['quick_tools'] ?? 'Quick Tools'; ?></p></strong>
+                    </div>
+                </div>
                 <div class="row">
                     <div class="col-md-6 mb-3">
                         <div class="card p-3">
-                            <strong><p style="color: #000000;"><?php echo $translations['cache_management'] ?? 'Cache Management'; ?></p></strong>
+                            <strong><p style="color: #fff;"><?php echo $translations['cache_management'] ?? 'Cache Management'; ?></p></strong>
                             <button class="btn btn-warning" onclick="clearCache()"><?php echo $translations['clear_cache'] ?? 'Clear Cache'; ?></button>
                         </div>
                     </div>
                     <div class="col-md-6 mb-3">
                         <div class="card p-3">
-                            <strong><p style="color: #000000;"><?php echo $translations['database_optimization'] ?? 'Database Optimization'; ?></p></strong>
+                            <strong><p style="color: #fff;"><?php echo $translations['database_optimization'] ?? 'Database Optimization'; ?></p></strong>
                             <select id="optimize-db-select" class="form-select mb-2">
                                 <option value=""><?php echo $translations['select_database'] ?? 'Select Database'; ?></option>
                             </select>
@@ -1230,7 +1387,7 @@ foreach ($folders as $host) {
                 <div class="row">
                     <div class="col-md-6 mb-3">
                         <div class="card p-3">
-                            <strong><p style="color: #000000;"><?php echo $translations['project_actions'] ?? 'Project Actions'; ?></p></strong>
+                            <strong><p style="color: #fff;"><?php echo $translations['project_actions'] ?? 'Project Actions'; ?></p></strong>
                             <select id="project-select" class="form-select mb-2">
                                 <option value=""><?php echo $translations['select_project'] ?? 'Select Project'; ?></option>
                             </select>
@@ -1243,7 +1400,7 @@ foreach ($folders as $host) {
                     </div>
                     <div class="col-md-6 mb-3">
                         <div class="card p-3">
-                            <strong><p style="color: #000000;"><?php echo $translations['system_info'] ?? 'System Information'; ?></p></strong>
+                            <strong><p style="color: #fff;"><?php echo $translations['system_info'] ?? 'System Information'; ?></p></strong>
                             <button class="btn btn-info" onclick="showPhpInfo()"><?php echo $translations['php_info'] ?? 'PHP Info'; ?></button>
                         </div>
                     </div>
@@ -1252,9 +1409,9 @@ foreach ($folders as $host) {
                 <div class="row mt-4">
                     <div class="col-12">
                         <div class="card p-3">
-                            <strong><p style="color: #000000;">🔄 Self-Update</p></strong>
-                            <p class="small">Current Version: <strong><?php echo APP_VERSION; ?></strong></p>
-                            <button class="btn btn-primary" onclick="checkForUpdates()">Check for Updates</button>
+                            <strong><p style="color: #fff;">🔄 Self-Update (Git)</p></strong>
+                            <p class="small" style="color: #fff;">Current Version: <strong><?php echo APP_VERSION; ?></strong></p>
+                            <button class="btn btn-primary" onclick="checkForUpdates()">Check for Updates (Git)</button>
                             <div id="update-status" class="mt-2"></div>
                             <div id="update-progress" class="mt-2" style="display: none;">
                                 <div class="progress">
@@ -1373,7 +1530,7 @@ foreach ($folders as $host) {
                     const status = data.services[service];
                     const statusClass = status === 'running' ? 'success' : 'danger';
                     const statusText = status === 'running' ? 'Running' : 'Stopped';
-                    container.append('<div class="col-md-4 mb-3"><div class="card p-3"><strong>' + service + '</strong><p>Status: <span class="badge bg-' + statusClass + '">' + statusText + '</span></p><div class="btn-group"><button class="btn btn-sm btn-success" onclick="controlService(\'' + service + '\', \'start\')">Start</button><button class="btn btn-sm btn-danger" onclick="controlService(\'' + service + '\', \'stop\')">Stop</button><button class="btn btn-sm btn-warning" onclick="controlService(\'' + service + '\', \'restart\')">Restart</button></div></div></div>');
+                    container.append('<div class="col-3"><div class="card p-3"><strong style="color: #fff;">' + service + '</strong><p style="color: #fff;">Status: <span class="badge bg-' + statusClass + '">' + statusText + '</span></p><div class="btn-group"><button class="btn btn-sm btn-success" onclick="controlService(\'' + service + '\', \'start\')">Start</button><button class="btn btn-sm btn-danger" onclick="controlService(\'' + service + '\', \'stop\')">Stop</button><button class="btn btn-sm btn-warning" onclick="controlService(\'' + service + '\', \'restart\')">Restart</button></div></div></div>');
                 });
             }
         });
@@ -1588,16 +1745,32 @@ foreach ($folders as $host) {
         $.get('LaragonDash/update_manager.php?action=check', function(data) {
             if (data.success) {
                 if (data.update_available) {
-                    $('#update-status').html(
-                        '<div class="alert alert-success">' +
+                    let statusHtml = '<div class="alert alert-success">' +
                         '<strong>Update Available!</strong><br>' +
-                        'Current: ' + data.current_version + '<br>' +
-                        'Latest: ' + data.latest_version + '<br>' +
-                        '<button class="btn btn-success btn-sm mt-2" onclick="downloadUpdate(\'' + data.download_url + '\')">Download & Install Update</button>' +
-                        '</div>'
-                    );
+                        'Current: ' + data.current_version;
+                    if (data.current_commit) {
+                        statusHtml += ' (' + data.current_commit + ')';
+                    }
+                    statusHtml += '<br>Latest: ' + data.latest_version;
+                    if (data.latest_commit) {
+                        statusHtml += ' (' + data.latest_commit + ')';
+                    }
+                    if (data.branch) {
+                        statusHtml += '<br>Branch: ' + data.branch;
+                    }
+                    statusHtml += '<br><button class="btn btn-success btn-sm mt-2" onclick="installUpdate()">Pull & Install Update</button>' +
+                        '</div>';
+                    $('#update-status').html(statusHtml);
                 } else {
-                    $('#update-status').html('<div class="alert alert-success">You are running the latest version (' + data.current_version + ')</div>');
+                    let statusHtml = '<div class="alert alert-success">You are running the latest version (' + data.current_version + ')';
+                    if (data.current_commit) {
+                        statusHtml += ' - Commit: ' + data.current_commit;
+                    }
+                    if (data.branch) {
+                        statusHtml += '<br>Branch: ' + data.branch;
+                    }
+                    statusHtml += '</div>';
+                    $('#update-status').html(statusHtml);
                 }
             } else {
                 $('#update-status').html('<div class="alert alert-warning">Unable to check for updates: ' + (data.error || 'Unknown error') + '</div>');
@@ -1607,42 +1780,18 @@ foreach ($folders as $host) {
         });
     }
 
-    function downloadUpdate(downloadUrl) {
-        if (!confirm('This will download and install the update. Continue?')) {
+    function installUpdate() {
+        if (!confirm('This will pull the latest changes from Git. Continue?')) {
             return;
         }
 
         $('#update-progress').show();
         $('#progress-bar').css('width', '0%').text('0%');
-        $('#progress-text').text('Starting download...');
+        $('#progress-text').text('Pulling latest changes from Git...');
 
-        const csrfToken = '<?php echo SecurityHelper::getCSRFToken(); ?>';
-        
-        $.post('LaragonDash/update_manager.php?action=download', {
-            download_url: downloadUrl,
-            csrf_token: csrfToken
-        }, function(data) {
-            if (data.success) {
-                $('#progress-bar').css('width', '50%').text('50%');
-                $('#progress-text').text('Download complete. Installing update...');
-                
-                // Install update
-                installUpdate(data.file);
-            } else {
-                $('#update-progress').hide();
-                $('#update-status').html('<div class="alert alert-danger">Download failed: ' + (data.error || 'Unknown error') + '</div>');
-            }
-        }).fail(function() {
-            $('#update-progress').hide();
-            $('#update-status').html('<div class="alert alert-danger">Download failed. Please try again.</div>');
-        });
-    }
-
-    function installUpdate(zipFile) {
         const csrfToken = '<?php echo SecurityHelper::getCSRFToken(); ?>';
         
         $.post('LaragonDash/update_manager.php?action=install', {
-            zip_file: zipFile,
             csrf_token: csrfToken
         }, function(data) {
             if (data.success) {
@@ -1651,7 +1800,8 @@ foreach ($folders as $host) {
                 $('#update-status').html(
                     '<div class="alert alert-success">' +
                     '<strong>Update Installed!</strong><br>' +
-                    'The update has been installed successfully. Please refresh the page to see the changes.' +
+                    'The update has been installed successfully via Git pull.' +
+                    (data.branch ? '<br>Branch: ' + data.branch : '') +
                     '<br><button class="btn btn-primary btn-sm mt-2" onclick="location.reload()">Refresh Page</button>' +
                     '</div>'
                 );

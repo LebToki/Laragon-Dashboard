@@ -32,71 +32,67 @@ $action = $_GET['action'] ?? 'check';
 try {
     switch ($action) {
         case 'check':
-            // Check for updates
+            // Check for updates using Git
             $currentVersion = APP_VERSION;
-            $updateUrl = 'https://api.github.com/repos/LebToki/Laragon-Dashboard/releases/latest';
+            $rootDir = dirname(__DIR__);
+            $gitDir = $rootDir . '/.git';
             
-            $ch = curl_init($updateUrl);
-            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-            curl_setopt($ch, CURLOPT_USERAGENT, 'Laragon-Dashboard/' . $currentVersion);
-            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-            $response = curl_exec($ch);
-            $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-            curl_close($ch);
-            
-            if ($httpCode === 200 && $response) {
-                $data = json_decode($response, true);
-                $latestVersion = ltrim($data['tag_name'] ?? 'v' . $currentVersion, 'v');
-                $updateAvailable = version_compare($latestVersion, $currentVersion, '>');
-                
-                echo json_encode([
-                    'success' => true,
-                    'current_version' => $currentVersion,
-                    'latest_version' => $latestVersion,
-                    'update_available' => $updateAvailable,
-                    'download_url' => $updateAvailable ? ($data['assets'][0]['browser_download_url'] ?? '') : ''
-                ]);
-            } else {
+            // Check if this is a git repository
+            if (!is_dir($gitDir)) {
                 echo json_encode([
                     'success' => false,
-                    'error' => 'Unable to check for updates'
+                    'error' => 'Not a Git repository'
                 ]);
-            }
-            break;
-            
-        case 'download':
-            $downloadUrl = $_POST['download_url'] ?? '';
-            if (empty($downloadUrl)) {
-                throw new Exception('Download URL is required');
+                break;
             }
             
-            $rootDir = dirname(__DIR__);
-            $tempFile = $rootDir . '/laragon-dashboard-update.zip';
+            // Fetch latest from remote
+            $output = [];
+            $returnCode = 0;
+            chdir($rootDir);
+            exec('git fetch origin 2>&1', $output, $returnCode);
             
-            // Download file with progress tracking
-            $result = downloadFileWithProgress($downloadUrl, $tempFile);
+            // Get current branch
+            $currentBranch = trim(shell_exec('git rev-parse --abbrev-ref HEAD 2>&1'));
             
-            if ($result['success']) {
-                echo json_encode([
-                    'success' => true,
-                    'file' => $tempFile,
-                    'size' => filesize($tempFile)
-                ]);
-            } else {
-                throw new Exception($result['error'] ?? 'Download failed');
+            // Get local and remote commit hashes
+            $localCommit = trim(shell_exec('git rev-parse HEAD 2>&1'));
+            $remoteCommit = trim(shell_exec('git rev-parse origin/' . $currentBranch . ' 2>&1'));
+            
+            // Get version from git tag or config
+            $latestTag = trim(shell_exec('git describe --tags --abbrev=0 origin/' . $currentBranch . ' 2>&1'));
+            $latestVersion = $latestTag ? ltrim($latestTag, 'v') : $currentVersion;
+            
+            // Check if update is available (local != remote)
+            $updateAvailable = ($localCommit !== $remoteCommit && !empty($remoteCommit) && strpos($remoteCommit, 'fatal') === false);
+            
+            // If versions are the same but commits differ, still show update
+            if ($updateAvailable && $latestVersion === $currentVersion) {
+                $latestVersion = 'dev-' . substr($remoteCommit, 0, 7);
             }
+            
+            echo json_encode([
+                'success' => true,
+                'current_version' => $currentVersion,
+                'latest_version' => $latestVersion,
+                'update_available' => $updateAvailable,
+                'current_commit' => substr($localCommit, 0, 7),
+                'latest_commit' => substr($remoteCommit, 0, 7),
+                'branch' => $currentBranch
+            ]);
             break;
             
         case 'install':
-            $zipFile = $_POST['zip_file'] ?? '';
-            if (empty($zipFile) || !file_exists($zipFile)) {
-                throw new Exception('Zip file not found');
+            // Install update using Git pull
+            $rootDir = dirname(__DIR__);
+            $gitDir = $rootDir . '/.git';
+            
+            if (!is_dir($gitDir)) {
+                throw new Exception('Not a Git repository');
             }
             
-            $rootDir = dirname(__DIR__);
+            // Create backup before updating
             $backupDir = $rootDir . '/backups/pre-update-' . date('Ymd-His');
-            
-            // Create backup
             if (!is_dir($backupDir)) {
                 mkdir($backupDir, 0755, true);
             }
@@ -112,68 +108,40 @@ try {
                 copy($rootDir . '/index.php', $backupDir . '/index.php');
             }
             
-            // Extract zip to temp directory
-            $tempDir = sys_get_temp_dir() . '/laragon-update-' . uniqid();
-            mkdir($tempDir, 0755, true);
+            // Change to root directory and pull updates
+            chdir($rootDir);
             
-            $zip = new ZipArchive();
-            if ($zip->open($zipFile) === TRUE) {
-                $zip->extractTo($tempDir);
-                $zip->close();
-            } else {
-                throw new Exception('Failed to extract zip file');
+            // Get current branch
+            $currentBranch = trim(shell_exec('git rev-parse --abbrev-ref HEAD 2>&1'));
+            
+            // Stash any local changes
+            exec('git stash 2>&1', $stashOutput, $stashCode);
+            
+            // Pull latest changes
+            $output = [];
+            $returnCode = 0;
+            exec('git pull origin ' . escapeshellarg($currentBranch) . ' 2>&1', $output, $returnCode);
+            
+            // Restore stashed changes if any
+            if ($stashCode === 0) {
+                exec('git stash pop 2>&1', $stashPopOutput, $stashPopCode);
             }
             
-            // Find LaragonDash folder in extracted files
-            $extractedLaragonDash = null;
-            $files = scandir($tempDir);
-            foreach ($files as $file) {
-                if ($file !== '.' && $file !== '..') {
-                    $path = $tempDir . '/' . $file;
-                    if (is_dir($path) && $file === 'LaragonDash') {
-                        $extractedLaragonDash = $path;
-                        break;
-                    } elseif (is_dir($path)) {
-                        // Check if LaragonDash is inside
-                        $innerPath = $path . '/LaragonDash';
-                        if (is_dir($innerPath)) {
-                            $extractedLaragonDash = $innerPath;
-                            break;
-                        }
-                    }
-                }
+            if ($returnCode !== 0) {
+                throw new Exception('Git pull failed: ' . implode("\n", $output));
             }
             
-            if (!$extractedLaragonDash) {
-                throw new Exception('LaragonDash folder not found in update package');
-            }
-            
-            // Remove old LaragonDash
-            if (is_dir($laragonDashDir)) {
-                deleteDirectory($laragonDashDir);
-            }
-            
-            // Copy new LaragonDash
-            copyDirectory($extractedLaragonDash, $laragonDashDir);
-            
-            // Update root index.php if it exists in the update
-            $newIndexPath = $tempDir . '/index.php';
-            if (file_exists($newIndexPath)) {
-                copy($newIndexPath, $rootDir . '/index.php');
-            }
-            
-            // Clean up
-            deleteDirectory($tempDir);
-            unlink($zipFile);
-            
-            DashboardLogger::info("Update installed successfully", [
-                'backup' => $backupDir
+            DashboardLogger::info("Update installed successfully via Git", [
+                'backup' => $backupDir,
+                'branch' => $currentBranch,
+                'output' => implode("\n", $output)
             ]);
             
             echo json_encode([
                 'success' => true,
-                'message' => 'Update installed successfully',
-                'backup_location' => $backupDir
+                'message' => 'Update installed successfully via Git pull',
+                'backup_location' => $backupDir,
+                'branch' => $currentBranch
             ]);
             break;
             
