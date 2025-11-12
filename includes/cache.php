@@ -4,8 +4,8 @@
  * Provides file-based caching for improved performance
  */
 
-require_once __DIR__ . '/config.php';
-require_once __DIR__ . '/includes/logger.php';
+require_once __DIR__ . '/../config.php';
+require_once __DIR__ . '/logger.php';
 
 class CacheHelper {
     private static $cacheDir = null;
@@ -13,7 +13,7 @@ class CacheHelper {
     
     public static function init() {
         if (self::$cacheDir === null) {
-            self::$cacheDir = __DIR__ . '/cache';
+            self::$cacheDir = __DIR__ . '/../cache';
             if (!is_dir(self::$cacheDir)) {
                 mkdir(self::$cacheDir, 0755, true);
             }

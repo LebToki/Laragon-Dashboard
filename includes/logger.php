@@ -4,14 +4,14 @@
  * Provides centralized error handling and logging functionality
  */
 
-require_once __DIR__ . '/config.php';
+require_once __DIR__ . '/../config.php';
 
 class DashboardLogger {
     private static $logFile = null;
     
     public static function init() {
         if (self::$logFile === null) {
-            $logDir = __DIR__ . '/logs';
+            $logDir = __DIR__ . '/../logs';
             if (!is_dir($logDir)) {
                 mkdir($logDir, 0755, true);
             }

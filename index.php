@@ -868,6 +868,10 @@ foreach ($langFiles as $file) {
         <div class="tab <?php echo $activeTab === 'servers' ? 'active' : ''; ?>" data-tab="servers"><?php echo $translations['servers_tab'] ?? 'Servers'; ?></div>
         <div class="tab <?php echo $activeTab === 'mailbox' ? 'active' : ''; ?>" data-tab="mailbox"><?php echo $translations['inbox_tab'] ?? 'Mailbox'; ?></div>
         <div class="tab <?php echo $activeTab === 'vitals' ? 'active' : ''; ?>" data-tab="vitals"><?php echo $translations['vitals_tab'] ?? 'Server Vitals'; ?></div>
+        <div class="tab <?php echo $activeTab === 'databases' ? 'active' : ''; ?>" data-tab="databases"><?php echo $translations['databases_tab'] ?? 'Databases'; ?></div>
+        <div class="tab <?php echo $activeTab === 'services' ? 'active' : ''; ?>" data-tab="services"><?php echo $translations['services_tab'] ?? 'Services'; ?></div>
+        <div class="tab <?php echo $activeTab === 'logs' ? 'active' : ''; ?>" data-tab="logs"><?php echo $translations['logs_tab'] ?? 'Logs'; ?></div>
+        <div class="tab <?php echo $activeTab === 'tools' ? 'active' : ''; ?>" data-tab="tools"><?php echo $translations['tools_tab'] ?? 'Tools'; ?></div>
     </nav>
 
     <div class="grid-container">
@@ -1092,6 +1096,161 @@ foreach ($folders as $host) {
 
             </div>
         </div>
+
+        <!-- Databases Tab -->
+        <div class="tab-content <?php echo $activeTab === 'databases' ? 'active' : ''; ?>" id="databases">
+            <header class="header">
+                <div class="header__search"><?php echo $translations['breadcrumb_server_databases'] ?? 'My Development Server Databases'; ?></div>
+                <div class="header__avatar"><?php echo $translations['welcome_back'] ?? 'Welcome Back!'; ?></div>
+            </header>
+            <div class="container mt-5" style="width: 1440px!important;background-color: #f8f9fa;padding: 20px;border-radius: 5px;color: #000000;">
+                <div id="database-manager">
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <strong><p style="color: #000000;"><?php echo $translations['select_database'] ?? 'Select Database'; ?></p></strong>
+                            <select id="database-select" class="form-select">
+                                <option value=""><?php echo $translations['loading'] ?? 'Loading...'; ?></option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <strong><p style="color: #000000;"><?php echo $translations['database_size'] ?? 'Database Size'; ?></p></strong>
+                            <p id="database-size">-</p>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-12">
+                            <strong><p style="color: #000000;"><?php echo $translations['tables'] ?? 'Tables'; ?></p></strong>
+                            <div id="tables-list" class="table-responsive">
+                                <table class="table table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th><?php echo $translations['table_name'] ?? 'Table Name'; ?></th>
+                                            <th><?php echo $translations['rows'] ?? 'Rows'; ?></th>
+                                            <th><?php echo $translations['size'] ?? 'Size'; ?></th>
+                                            <th><?php echo $translations['actions'] ?? 'Actions'; ?></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="tables-tbody">
+                                        <tr><td colspan="4"><?php echo $translations['select_database_first'] ?? 'Please select a database first'; ?></td></tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12">
+                            <strong><p style="color: #000000;"><?php echo $translations['run_query'] ?? 'Run Query'; ?></p></strong>
+                            <textarea id="query-input" class="form-control" rows="5" placeholder="SELECT * FROM table_name LIMIT 10;"></textarea>
+                            <button class="btn btn-primary mt-2" onclick="executeQuery()"><?php echo $translations['execute'] ?? 'Execute'; ?></button>
+                            <div id="query-results" class="mt-3"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Services Tab -->
+        <div class="tab-content <?php echo $activeTab === 'services' ? 'active' : ''; ?>" id="services">
+            <header class="header">
+                <div class="header__search"><?php echo $translations['breadcrumb_server_services'] ?? 'My Development Server Services'; ?></div>
+                <div class="header__avatar"><?php echo $translations['welcome_back'] ?? 'Welcome Back!'; ?></div>
+            </header>
+            <div class="container mt-5" style="width: 1440px!important;background-color: #f8f9fa;padding: 20px;border-radius: 5px;color: #000000;">
+                <strong><p style="text-align: center;color: #000000; font-size: 24px;"><?php echo $translations['services_management'] ?? 'Services Management'; ?></p></strong>
+                <div id="services-list" class="row">
+                    <!-- Services will be loaded here -->
+                </div>
+                <div class="row mt-4">
+                    <div class="col-12">
+                        <strong><p style="color: #000000;"><?php echo $translations['port_monitor'] ?? 'Port Monitor'; ?></p></strong>
+                        <button class="btn btn-info" onclick="refreshPorts()"><?php echo $translations['refresh_ports'] ?? 'Refresh Ports'; ?></button>
+                        <div id="ports-list" class="mt-3"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Logs Tab -->
+        <div class="tab-content <?php echo $activeTab === 'logs' ? 'active' : ''; ?>" id="logs">
+            <header class="header">
+                <div class="header__search"><?php echo $translations['breadcrumb_server_logs'] ?? 'My Development Server Logs'; ?></div>
+                <div class="header__avatar"><?php echo $translations['welcome_back'] ?? 'Welcome Back!'; ?></div>
+            </header>
+            <div class="container mt-5" style="width: 1440px!important;background-color: #f8f9fa;padding: 20px;border-radius: 5px;color: #000000;">
+                <strong><p style="text-align: center;color: #000000; font-size: 24px;"><?php echo $translations['log_viewer'] ?? 'Log Viewer'; ?></p></strong>
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <strong><p style="color: #000000;"><?php echo $translations['select_log'] ?? 'Select Log File'; ?></p></strong>
+                        <select id="log-select" class="form-select">
+                            <option value=""><?php echo $translations['loading'] ?? 'Loading...'; ?></option>
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <strong><p style="color: #000000;"><?php echo $translations['lines_to_show'] ?? 'Lines to Show'; ?></p></strong>
+                        <input type="number" id="log-lines" class="form-control" value="100" min="10" max="1000">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-12">
+                        <button class="btn btn-primary" onclick="loadLog()"><?php echo $translations['load_log'] ?? 'Load Log'; ?></button>
+                        <button class="btn btn-danger" onclick="clearLog()"><?php echo $translations['clear_log'] ?? 'Clear Log'; ?></button>
+                        <div id="log-content" class="mt-3" style="background-color: #000000;color: #00ff00;padding: 15px;border-radius: 5px;font-family: monospace;max-height: 600px;overflow-y: auto;">
+                            <pre id="log-text"></pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tools Tab -->
+        <div class="tab-content <?php echo $activeTab === 'tools' ? 'active' : ''; ?>" id="tools">
+            <header class="header">
+                <div class="header__search"><?php echo $translations['breadcrumb_server_tools'] ?? 'My Development Server Tools'; ?></div>
+                <div class="header__avatar"><?php echo $translations['welcome_back'] ?? 'Welcome Back!'; ?></div>
+            </header>
+            <div class="container mt-5" style="width: 1440px!important;background-color: #f8f9fa;padding: 20px;border-radius: 5px;color: #000000;">
+                <strong><p style="text-align: center;color: #000000; font-size: 24px;"><?php echo $translations['quick_tools'] ?? 'Quick Tools'; ?></p></strong>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <div class="card p-3">
+                            <strong><p style="color: #000000;"><?php echo $translations['cache_management'] ?? 'Cache Management'; ?></p></strong>
+                            <button class="btn btn-warning" onclick="clearCache()"><?php echo $translations['clear_cache'] ?? 'Clear Cache'; ?></button>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <div class="card p-3">
+                            <strong><p style="color: #000000;"><?php echo $translations['database_optimization'] ?? 'Database Optimization'; ?></p></strong>
+                            <select id="optimize-db-select" class="form-select mb-2">
+                                <option value=""><?php echo $translations['select_database'] ?? 'Select Database'; ?></option>
+                            </select>
+                            <button class="btn btn-success" onclick="optimizeDatabase()"><?php echo $translations['optimize'] ?? 'Optimize'; ?></button>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <div class="card p-3">
+                            <strong><p style="color: #000000;"><?php echo $translations['project_actions'] ?? 'Project Actions'; ?></p></strong>
+                            <select id="project-select" class="form-select mb-2">
+                                <option value=""><?php echo $translations['select_project'] ?? 'Select Project'; ?></option>
+                            </select>
+                            <div class="btn-group-vertical w-100">
+                                <button class="btn btn-info mb-2" onclick="gitStatus()"><?php echo $translations['git_status'] ?? 'Git Status'; ?></button>
+                                <button class="btn btn-primary mb-2" onclick="composerInstall()"><?php echo $translations['composer_install'] ?? 'Composer Install'; ?></button>
+                                <button class="btn btn-secondary mb-2" onclick="npmInstall()"><?php echo $translations['npm_install'] ?? 'NPM Install'; ?></button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <div class="card p-3">
+                            <strong><p style="color: #000000;"><?php echo $translations['system_info'] ?? 'System Information'; ?></p></strong>
+                            <button class="btn btn-info" onclick="showPhpInfo()"><?php echo $translations['php_info'] ?? 'PHP Info'; ?></button>
+                        </div>
+                    </div>
+                </div>
+                <div id="tools-output" class="mt-3"></div>
+            </div>
+        </div>
     </div>
 
     <script>
@@ -1103,6 +1262,307 @@ foreach ($folders as $host) {
     function stopServer() {
         alert('Stopping server...');
         // Add your server stop logic here
+    }
+
+    // Database Manager Functions
+    $(document).ready(function() {
+        loadDatabases();
+        loadServices();
+        loadLogs();
+        loadProjects();
+    });
+
+    function loadDatabases() {
+        $.get('database_manager.php?action=list_databases', function(data) {
+            if (data.success) {
+                const select = $('#database-select');
+                select.empty();
+                select.append('<option value="">Select Database</option>');
+                data.databases.forEach(function(db) {
+                    select.append('<option value="' + db + '">' + db + '</option>');
+                });
+            }
+        });
+    }
+
+    $('#database-select').change(function() {
+        const db = $(this).val();
+        if (db) {
+            loadTables(db);
+            getDatabaseSize(db);
+        }
+    });
+
+    function loadTables(database) {
+        $.get('database_manager.php?action=get_tables&database=' + encodeURIComponent(database), function(data) {
+            if (data.success) {
+                const tbody = $('#tables-tbody');
+                tbody.empty();
+                data.tables.forEach(function(table) {
+                    const size = formatBytes((table.DATA_LENGTH || 0) + (table.INDEX_LENGTH || 0));
+                    tbody.append('<tr><td>' + table.TABLE_NAME + '</td><td>' + (table.TABLE_ROWS || 0) + '</td><td>' + size + '</td><td><button class="btn btn-sm btn-info" onclick="viewTableStructure(\'' + database + '\', \'' + table.TABLE_NAME + '\')">Structure</button></td></tr>');
+                });
+            }
+        });
+    }
+
+    function getDatabaseSize(database) {
+        $.get('database_manager.php?action=get_database_size&database=' + encodeURIComponent(database), function(data) {
+            if (data.success) {
+                $('#database-size').text(data.size_mb + ' MB');
+            }
+        });
+    }
+
+    function executeQuery() {
+        const query = $('#query-input').val();
+        if (!query) {
+            alert('Please enter a query');
+            return;
+        }
+        $.post('database_manager.php?action=execute_query', {query: query}, function(data) {
+            if (data.success) {
+                let html = '<table class="table table-striped"><thead><tr>';
+                if (data.results.length > 0) {
+                    Object.keys(data.results[0]).forEach(function(key) {
+                        html += '<th>' + key + '</th>';
+                    });
+                    html += '</tr></thead><tbody>';
+                    data.results.forEach(function(row) {
+                        html += '<tr>';
+                        Object.values(row).forEach(function(val) {
+                            html += '<td>' + (val !== null ? val : 'NULL') + '</td>';
+                        });
+                        html += '</tr>';
+                    });
+                    html += '</tbody></table>';
+                } else {
+                    html = '<p>No results</p>';
+                }
+                $('#query-results').html(html);
+            } else {
+                alert('Error: ' + data.error);
+            }
+        });
+    }
+
+    // Services Manager Functions
+    function loadServices() {
+        $.get('services_manager.php?action=status', function(data) {
+            if (data.success) {
+                const container = $('#services-list');
+                container.empty();
+                Object.keys(data.services).forEach(function(service) {
+                    const status = data.services[service];
+                    const statusClass = status === 'running' ? 'success' : 'danger';
+                    const statusText = status === 'running' ? 'Running' : 'Stopped';
+                    container.append('<div class="col-md-4 mb-3"><div class="card p-3"><strong>' + service + '</strong><p>Status: <span class="badge bg-' + statusClass + '">' + statusText + '</span></p><div class="btn-group"><button class="btn btn-sm btn-success" onclick="controlService(\'' + service + '\', \'start\')">Start</button><button class="btn btn-sm btn-danger" onclick="controlService(\'' + service + '\', \'stop\')">Stop</button><button class="btn btn-sm btn-warning" onclick="controlService(\'' + service + '\', \'restart\')">Restart</button></div></div></div>');
+                });
+            }
+        });
+    }
+
+    function controlService(service, action) {
+        if (!confirm('Are you sure you want to ' + action + ' ' + service + '?')) {
+            return;
+        }
+        $.get('services_manager.php?action=' + action + '&service=' + encodeURIComponent(service), function(data) {
+            if (data.success) {
+                alert('Service ' + action + ' command executed');
+                loadServices();
+            } else {
+                alert('Error: ' + data.error);
+            }
+        });
+    }
+
+    function refreshPorts() {
+        $.get('services_manager.php?action=get_ports', function(data) {
+            if (data.success) {
+                let html = '<table class="table table-striped"><thead><tr><th>Address</th><th>Port</th></tr></thead><tbody>';
+                data.ports.forEach(function(port) {
+                    html += '<tr><td>' + port.address + '</td><td>' + port.port + '</td></tr>';
+                });
+                html += '</tbody></table>';
+                $('#ports-list').html(html);
+            }
+        });
+    }
+
+    // Log Viewer Functions
+    function loadLogs() {
+        $.get('log_viewer.php?action=list_logs', function(data) {
+            if (data.success) {
+                const select = $('#log-select');
+                select.empty();
+                select.append('<option value="">Select Log File</option>');
+                data.logs.forEach(function(log) {
+                    select.append('<option value="' + log.path + '">' + log.type + ' - ' + log.name + ' (' + formatBytes(log.size) + ')</option>');
+                });
+            }
+        });
+    }
+
+    function loadLog() {
+        const logPath = $('#log-select').val();
+        const lines = $('#log-lines').val();
+        if (!logPath) {
+            alert('Please select a log file');
+            return;
+        }
+        $.get('log_viewer.php?action=read_log&path=' + encodeURIComponent(logPath) + '&lines=' + lines, function(data) {
+            if (data.success) {
+                $('#log-text').text(data.lines.join('\n'));
+            } else {
+                alert('Error: ' + data.error);
+            }
+        });
+    }
+
+    function clearLog() {
+        const logPath = $('#log-select').val();
+        if (!logPath) {
+            alert('Please select a log file');
+            return;
+        }
+        if (!confirm('Are you sure you want to clear this log file?')) {
+            return;
+        }
+        $.get('log_viewer.php?action=clear_log&path=' + encodeURIComponent(logPath), function(data) {
+            if (data.success) {
+                alert('Log cleared successfully');
+                loadLog();
+            } else {
+                alert('Error: ' + data.error);
+            }
+        });
+    }
+
+    // Quick Tools Functions
+    function clearCache() {
+        $.post('quick_tools.php', {action: 'clear_cache'}, function(data) {
+            if (data.success) {
+                alert('Cache cleared successfully');
+            } else {
+                alert('Error: ' + data.error);
+            }
+        });
+    }
+
+    function optimizeDatabase() {
+        const database = $('#optimize-db-select').val();
+        if (!database) {
+            alert('Please select a database');
+            return;
+        }
+        if (!confirm('This may take a while. Continue?')) {
+            return;
+        }
+        $.post('quick_tools.php', {action: 'optimize_database', database: database}, function(data) {
+            if (data.success) {
+                alert('Database optimized successfully. Tables optimized: ' + data.optimized_tables.length);
+            } else {
+                alert('Error: ' + data.error);
+            }
+        });
+    }
+
+    function loadProjects() {
+        const wwwPath = '<?php echo dirname($_SERVER["DOCUMENT_ROOT"]); ?>';
+        const folders = <?php 
+            $folders = array_filter(glob(dirname(__DIR__) . '/*'), 'is_dir');
+            $ignore = ['.', '..', 'logs', 'access-logs', 'vendor', 'favicon_io', 'ablepro-90', 'assets', 'Laragon-Dashboard'];
+            $projects = [];
+            foreach ($folders as $folder) {
+                $name = basename($folder);
+                if (!in_array($name, $ignore)) {
+                    $projects[] = ['name' => $name, 'path' => $folder];
+                }
+            }
+            echo json_encode($projects);
+        ?>;
+        
+        const select = $('#project-select');
+        const optimizeSelect = $('#optimize-db-select');
+        select.empty();
+        optimizeSelect.empty();
+        select.append('<option value="">Select Project</option>');
+        optimizeSelect.append('<option value="">Select Database</option>');
+        
+        folders.forEach(function(project) {
+            select.append('<option value="' + project.path + '">' + project.name + '</option>');
+        });
+        
+        // Load databases for optimize select
+        loadDatabases();
+        $('#database-select').change(function() {
+            optimizeSelect.append('<option value="' + $(this).val() + '">' + $(this).val() + '</option>');
+        });
+    }
+
+    function gitStatus() {
+        const projectPath = $('#project-select').val();
+        if (!projectPath) {
+            alert('Please select a project');
+            return;
+        }
+        $.post('quick_tools.php', {action: 'git_status', project_path: projectPath}, function(data) {
+            if (data.success) {
+                $('#tools-output').html('<div class="alert alert-info"><strong>Git Status:</strong><pre>' + data.status + '</pre><strong>Branch:</strong> ' + data.branch + '</div>');
+            } else {
+                alert('Error: ' + data.error);
+            }
+        });
+    }
+
+    function composerInstall() {
+        const projectPath = $('#project-select').val();
+        if (!projectPath) {
+            alert('Please select a project');
+            return;
+        }
+        if (!confirm('Run composer install? This may take a while.')) {
+            return;
+        }
+        $.post('quick_tools.php', {action: 'composer_command', project_path: projectPath, command: 'install'}, function(data) {
+            $('#tools-output').html('<div class="alert alert-info"><strong>Composer Output:</strong><pre>' + (data.output || '') + '</pre></div>');
+        });
+    }
+
+    function npmInstall() {
+        const projectPath = $('#project-select').val();
+        if (!projectPath) {
+            alert('Please select a project');
+            return;
+        }
+        if (!confirm('Run npm install? This may take a while.')) {
+            return;
+        }
+        $.post('quick_tools.php', {action: 'npm_command', project_path: projectPath, command: 'install'}, function(data) {
+            $('#tools-output').html('<div class="alert alert-info"><strong>NPM Output:</strong><pre>' + (data.output || '') + '</pre></div>');
+        });
+    }
+
+    function showPhpInfo() {
+        $.get('quick_tools.php?action=php_info', function(data) {
+            if (data.success) {
+                const win = window.open('', 'phpinfo', 'width=800,height=600');
+                win.document.write(data.phpinfo);
+            }
+        });
+    }
+
+    function viewTableStructure(database, table) {
+        $.get('database_manager.php?action=get_table_structure&database=' + encodeURIComponent(database) + '&table=' + encodeURIComponent(table), function(data) {
+            if (data.success) {
+                let html = '<table class="table table-striped"><thead><tr><th>Column</th><th>Type</th><th>Nullable</th><th>Key</th><th>Default</th><th>Extra</th></tr></thead><tbody>';
+                data.columns.forEach(function(col) {
+                    html += '<tr><td>' + col.COLUMN_NAME + '</td><td>' + col.DATA_TYPE + '</td><td>' + col.IS_NULLABLE + '</td><td>' + col.COLUMN_KEY + '</td><td>' + (col.COLUMN_DEFAULT || 'NULL') + '</td><td>' + col.EXTRA + '</td></tr>';
+                });
+                html += '</tbody></table>';
+                $('#query-results').html(html);
+            }
+        });
     }
     </script>
 

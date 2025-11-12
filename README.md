@@ -2,7 +2,7 @@
 
 A modern, feature-rich dashboard for Laragon development environment with advanced email management, server monitoring, and security features.
 
-[![Version](https://img.shields.io/badge/version-2.5.0-blue.svg)](https://github.com/your-repo/laragon-dashboard)
+[![Version](https://img.shields.io/badge/version-2.5.1-blue.svg)](https://github.com/LebToki/Laragon-Dashboard)
 [![PHP](https://img.shields.io/badge/PHP-7.4%2B-green.svg)](https://php.net)
 [![Bootstrap](https://img.shields.io/badge/Bootstrap-5.3.2-purple.svg)](https://getbootstrap.com)
 [![License](https://img.shields.io/badge/license-MIT-orange.svg)](LICENSE)
@@ -44,6 +44,40 @@ A modern, feature-rich dashboard for Laragon development environment with advanc
 - **Error Handling** - Graceful error management
 - **Database Integration** - PDO-based database helpers
 
+### 🗄️ Database Management
+
+- **Database Browser** - Browse all databases and view sizes
+- **Table Explorer** - List tables with row counts and sizes
+- **Table Structure** - View column details, types, keys, and constraints
+- **Query Runner** - Execute SELECT queries safely
+- **Real-time Information** - Live database statistics
+
+### 🔧 Services Management
+
+- **Service Control** - Start, stop, and restart services (Apache, MySQL, Nginx, Redis, Memcached)
+- **Status Monitoring** - Real-time service status display
+- **Port Monitor** - View all listening ports on your system
+- **Service Health** - Quick overview of all Laragon services
+
+### 📋 Log Viewer
+
+- **Multi-Log Support** - View Apache, PHP, MySQL, and Dashboard logs
+- **Configurable Display** - Adjust number of lines to display
+- **Log Management** - Clear log files with one click
+- **Auto-Detection** - Automatically finds available log files
+- **Terminal-Style Display** - Easy-to-read log format
+
+### 🛠️ Quick Tools
+
+- **Cache Management** - Clear application and framework caches
+- **Database Optimization** - Optimize all tables in a database
+- **Project Actions**:
+  - Git status check
+  - Composer install/update commands
+  - NPM install/update commands
+- **PHP Info** - Quick access to PHP configuration
+- **Project Selector** - Choose projects for quick actions
+
 ### 🌍 Multi-language Support
 
 - English, German, Spanish, French, Indonesian, Portuguese, Tagalog
@@ -68,7 +102,7 @@ A modern, feature-rich dashboard for Laragon development environment with advanc
 1. **Clone or Download**
 
    ```bash
-   git clone https://github.com/your-repo/laragon-dashboard.git
+   git clone https://github.com/LebToki/Laragon-Dashboard.git
    # or download and extract to your Laragon www directory
    ```
 
@@ -106,7 +140,7 @@ define('MYSQL_PASSWORD', '');
 
 // Application Settings
 define('APP_NAME', 'Laragon Dashboard');
-define('APP_VERSION', '2.5.0');
+define('APP_VERSION', '2.5.1');
 define('APP_DEBUG', false);
 
 // Security Settings
@@ -138,6 +172,10 @@ Laragon-Dashboard/
 ├── index.php              # Main dashboard
 ├── server_vitals.php      # Server monitoring API
 ├── project_search.php     # Project search API
+├── database_manager.php   # Database management API
+├── services_manager.php   # Services control API
+├── log_viewer.php         # Log viewing API
+├── quick_tools.php        # Quick tools API
 ├── CHANGELOG.md           # Version history
 ├── .gitignore             # Git ignore rules
 └── README.md              # This file
@@ -173,6 +211,43 @@ Monitor your server via the "Server Vitals" tab:
 - **Disk Space** - Monitor disk usage across all drives
 - **Performance Metrics** - Page load times and execution statistics
 
+### Database Management
+
+Access database tools via the "Databases" tab:
+
+- **Browse Databases** - View all available databases and their sizes
+- **Explore Tables** - See table structures, row counts, and sizes
+- **Run Queries** - Execute SELECT queries safely (read-only)
+- **View Structure** - Inspect table columns, types, keys, and constraints
+
+### Services Management
+
+Control Laragon services via the "Services" tab:
+
+- **Service Control** - Start, stop, or restart Apache, MySQL, Nginx, Redis, Memcached
+- **Status Monitoring** - See real-time status of all services
+- **Port Monitor** - View all listening ports on your system
+- **Quick Actions** - One-click service management
+
+### Log Viewer
+
+View logs via the "Logs" tab:
+
+- **Multiple Log Types** - Access Apache, PHP, MySQL, and Dashboard logs
+- **Configurable Display** - Choose how many lines to show (10-1000)
+- **Log Management** - Clear log files when needed
+- **Easy Navigation** - Terminal-style display for better readability
+
+### Quick Tools
+
+Access developer tools via the "Tools" tab:
+
+- **Cache Management** - Clear application and framework caches
+- **Database Optimization** - Optimize database tables for better performance
+- **Git Integration** - Check Git status for your projects
+- **Package Management** - Run Composer and NPM commands
+- **System Info** - Quick access to PHP configuration
+
 ## 🔧 API Endpoints
 
 ### Server Vitals API
@@ -203,6 +278,53 @@ GET /project_search.php?q=search_term
 ```
 
 Returns filtered project list based on search query.
+
+### Database Manager API
+
+```
+GET /database_manager.php?action=list_databases
+GET /database_manager.php?action=get_tables&database=dbname
+GET /database_manager.php?action=get_table_structure&database=dbname&table=tablename
+GET /database_manager.php?action=get_database_size&database=dbname
+POST /database_manager.php?action=execute_query
+```
+
+Returns database information and query results (read-only queries only).
+
+### Services Manager API
+
+```
+GET /services_manager.php?action=status
+GET /services_manager.php?action=start&service=Apache
+GET /services_manager.php?action=stop&service=MySQL
+GET /services_manager.php?action=restart&service=Nginx
+GET /services_manager.php?action=get_ports
+```
+
+Returns service status and port information.
+
+### Log Viewer API
+
+```
+GET /log_viewer.php?action=list_logs
+GET /log_viewer.php?action=read_log&path=logpath&lines=100
+GET /log_viewer.php?action=clear_log&path=logpath
+```
+
+Returns log file information and content.
+
+### Quick Tools API
+
+```
+POST /quick_tools.php (action: clear_cache)
+POST /quick_tools.php (action: optimize_database, database: dbname)
+POST /quick_tools.php (action: composer_command, project_path: path, command: install)
+POST /quick_tools.php (action: npm_command, project_path: path, command: install)
+POST /quick_tools.php (action: git_status, project_path: path)
+GET /quick_tools.php?action=php_info
+```
+
+Executes various developer tools and returns results.
 
 ## 🛡️ Security
 

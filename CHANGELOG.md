@@ -5,6 +5,82 @@ All notable changes to the Laragon Dashboard project will be documented in this 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.5.1] - 2025-01-XX
+
+### Added
+
+- **Database Management Tab**
+  - Browse all databases and view database sizes
+  - List tables with row counts and sizes
+  - View table structure (columns, types, keys)
+  - Execute SELECT queries safely
+  - Real-time database information display
+
+- **Services Management Tab**
+  - Start, stop, and restart services (Apache, MySQL, Nginx, Redis, Memcached)
+  - Real-time service status monitoring
+  - Port monitor to view all listening ports
+  - Service control with confirmation dialogs
+
+- **Log Viewer Tab**
+  - View Apache, PHP, MySQL, and Dashboard logs
+  - Configurable number of lines to display
+  - Clear log files functionality
+  - Automatic log file detection
+  - Terminal-style log display
+
+- **Quick Tools Tab**
+  - Cache management (clear application cache)
+  - Database optimization (optimize all tables in a database)
+  - Project actions:
+    - Git status check
+    - Composer install/update commands
+    - NPM install/update commands
+  - PHP info viewer
+  - Project selector for quick actions
+
+- **Enhanced API Endpoints**
+  - `database_manager.php` - Database operations API
+  - `services_manager.php` - Service control API
+  - `log_viewer.php` - Log viewing API
+  - `quick_tools.php` - Quick actions API
+
+### Changed
+
+- **Navigation**
+  - Added 4 new tabs: Databases, Services, Logs, and Tools
+  - Improved tab navigation with better organization
+
+- **Language Support**
+  - Added translations for all new features
+  - Extended English language file with new terms
+
+### Fixed
+
+- **Path Issues**
+  - Fixed incorrect config.php paths in includes files
+  - Corrected relative path references in helper classes
+  - Fixed log directory path in logger
+
+- **Code Quality**
+  - Improved error handling in API endpoints
+  - Added security checks for all API actions
+  - Better input validation and sanitization
+
+### Technical Details
+
+- **New Files**
+  - `database_manager.php` - Database management API
+  - `services_manager.php` - Services control API
+  - `log_viewer.php` - Log viewing API
+  - `quick_tools.php` - Quick tools API
+
+- **Security**
+  - All API endpoints protected with security validation
+  - Query execution limited to SELECT, SHOW, DESCRIBE, EXPLAIN
+  - Path validation for file operations
+  - Service control requires confirmation
+
 ## [2.5.0] - 2024-12-19
 
 ### Added

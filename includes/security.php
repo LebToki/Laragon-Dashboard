@@ -4,7 +4,7 @@
  * Provides security headers, CSRF protection, and input sanitization
  */
 
-require_once __DIR__ . '/config.php';
+require_once __DIR__ . '/../config.php';
 
 class SecurityHelper {
     private static $csrfToken = null;
@@ -91,7 +91,7 @@ class SecurityHelper {
     }
     
     public static function rateLimit($key, $maxAttempts = 10, $timeWindow = 300) {
-        $rateLimitFile = __DIR__ . '/logs/rate_limit.json';
+        $rateLimitFile = __DIR__ . '/../logs/rate_limit.json';
         
         if (!file_exists($rateLimitFile)) {
             file_put_contents($rateLimitFile, '{}');
@@ -127,6 +127,22 @@ class SecurityHelper {
     public static function generateSecurePassword($length = 12) {
         $chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*';
         return substr(str_shuffle($chars), 0, $length);
+    }
+    
+    public static function validateRequest() {
+        // Basic request validation
+        // Check if request is from same origin (for API endpoints)
+        $referer = $_SERVER['HTTP_REFERER'] ?? '';
+        $host = $_SERVER['HTTP_HOST'] ?? '';
+        
+        // Allow requests from same host
+        if (!empty($referer) && strpos($referer, $host) === false) {
+            return false;
+        }
+        
+        // Rate limiting check
+        $ip = $_SERVER['REMOTE_ADDR'] ?? 'unknown';
+        return self::rateLimit($ip, 100, 60); // 100 requests per minute
     }
 }
 

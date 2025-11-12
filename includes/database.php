@@ -4,8 +4,8 @@
  * Provides database connection and query utilities
  */
 
-require_once __DIR__ . '/config.php';
-require_once __DIR__ . '/includes/logger.php';
+require_once __DIR__ . '/../config.php';
+require_once __DIR__ . '/logger.php';
 
 class DatabaseHelper {
     private static $connection = null;
