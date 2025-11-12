@@ -76,26 +76,36 @@ function showServerStatus(): void
 }
 
 // Handle incoming query parameters
+// SECURITY: These endpoints expose sensitive information and should only be available in debug mode
 function handleQueryParameter(string $param): void
 {
+    // Only allow debug endpoints if APP_DEBUG is enabled
+    if (!defined('APP_DEBUG') || !APP_DEBUG) {
+        http_response_code(403);
+        die('Access denied. Debug endpoints are disabled.');
+    }
+    
     switch ($param) {
         case 'info':
             phpinfo();
-            break;
+            exit;
         case 'status':
             showServerStatus();
-            break;
+            exit;
         default:
             throw new InvalidArgumentException("Unsupported parameter: " . htmlspecialchars($param));
     }
 }
 
-if (isset($_GET['q'])) {
+// SECURITY: Disable debug query parameters in production
+if (isset($_GET['q']) && (defined('APP_DEBUG') && APP_DEBUG)) {
     $queryParam = filter_input(INPUT_GET, 'q', FILTER_SANITIZE_STRING);
     try {
         handleQueryParameter($queryParam);
     } catch (InvalidArgumentException $e) {
+        http_response_code(400);
         echo 'Error: ' . htmlspecialchars($e->getMessage());
+        exit;
     }
 }
 
@@ -182,12 +192,18 @@ function serverInfo(): array
     $phpSapi = php_sapi_name();
     $isFpm = (strpos($phpSapi, 'fpm') !== false);
 
+    // SECURITY: Only expose full document root path in debug mode
+    $docRoot = $_SERVER['DOCUMENT_ROOT'] ?? '/var/www/html';
+    $docRootDisplay = (defined('APP_DEBUG') && APP_DEBUG) 
+        ? $docRoot 
+        : basename($docRoot);
+    
     return [
         'httpdVer' => htmlspecialchars($httpdVer),
         'openSsl' => htmlspecialchars($openSslVer),
         'phpVer' => htmlspecialchars($phpInfo['currentVersion']),
         'xDebug' => htmlspecialchars($xdebugVersion),
-        'docRoot' => htmlspecialchars($_SERVER['DOCUMENT_ROOT'] ?? '/var/www/html'),
+        'docRoot' => htmlspecialchars($docRootDisplay),
         'serverName' => htmlspecialchars($_SERVER['HTTP_HOST'] ?? 'localhost'),
         'webServer' => htmlspecialchars($webServer),
         'phpSapi' => htmlspecialchars($phpSapi),
@@ -1022,7 +1038,16 @@ foreach ($langFiles as $file) {
                         <div class="overviewcard">
                             <div class="overviewcard_icon"><?php echo $translations['document_root'] ?? 'Document Root'; ?></div>
                             <div class="overviewcard_info">
-                                <?php echo htmlspecialchars($_SERVER['DOCUMENT_ROOT']); ?>
+                                <?php 
+                                // SECURITY: Only show full path in debug mode, otherwise show relative path
+                                $docRoot = $_SERVER['DOCUMENT_ROOT'] ?? '';
+                                if (defined('APP_DEBUG') && APP_DEBUG) {
+                                    echo htmlspecialchars($docRoot);
+                                } else {
+                                    // Show only the last directory name for security
+                                    echo htmlspecialchars(basename($docRoot));
+                                }
+                                ?>
                             </div>
                         </div>
                     </div>
@@ -1642,7 +1667,15 @@ foreach ($folders as $host) {
     }
 
     function loadProjects() {
-        const wwwPath = '<?php echo dirname($_SERVER["DOCUMENT_ROOT"]); ?>';
+        // SECURITY: Don't expose full server paths in client-side code
+        const wwwPath = '<?php 
+            // Only expose full path in debug mode
+            if (defined('APP_DEBUG') && APP_DEBUG) {
+                echo dirname($_SERVER["DOCUMENT_ROOT"]);
+            } else {
+                echo '/www'; // Generic path for production
+            }
+        ?>';
         const folders = <?php 
             $folders = array_filter(glob(dirname(__DIR__) . '/*'), 'is_dir');
             $ignore = ['.', '..', 'logs', 'access-logs', 'vendor', 'favicon_io', 'ablepro-90', 'assets', 'Laragon-Dashboard'];
