@@ -1,0 +1,30 @@
+{
+    "generated_at": "2025-11-12 19:59:32",
+    "total_items": 1,
+    "summary": {
+        "sensitive_data_exposure": {
+            "count": 1,
+            "severity_breakdown": {
+                "critical": 0,
+                "high": 1,
+                "medium": 0,
+                "low": 0
+            }
+        }
+    },
+    "items": [
+        {
+            "id": 1,
+            "title": "Sensitive data exposure in index.php",
+            "description": "Issue of type 'sensitive_data_exposure' detected. Location: C:\\laragon\\www\\Laragon-Dashboard\\LaragonDash\\index.php (line 1)",
+            "file": "C:\\laragon\\www\\Laragon-Dashboard\\LaragonDash\\index.php",
+            "line": 1,
+            "type": "sensitive_data_exposure",
+            "severity": "high",
+            "risk_level": "moderate",
+            "suggested_fix": "Review the code and apply appropriate security best practices.",
+            "status": "pending",
+            "notes": ""
+        }
+    ]
+}

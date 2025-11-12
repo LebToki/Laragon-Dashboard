@@ -22,8 +22,8 @@ A modern, feature-rich dashboard for Laragon development environment with advanc
 The installation structure:
 ```
 Laragon-Dashboard/
-├── index.php          # Root entry point (loads LaragonDash application)
-└── LaragonDash/       # Main application folder
+├── index.php          # Root entry point (loads Laragon-Dashboard application)
+└── Laragon-Dashboard/       # Main application folder
     ├── index.php      # Main dashboard application
     ├── config.php     # Configuration file
     ├── assets/        # CSS, images, languages
@@ -83,7 +83,7 @@ The dashboard includes a built-in self-update mechanism:
 
 ## 📖 Documentation
 
-For detailed documentation, see the [README in LaragonDash folder](LaragonDash/README.md).
+For detailed documentation, see the [README in Laragon-Dashboard folder](Laragon-Dashboard/README.md).
 
 ## 🛡️ Security
 
@@ -97,7 +97,7 @@ For detailed documentation, see the [README in LaragonDash folder](LaragonDash/R
 ## 🎨 Customization
 
 ### Configuration
-Edit `LaragonDash/config.php` to customize:
+Edit `Laragon-Dashboard/config.php` to customize:
 - Database connection settings
 - Email directory paths
 - Security settings
@@ -106,7 +106,7 @@ Edit `LaragonDash/config.php` to customize:
 ### Language Support
 The dashboard supports multiple languages. Language files are located in:
 ```
-LaragonDash/assets/languages/
+Laragon-Dashboard/assets/languages/
 ```
 
 ## 🐛 Troubleshooting
@@ -116,17 +116,17 @@ LaragonDash/assets/languages/
 **Dashboard not loading:**
 - Ensure PHP 7.4+ is installed
 - Check file permissions
-- Verify LaragonDash folder exists
+- Verify Laragon-Dashboard folder exists
 
 **Database connection issues:**
-- Verify MySQL credentials in `LaragonDash/config.php`
+- Verify MySQL credentials in `Laragon-Dashboard/config.php`
 - Ensure MySQL service is running
 - Check firewall settings
 
 **Update mechanism not working:**
 - Verify internet connection
 - Check GitHub API access
-- Ensure write permissions on LaragonDash folder
+- Ensure write permissions on Laragon-Dashboard folder
 
 ## 📈 Performance
 
@@ -166,7 +166,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 🔄 Changelog
 
-See [CHANGELOG.md](LaragonDash/CHANGELOG.md) for detailed version history.
+See [CHANGELOG.md](Laragon-Dashboard/CHANGELOG.md) for detailed version history.
 
 ---
 
@@ -179,7 +179,7 @@ Laragon-Dashboard/
 ├── index.php                    # Root entry point
 ├── README.md                    # This file
 ├── LICENSE                      # License file
-└── LaragonDash/                 # Main application
+└── Laragon-Dashboard/                 # Main application
     ├── index.php               # Main dashboard
     ├── config.php              # Configuration
     ├── README.md               # Detailed documentation
@@ -206,7 +206,7 @@ Laragon-Dashboard/
 ## 🚀 Quick Start
 
 1. **Install** - Extract to `C:\laragon\www\Laragon-Dashboard\`
-2. **Configure** - Edit `LaragonDash/config.php` if needed
+2. **Configure** - Edit `Laragon-Dashboard/config.php` if needed
 3. **Access** - Open `http://localhost/Laragon-Dashboard/`
 4. **Enjoy** - Start managing your Laragon environment!
 
