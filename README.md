@@ -99,30 +99,56 @@ A modern, feature-rich dashboard for Laragon development environment with advanc
 
 ### Quick Setup
 
-1. **Clone or Download**
+#### Option 1: Download ZIP (Recommended)
+
+1. **Download the latest release** from the [Releases page](https://github.com/LebToki/Laragon-Dashboard/releases)
+
+2. **Extract the zip file** to your Laragon `www` directory:
+   ```
+   C:\laragon\www\
+   ```
+
+3. **The extraction will:**
+   - **Replace/create** `index.php` in the root of `www` directory (this is the entry point)
+   - **Create/extract** the `Laragon-Dashboard/` folder containing all application files
+
+4. **Final structure should be:**
+   ```
+   C:\laragon\www\
+   ├── index.php                    # Root entry point (replaced/created)
+   └── Laragon-Dashboard/          # Application folder (created)
+       ├── index.php               # Main dashboard application
+       ├── config.php              # Configuration file
+       ├── assets/                 # CSS, images, languages
+       ├── includes/               # Helper classes
+       └── *.php                   # API endpoints
+   ```
+
+5. **Access Dashboard**
+   ```
+   http://localhost/Laragon-Dashboard/
+   ```
+
+#### Option 2: Git Clone
+
+1. **Clone the repository**
 
    ```bash
    git clone https://github.com/LebToki/Laragon-Dashboard.git
-   # or download and extract to your Laragon www directory
+   cd Laragon-Dashboard
    ```
 
-2. **Configure Environment**
+2. **Move files to Laragon www directory**
 
    ```bash
-   # Copy and modify configuration
-   cp config.php config.local.php
-   # Edit config.local.php with your settings
+   # Copy index.php to www root
+   cp index.php C:\laragon\www\index.php
+   
+   # Move Laragon-Dashboard folder to www
+   mv Laragon-Dashboard C:\laragon\www\Laragon-Dashboard
    ```
 
-3. **Set Permissions**
-
-   ```bash
-   # Create required directories
-   mkdir -p logs cache
-   chmod 755 logs cache
-   ```
-
-4. **Access Dashboard**
+3. **Access Dashboard**
 
    ```
    http://localhost/Laragon-Dashboard/
@@ -130,7 +156,11 @@ A modern, feature-rich dashboard for Laragon development environment with advanc
 
 ### Configuration
 
-Edit `config.php` to customize your setup:
+Edit `Laragon-Dashboard/config.php` to customize your setup:
+
+### Configuration
+
+Edit `Laragon-Dashboard/config.php` to customize your setup:
 
 ```php
 // Database Configuration
@@ -140,7 +170,7 @@ define('MYSQL_PASSWORD', '');
 
 // Application Settings
 define('APP_NAME', 'Laragon Dashboard');
-define('APP_VERSION', '2.5.1');
+define('APP_VERSION', '2.6.0');
 define('APP_DEBUG', false);
 
 // Security Settings
@@ -151,6 +181,11 @@ define('MAX_LOGIN_ATTEMPTS', 5);
 define('SENDMAIL_OUTPUT_DIR', 'C:/laragon/bin/sendmail/output/');
 define('DOMAIN_SUFFIX', '.local');
 ```
+
+**Important Notes:**
+- The root `index.php` serves as the entry point and loads the application from the `Laragon-Dashboard/` folder
+- Both files are required for the dashboard to function properly
+- Do not delete or modify the root `index.php` unless you understand its purpose
 
 ## 📁 Project Structure
 
