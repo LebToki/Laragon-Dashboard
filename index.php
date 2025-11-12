@@ -444,6 +444,15 @@ $activeTab = $_GET['tab'] ?? 'servers';
             } else {
                 $('#servers .container-fluid').show();
             }
+            
+            // Initialize charts when vitals tab is clicked
+            if (tab_id === 'vitals') {
+                setTimeout(function() {
+                    if (typeof initializeCharts === 'function') {
+                        initializeCharts();
+                    }
+                }, 100);
+            }
         });
 
         $('#language-selector').change(function() {
@@ -487,30 +496,38 @@ $activeTab = $_GET['tab'] ?? 'servers';
                 }
                 $('#disk-usage').text(diskInfo || 'No disk information available');
 
-                // Update charts
-                if (uptimeChart && data.uptimeLabels && data.uptimeData) {
-                    uptimeChart.data.labels = data.uptimeLabels;
-                    uptimeChart.data.datasets[0].data = data.uptimeData;
-                    uptimeChart.update();
+                // Update charts (only if they exist and are initialized)
+                if (typeof window.uptimeChart !== 'undefined' && window.uptimeChart && window.uptimeChart.data && data.uptimeLabels && data.uptimeData) {
+                    window.uptimeChart.data.labels = data.uptimeLabels;
+                    if (window.uptimeChart.data.datasets && window.uptimeChart.data.datasets[0]) {
+                        window.uptimeChart.data.datasets[0].data = data.uptimeData;
+                        window.uptimeChart.update();
+                    }
                 }
 
-                if (memoryUsageChart && data.memoryUsageLabels && data.memoryUsageData) {
-                    memoryUsageChart.data.labels = data.memoryUsageLabels;
-                    memoryUsageChart.data.datasets[0].data = data.memoryUsageData;
-                    memoryUsageChart.update();
+                if (typeof window.memoryUsageChart !== 'undefined' && window.memoryUsageChart && window.memoryUsageChart.data && data.memoryUsageLabels && data.memoryUsageData) {
+                    window.memoryUsageChart.data.labels = data.memoryUsageLabels;
+                    if (window.memoryUsageChart.data.datasets && window.memoryUsageChart.data.datasets[0]) {
+                        window.memoryUsageChart.data.datasets[0].data = data.memoryUsageData;
+                        window.memoryUsageChart.update();
+                    }
                 }
 
-                if (diskUsageChart && data.diskUsageLabels && data.diskUsageData) {
-                    diskUsageChart.data.labels = data.diskUsageLabels;
-                    diskUsageChart.data.datasets[0].data = data.diskUsageData;
-                    diskUsageChart.update();
+                if (typeof window.diskUsageChart !== 'undefined' && window.diskUsageChart && window.diskUsageChart.data && data.diskUsageLabels && data.diskUsageData) {
+                    window.diskUsageChart.data.labels = data.diskUsageLabels;
+                    if (window.diskUsageChart.data.datasets && window.diskUsageChart.data.datasets[0]) {
+                        window.diskUsageChart.data.datasets[0].data = data.diskUsageData;
+                        window.diskUsageChart.update();
+                    }
                 }
                 
-                if (phpMemoryChart && data.phpMemory) {
+                if (typeof window.phpMemoryChart !== 'undefined' && window.phpMemoryChart && window.phpMemoryChart.data && data.phpMemory) {
                     const currentMB = Math.round(data.phpMemory.current / (1024 * 1024));
                     const peakMB = Math.round(data.phpMemory.peak / (1024 * 1024));
-                    phpMemoryChart.data.datasets[0].data = [currentMB, peakMB];
-                    phpMemoryChart.update();
+                    if (window.phpMemoryChart.data.datasets && window.phpMemoryChart.data.datasets[0]) {
+                        window.phpMemoryChart.data.datasets[0].data = [currentMB, peakMB];
+                        window.phpMemoryChart.update();
+                    }
                 }
             },
             error: function(xhr, status, error) {
@@ -1886,112 +1903,136 @@ foreach ($folders as $host) {
     </footer>
 
     <script>
-    const uptimeData = [ /* Add your uptime data here */ ];
-    const memoryUsageData = [ /* Add your memory usage data here */ ];
-    const diskUsageData = [ /* Add your disk usage data here */ ];
-
-    const ctxUptime = document.getElementById('uptimeChart').getContext('2d');
-    const uptimeChart = new Chart(ctxUptime, {
-        type: 'line',
-        data: {
-            labels: ['Time1', 'Time2', 'Time3'],
-            datasets: [{
-                label: 'Uptime',
-                data: uptimeData,
-                backgroundColor: 'rgba(54, 162, 235, 0.2)',
-                borderColor: 'rgba(54, 162, 235, 1)',
-                borderWidth: 1
-            }]
-        },
-        options: {
-            scales: {
-                y: {
-                    beginAtZero: true
-                }
-            }
+    // Initialize charts only when vitals tab is active
+    function initializeCharts() {
+        if (typeof Chart === 'undefined') {
+            console.warn('Chart.js not loaded yet');
+            return;
         }
-    });
-
-    const ctxMemory = document.getElementById('memoryUsageChart').getContext('2d');
-    const memoryUsageChart = new Chart(ctxMemory, {
-        type: 'bar',
-        data: {
-            labels: ['Total', 'Used', 'Free'],
-            datasets: [{
-                label: 'Memory Usage (MB)',
-                data: memoryUsageData,
-                backgroundColor: [
-                    'rgba(255, 99, 132, 0.2)',
-                    'rgba(54, 162, 235, 0.2)',
-                    'rgba(75, 192, 192, 0.2)'
-                ],
-                borderColor: [
-                    'rgba(255, 99, 132, 1)',
-                    'rgba(54, 162, 235, 1)',
-                    'rgba(75, 192, 192, 1)'
-                ],
-                borderWidth: 1
-            }]
-        },
-        options: {
-            scales: {
-                y: {
-                    beginAtZero: true
+        
+        const uptimeChartEl = document.getElementById('uptimeChart');
+        const memoryChartEl = document.getElementById('memoryUsageChart');
+        const diskChartEl = document.getElementById('diskUsageChart');
+        const phpMemoryChartEl = document.getElementById('phpMemoryChart');
+        
+        if (uptimeChartEl && typeof window.uptimeChart === 'undefined') {
+            const ctxUptime = uptimeChartEl.getContext('2d');
+            window.uptimeChart = new Chart(ctxUptime, {
+                type: 'line',
+                data: {
+                    labels: [],
+                    datasets: [{
+                        label: 'Uptime',
+                        data: [],
+                        backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                        borderColor: 'rgba(54, 162, 235, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
                 }
-            }
+            });
         }
-    });
-
-    const ctxDisk = document.getElementById('diskUsageChart').getContext('2d');
-    const diskUsageChart = new Chart(ctxDisk, {
-        type: 'doughnut',
-        data: {
-            labels: ['Used', 'Available'],
-            datasets: [{
-                label: 'Disk Usage',
-                data: diskUsageData,
-                backgroundColor: [
-                    'rgba(255, 206, 86, 0.2)',
-                    'rgba(75, 192, 192, 0.2)'
-                ],
-                borderColor: [
-                    'rgba(255, 206, 86, 1)',
-                    'rgba(75, 192, 192, 1)'
-                ],
-                borderWidth: 1
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false
-        }
-    });
-
-    const ctxPhpMemory = document.getElementById('phpMemoryChart').getContext('2d');
-    const phpMemoryChart = new Chart(ctxPhpMemory, {
-        type: 'bar',
-        data: {
-            labels: ['Current', 'Peak'],
-            datasets: [{
-                label: 'PHP Memory Usage (MB)',
-                data: [0, 0],
-                backgroundColor: [
-                    'rgba(54, 162, 235, 0.2)',
-                    'rgba(255, 99, 132, 0.2)'
-                ],
-                borderColor: [
-                    'rgba(54, 162, 235, 1)',
-                    'rgba(255, 99, 132, 1)'
-                ],
-                borderWidth: 1
-            }]
-        },
-        options: {
-            scales: {
-                y: {
-                    beginAtZero: true
+        
+        if (memoryChartEl && typeof window.memoryUsageChart === 'undefined') {
+            const ctxMemory = memoryChartEl.getContext('2d');
+            window.memoryUsageChart = new Chart(ctxMemory, {
+                type: 'bar',
+                data: {
+                    labels: [],
+                    datasets: [{
+                        label: 'Memory Usage (MB)',
+                        data: [],
+                        backgroundColor: [
+                            'rgba(255, 99, 132, 0.2)',
+                            'rgba(54, 162, 235, 0.2)',
+                            'rgba(75, 192, 192, 0.2)'
+                        ],
+                        borderColor: [
+                            'rgba(255, 99, 132, 1)',
+                            'rgba(54, 162, 235, 1)',
+                            'rgba(75, 192, 192, 1)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
                 }
-            }
+            });
+        }
+        
+        if (diskChartEl && typeof window.diskUsageChart === 'undefined') {
+            const ctxDisk = diskChartEl.getContext('2d');
+            window.diskUsageChart = new Chart(ctxDisk, {
+                type: 'doughnut',
+                data: {
+                    labels: [],
+                    datasets: [{
+                        label: 'Disk Usage',
+                        data: [],
+                        backgroundColor: [
+                            'rgba(255, 206, 86, 0.2)',
+                            'rgba(75, 192, 192, 0.2)'
+                        ],
+                        borderColor: [
+                            'rgba(255, 206, 86, 1)',
+                            'rgba(75, 192, 192, 1)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false
+                }
+            });
+        }
+        
+        if (phpMemoryChartEl && typeof window.phpMemoryChart === 'undefined') {
+            const ctxPhpMemory = phpMemoryChartEl.getContext('2d');
+            window.phpMemoryChart = new Chart(ctxPhpMemory, {
+                type: 'bar',
+                data: {
+                    labels: ['Current', 'Peak'],
+                    datasets: [{
+                        label: 'PHP Memory Usage (MB)',
+                        data: [0, 0],
+                        backgroundColor: [
+                            'rgba(54, 162, 235, 0.2)',
+                            'rgba(255, 99, 132, 0.2)'
+                        ],
+                        borderColor: [
+                            'rgba(54, 162, 235, 1)',
+                            'rgba(255, 99, 132, 1)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        }
+    }
+    
+    // Initialize charts if vitals tab is already active on page load
+    $(document).ready(function() {
+        if ($('.tab[data-tab="vitals"]').hasClass('active')) {
+            setTimeout(initializeCharts, 500);
         }
     });
     </script>
