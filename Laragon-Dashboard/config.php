@@ -1,13 +1,146 @@
 <?php
 // Configuration for Laragon Dashboard
-// Define the directory where sendmail stores outbound emails.
-// This can be overridden using the SENDMAIL_OUTPUT_DIR environment variable.
 
-define('SENDMAIL_OUTPUT_DIR', rtrim(getenv('SENDMAIL_OUTPUT_DIR') ?: 'C:/laragon/bin/sendmail/output/', '/\\') . '/');
+/**
+ * Auto-detect Laragon installation path
+ */
+function getLaragonRoot() {
+    // Check environment variable first
+    $envPath = getenv('LARAGON_ROOT');
+    if (!empty($envPath) && is_dir($envPath) && file_exists($envPath . '/laragon.exe')) {
+        return rtrim(str_replace('\\', '/', $envPath), '/');
+    }
+    
+    // Try common installation paths
+    $possiblePaths = ['C:/laragon', 'D:/laragon', 'E:/laragon'];
+    foreach ($possiblePaths as $path) {
+        if (is_dir($path) && file_exists($path . '/laragon.exe')) {
+            return $path;
+        }
+    }
+    
+    // Try to detect from document root
+    $docRoot = $_SERVER['DOCUMENT_ROOT'] ?? '';
+    if (strpos($docRoot, 'laragon') !== false) {
+        $parts = explode('laragon', $docRoot);
+        $detectedPath = $parts[0] . 'laragon';
+        if (is_dir($detectedPath) && file_exists($detectedPath . '/laragon.exe')) {
+            return str_replace('\\', '/', $detectedPath);
+        }
+    }
+    
+    // Default fallback
+    return 'C:/laragon';
+}
 
-// Domain suffix used for local sites (e.g., ".local").
-// Override by setting the DOMAIN_SUFFIX environment variable.
-define('DOMAIN_SUFFIX', getenv('DOMAIN_SUFFIX') ?: '.local');
+/**
+ * Auto-detect domain suffix from Laragon configuration
+ */
+function getLaragonDomainSuffix() {
+    $laragonRoot = getLaragonRoot();
+    
+    // Check laragon.ini file - look for HostnameFormat first
+    $iniFile = $laragonRoot . '/usr/laragon.ini';
+    if (file_exists($iniFile)) {
+        $config = @parse_ini_file($iniFile);
+        if ($config && isset($config['HostnameFormat'])) {
+            // Extract suffix from format like "{name}.local"
+            $format = $config['HostnameFormat'];
+            if (preg_match('/\.([a-z0-9\-]+)$/i', $format, $matches)) {
+                $suffix = '.' . $matches[1];
+                return $suffix;
+            }
+        }
+        // Also check for DomainSuffix if it exists
+        if ($config && isset($config['DomainSuffix'])) {
+            $suffix = trim($config['DomainSuffix']);
+            if (!empty($suffix) && $suffix[0] !== '.') {
+                $suffix = '.' . $suffix;
+            }
+            return $suffix;
+        }
+    }
+    
+    // Check etc/apache2/sites-enabled for domain patterns
+    $sitesDir = $laragonRoot . '/etc/apache2/sites-enabled';
+    if (is_dir($sitesDir)) {
+        $files = glob($sitesDir . '/*.conf');
+        if (!empty($files)) {
+            $content = @file_get_contents($files[0]);
+            if ($content && preg_match('/ServerName\s+([^\.]+)\.([^\s]+)/i', $content, $matches)) {
+                $suffix = '.' . $matches[2];
+                if ($suffix !== '.localhost' && $suffix !== '.127.0.0.1') {
+                    return $suffix;
+                }
+            }
+        }
+    }
+    
+    // Default fallback
+    return '.local';
+}
+
+/**
+ * Auto-detect sendmail output directory
+ */
+function getLaragonSendmailDir() {
+    $laragonRoot = getLaragonRoot();
+    $sendmailDir = $laragonRoot . '/bin/sendmail/output';
+    
+    if (is_dir($sendmailDir)) {
+        return rtrim(str_replace('\\', '/', $sendmailDir), '/') . '/';
+    }
+    
+    // Fallback to default
+    return rtrim($laragonRoot, '/') . '/bin/sendmail/output/';
+}
+
+/**
+ * Auto-detect application version from Git
+ */
+function getAppVersion() {
+    $versionFile = __DIR__ . '/VERSION';
+    
+    // Check for VERSION file first
+    if (file_exists($versionFile)) {
+        $version = trim(@file_get_contents($versionFile));
+        if (!empty($version)) {
+            return $version;
+        }
+    }
+    
+    // Try to get version from Git
+    $gitDir = __DIR__ . '/.git';
+    if (is_dir($gitDir)) {
+        // Try git describe
+        $command = 'cd ' . escapeshellarg(__DIR__) . ' && git describe --tags --always 2>nul';
+        $version = @shell_exec($command);
+        if ($version) {
+            $version = trim($version);
+            // Remove 'v' prefix if present
+            $version = preg_replace('/^v/', '', $version);
+            return $version;
+        }
+        
+        // Fallback to short commit hash
+        $command = 'cd ' . escapeshellarg(__DIR__) . ' && git rev-parse --short HEAD 2>nul';
+        $hash = @shell_exec($command);
+        if ($hash) {
+            return 'dev-' . trim($hash);
+        }
+    }
+    
+    // Default fallback
+    return '2.6.0';
+}
+
+// Get Laragon root path
+$LARAGON_ROOT = getLaragonRoot();
+
+// Auto-detect configuration values
+define('SENDMAIL_OUTPUT_DIR', getenv('SENDMAIL_OUTPUT_DIR') ?: getLaragonSendmailDir());
+define('DOMAIN_SUFFIX', getenv('DOMAIN_SUFFIX') ?: getLaragonDomainSuffix());
+define('APP_VERSION', getenv('APP_VERSION') ?: getAppVersion());
 
 // URL to access PhpMyAdmin. Override with the PHPMYADMIN_URL environment variable.
 define('PHPMYADMIN_URL', getenv('PHPMYADMIN_URL') ?: 'http://localhost/phpmyadmin');
@@ -19,7 +152,6 @@ define('MYSQL_PASSWORD', getenv('MYSQL_PASSWORD') ?: '');
 
 // Application settings
 define('APP_NAME', 'Laragon Dashboard');
-define('APP_VERSION', '2.6.0');
 define('APP_DEBUG', false);
 
 // Security settings
