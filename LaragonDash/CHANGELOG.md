@@ -5,6 +5,53 @@ All notable changes to the Laragon Dashboard project will be documented in this 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.6.0] - 2025-01-XX
+
+### Added
+
+- **Self-Update Mechanism**
+  - Automatic update checking
+  - Download with progress bar
+  - One-click update installation
+  - Backup before update
+  - Update manager API endpoint
+
+- **Bcrypt Password Generator**
+  - Generate bcrypt hashes
+  - Copy to clipboard functionality
+  - Modern UI card design
+
+- **Backup & Export Tool**
+  - Full project backup with database
+  - Configurable backup options
+  - Recent backups list
+  - Download backups
+
+- **Enhanced UI**
+  - Modern card-based design
+  - Improved tool organization
+  - Better visual hierarchy
+  - Enhanced styling
+
+### Changed
+
+- **Project Structure**
+  - All files consolidated into LaragonDash/ folder
+  - Root index.php serves as simple loader
+  - Cleaner installation structure
+  - Better organization for updates
+
+- **API Endpoints**
+  - All endpoints now under LaragonDash/ prefix
+  - Updated asset paths
+  - Consistent path structure
+
+### Fixed
+
+- **CSRF Protection**
+  - Added CSRF tokens to all POST requests
+  - Improved security for API endpoints
+
 ## [2.5.1] - 2025-01-XX
 
 ### Added

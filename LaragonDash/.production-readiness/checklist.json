@@ -1,0 +1,43 @@
+{
+    "generated_at": "2025-11-12 19:27:35",
+    "total_items": 2,
+    "summary": {
+        "missing_csrf_protection": {
+            "count": 2,
+            "severity_breakdown": {
+                "critical": 0,
+                "high": 0,
+                "medium": 2,
+                "low": 0
+            }
+        }
+    },
+    "items": [
+        {
+            "id": 1,
+            "title": "Csrf protection in database_manager.php",
+            "description": "Issue of type 'csrf_protection' detected. Location: C:\\laragon\\www\\Laragon-Dashboard\\database_manager.php (line 1)",
+            "file": "C:\\laragon\\www\\Laragon-Dashboard\\database_manager.php",
+            "line": 114,
+            "type": "missing_csrf_protection",
+            "severity": "medium",
+            "risk_level": "moderate",
+            "suggested_fix": "Review the code and apply appropriate security best practices.",
+            "status": "pending",
+            "notes": ""
+        },
+        {
+            "id": 2,
+            "title": "Csrf protection in quick_tools.php",
+            "description": "Issue of type 'csrf_protection' detected. Location: C:\\laragon\\www\\Laragon-Dashboard\\quick_tools.php (line 1)",
+            "file": "C:\\laragon\\www\\Laragon-Dashboard\\quick_tools.php",
+            "line": 21,
+            "type": "missing_csrf_protection",
+            "severity": "medium",
+            "risk_level": "moderate",
+            "suggested_fix": "Review the code and apply appropriate security best practices.",
+            "status": "pending",
+            "notes": ""
+        }
+    ]
+}

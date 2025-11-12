@@ -20,6 +20,16 @@ if (!SecurityHelper::validateRequest()) {
 
 $action = $_POST['action'] ?? $_GET['action'] ?? '';
 
+// CSRF protection for POST requests
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $csrfToken = $_POST['csrf_token'] ?? $_SERVER['HTTP_X_CSRF_TOKEN'] ?? '';
+    if (empty($csrfToken) || !SecurityHelper::validateCSRF($csrfToken)) {
+        http_response_code(403);
+        echo json_encode(['error' => 'Invalid CSRF token']);
+        exit;
+    }
+}
+
 function executeCommand($command, $workingDir = null) {
     $descriptorspec = [
         0 => ["pipe", "r"],

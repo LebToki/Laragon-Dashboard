@@ -19,7 +19,7 @@ define('MYSQL_PASSWORD', getenv('MYSQL_PASSWORD') ?: '');
 
 // Application settings
 define('APP_NAME', 'Laragon Dashboard');
-define('APP_VERSION', '2.5.1');
+define('APP_VERSION', '2.6.0');
 define('APP_DEBUG', false);
 
 // Security settings

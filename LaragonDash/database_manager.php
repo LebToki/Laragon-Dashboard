@@ -111,6 +111,12 @@ try {
             break;
             
         case 'execute_query':
+            // CSRF protection
+            $csrfToken = $_POST['csrf_token'] ?? $_SERVER['HTTP_X_CSRF_TOKEN'] ?? '';
+            if (empty($csrfToken) || !SecurityHelper::validateCSRF($csrfToken)) {
+                throw new Exception('Invalid CSRF token');
+            }
+            
             $query = $_POST['query'] ?? '';
             if (empty($query)) {
                 throw new Exception('Query is required');
