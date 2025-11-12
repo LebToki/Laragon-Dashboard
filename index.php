@@ -399,22 +399,25 @@ $activeTab = $_GET['tab'] ?? 'servers';
     <link rel="icon" type="image/x-icon" href="Laragon-Dashboard/assets/favicon.ico">
     <title><?php echo $translations['title'] ?? 'Welcome to the Laragon Dashboard'; ?></title>
 
-    <link href="https://fonts.googleapis.com/css?family=Pt+Sans&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,700&display=swap">
+    <!-- Local Google Fonts -->
+    <link rel="stylesheet" href="Laragon-Dashboard/assets/libs/fonts/google-fonts.css">
     <link rel="stylesheet" href="Laragon-Dashboard/assets/style.css">
 
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/css/bootstrap-grid.min.css" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/css/bootstrap-reboot.min.css" />
+    <!-- Local Bootstrap -->
+    <link rel="stylesheet" href="Laragon-Dashboard/assets/libs/bootstrap/bootstrap.min.css">
 
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/brands.min.css" />
+    <!-- Local Font Awesome -->
+    <link rel="stylesheet" href="Laragon-Dashboard/assets/libs/fontawesome/all.min.css" />
+    <link rel="stylesheet" href="Laragon-Dashboard/assets/libs/fontawesome/brands.min.css" />
 
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/js/bootstrap.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/js/all.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/js/fontawesome.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+    <!-- Local jQuery -->
+    <script src="Laragon-Dashboard/assets/libs/jquery/jquery-3.7.1.min.js"></script>
+    <!-- Local Bootstrap JS -->
+    <script src="Laragon-Dashboard/assets/libs/bootstrap/bootstrap.bundle.min.js"></script>
+    <!-- Local Chart.js -->
+    <script src="Laragon-Dashboard/assets/libs/chartjs/chart.umd.min.js"></script>
+    <!-- Local Iconify -->
+    <script src="Laragon-Dashboard/assets/libs/iconify/iconify.min.js"></script>
 
     <link rel="icon" href="Laragon-Dashboard/assets/favicon/favicon.ico" type="image/x-icon">
     <link rel="icon" type="image/png" href="Laragon-Dashboard/assets/favicon/favicon-16x16.png" sizes="16x16">
