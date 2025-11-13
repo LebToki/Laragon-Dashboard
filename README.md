@@ -11,6 +11,7 @@ A modern, feature-rich dashboard for Laragon development environment with advanc
 ## ✨ Screenshots
 
 <img width="1897" height="870" alt="image" src="https://github.com/user-attachments/assets/15a4ea21-8fd6-4d2b-a8f0-960f7d74ef68" />
+<img width="1881" height="884" alt="image" src="https://github.com/user-attachments/assets/3b365184-b31a-4949-aa0b-830a1fd5b7f5" />
 
 ---
 
