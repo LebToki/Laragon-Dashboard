@@ -11,6 +11,7 @@ A modern, feature-rich dashboard for Laragon development environment with advanc
 ## ✨ Screenshots
 
 # ![Laragon-Dashboard Enhanced Dashboard](Laragon-Dashboard/assets/01-Dashboard.png)
+<img width="1897" height="870" alt="image" src="https://github.com/user-attachments/assets/15a4ea21-8fd6-4d2b-a8f0-960f7d74ef68" />
 
 ---
 
