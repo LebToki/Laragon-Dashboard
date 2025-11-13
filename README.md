@@ -7,8 +7,13 @@ A modern, feature-rich dashboard for Laragon development environment with advanc
 [![Bootstrap](https://img.shields.io/badge/Bootstrap-5.3.2-purple.svg)](https://getbootstrap.com)
 [![License](https://img.shields.io/badge/license-MIT-orange.svg)](LICENSE)
 
+---
+## ✨ Screenshots
 
-# ![Laragon-Dashboard Enhanced Dashboard](assets/images/01-Dashboard.png)
+# ![Laragon-Dashboard Enhanced Dashboard](Laragon-Dashboard/assets/images/01-Dashboard.png)
+
+---
+
 ## ✨ Features
 
 ### 🎨 Modern Email Client
