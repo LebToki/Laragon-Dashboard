@@ -2,7 +2,7 @@
 
 A modern, feature-rich dashboard for Laragon development environment with advanced email management, server monitoring, and security features.
 
-[![Version](https://img.shields.io/badge/version-2.5.1-blue.svg)](https://github.com/LebToki/Laragon-Dashboard)
+[![Version](https://img.shields.io/badge/version-2.6.0-blue.svg)](https://github.com/LebToki/Laragon-Dashboard)
 [![PHP](https://img.shields.io/badge/PHP-7.4%2B-green.svg)](https://php.net)
 [![Bootstrap](https://img.shields.io/badge/Bootstrap-5.3.2-purple.svg)](https://getbootstrap.com)
 [![License](https://img.shields.io/badge/license-MIT-orange.svg)](LICENSE)
