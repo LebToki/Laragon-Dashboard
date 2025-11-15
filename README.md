@@ -1,8 +1,8 @@
 # 🚀 Laragon Dashboard
 
-A modern, feature-rich web-based dashboard for managing Laragon development environment. Version 3.0.4 aims to be a comprehensive MAMP competitor on Windows, replicating Laragon control panel functionality in a modern, themed web interface.
+A modern, feature-rich web-based dashboard for managing Laragon development environment. Version 3.0.5 aims to be a comprehensive MAMP competitor on Windows, replicating Laragon control panel functionality in a modern, themed web interface.
 
-[![Version](https://img.shields.io/badge/version-3.0.4-blue.svg)](https://github.com/LebToki/Laragon-Dashboard)
+[![Version](https://img.shields.io/badge/version-3.0.5-blue.svg)](https://github.com/LebToki/Laragon-Dashboard)
 [![PHP](https://img.shields.io/badge/PHP-7.4%2B-green.svg)](https://php.net)
 [![Bootstrap](https://img.shields.io/badge/Bootstrap-5.3.2-purple.svg)](https://getbootstrap.com)
 [![License](https://img.shields.io/badge/license-MIT-orange.svg)](LICENSE)
@@ -25,7 +25,7 @@ A modern, feature-rich web-based dashboard for managing Laragon development envi
 ## 📋 Project Information
 
 - **Project Name**: Laragon Dashboard
-- **Version**: 3.0.4
+- **Version**: 3.0.5
 - **Author**: Tarek Tarabichi
 - **Company**: 2TInteractive (2tinteractive.com)
 - **Project Start**: Early 2024
@@ -587,7 +587,13 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 See [CHANGELOG.md](CHANGELOG.md) for detailed version history.
 
-### Version 3.0.4 (Current)
+### Version 3.0.5 (Current)
+- Fixed CSS loading issue - removed conflicting base tag
+- All asset paths now use absolute paths from web root
+- Improved BASE_URL calculation for better routing support
+- CSS and JS files now load correctly in all scenarios
+
+### Version 3.0.4
 - Fixed CSS loading issue - improved BASE_URL and ASSETS_URL calculation
 - Enhanced asset path resolution for routing scenarios
 - CSS files now load correctly regardless of access method
