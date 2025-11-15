@@ -1,5 +1,5 @@
 <?php
-// Ensure constants are defined
+// Ensure constants are defined - use absolute paths from web root
 if (!defined('ASSETS_URL')) {
     // Fallback calculation if not defined
     $baseUrl = defined('BASE_URL') ? BASE_URL : '';
@@ -8,22 +8,12 @@ if (!defined('ASSETS_URL')) {
     $assetsUrl = ASSETS_URL;
 }
 
-$baseUrl = defined('BASE_URL') ? BASE_URL : '';
-
-// Calculate base href for <base> tag
-// BASE_URL should be like "/Laragon-Dashboard" or ""
-if (empty($baseUrl)) {
-    $baseHref = '/';
-} else {
-    // Ensure it starts with / and ends with /
-    $baseHref = rtrim($baseUrl, '/') . '/';
-    if (substr($baseHref, 0, 1) !== '/') {
-        $baseHref = '/' . $baseHref;
-    }
+// Ensure ASSETS_URL is always absolute (starts with /)
+if (substr($assetsUrl, 0, 1) !== '/') {
+    $assetsUrl = '/' . $assetsUrl;
 }
 ?>
 <head>
-    <base href="<?php echo htmlspecialchars($baseHref); ?>">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- Primary Meta Tags -->

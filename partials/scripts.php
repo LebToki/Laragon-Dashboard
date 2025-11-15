@@ -1,6 +1,10 @@
 <?php
-// Use root assets directory (same as head.php)
-$assetsUrl = defined('ASSETS_URL') ? ASSETS_URL : 'assets';
+// Use root assets directory (same as head.php) - ensure absolute path
+$assetsUrl = defined('ASSETS_URL') ? ASSETS_URL : '/assets';
+// Ensure ASSETS_URL is always absolute (starts with /)
+if (substr($assetsUrl, 0, 1) !== '/') {
+    $assetsUrl = '/' . $assetsUrl;
+}
 ?>
     <!-- jQuery library js -->
     <script src="<?php echo $assetsUrl; ?>/js/lib/jquery-3.7.1.min.js"></script>

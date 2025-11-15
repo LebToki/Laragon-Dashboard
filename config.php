@@ -75,30 +75,31 @@ if (!defined('CACHE_ROOT')) {
 
 // URL Path Definitions (relative to web root)
 if (!defined('BASE_URL')) {
-    // Try multiple methods to determine base URL
+    // Determine base URL - this must work correctly for routing scenarios
     $basePath = '';
     
-    // Method 1: Use SCRIPT_NAME (most reliable for routing)
-    // This works correctly when accessed via index.php?page=...
+    // Method 1: Use SCRIPT_NAME (most reliable - always reflects the actual script being executed)
+    // When accessing via index.php?page=projects, SCRIPT_NAME is /Laragon-Dashboard/index.php
+    // When accessing pages/projects.php directly, SCRIPT_NAME is /Laragon-Dashboard/pages/projects.php
     $scriptName = $_SERVER['SCRIPT_NAME'] ?? $_SERVER['PHP_SELF'] ?? '';
     if (!empty($scriptName)) {
         $basePath = dirname($scriptName);
-        // Normalize: if script is in root (index.php), dirname returns '.' or '/'
-        // If script is in subdirectory (/Laragon-Dashboard/index.php), dirname returns '/Laragon-Dashboard'
-        if ($basePath === '.' || $basePath === '/') {
+        // Normalize: dirname('/Laragon-Dashboard/index.php') = '/Laragon-Dashboard'
+        // dirname('/index.php') = '/' or '.'
+        if ($basePath === '.' || $basePath === '/' || $basePath === '\\') {
             $basePath = '';
         }
     }
     
-    // Method 2: Fallback to REQUEST_URI if SCRIPT_NAME didn't work
-    if (empty($basePath)) {
+    // Method 2: Fallback - use REQUEST_URI to detect subdirectory
+    if (empty($basePath) || $basePath === '') {
         $requestUri = $_SERVER['REQUEST_URI'] ?? '';
         if (!empty($requestUri)) {
-            // Remove query string and get path
+            // Remove query string
             $requestPath = parse_url($requestUri, PHP_URL_PATH);
             // Get directory part
             $basePath = dirname($requestPath);
-            if ($basePath === '.' || $basePath === '/') {
+            if ($basePath === '.' || $basePath === '/' || $basePath === '\\') {
                 $basePath = '';
             }
         }
@@ -107,7 +108,7 @@ if (!defined('BASE_URL')) {
     // Normalize path separators
     $basePath = str_replace('\\', '/', $basePath);
     
-    // Final normalization
+    // Final normalization - ensure proper format
     if ($basePath === '/' || $basePath === '\\' || $basePath === '.' || $basePath === '') {
         $basePath = '';
     } else {
@@ -122,11 +123,15 @@ if (!defined('BASE_URL')) {
 }
 if (!defined('ASSETS_URL')) {
     // Always use absolute path from web root for assets
-    // This ensures CSS/JS files load correctly regardless of routing
+    // This ensures CSS/JS files load correctly regardless of routing or direct access
     if (BASE_URL === '') {
         $assetsPath = '/assets';
     } else {
         $assetsPath = BASE_URL . '/assets';
+    }
+    // Ensure it starts with / (absolute path)
+    if (substr($assetsPath, 0, 1) !== '/') {
+        $assetsPath = '/' . $assetsPath;
     }
     define('ASSETS_URL', $assetsPath);
 }
