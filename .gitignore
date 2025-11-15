@@ -1,0 +1,34 @@
+# Backup directories
+backup/
+backup_old_files/
+
+# Development files (kept in devfiles/)
+*.log
+*.cache
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Temporary files
+*.tmp
+*.temp
+*.bak
+
+# Uploaded files
+uploaded/
+
+# Cache directory
+cache/
+
+# Logs directory
+logs/
+
