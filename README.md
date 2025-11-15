@@ -158,7 +158,21 @@ Laragon is currently Windows-only. For future cross-platform support, the dashbo
    C:\laragon\www\Laragon-Dashboard\
    ```
 
-3. **Access Dashboard**
+3. **Edit Laragon's root index.php** (located at `C:\laragon\www\index.php`)
+   
+   Replace the existing content with this redirect:
+   ```php
+   <?php
+   header('Location: /Laragon-Dashboard/');
+   exit;
+   ?>
+   ```
+
+4. **Access Dashboard**
+   ```
+   http://localhost/
+   ```
+   or directly:
    ```
    http://localhost/Laragon-Dashboard/
    ```
@@ -177,7 +191,21 @@ Laragon is currently Windows-only. For future cross-platform support, the dashbo
    move Laragon-Dashboard C:\laragon\www\Laragon-Dashboard
    ```
 
-3. **Access Dashboard**
+3. **Edit Laragon's root index.php** (located at `C:\laragon\www\index.php`)
+   
+   Replace the existing content with this redirect:
+   ```php
+   <?php
+   header('Location: /Laragon-Dashboard/');
+   exit;
+   ?>
+   ```
+
+4. **Access Dashboard**
+   ```
+   http://localhost/
+   ```
+   or directly:
    ```
    http://localhost/Laragon-Dashboard/
    ```
@@ -210,6 +238,11 @@ MAX_LOGIN_ATTEMPTS = 5
 2. Common paths: `C:/laragon`, `D:/laragon`, `E:/laragon`
 3. Detect from `DOCUMENT_ROOT` (if contains 'laragon')
 4. Default fallback: `C:/laragon`
+
+**Important Setup Note:**
+- The root `index.php` file at `C:\laragon\www\index.php` should redirect to the dashboard
+- This allows accessing the dashboard via `http://localhost/` instead of `http://localhost/Laragon-Dashboard/`
+- If you prefer direct access, you can skip modifying the root `index.php` and access the dashboard directly at `http://localhost/Laragon-Dashboard/`
 
 ## 📁 Project Structure
 
