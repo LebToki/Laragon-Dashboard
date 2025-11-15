@@ -1,6 +1,7 @@
 # Backup directories
 backup/
 backup_old_files/
+__backup/
 
 # Development files (kept in devfiles/)
 *.log
