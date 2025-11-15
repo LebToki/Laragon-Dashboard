@@ -1,13 +1,14 @@
 # 🚀 Laragon Dashboard
 
-A modern, feature-rich dashboard for Laragon development environment with advanced email management, server monitoring, and security features.
+A modern, feature-rich web-based dashboard for managing Laragon development environment. Version 3.0.1 aims to be a comprehensive MAMP competitor on Windows, replicating Laragon control panel functionality in a modern, themed web interface.
 
-[![Version](https://img.shields.io/badge/version-2.6.0-blue.svg)](https://github.com/LebToki/Laragon-Dashboard)
+[![Version](https://img.shields.io/badge/version-3.0.1-blue.svg)](https://github.com/LebToki/Laragon-Dashboard)
 [![PHP](https://img.shields.io/badge/PHP-7.4%2B-green.svg)](https://php.net)
 [![Bootstrap](https://img.shields.io/badge/Bootstrap-5.3.2-purple.svg)](https://getbootstrap.com)
 [![License](https://img.shields.io/badge/license-MIT-orange.svg)](LICENSE)
 
 ---
+
 ## ✨ Screenshots
 
 <img width="1897" height="870" alt="image" src="https://github.com/user-attachments/assets/15a4ea21-8fd6-4d2b-a8f0-960f7d74ef68" />
@@ -19,91 +20,125 @@ A modern, feature-rich dashboard for Laragon development environment with advanc
 <img width="1898" height="910" alt="image" src="https://github.com/user-attachments/assets/43dfe841-8e53-4208-9bea-ad38364ebf4e" />
 <img width="1896" height="909" alt="image" src="https://github.com/user-attachments/assets/aac174e3-6b30-4a03-b8be-f594aabb3786" />
 
-
 ---
+
+## 📋 Project Information
+
+- **Project Name**: Laragon Dashboard
+- **Version**: 3.0.1
+- **Author**: Tarek Tarabichi
+- **Company**: 2TInteractive (2tinteractive.com)
+- **Project Start**: Early 2024
+- **GitHub**: https://github.com/LebToki/Laragon-Dashboard
+- **License**: MIT
+- **Goal**: MAMP competitor for Windows OS (with potential future cross-platform support)
+
+## 🌍 Platform Support
+
+### Current Status (as of November 2025)
+- **Windows**: ✅ Fully supported (primary platform)
+- **macOS**: ❌ Not supported by Laragon (Windows-only)
+- **Linux**: ❌ Not supported by Laragon (Windows-only)
+
+### Cross-Platform Research
+Laragon is currently Windows-only. For future cross-platform support, the dashboard architecture is designed to:
+- Abstract platform-specific operations (service management, file paths, etc.)
+- Support multiple backend environments (Laragon on Windows, MAMP/XAMPP on macOS/Linux)
+- Detect and adapt to the host platform
+- Provide platform-specific features when available
+
+**Potential Future Platforms**:
+- **macOS**: Could integrate with MAMP, Laravel Valet, or Docker
+- **Linux**: Could integrate with LAMP stack, Docker, or platform-specific tools
 
 ## ✨ Features
 
-### 🎨 Modern Email Client
+### 🎛️ Service Management
+- **Start/Stop/Restart Services** - Apache, MySQL, Nginx, Redis, Memcached, MongoDB, PostgreSQL, Mailpit
+- **Service Status Monitoring** - Real-time status display
+- **Port Monitoring** - View all listening ports on your system
+- **Service Version Detection** - Automatic version detection
+- **Windows Service Control** - Full Windows service management via `sc` commands
+- **Process-Based Services** - Support for non-Windows services (Nginx, Mailpit)
 
-- **Bootstrap 5 Interface** - Professional, responsive design
-- **Interactive Statistics** - Real-time email metrics and analytics
-- **Advanced Search** - Filter emails by sender, subject, or content
-- **Email Cards** - Beautiful hover effects and smooth animations
-- **Modal Viewer** - Enhanced email reading experience
-- **Bulk Operations** - Mass email management capabilities
-- **Keyboard Shortcuts** - Improved accessibility and productivity
+### 📁 Project Management
+- **Project Discovery** - Automatically list projects from `www` directory
+- **Framework Detection** - WordPress, Laravel, Drupal, CodeIgniter, Symfony, CakePHP, Joomla
+- **Project Search/Filter** - Quick search and filtering capabilities
+- **Quick Access Links** - Direct links to project admin panels
+- **Framework-Specific Icons** - Visual identification of project types
+
+### 🗄️ Database Management
+- **Database Browser** - Browse all databases and view sizes
+- **Table Explorer** - List tables with row counts and sizes
+- **Table Structure** - View column details, types, keys, and constraints
+- **Query Runner** - Execute SELECT queries safely (read-only)
+- **Database Optimization** - Optimize tables for better performance
+- **Real-time Information** - Live database statistics
+
+### 📧 Email Management (Mailpit)
+- **Email Viewer** - View emails from Laragon's sendmail output
+- **Email Statistics** - Total, daily, weekly counts, unique senders
+- **Search & Filter** - Advanced email search capabilities
+- **Email Reading** - Full email content viewer
+- **Email Management** - Delete individual or bulk emails
+- **Export Options** - Download email data
 
 ### 📊 Server Monitoring
-
 - **Real-time Vitals** - CPU, memory, and disk usage monitoring
-- **Visual Charts** - Interactive charts using Chart.js
-- **Windows Compatible** - Optimized for Windows/Laragon environment
 - **PHP Memory Tracking** - Monitor PHP memory usage and limits
 - **Multi-drive Support** - Track disk usage across all drives
+- **Visual Charts** - Interactive charts using Chart.js
+- **Windows Compatible** - Optimized for Windows/Laragon environment
+
+### 📋 Log Viewer
+- **Multi-Log Support** - View Apache, PHP, MySQL, and Dashboard logs
+- **Configurable Display** - Adjust number of lines to display (10-1000)
+- **Log Management** - Clear log files with one click
+- **Auto-Detection** - Automatically finds available log files
+- **Terminal-Style Display** - Easy-to-read log format
+
+### 🛠️ Quick Tools
+- **Cache Management** - Clear application and framework caches
+- **Database Optimization** - Optimize all tables in a database
+- **Git Integration** - Check Git status for projects
+- **Composer Commands** - Install, update, dump-autoload, clear-cache
+- **NPM Commands** - Install, update, run build/dev/prod
+- **PHP Info** - Quick access to PHP configuration
+
+### 💾 Backup & Export
+- **Full Project Backup** - Backup projects with database
+- **Configurable Options** - Include/exclude vendor, cache directories
+- **Recent Backups List** - View and manage backup history
+- **Download Backups** - Easy backup retrieval
+- **ZIP Compression** - Efficient backup storage
+
+### 🔄 Update Management
+- **Automatic Update Checking** - Check for new versions
+- **Download with Progress** - Visual download progress
+- **One-Click Installation** - Easy update process
+- **Backup Before Update** - Automatic backup before updating
 
 ### 🔒 Security Features
-
 - **CSRF Protection** - Secure token-based protection
 - **Security Headers** - Comprehensive HTTP security headers
 - **Rate Limiting** - Prevent abuse and brute force attacks
 - **Input Sanitization** - XSS and injection protection
 - **Secure Sessions** - HTTPOnly and secure cookie settings
 - **Content Security Policy** - Advanced CSP implementation
-
-### ⚡ Performance & Monitoring
-
-- **Caching System** - File-based caching with TTL support
-- **Performance Monitoring** - Execution time and memory tracking
-- **Comprehensive Logging** - Multi-level logging system
-- **Error Handling** - Graceful error management
-- **Database Integration** - PDO-based database helpers
-
-### 🗄️ Database Management
-
-- **Database Browser** - Browse all databases and view sizes
-- **Table Explorer** - List tables with row counts and sizes
-- **Table Structure** - View column details, types, keys, and constraints
-- **Query Runner** - Execute SELECT queries safely
-- **Real-time Information** - Live database statistics
-
-### 🔧 Services Management
-
-- **Service Control** - Start, stop, and restart services (Apache, MySQL, Nginx, Redis, Memcached)
-- **Status Monitoring** - Real-time service status display
-- **Port Monitor** - View all listening ports on your system
-- **Service Health** - Quick overview of all Laragon services
-
-### 📋 Log Viewer
-
-- **Multi-Log Support** - View Apache, PHP, MySQL, and Dashboard logs
-- **Configurable Display** - Adjust number of lines to display
-- **Log Management** - Clear log files with one click
-- **Auto-Detection** - Automatically finds available log files
-- **Terminal-Style Display** - Easy-to-read log format
-
-### 🛠️ Quick Tools
-
-- **Cache Management** - Clear application and framework caches
-- **Database Optimization** - Optimize all tables in a database
-- **Project Actions**:
-  - Git status check
-  - Composer install/update commands
-  - NPM install/update commands
-- **PHP Info** - Quick access to PHP configuration
-- **Project Selector** - Choose projects for quick actions
+- **SQL Injection Protection** - Prepared statements throughout
 
 ### 🌍 Multi-language Support
-
-- English, German, Spanish, French, Indonesian, Portuguese, Tagalog
-- Easy language switching
-- Consistent translation system
+- **8 Languages** - English, German, Spanish, French, Indonesian, Portuguese, Tagalog, Arabic
+- **Easy Language Switching** - Quick language selector
+- **Consistent Translation System** - Organized translation files
+- **Module-Based Translations** - Translations organized by feature
 
 ## 🛠️ Installation
 
 ### Prerequisites
 
-- **Laragon** development environment
+- **Laragon** development environment installed
 - **PHP 7.4+** with required extensions:
   - `json`
   - `mbstring`
@@ -120,26 +155,10 @@ A modern, feature-rich dashboard for Laragon development environment with advanc
 
 2. **Extract the zip file** to your Laragon `www` directory:
    ```
-   C:\laragon\www\
+   C:\laragon\www\Laragon-Dashboard\
    ```
 
-3. **The extraction will:**
-   - **Replace/create** `index.php` in the root of `www` directory (this is the entry point)
-   - **Create/extract** the `Laragon-Dashboard/` folder containing all application files
-
-4. **Final structure should be:**
-   ```
-   C:\laragon\www\
-   ├── index.php                    # Root entry point (replaced/created)
-   └── Laragon-Dashboard/          # Application folder (created)
-       ├── index.php               # Main dashboard application
-       ├── config.php              # Configuration file
-       ├── assets/                 # CSS, images, languages
-       ├── includes/               # Helper classes
-       └── *.php                   # API endpoints
-   ```
-
-5. **Access Dashboard**
+3. **Access Dashboard**
    ```
    http://localhost/Laragon-Dashboard/
    ```
@@ -147,84 +166,105 @@ A modern, feature-rich dashboard for Laragon development environment with advanc
 #### Option 2: Git Clone
 
 1. **Clone the repository**
-
    ```bash
    git clone https://github.com/LebToki/Laragon-Dashboard.git
    cd Laragon-Dashboard
    ```
 
-2. **Move files to Laragon www directory**
-
+2. **Move to Laragon www directory**
    ```bash
-   # Copy index.php to www root
-   cp index.php C:\laragon\www\index.php
-   
    # Move Laragon-Dashboard folder to www
-   mv Laragon-Dashboard C:\laragon\www\Laragon-Dashboard
+   move Laragon-Dashboard C:\laragon\www\Laragon-Dashboard
    ```
 
 3. **Access Dashboard**
-
    ```
    http://localhost/Laragon-Dashboard/
    ```
 
 ### Configuration
 
-Edit `Laragon-Dashboard/config.php` to customize your setup:
+The dashboard auto-detects Laragon installation paths. Edit `config.php` to customize:
 
 ```php
-// Database Configuration
-define('MYSQL_HOST', 'localhost');
-define('MYSQL_USER', 'root');
-define('MYSQL_PASSWORD', '');
+// Auto-detected values (no manual configuration needed)
+$LARAGON_ROOT = getLaragonRoot(); // Auto-detect from common paths
+SENDMAIL_OUTPUT_DIR = getLaragonSendmailDir(); // C:/laragon/bin/sendmail/output/
+DOMAIN_SUFFIX = getLaragonDomainSuffix(); // .local
+APP_VERSION = getAppVersion(); // From Git or VERSION file
+
+// MySQL Configuration (defaults)
+MYSQL_HOST = 'localhost'
+MYSQL_USER = 'root'
+MYSQL_PASSWORD = ''
 
 // Application Settings
-define('APP_NAME', 'Laragon Dashboard');
-define('APP_VERSION', '2.6.0');
-define('APP_DEBUG', false);
-
-// Security Settings
-define('SESSION_TIMEOUT', 3600);
-define('MAX_LOGIN_ATTEMPTS', 5);
-
-// Email Configuration
-define('SENDMAIL_OUTPUT_DIR', 'C:/laragon/bin/sendmail/output/');
-define('DOMAIN_SUFFIX', '.local');
+APP_NAME = 'Laragon Dashboard'
+APP_DEBUG = false
+SESSION_TIMEOUT = 3600
+MAX_LOGIN_ATTEMPTS = 5
 ```
 
-**Important Notes:**
-- The root `index.php` serves as the entry point and loads the application from the `Laragon-Dashboard/` folder
-- Both files are required for the dashboard to function properly
-- Do not delete or modify the root `index.php` unless you understand its purpose
+**Laragon Path Auto-Detection Order:**
+1. `LARAGON_ROOT` environment variable
+2. Common paths: `C:/laragon`, `D:/laragon`, `E:/laragon`
+3. Detect from `DOCUMENT_ROOT` (if contains 'laragon')
+4. Default fallback: `C:/laragon`
 
 ## 📁 Project Structure
 
 ```
 Laragon-Dashboard/
-├── assets/
-│   ├── languages/          # Translation files
-│   ├── inbox/             # Email client interface
-│   ├── favicon/           # Favicon files
-│   └── style.css          # Main stylesheet
-├── includes/              # Helper classes
-│   ├── logger.php         # Logging system
-│   ├── security.php       # Security helpers
-│   ├── database.php       # Database utilities
-│   └── cache.php          # Caching system
-├── logs/                  # Application logs
-├── cache/                 # Cache files
-├── config.php             # Main configuration
-├── index.php              # Main dashboard
-├── server_vitals.php      # Server monitoring API
-├── project_search.php     # Project search API
-├── database_manager.php   # Database management API
-├── services_manager.php   # Services control API
-├── log_viewer.php         # Log viewing API
-├── quick_tools.php        # Quick tools API
-├── CHANGELOG.md           # Version history
-├── .gitignore             # Git ignore rules
-└── README.md              # This file
+├── api/                    # API endpoints
+│   ├── services.php        # Services management API
+│   ├── databases.php       # Database management API
+│   ├── vitals.php         # Server monitoring API
+│   ├── logs.php           # Log viewer API
+│   ├── tools.php          # Quick tools API
+│   ├── backup.php         # Backup API
+│   ├── update.php         # Update API
+│   └── mailpit.php        # Email management API
+├── assets/                 # Application assets
+│   ├── css/               # Stylesheets
+│   ├── js/                # JavaScript files
+│   ├── images/            # Images and icons
+│   └── fonts/             # Web fonts
+├── i18n/                  # Internationalization
+│   ├── common/            # Common translations
+│   ├── dashboard/         # Dashboard translations
+│   ├── projects/          # Projects translations
+│   └── ...                # Module-specific translations
+├── includes/               # Helper classes
+│   ├── Router.php         # Routing system
+│   ├── UpdateManager.php  # Update management
+│   ├── AdminerModule.php  # Database admin integration
+│   ├── ConfigMigrator.php # Configuration migration
+│   └── helpers.php        # Helper functions
+├── pages/                  # Page templates
+│   ├── dashboard.php      # Main dashboard
+│   ├── projects.php       # Projects page
+│   ├── services.php       # Services page
+│   ├── databases.php     # Databases page
+│   ├── mailbox.php       # Email client
+│   ├── vitals.php        # Server monitoring
+│   ├── logs.php          # Log viewer
+│   └── tools.php         # Quick tools
+├── partials/               # Layout partials
+│   ├── layouts/          # Layout templates
+│   │   ├── layoutTop.php # Top layout (header, sidebar, navbar)
+│   │   └── layoutBottom.php # Bottom layout (footer, scripts)
+│   ├── head.php          # Meta tags, CSS includes
+│   ├── sidebar.php       # Navigation sidebar
+│   ├── navbar.php        # Top navigation bar
+│   ├── footer.php        # Footer content
+│   └── scripts.php       # JavaScript includes
+├── devfiles/              # Development files
+│   ├── KNOWLEDGE_BASE.md # Knowledge base documentation
+│   ├── TESTING_CHECKLIST.md # Testing guidelines
+│   └── ...               # Other dev documentation
+├── config.php            # Main configuration
+├── index.php             # Entry point and router
+└── README.md             # This file
 ```
 
 ## 🎯 Usage
@@ -232,145 +272,127 @@ Laragon-Dashboard/
 ### Dashboard Overview
 
 The main dashboard provides:
-
 - **Server Information** - PHP version, MySQL status, web server details
 - **Project Management** - List and manage your development projects
 - **Framework Detection** - Automatic detection of WordPress, Laravel, Drupal, etc.
 - **Quick Access** - Direct links to project admin panels
 
-### Email Management
+### Service Management
 
-Access the email client via the "Mailbox" tab:
+Control Laragon services via the "Services" tab:
+- Start, stop, or restart services (Apache, MySQL, Nginx, Redis, Memcached, MongoDB, PostgreSQL, Mailpit)
+- View real-time status of all services
+- Monitor listening ports
+- Quick service actions
 
-- **View Statistics** - Total emails, daily/weekly counts, unique senders
-- **Search & Filter** - Find emails quickly with advanced search
-- **Read Emails** - Click any email to view full content
-- **Manage Emails** - Delete individual or bulk emails
-- **Export Options** - Download email data
+### Project Management
 
-### Server Monitoring
-
-Monitor your server via the "Server Vitals" tab:
-
-- **Real-time Charts** - Visual representation of system metrics
-- **Memory Usage** - Track PHP and system memory consumption
-- **Disk Space** - Monitor disk usage across all drives
-- **Performance Metrics** - Page load times and execution statistics
+Access projects via the "Projects" tab:
+- View all projects in your `www` directory
+- Search and filter projects
+- See framework detection results
+- Quick access to project admin panels
 
 ### Database Management
 
 Access database tools via the "Databases" tab:
+- Browse all available databases and their sizes
+- Explore table structures, row counts, and sizes
+- Run SELECT queries safely (read-only)
+- Optimize database tables
 
-- **Browse Databases** - View all available databases and their sizes
-- **Explore Tables** - See table structures, row counts, and sizes
-- **Run Queries** - Execute SELECT queries safely (read-only)
-- **View Structure** - Inspect table columns, types, keys, and constraints
+### Email Management
 
-### Services Management
+Access the email client via the "Mailbox" tab:
+- View email statistics (total, daily, weekly, unique senders)
+- Search and filter emails
+- Read full email content
+- Delete individual or bulk emails
+- Export email data
 
-Control Laragon services via the "Services" tab:
+### Server Monitoring
 
-- **Service Control** - Start, stop, or restart Apache, MySQL, Nginx, Redis, Memcached
-- **Status Monitoring** - See real-time status of all services
-- **Port Monitor** - View all listening ports on your system
-- **Quick Actions** - One-click service management
+Monitor your server via the "Server Vitals" tab:
+- Real-time charts for CPU, memory, and disk usage
+- PHP memory usage tracking
+- Multi-drive disk space monitoring
+- Performance metrics
 
 ### Log Viewer
 
 View logs via the "Logs" tab:
-
-- **Multiple Log Types** - Access Apache, PHP, MySQL, and Dashboard logs
-- **Configurable Display** - Choose how many lines to show (10-1000)
-- **Log Management** - Clear log files when needed
-- **Easy Navigation** - Terminal-style display for better readability
+- Multiple log types (Apache, PHP, MySQL, Dashboard)
+- Configurable line count (10-1000)
+- Clear log files when needed
+- Terminal-style display
 
 ### Quick Tools
 
 Access developer tools via the "Tools" tab:
-
-- **Cache Management** - Clear application and framework caches
-- **Database Optimization** - Optimize database tables for better performance
-- **Git Integration** - Check Git status for your projects
-- **Package Management** - Run Composer and NPM commands
-- **System Info** - Quick access to PHP configuration
+- Cache management (clear application and framework caches)
+- Database optimization
+- Git status check
+- Composer and NPM commands
+- PHP info viewer
 
 ## 🔧 API Endpoints
 
+All APIs return JSON responses and follow a consistent pattern:
+
+### Services API
+```
+GET /api/services.php?action=status
+GET /api/services.php?action=start&service=Apache
+GET /api/services.php?action=stop&service=MySQL
+GET /api/services.php?action=restart&service=Nginx
+GET /api/services.php?action=get_ports
+```
+
+### Database API
+```
+GET /api/databases.php?action=list_databases
+GET /api/databases.php?action=get_tables&database=dbname
+GET /api/databases.php?action=get_table_structure&database=dbname&table=tablename
+GET /api/databases.php?action=get_database_size&database=dbname
+POST /api/databases.php?action=execute_query
+```
+
 ### Server Vitals API
-
 ```
-GET /server_vitals.php
+GET /api/vitals.php
 ```
-
-Returns JSON with server statistics:
-
-```json
-{
-  "uptime": "2 days, 5 hours, 30 minutes",
-  "memoryUsage": "45.2%",
-  "diskUsage": [...],
-  "phpMemory": {
-    "current": 2097152,
-    "peak": 4194304,
-    "limit": "512M"
-  }
-}
-```
-
-### Project Search API
-
-```
-GET /project_search.php?q=search_term
-```
-
-Returns filtered project list based on search query.
-
-### Database Manager API
-
-```
-GET /database_manager.php?action=list_databases
-GET /database_manager.php?action=get_tables&database=dbname
-GET /database_manager.php?action=get_table_structure&database=dbname&table=tablename
-GET /database_manager.php?action=get_database_size&database=dbname
-POST /database_manager.php?action=execute_query
-```
-
-Returns database information and query results (read-only queries only).
-
-### Services Manager API
-
-```
-GET /services_manager.php?action=status
-GET /services_manager.php?action=start&service=Apache
-GET /services_manager.php?action=stop&service=MySQL
-GET /services_manager.php?action=restart&service=Nginx
-GET /services_manager.php?action=get_ports
-```
-
-Returns service status and port information.
+Returns JSON with server statistics (uptime, CPU, memory, disk usage, PHP memory info).
 
 ### Log Viewer API
-
 ```
-GET /log_viewer.php?action=list_logs
-GET /log_viewer.php?action=read_log&path=logpath&lines=100
-GET /log_viewer.php?action=clear_log&path=logpath
+GET /api/logs.php?action=list_logs
+GET /api/logs.php?action=read_log&path=logpath&lines=100
+GET /api/logs.php?action=clear_log&path=logpath
 ```
-
-Returns log file information and content.
 
 ### Quick Tools API
-
 ```
-POST /quick_tools.php (action: clear_cache)
-POST /quick_tools.php (action: optimize_database, database: dbname)
-POST /quick_tools.php (action: composer_command, project_path: path, command: install)
-POST /quick_tools.php (action: npm_command, project_path: path, command: install)
-POST /quick_tools.php (action: git_status, project_path: path)
-GET /quick_tools.php?action=php_info
+POST /api/tools.php (action: clear_cache)
+POST /api/tools.php (action: optimize_database, database: dbname)
+POST /api/tools.php (action: composer_command, project_path: path, command: install)
+POST /api/tools.php (action: npm_command, project_path: path, command: install)
+POST /api/tools.php (action: git_status, project_path: path)
+GET /api/tools.php?action=php_info
 ```
 
-Executes various developer tools and returns results.
+### Backup API
+```
+GET /api/backup.php?action=list
+POST /api/backup.php?action=create
+POST /api/backup.php?action=delete&backup_id=id
+```
+
+### Update API
+```
+GET /api/update.php?action=check
+POST /api/update.php?action=download
+POST /api/update.php?action=install
+```
 
 ## 🛡️ Security
 
@@ -412,7 +434,7 @@ The dashboard uses Bootstrap 5 with custom CSS. Key customization points:
 
 ### Language Files
 
-Add new languages by creating JSON files in `assets/languages/`:
+Add new languages by creating JSON files in `i18n/[module]/[language].json`:
 
 ```json
 {
@@ -429,25 +451,21 @@ Add new languages by creating JSON files in `assets/languages/`:
 ### Common Issues
 
 **Email not loading:**
-
 - Check `SENDMAIL_OUTPUT_DIR` path in config.php
 - Ensure directory exists and is readable
 - Verify Laragon sendmail configuration
 
 **Server vitals not working:**
-
 - Ensure PHP has necessary permissions
 - Check if required PHP extensions are loaded
 - Verify disk paths are accessible
 
 **Database connection issues:**
-
 - Verify MySQL credentials in config.php
 - Ensure MySQL service is running
 - Check firewall settings
 
 **Performance issues:**
-
 - Enable caching in config.php
 - Check log files for errors
 - Monitor memory usage
@@ -461,7 +479,6 @@ define('APP_DEBUG', true);
 ```
 
 This will show:
-
 - Detailed error messages
 - Performance metrics
 - Debug information in footer
@@ -483,6 +500,18 @@ This will show:
 - **Cache Statistics** - Monitor cache hit rates
 - **Error Logging** - Track and analyze errors
 
+## 🔄 Framework Detection
+
+The dashboard automatically detects frameworks in your projects:
+
+1. **WordPress** - Checks for `wp-config.php`
+2. **Laravel** - Checks for `artisan` file
+3. **Drupal** - Checks for `sites/default/settings.php`
+4. **CodeIgniter** - Checks for `application/config/config.php`
+5. **Symfony** - Checks for `app/AppKernel.php` or `symfony.lock`
+6. **CakePHP** - Checks for `config/app.php`
+7. **Joomla** - Checks for `configuration.php`
+
 ## 🤝 Contributing
 
 We welcome contributions! Please see our [Contributing Guidelines](CONTRIBUTING.md) for details.
@@ -501,6 +530,8 @@ We welcome contributions! Please see our [Contributing Guidelines](CONTRIBUTING.
 - Add comprehensive comments
 - Include error handling
 - Test on multiple PHP versions
+- No inline JavaScript in PHP files (all JS in separate files)
+- Use template partials for layout consistency
 
 ## 📄 License
 
@@ -515,15 +546,32 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 📞 Support
 
-- **Documentation** - Check this README and inline comments
-- **Issues** - Report bugs via GitHub Issues
-- **Discussions** - Join our GitHub Discussions
-- **Email** - Contact the maintainer
+- **Documentation** - Check this README and the [Knowledge Base](devfiles/KNOWLEDGE_BASE.md)
+- **Issues** - Report bugs via [GitHub Issues](https://github.com/LebToki/Laragon-Dashboard/issues)
+- **Discussions** - Join our [GitHub Discussions](https://github.com/LebToki/Laragon-Dashboard/discussions)
 
 ## 🔄 Changelog
 
 See [CHANGELOG.md](CHANGELOG.md) for detailed version history.
 
+### Version 3.0.1 (Current)
+- Fixed asset path resolution issues
+- Improved BASE_URL calculation for routing
+- Organized development files into `/devfiles` directory
+- Removed `/template` directory (no longer needed)
+- Enhanced asset loading with proper base tag support
+
+### Version 3.0.0
+- Major version release
+- Complete UI overhaul with modern dashboard design
+- Enhanced service management
+- Improved project detection
+- Better database management tools
+- Advanced email client integration
+- Comprehensive logging system
+
 ---
 
 **Made with ❤️ for the Laragon community**
+
+**Author**: Tarek Tarabichi | **Company**: 2TInteractive | **Website**: https://2tinteractive.com
