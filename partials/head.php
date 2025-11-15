@@ -1,6 +1,13 @@
 <?php
-// Use root assets directory (same as scripts.php)
-$assetsUrl = defined('ASSETS_URL') ? ASSETS_URL : 'assets';
+// Ensure constants are defined
+if (!defined('ASSETS_URL')) {
+    // Fallback calculation if not defined
+    $baseUrl = defined('BASE_URL') ? BASE_URL : '';
+    $assetsUrl = $baseUrl === '' ? '/assets' : $baseUrl . '/assets';
+} else {
+    $assetsUrl = ASSETS_URL;
+}
+
 $baseUrl = defined('BASE_URL') ? BASE_URL : '';
 
 // Calculate base href for <base> tag

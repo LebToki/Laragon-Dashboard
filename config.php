@@ -75,13 +75,39 @@ if (!defined('CACHE_ROOT')) {
 
 // URL Path Definitions (relative to web root)
 if (!defined('BASE_URL')) {
+    // Try multiple methods to determine base URL
+    $basePath = '';
+    
+    // Method 1: Use SCRIPT_NAME (most reliable for routing)
+    // This works correctly when accessed via index.php?page=...
     $scriptName = $_SERVER['SCRIPT_NAME'] ?? $_SERVER['PHP_SELF'] ?? '';
-    $basePath = dirname($scriptName);
+    if (!empty($scriptName)) {
+        $basePath = dirname($scriptName);
+        // Normalize: if script is in root (index.php), dirname returns '.' or '/'
+        // If script is in subdirectory (/Laragon-Dashboard/index.php), dirname returns '/Laragon-Dashboard'
+        if ($basePath === '.' || $basePath === '/') {
+            $basePath = '';
+        }
+    }
+    
+    // Method 2: Fallback to REQUEST_URI if SCRIPT_NAME didn't work
+    if (empty($basePath)) {
+        $requestUri = $_SERVER['REQUEST_URI'] ?? '';
+        if (!empty($requestUri)) {
+            // Remove query string and get path
+            $requestPath = parse_url($requestUri, PHP_URL_PATH);
+            // Get directory part
+            $basePath = dirname($requestPath);
+            if ($basePath === '.' || $basePath === '/') {
+                $basePath = '';
+            }
+        }
+    }
     
     // Normalize path separators
     $basePath = str_replace('\\', '/', $basePath);
     
-    // Handle root cases
+    // Final normalization
     if ($basePath === '/' || $basePath === '\\' || $basePath === '.' || $basePath === '') {
         $basePath = '';
     } else {
@@ -95,10 +121,12 @@ if (!defined('BASE_URL')) {
     define('BASE_URL', $basePath);
 }
 if (!defined('ASSETS_URL')) {
-    // Ensure ASSETS_URL starts with / if BASE_URL is not empty
-    $assetsPath = BASE_URL . '/assets';
-    if (BASE_URL === '' && substr($assetsPath, 0, 1) !== '/') {
-        $assetsPath = '/' . $assetsPath;
+    // Always use absolute path from web root for assets
+    // This ensures CSS/JS files load correctly regardless of routing
+    if (BASE_URL === '') {
+        $assetsPath = '/assets';
+    } else {
+        $assetsPath = BASE_URL . '/assets';
     }
     define('ASSETS_URL', $assetsPath);
 }
