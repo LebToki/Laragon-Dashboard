@@ -1,0 +1,21 @@
+{
+    "title": "Respaldo",
+    "create_backup": "Crear Respaldo",
+    "restore_backup": "Restaurar Respaldo",
+    "backup_name": "Nombre del Respaldo",
+    "backup_type": "Tipo de Respaldo",
+    "created_at": "Creado En",
+    "size": "Tamaño",
+    "status": "Estado",
+    "actions": "Acciones",
+    "download": "Descargar",
+    "delete": "Eliminar",
+    "full_backup": "Respaldo Completo",
+    "database_backup": "Respaldo de Base de Datos",
+    "files_backup": "Respaldo de Archivos",
+    "scheduled_backups": "Respaldos Programados",
+    "backup_settings": "Configuración de Respaldo",
+    "auto_backup": "Respaldo Automático",
+    "backup_location": "Ubicación del Respaldo"
+}
+

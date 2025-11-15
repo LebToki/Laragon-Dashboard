@@ -1,0 +1,24 @@
+{
+    "title": "Mga Serbisyo",
+    "manage_services": "Pamahalaan ang Mga Serbisyo",
+    "service_name": "Pangalan ng Serbisyo",
+    "status": "Status",
+    "version": "Bersyon",
+    "port": "Port",
+    "actions": "Mga Aksyon",
+    "start": "Simulan",
+    "stop": "Itigil",
+    "restart": "I-restart",
+    "running": "Tumatakbo",
+    "stopped": "Nahinto",
+    "apache": "Apache",
+    "mysql": "MySQL",
+    "nginx": "Nginx",
+    "redis": "Redis",
+    "memcached": "Memcached",
+    "postgresql": "PostgreSQL",
+    "mongodb": "MongoDB",
+    "service_status": "Status ng Serbisyo",
+    "all_services": "Lahat ng Mga Serbisyo"
+}
+

@@ -1,0 +1,32 @@
+/**
+ * Laragon Dashboard Monochrome Mode
+ * Reduces eye strain by limiting color constraints
+ * Useful for extended use and accessibility
+ */
+
+/* Monochrome Mode - Applied when .monochrome-mode class is on body */
+body.monochrome-mode {
+    /* Remove color saturation from backgrounds */
+    filter: grayscale(100%);
+    -webkit-filter: grayscale(100%);
+}
+
+/* Keep text readable - adjust contrast if needed */
+body.monochrome-mode * {
+    /* Ensure sufficient contrast for accessibility */
+    color-scheme: light dark;
+}
+
+/* Optional: Override specific elements to maintain minimal color cues */
+body.monochrome-mode .bg-danger-focus,
+body.monochrome-mode .bg-success-focus,
+body.monochrome-mode .bg-warning-focus {
+    /* Keep subtle color hints for critical information */
+    filter: grayscale(70%);
+    -webkit-filter: grayscale(70%);
+}
+
+/* Icon colors - maintain minimal distinction */
+body.monochrome-mode iconify-icon {
+    opacity: 0.9;
+}

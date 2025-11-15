@@ -1,0 +1,16 @@
+{
+    "dashboard": "لوحة التحكم",
+    "development": "التطوير",
+    "projects": "المشاريع",
+    "databases": "قواعد البيانات",
+    "services": "الخدمات",
+    "server_vitals": "مؤشرات الخادم",
+    "system": "النظام",
+    "mailbox": "صندوق البريد",
+    "logs": "السجلات",
+    "tools": "الأدوات",
+    "quick_tools": "أدوات سريعة",
+    "backup": "النسخ الاحتياطي",
+    "preferences": "التفضيلات"
+}
+

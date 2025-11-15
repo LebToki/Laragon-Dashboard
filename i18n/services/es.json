@@ -1,0 +1,24 @@
+{
+    "title": "Servicios",
+    "manage_services": "Gestionar Servicios",
+    "service_name": "Nombre del Servicio",
+    "status": "Estado",
+    "version": "Versión",
+    "port": "Puerto",
+    "actions": "Acciones",
+    "start": "Iniciar",
+    "stop": "Detener",
+    "restart": "Reiniciar",
+    "running": "En ejecución",
+    "stopped": "Detenido",
+    "apache": "Apache",
+    "mysql": "MySQL",
+    "nginx": "Nginx",
+    "redis": "Redis",
+    "memcached": "Memcached",
+    "postgresql": "PostgreSQL",
+    "mongodb": "MongoDB",
+    "service_status": "Estado del Servicio",
+    "all_services": "Todos los Servicios"
+}
+

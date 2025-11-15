@@ -1,0 +1,102 @@
+/* Dropdown Css Start */
+.has-indicator {
+    position: relative;
+    transition: 0s;
+    &.show {
+        &::before {
+            visibility: visible;
+            opacity: 1;
+        }
+    }
+    &::before {
+        position: absolute;
+        content: "";
+        width: 40px;
+        height: 32px;
+        // background-color: #b9b9b9;
+        background-color: var(--white);
+        border-radius: 8px;
+        top: calc(100% - -10px);
+        left: 50%;  
+        transform: translateX(-50%) rotate(45deg);
+        visibility: hidden;
+        opacity: 0;
+        transition: 0s;
+        margin-left: -2px;
+        box-shadow: -13px -8px 24px -7px rgba(46,45,116,.09);
+    }
+}
+
+.dropdown {
+    > button {
+        &.show {
+            background-color: var(--primary-50);
+            color: var(--primary-600) !important;
+            .text-primary-light {
+                color: var(--primary-600) !important;
+            }
+        }
+    }
+}
+
+.dropdown-menu {
+    border: 0;
+    border-radius: 16px;
+    box-shadow: 0px 13px 30px 10px rgba(46,45,116,.05);
+    padding: 16px;
+    background-color: var(--white);
+    &.to-top {
+        top: calc(100% - 28px) !important;
+    }
+    &-lg {
+        @media (min-width: 575px) {
+            width: 425px;
+        }
+    }
+    &-sm {
+        @media (min-width: 375px) {
+            width: 312px;
+        }
+    }
+}
+
+
+/* Dropdown Toggle Custom Icon */
+.toggle-icon {
+    &.icon-up {
+        &::after {
+            content: "\EA78" !important;
+        }
+    }
+    &.icon-right {
+        &::after {
+            content: "\EA6E" !important;
+        }
+    }
+    &.icon-left {
+        &::before {
+            content: "\EA64" !important;
+            vertical-align: middle !important;
+            border: 0 !important;
+            font-family: remixicon;
+            font-size: 24px;
+            line-height: 0;
+            color: inherit;
+        }
+    }
+    &::after {
+        vertical-align: middle !important;
+        border: 0 !important;
+        content: "\ea4e" !important;
+        font-family: remixicon;
+        font-size: 24px;
+        line-height: 0;
+        color: inherit;
+    }
+}
+ 
+
+.dropdown>.not-active.show {
+    color: #fff !important;
+}
+/* Dropdown Css End */

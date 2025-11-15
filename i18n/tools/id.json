@@ -1,0 +1,21 @@
+{
+    "title": "Alat",
+    "manage_tools": "Kelola Alat",
+    "tool_name": "Nama Alat",
+    "description": "Deskripsi",
+    "category": "Kategori",
+    "actions": "Tindakan",
+    "run": "Jalankan",
+    "open": "Buka",
+    "composer": "Composer",
+    "npm": "NPM",
+    "git": "Git",
+    "node": "Node.js",
+    "python": "Python",
+    "terminal": "Terminal",
+    "file_manager": "Pengelola File",
+    "phpmyadmin": "phpMyAdmin",
+    "redis_commander": "Redis Commander",
+    "mongodb_compass": "MongoDB Compass"
+}
+

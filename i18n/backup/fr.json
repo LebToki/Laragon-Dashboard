@@ -1,0 +1,21 @@
+{
+    "title": "Sauvegarde",
+    "create_backup": "Créer une sauvegarde",
+    "restore_backup": "Restaurer une sauvegarde",
+    "backup_name": "Nom de la sauvegarde",
+    "backup_type": "Type de sauvegarde",
+    "created_at": "Créé le",
+    "size": "Taille",
+    "status": "Statut",
+    "actions": "Actions",
+    "download": "Télécharger",
+    "delete": "Supprimer",
+    "full_backup": "Sauvegarde complète",
+    "database_backup": "Sauvegarde de base de données",
+    "files_backup": "Sauvegarde de fichiers",
+    "scheduled_backups": "Sauvegardes planifiées",
+    "backup_settings": "Paramètres de sauvegarde",
+    "auto_backup": "Sauvegarde automatique",
+    "backup_location": "Emplacement de la sauvegarde"
+}
+

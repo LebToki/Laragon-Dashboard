@@ -1,0 +1,13 @@
+@each $property, $value in $spaces {
+  .radius-#{$property} {
+    @include border-radius($value);
+  }
+}
+
+.rounded-start-top-0 {
+  border-start-start-radius: 0!important;
+}
+
+.rounded-end-bottom-0 {
+  border-end-end-radius: 0!important;
+}

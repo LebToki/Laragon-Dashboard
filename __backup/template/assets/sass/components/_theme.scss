@@ -1,0 +1,13 @@
+/* Theme Css Start */
+.payment-gateway-input:checked {
+    ~ .payment-gateway-label {
+        border-color: var(--primary-600) !important;
+        box-shadow: 0px 8px 24px 0px rgba(0, 0, 0, 0.10);
+        .text-secondary-light {
+            color: var(--text-primary-light)!important;
+        }
+    }
+}
+
+
+/* Theme Css End */

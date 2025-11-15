@@ -1,0 +1,22 @@
+{
+    "title": "Projets",
+    "manage_projects": "Gérer les projets",
+    "create_project": "Créer un projet",
+    "edit_project": "Modifier le projet",
+    "project_name": "Nom du projet",
+    "project_path": "Chemin du projet",
+    "project_url": "URL du projet",
+    "project_type": "Type de projet",
+    "php_version": "Version PHP",
+    "database": "Base de données",
+    "created_at": "Créé le",
+    "updated_at": "Mis à jour le",
+    "actions": "Actions",
+    "no_projects": "Aucun projet trouvé",
+    "add_new_project": "Ajouter un nouveau projet",
+    "project_details": "Détails du projet",
+    "open_project": "Ouvrir le projet",
+    "delete_project": "Supprimer le projet",
+    "project_settings": "Paramètres du projet"
+}
+

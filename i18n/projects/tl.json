@@ -1,0 +1,22 @@
+{
+    "title": "Mga Proyekto",
+    "manage_projects": "Pamahalaan ang Mga Proyekto",
+    "create_project": "Lumikha ng Proyekto",
+    "edit_project": "I-edit ang Proyekto",
+    "project_name": "Pangalan ng Proyekto",
+    "project_path": "Path ng Proyekto",
+    "project_url": "URL ng Proyekto",
+    "project_type": "Uri ng Proyekto",
+    "php_version": "Bersyon ng PHP",
+    "database": "Database",
+    "created_at": "Nilikha Sa",
+    "updated_at": "Na-update Sa",
+    "actions": "Mga Aksyon",
+    "no_projects": "Walang nahanap na proyekto",
+    "add_new_project": "Magdagdag ng Bagong Proyekto",
+    "project_details": "Mga Detalye ng Proyekto",
+    "open_project": "Buksan ang Proyekto",
+    "delete_project": "Tanggalin ang Proyekto",
+    "project_settings": "Mga Setting ng Proyekto"
+}
+

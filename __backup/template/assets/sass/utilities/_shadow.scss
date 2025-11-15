@@ -1,0 +1,13 @@
+@each $property, $value in $shadows {
+  .shadow-#{$property} {
+    box-shadow: var(--shadow-#{$property});
+  }
+}
+
+.bordered-shadow {
+  box-shadow: 0px 0px 0px 5px #ffffff80;
+}
+
+.shadow-top {
+  box-shadow: 0px -4px 30px 0px rgba(46, 45, 116, 0.05);
+}

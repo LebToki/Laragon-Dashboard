@@ -1,0 +1,16 @@
+{
+    "dashboard": "Tableau de bord",
+    "development": "Développement",
+    "projects": "Projets",
+    "databases": "Bases de données",
+    "services": "Services",
+    "server_vitals": "Vitals du serveur",
+    "system": "Système",
+    "mailbox": "Boîte aux lettres",
+    "logs": "Journaux",
+    "tools": "Outils",
+    "quick_tools": "Outils rapides",
+    "backup": "Sauvegarde",
+    "preferences": "Préférences"
+}
+

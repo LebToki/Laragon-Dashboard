@@ -1,0 +1,21 @@
+{
+    "title": "Einstellungen",
+    "general_settings": "Allgemeine Einstellungen",
+    "appearance": "Erscheinungsbild",
+    "language": "Sprache",
+    "theme": "Design",
+    "light": "Hell",
+    "dark": "Dunkel",
+    "monochrome": "Monochrom",
+    "laragon_settings": "Laragon-Einstellungen",
+    "laragon_path": "Laragon-Pfad",
+    "document_root": "Dokumentenstammverzeichnis",
+    "mysql_settings": "MySQL-Einstellungen",
+    "mysql_host": "MySQL-Host",
+    "mysql_user": "MySQL-Benutzer",
+    "mysql_password": "MySQL-Passwort",
+    "save_preferences": "Einstellungen speichern",
+    "preferences_saved": "Einstellungen erfolgreich gespeichert",
+    "reset_to_defaults": "Auf Standard zurücksetzen"
+}
+

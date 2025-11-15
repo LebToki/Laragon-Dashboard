@@ -1,0 +1,99 @@
+
+
+.ppq-audio-player .play-pause-btn .play-pause-icon:after {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    -webkit-transform: translate(-50%, -50%);
+    -ms-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%)
+  }
+  
+  .ppq-audio-player .play-pause-btn .play-pause-icon:after, .ppq-audio-player.player-playing .play-pause-icon:after {
+    background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACUAAAASCAMAAADrP+ckAAABNVBMVEUAAAAAmIcAmYgAm4sAnIsAnIwAnI0AnY0AnY4Ano4Ano8An5AAoJEAoZEAoZIAopMBn5ABoJABoJEBoZEBoZIBoZMBopMCoZICopMCopQCo5QDoJEDoZEDo5QDo5UFopMGo5QKpJYLpJYMpZcMppgNpZcNppgNp5gOppcOppgOp5gOp5kQqJoSp5kSqJoTqZsbrJ4drJ8irZ8mrqEnsKMrsqUtsqYytKg0tak5t6tHvLJJvbNLvbNqycBrysFsycFwy8Jwy8N3zsZ+0MiA0cqD0suH1M2L1c6P1tCk3tmm39mv4t285+PE6ebH6ufN7erS7+zV7+3W8O3X8O7a8u/k9fPs+Pft+Pfx+fjx+fnx+vny+vr1+/v2+/v5/fz7/f38/f38/v38/v79/v7+/v7+//////+ALAV1AAAAAXRSTlMAQObYZgAAATxJREFUKM+F0tlWwjAQBuAgQgHTRFFrqaK4IALiiuKugPsKrqUo0DbO+z+CDYHIFZ279nznP3P+DHLh4+L8HWybAQM+qDdlUgGXMRcqpIwYnIwoG7ct6LjAfgdUKlZoAmPQLMRSCBrLZH4idPAEbqcb11eamm1w1ciqGgJrFVPNiMydfkLH8X5LhXMWV1YOc7WCKSGGHty6A9Z2ZRbFGaEymApFKaHJceXoFRxnmPKcZoQXL79huPLijKng/ouP4nFJZcdXUWJML/gpLyo6du2zPTUmQ3uPw7cnWiK8dPUDzn+rUvVaFXUdv4Fjy+51nBcqj3XxQl71o9v33eqlipO0yZWZJnEE5pqqJZTZsy/xjHKvYqBk82+7FCgiaO1GZqKHz/2TkKpWrYv7qldryIGH9c2bFrR75yXV4PwBrZh1OjRqx9oAAAAASUVORK5CYII=);
+    background-size: 37px 18px
+  }
+  
+  .ppq-audio-player {
+    line-height: 111px;
+    position: relative;
+    overflow: hidden;
+    height: 111px;
+    margin: 0 auto;
+    background: #f4f4f4
+  }
+  
+  .ppq-audio-player audio {
+    position: absolute;
+    vertical-align: baseline
+  }
+  
+  .ppq-audio-player .play-pause-btn {
+    float: left;
+    margin: 29px 0 0 12px
+  }
+  
+  .ppq-audio-player .play-pause-btn .play-pause-icon {
+    position: relative;
+    display: block;
+    width: 47px;
+    height: 47px;
+    border: 3px solid #00a293;
+    border-radius: 100%;
+    background-color: #fff
+  }
+  
+  .ppq-audio-player .play-pause-btn .play-pause-icon:after {
+    display: block;
+    content: "";
+    background-position: 0 0;
+    width: 17px;
+    height: 18px
+  }
+  
+  .ppq-audio-player.player-playing .play-pause-icon:after {
+    background-position: -25px 0;
+    width: 12px;
+    height: 17px
+  }
+  
+  .ppq-audio-player .player-time {
+    float: left;
+    width: 51px;
+    margin-right: 8px;
+    text-align: right
+  }
+  
+  .ppq-audio-player .player-time-duration {
+    float: right;
+    margin: 0 0 0 8px;
+    text-align: left
+  }
+  
+  .ppq-audio-player .player-bar {
+    position: relative;
+    overflow: hidden;
+    height: 5px;
+    margin-top: 53px;
+    background-color: #fff
+  }
+  
+  .ppq-audio-player .player-bar .player-bar-loaded {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: 3px;
+    background: #ddd
+  }
+  
+  .ppq-audio-player .player-bar .player-bar-played {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 0;
+    height: 100%;
+    border-radius: 3px;
+    background: #00a293
+  }

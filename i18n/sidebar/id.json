@@ -1,0 +1,16 @@
+{
+    "dashboard": "Dasbor",
+    "development": "Pengembangan",
+    "projects": "Proyek",
+    "databases": "Basis Data",
+    "services": "Layanan",
+    "server_vitals": "Vitalitas Server",
+    "system": "Sistem",
+    "mailbox": "Kotak Surat",
+    "logs": "Log",
+    "tools": "Alat",
+    "quick_tools": "Alat Cepat",
+    "backup": "Cadangan",
+    "preferences": "Preferensi"
+}
+

@@ -1,0 +1,19 @@
+{
+    "title": "Journaux",
+    "view_logs": "Voir les journaux",
+    "log_file": "Fichier journal",
+    "log_level": "Niveau de journal",
+    "timestamp": "Horodatage",
+    "message": "Message",
+    "clear_logs": "Effacer les journaux",
+    "download_logs": "Télécharger les journaux",
+    "refresh": "Actualiser",
+    "no_logs": "Aucun journal disponible",
+    "error_logs": "Journaux d'erreur",
+    "access_logs": "Journaux d'accès",
+    "apache_logs": "Journaux Apache",
+    "mysql_logs": "Journaux MySQL",
+    "php_logs": "Journaux PHP",
+    "application_logs": "Journaux d'application"
+}
+

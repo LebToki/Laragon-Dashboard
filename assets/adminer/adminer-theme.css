@@ -1,0 +1,359 @@
+/**
+ * Adminer Theme - Dashboard Integration
+ * Matches dashboard design system
+ * Version: 1.0.0
+ *//* Color Variables - Match Dashboard Theme */:root
+{
+    --adminer-primary: #458EFF;
+    --adminer-primary-hover: #487FFF;
+    --adminer-secondary: #6B7280;
+    --adminer-success: #22C55E;
+    --adminer-danger: #EF4444;
+    --adminer-warning: #F59E0B;
+    --adminer-info: #3B82F6;
+    --adminer-bg: #FFFFFF;
+    --adminer-bg-alt: #F9FAFB;
+    --adminer-border: #E5E7EB;
+    --adminer-text: #111827;
+    --adminer-text-light: #6B7280;
+    --adminer-radius: 12px;
+    --adminer-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+    --adminer-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+/* Dark Mode Support */
+@media(prefers-color-scheme: dark){:root {
+    --adminer-bg: #1F2937;
+    --adminer-bg-alt: #111827;
+    --adminer-border: #374151;
+    --adminer-text: #F9FAFB;
+    --adminer-text-light: #9CA3AF;
+}
+}
+
+body.monochrome-mode {
+--adminer-primary: #000000;
+--adminer-primary-hover: #333333;
+--adminer-success: #000000;
+--adminer-danger: #000000;
+--adminer-warning: #000000;
+--adminer-info: #000000;
+}
+
+/* Global Adminer Overrides */
+body.adminer {
+font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+background-color: var(--adminer-bg-alt);
+color: var(--adminer-text);
+line-height: 1.6;
+}
+
+/* Header Styling */
+#header {
+background: linear-gradient(135deg, var(--adminer-primary) 0%, var(--adminer-primary-hover) 100%);
+color: white;
+padding: 1rem 1.5rem;
+border-radius: var(--adminer-radius) var(--adminer-radius) 0 0;
+box-shadow: var(--adminer-shadow);
+margin-bottom: 0;
+}
+
+#header h1 {
+color: white;
+font-size: 1.5rem;
+font-weight: 600;
+margin: 0;
+}
+
+#header a {
+color: white;
+text-decoration: none;
+opacity: 0.9;
+transition: opacity 0.2s;
+}
+
+#header a:hover {
+opacity: 1;
+}
+
+/* Main Content Area */
+#content {
+background: var(--adminer-bg);
+border-radius: 0 0 var(--adminer-radius) var(--adminer-radius);
+box-shadow: var(--adminer-shadow-lg);
+padding: 1.5rem;
+margin: 0;
+border: 1px solid var(--adminer-border);
+border-top: none;
+}
+
+/* Forms */
+form {
+margin: 0;
+}
+
+input[type="text"],
+input[type="password"],
+input[type="number"],
+input[type="email"],
+select,
+textarea {
+border: 1px solid var(--adminer-border);
+border-radius: 8px;
+padding: 0.625rem 0.875rem;
+font-size: 0.875rem;
+background: var(--adminer-bg);
+color: var(--adminer-text);
+transition: all 0.2s;
+width: 100%;
+box-sizing: border-box;
+}
+
+input[type="text"]:focus,
+input[type="password"]:focus,
+input[type="number"]:focus,
+input[type="email"]:focus,
+select:focus,
+textarea:focus {
+outline: none;
+border-color: var(--adminer-primary);
+box-shadow: 0 0 0 3px rgba(69, 142, 255, 0.1);
+}
+
+/* Buttons */
+input[type="submit"],
+button,
+.button {
+background: var(--adminer-primary);
+color: white;
+border: none;
+border-radius: 8px;
+padding: 0.625rem 1.25rem;
+font-size: 0.875rem;
+font-weight: 500;
+cursor: pointer;
+transition: all 0.2s;
+display: inline-block;
+text-decoration: none;
+}
+
+input[type="submit"]:hover,
+button:hover,
+.button:hover {
+background: var(--adminer-primary-hover);
+transform: translateY(-1px);
+box-shadow: var(--adminer-shadow);
+}
+
+input[type="submit"]:active,
+button:active,
+.button:active {
+transform: translateY(0);
+}
+
+/* Tables */
+table {
+width: 100%;
+border-collapse: collapse;
+background: var(--adminer-bg);
+border-radius: var(--adminer-radius);
+overflow: hidden;
+box-shadow: var(--adminer-shadow);
+margin: 1rem 0;
+}
+
+table th {
+background: var(--adminer-bg-alt);
+color: var(--adminer-text);
+font-weight: 600;
+padding: 0.875rem 1rem;
+text-align: left;
+border-bottom: 2px solid var(--adminer-border);
+font-size: 0.875rem;
+}
+
+table td {
+padding: 0.75rem 1rem;
+border-bottom: 1px solid var(--adminer-border);
+font-size: 0.875rem;
+color: var(--adminer-text);
+}
+
+table tr:hover {
+background: var(--adminer-bg-alt);
+}
+
+table tr:last-child td {
+border-bottom: none;
+}
+
+/* Links */
+a {
+color: var(--adminer-primary);
+text-decoration: none;
+transition: color 0.2s;
+}
+
+a:hover {
+color: var(--adminer-primary-hover);
+text-decoration: underline;
+}
+
+/* Cards/Panels */
+.panel,
+.card {
+background: var(--adminer-bg);
+border: 1px solid var(--adminer-border);
+border-radius: var(--adminer-radius);
+padding: 1.5rem;
+margin: 1rem 0;
+box-shadow: var(--adminer-shadow);
+}
+
+/* Success Messages */
+.success,
+.notice {
+background: rgba(34, 197, 94, 0.1);
+color: var(--adminer-success);
+border: 1px solid rgba(34, 197, 94, 0.2);
+border-radius: 8px;
+padding: 0.875rem 1rem;
+margin: 1rem 0;
+}
+
+/* Error Messages */
+.error,
+.warning {
+background: rgba(239, 68, 68, 0.1);
+color: var(--adminer-danger);
+border: 1px solid rgba(239, 68, 68, 0.2);
+border-radius: 8px;
+padding: 0.875rem 1rem;
+margin: 1rem 0;
+}
+
+/* Navigation */
+#menu {
+background: var(--adminer-bg-alt);
+border-bottom: 1px solid var(--adminer-border);
+padding: 0.75rem 1.5rem;
+margin: 0;
+}
+
+#menu a {
+color: var(--adminer-text);
+padding: 0.5rem 1rem;
+border-radius: 6px;
+margin-right: 0.5rem;
+display: inline-block;
+transition: all 0.2s;
+}
+
+#menu a:hover {
+background: var(--adminer-bg);
+color: var(--adminer-primary);
+}
+
+#menu a.active {
+background: var(--adminer-primary);
+color: white;
+}
+
+/* SQL Editor */
+#sqlarea {
+border: 1px solid var(--adminer-border);
+border-radius: 8px;
+padding: 1rem;
+background: var(--adminer-bg);
+font-family: 'Courier New', monospace;
+font-size: 0.875rem;
+}
+
+/* Breadcrumbs */
+#breadcrumb {
+background: var(--adminer-bg-alt);
+padding: 0.75rem 1.5rem;
+border-bottom: 1px solid var(--adminer-border);
+font-size: 0.875rem;
+color: var(--adminer-text-light);
+}
+
+#breadcrumb a {
+color: var(--adminer-primary);
+}
+
+/* Status Bar */
+#status {
+background: var(--adminer-bg-alt);
+border-top: 1px solid var(--adminer-border);
+padding: 0.75rem 1.5rem;
+font-size: 0.75rem;
+color: var(--adminer-text-light);
+border-radius: 0 0 var(--adminer-radius) var(--adminer-radius);
+}
+
+/* Login Form */
+#login {
+max-width: 400px;
+margin: 2rem auto;
+background: var(--adminer-bg);
+border: 1px solid var(--adminer-border);
+border-radius: var(--adminer-radius);
+padding: 2rem;
+box-shadow: var(--adminer-shadow-lg);
+}
+
+#login h1 {
+color: var(--adminer-text);
+margin-bottom: 1.5rem;
+text-align: center;
+}
+
+#login input[type="text"],
+#login input[type="password"] {
+margin-bottom: 1rem;
+}
+
+#login input[type="submit"] {
+width: 100%;
+margin-top: 0.5rem;
+}
+
+/* Responsive */
+@media(max-width: 768px) {
+#content {
+    padding: 1rem;
+}
+
+table {
+    font-size: 0.75rem;
+}
+
+table th,
+table td {
+    padding: 0.5rem;
+}
+}
+
+/* Utility Classes */
+.text-primary {
+color: var(--adminer-primary);
+}
+.text-success {
+color: var(--adminer-success);
+}
+.text-danger {
+color: var(--adminer-danger);
+}
+.text-warning {
+color: var(--adminer-warning);
+}
+.bg-primary {
+background-color: var(--adminer-primary);
+}
+.bg-success {
+background-color: var(--adminer-success);
+}
+.bg-danger {
+background-color: var(--adminer-danger);
+}

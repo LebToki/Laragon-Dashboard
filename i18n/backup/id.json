@@ -1,0 +1,21 @@
+{
+    "title": "Cadangan",
+    "create_backup": "Buat Cadangan",
+    "restore_backup": "Pulihkan Cadangan",
+    "backup_name": "Nama Cadangan",
+    "backup_type": "Jenis Cadangan",
+    "created_at": "Dibuat Pada",
+    "size": "Ukuran",
+    "status": "Status",
+    "actions": "Tindakan",
+    "download": "Unduh",
+    "delete": "Hapus",
+    "full_backup": "Cadangan Penuh",
+    "database_backup": "Cadangan Basis Data",
+    "files_backup": "Cadangan File",
+    "scheduled_backups": "Cadangan Terjadwal",
+    "backup_settings": "Pengaturan Cadangan",
+    "auto_backup": "Cadangan Otomatis",
+    "backup_location": "Lokasi Cadangan"
+}
+

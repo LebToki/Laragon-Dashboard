@@ -1,0 +1,21 @@
+{
+    "title": "Backup",
+    "create_backup": "Backup erstellen",
+    "restore_backup": "Backup wiederherstellen",
+    "backup_name": "Backup-Name",
+    "backup_type": "Backup-Typ",
+    "created_at": "Erstellt am",
+    "size": "Größe",
+    "status": "Status",
+    "actions": "Aktionen",
+    "download": "Herunterladen",
+    "delete": "Löschen",
+    "full_backup": "Vollständiges Backup",
+    "database_backup": "Datenbank-Backup",
+    "files_backup": "Datei-Backup",
+    "scheduled_backups": "Geplante Backups",
+    "backup_settings": "Backup-Einstellungen",
+    "auto_backup": "Automatisches Backup",
+    "backup_location": "Backup-Speicherort"
+}
+

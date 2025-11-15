@@ -1,0 +1,174 @@
+/* 
+ * CorporaIQ Custom Styles
+ * This file contains all custom styles specific to CorporaIQ
+ */
+
+:root {
+    /* Primary Colors */
+    --primary-color: #4361ee;
+    --primary-hover: #3a56d4;
+    --primary-light: #eef2ff;
+    --primary-dark: #3730a3;
+    
+    /* Secondary Colors */
+    --secondary-color: #6c757d;
+    --secondary-hover: #5a6268;
+    --secondary-light: #e9ecef;
+    
+    /* Success, Danger, Warning, Info */
+    --success-color: #10b981;
+    --danger-color: #ef4444;
+    --warning-color: #f59e0b;
+    --info-color: #3b82f6;
+    
+    /* Grayscale */
+    --gray-100: #f8f9fa;
+    --gray-200: #e9ecef;
+    --gray-300: #dee2e6;
+    --gray-400: #ced4da;
+    --gray-500: #adb5bd;
+    --gray-600: #6c757d;
+    --gray-700: #495057;
+    --gray-800: #343a40;
+    --gray-900: #212529;
+    
+    /* Theme Specific */
+    --body-bg: #f5f7fb;
+    --card-bg: #ffffff;
+    --text-color: #2d3748;
+    --text-muted: #718096;
+    --border-color: #e2e8f0;
+    --header-bg: #ffffff;
+    --sidebar-bg: #1e293b;
+    --sidebar-text: #e2e8f0;
+    --sidebar-hover: #334155;
+    --sidebar-active: #3b82f6;
+}
+
+/* Dark Theme Variables */
+[data-theme="dark"] {
+    --body-bg: #0f172a;
+    --card-bg: #1e293b;
+    --text-color: #f8fafc;
+    --text-muted: #94a3b8;
+    --border-color: #334155;
+    --header-bg: #1e293b;
+    --sidebar-bg: #0f172a;
+    --sidebar-text: #e2e8f0;
+    --sidebar-hover: #334155;
+    --sidebar-active: #3b82f6;
+}
+
+/* Base Styles */
+body {
+    background-color: var(--body-bg);
+    color: var(--text-color);
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Card Styles */
+.card {
+    background-color: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 0.5rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    transition: all 0.3s ease;
+}
+
+.card:hover {
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+/* Button Styles */
+.btn-primary {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+.btn-primary:hover {
+    background-color: var(--primary-hover);
+    border-color: var(--primary-hover);
+}
+
+/* Sidebar Styles */
+.sidebar {
+    background-color: var(--sidebar-bg);
+    color: var(--sidebar-text);
+}
+
+.sidebar .nav-link {
+    color: var(--sidebar-text);
+}
+
+.sidebar .nav-link:hover,
+.sidebar .nav-link.active {
+    background-color: var(--sidebar-hover);
+    color: var(--sidebar-active);
+}
+
+/* Header Styles */
+.header {
+    background-color: var(--header-bg);
+    border-bottom: 1px solid var(--border-color);
+}
+
+/* Form Elements */
+.form-control {
+    background-color: var(--card-bg);
+    border: 1px solid var(--border-color);
+    color: var(--text-color);
+}
+
+.form-control:focus {
+    background-color: var(--card-bg);
+    color: var(--text-color);
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 0.2rem rgba(67, 97, 238, 0.25);
+}
+
+/* Table Styles */
+.table {
+    color: var(--text-color);
+}
+
+.table thead th {
+    border-bottom: 2px solid var(--border-color);
+}
+
+.table td, .table th {
+    border-top: 1px solid var(--border-color);
+}
+
+/* Custom Components */
+.chat-window {
+    background-color: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 0.5rem;
+}
+
+.chat-message {
+    background-color: var(--primary-light);
+    color: var(--text-color);
+    border-radius: 0.75rem;
+    padding: 0.75rem 1rem;
+    margin-bottom: 1rem;
+    max-width: 80%;
+}
+
+.chat-message.self {
+    background-color: var(--primary-color);
+    color: white;
+    margin-left: auto;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .sidebar {
+        transform: translateX(-100%);
+        transition: transform 0.3s ease;
+    }
+    
+    .sidebar.show {
+        transform: translateX(0);
+    }
+}

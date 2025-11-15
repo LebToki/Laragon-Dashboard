@@ -1,0 +1,21 @@
+{
+    "title": "Preferencias",
+    "general_settings": "Configuración General",
+    "appearance": "Apariencia",
+    "language": "Idioma",
+    "theme": "Tema",
+    "light": "Claro",
+    "dark": "Oscuro",
+    "monochrome": "Monocromo",
+    "laragon_settings": "Configuración de Laragon",
+    "laragon_path": "Ruta de Laragon",
+    "document_root": "Raíz del Documento",
+    "mysql_settings": "Configuración de MySQL",
+    "mysql_host": "Host de MySQL",
+    "mysql_user": "Usuario de MySQL",
+    "mysql_password": "Contraseña de MySQL",
+    "save_preferences": "Guardar Preferencias",
+    "preferences_saved": "Preferencias guardadas exitosamente",
+    "reset_to_defaults": "Restablecer a Predeterminados"
+}
+

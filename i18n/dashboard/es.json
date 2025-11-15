@@ -1,0 +1,22 @@
+{
+    "title": "Panel",
+    "welcome": "Bienvenido al Panel de Laragon",
+    "welcome_back": "¡Bienvenido de nuevo!",
+    "overview": "Resumen",
+    "server_status": "Estado del Servidor",
+    "services_status": "Estado de los Servicios",
+    "system_info": "Información del Sistema",
+    "quick_actions": "Acciones Rápidas",
+    "recent_projects": "Proyectos Recientes",
+    "server_uptime": "Tiempo de Actividad del Servidor",
+    "memory_usage": "Uso de Memoria",
+    "disk_usage": "Uso del Disco",
+    "cpu_usage": "Uso de CPU",
+    "php_version": "Versión de PHP",
+    "mysql_version": "Versión de MySQL",
+    "apache_version": "Versión de Apache",
+    "good_morning": "Buenos días",
+    "good_afternoon": "Buenas tardes",
+    "good_evening": "Buenas noches"
+}
+

@@ -1,0 +1,63 @@
+.card {
+  background-color: var(--white);
+  @include border-radius(8px);
+  box-shadow: 0 rem(4px) rem(30px) rgba(#2E2D74, 0.05);
+  border: none;
+  position: initial;
+  color: var(--text-secondary-light);
+  .card-header {
+    background-color: var(--white);
+    padding: rem(14px) rem(24px);
+    border-color: var(--border-color);
+    color: var(--text-secondary-light);
+  }
+  .card-title {
+    font-size: rem(18px) !important;
+    font-weight: 600;
+    color: var(--text-primary-light);
+  }
+  .card-body {
+    padding: rem(14px) rem(24px);
+    color: var(--text-secondary-light);
+  }
+}
+
+.left-line {
+  &::before {
+    position: absolute;
+    content: "";
+    width: 4px;
+    height: 44px;
+    background-color: var(--primary-600);
+    border-radius: 100px;
+    left: -1px;
+    top: 24px;
+    box-shadow: 2px 1px 7px 0px rgba(29, 128, 252, 0.60);
+  }
+}
+.line-bg {
+  &-primary {
+    &::before {
+      background-color: var(--primary-600);
+      box-shadow: 2px 1px 7px 0px rgba(29, 128, 252, 0.60);
+    }
+  }
+  &-lilac {
+    &::before {
+      background-color: var(--lilac-600);
+      box-shadow: 2px 1px 7px 0px rgba(98, 33, 245, 0.60);
+    }
+  }
+  &-success {
+    &::before {
+      background-color: var(--success-600);
+      box-shadow: 2px 1px 7px 0px rgba(1, 144, 99, 0.60);
+    }
+  }
+  &-warning {
+    &::before {
+      background-color: var(--warning-600);
+      box-shadow: 2px 1px 7px 0px rgba(255, 131, 3, 0.60);
+    }
+  }
+}

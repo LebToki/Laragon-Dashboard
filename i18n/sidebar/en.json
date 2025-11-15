@@ -1,0 +1,18 @@
+{
+    "dashboard": "Dashboard",
+    "development": "Development",
+    "projects": "Projects",
+    "databases": "Databases",
+    "services": "Services",
+    "server_vitals": "Server Vitals",
+    "system": "System",
+    "mailbox": "Mailbox",
+    "logs": "Logs",
+    "tools": "Tools",
+    "quick_tools": "Quick Tools",
+    "backup": "Backup",
+    "preferences": "Preferences",
+    "configuration": "Configuration",
+    "sites_enabled": "Sites Enabled"
+}
+

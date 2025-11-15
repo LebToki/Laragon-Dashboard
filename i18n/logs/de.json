@@ -1,0 +1,19 @@
+{
+    "title": "Protokolle",
+    "view_logs": "Protokolle anzeigen",
+    "log_file": "Protokolldatei",
+    "log_level": "Protokollstufe",
+    "timestamp": "Zeitstempel",
+    "message": "Nachricht",
+    "clear_logs": "Protokolle löschen",
+    "download_logs": "Protokolle herunterladen",
+    "refresh": "Aktualisieren",
+    "no_logs": "Keine Protokolle verfügbar",
+    "error_logs": "Fehlerprotokolle",
+    "access_logs": "Zugriffsprotokolle",
+    "apache_logs": "Apache-Protokolle",
+    "mysql_logs": "MySQL-Protokolle",
+    "php_logs": "PHP-Protokolle",
+    "application_logs": "Anwendungsprotokolle"
+}
+

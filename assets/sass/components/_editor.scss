@@ -1,0 +1,42 @@
+/* Code edit css start */
+.ql-toolbar.ql-snow {
+    border: 0 !important;
+    border-bottom: 1px solid var(--border-color) !important;
+    border-radius: inherit !important;
+}
+
+.ql-container.ql-snow {
+    border: 0 !important; 
+    border-radius: inherit !important;
+}
+.ql-editor {
+    border-radius: 12px;
+    min-height: 600px;
+}
+
+.ql-picker-label, .ql-formats {
+    color: var(--text-primary-light);
+    z-index: 2;
+}
+
+
+.ql-snow .ql-fill, .ql-snow .ql-stroke.ql-fill {
+    fill: var(--text-secondary-light);
+}
+
+.ql-snow .ql-stroke {
+    stroke: var(--text-secondary-light);
+}
+
+#toolbar-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+}
+.ql-formats {
+    border: 1px solid #ddd;
+    padding: 2px 4px;
+    border-radius: 8px;
+    margin-right: 0 !important;
+}
+/* Code edit css end */

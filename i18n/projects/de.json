@@ -1,0 +1,22 @@
+{
+    "title": "Projekte",
+    "manage_projects": "Projekte verwalten",
+    "create_project": "Projekt erstellen",
+    "edit_project": "Projekt bearbeiten",
+    "project_name": "Projektname",
+    "project_path": "Projektpfad",
+    "project_url": "Projekt-URL",
+    "project_type": "Projekttyp",
+    "php_version": "PHP-Version",
+    "database": "Datenbank",
+    "created_at": "Erstellt am",
+    "updated_at": "Aktualisiert am",
+    "actions": "Aktionen",
+    "no_projects": "Keine Projekte gefunden",
+    "add_new_project": "Neues Projekt hinzufügen",
+    "project_details": "Projektdetails",
+    "open_project": "Projekt öffnen",
+    "delete_project": "Projekt löschen",
+    "project_settings": "Projekteinstellungen"
+}
+

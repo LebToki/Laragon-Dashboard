@@ -1,0 +1,21 @@
+{
+    "title": "التفضيلات",
+    "general_settings": "الإعدادات العامة",
+    "appearance": "المظهر",
+    "language": "اللغة",
+    "theme": "المظهر",
+    "light": "فاتح",
+    "dark": "داكن",
+    "monochrome": "أحادي اللون",
+    "laragon_settings": "إعدادات لاراجون",
+    "laragon_path": "مسار لاراجون",
+    "document_root": "جذر المستند",
+    "mysql_settings": "إعدادات MySQL",
+    "mysql_host": "خادم MySQL",
+    "mysql_user": "مستخدم MySQL",
+    "mysql_password": "كلمة مرور MySQL",
+    "save_preferences": "حفظ التفضيلات",
+    "preferences_saved": "تم حفظ التفضيلات بنجاح",
+    "reset_to_defaults": "إعادة تعيين إلى الافتراضي"
+}
+

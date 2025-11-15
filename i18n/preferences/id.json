@@ -1,0 +1,21 @@
+{
+    "title": "Preferensi",
+    "general_settings": "Pengaturan Umum",
+    "appearance": "Tampilan",
+    "language": "Bahasa",
+    "theme": "Tema",
+    "light": "Terang",
+    "dark": "Gelap",
+    "monochrome": "Monokrom",
+    "laragon_settings": "Pengaturan Laragon",
+    "laragon_path": "Path Laragon",
+    "document_root": "Document Root",
+    "mysql_settings": "Pengaturan MySQL",
+    "mysql_host": "Host MySQL",
+    "mysql_user": "User MySQL",
+    "mysql_password": "Password MySQL",
+    "save_preferences": "Simpan Preferensi",
+    "preferences_saved": "Preferensi berhasil disimpan",
+    "reset_to_defaults": "Reset ke Default"
+}
+

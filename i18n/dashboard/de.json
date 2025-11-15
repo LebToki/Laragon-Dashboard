@@ -1,0 +1,21 @@
+{
+    "title": "Dashboard",
+    "welcome": "Willkommen im Laragon Dashboard",
+    "welcome_back": "Willkommen zurück!",
+    "overview": "Übersicht",
+    "server_status": "Server-Status",
+    "services_status": "Dienststatus",
+    "system_info": "Systeminformationen",
+    "quick_actions": "Schnellaktionen",
+    "recent_projects": "Letzte Projekte",
+    "server_uptime": "Server-Betriebszeit",
+    "memory_usage": "Speichernutzung",
+    "disk_usage": "Festplattennutzung",
+    "cpu_usage": "CPU-Nutzung",
+    "php_version": "PHP-Version",
+    "mysql_version": "MySQL-Version",
+    "apache_version": "Apache-Version",
+    "good_morning": "Guten Morgen",
+    "good_afternoon": "Guten Tag",
+    "good_evening": "Guten Abend"
+}

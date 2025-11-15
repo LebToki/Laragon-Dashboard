@@ -1,0 +1,21 @@
+{
+    "title": "Backup",
+    "create_backup": "Criar Backup",
+    "restore_backup": "Restaurar Backup",
+    "backup_name": "Nome do Backup",
+    "backup_type": "Tipo de Backup",
+    "created_at": "Criado Em",
+    "size": "Tamanho",
+    "status": "Status",
+    "actions": "Ações",
+    "download": "Baixar",
+    "delete": "Excluir",
+    "full_backup": "Backup Completo",
+    "database_backup": "Backup de Banco de Dados",
+    "files_backup": "Backup de Arquivos",
+    "scheduled_backups": "Backups Agendados",
+    "backup_settings": "Configurações de Backup",
+    "auto_backup": "Backup Automático",
+    "backup_location": "Localização do Backup"
+}
+

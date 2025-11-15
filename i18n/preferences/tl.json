@@ -1,0 +1,21 @@
+{
+    "title": "Mga Kagustuhan",
+    "general_settings": "Pangkalahatang Mga Setting",
+    "appearance": "Itsura",
+    "language": "Wika",
+    "theme": "Tema",
+    "light": "Maliwanag",
+    "dark": "Madilim",
+    "monochrome": "Monochrome",
+    "laragon_settings": "Mga Setting ng Laragon",
+    "laragon_path": "Path ng Laragon",
+    "document_root": "Document Root",
+    "mysql_settings": "Mga Setting ng MySQL",
+    "mysql_host": "Host ng MySQL",
+    "mysql_user": "User ng MySQL",
+    "mysql_password": "Password ng MySQL",
+    "save_preferences": "I-save ang Mga Kagustuhan",
+    "preferences_saved": "Matagumpay na na-save ang mga kagustuhan",
+    "reset_to_defaults": "I-reset sa Default"
+}
+

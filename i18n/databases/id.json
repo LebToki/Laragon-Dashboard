@@ -1,0 +1,21 @@
+{
+    "title": "Basis Data",
+    "manage_databases": "Kelola Basis Data",
+    "create_database": "Buat Basis Data",
+    "edit_database": "Edit Basis Data",
+    "database_name": "Nama Basis Data",
+    "charset": "Charset",
+    "collation": "Collation",
+    "created_at": "Dibuat Pada",
+    "actions": "Tindakan",
+    "no_databases": "Tidak ada basis data ditemukan",
+    "add_new_database": "Tambah Basis Data Baru",
+    "database_details": "Detail Basis Data",
+    "delete_database": "Hapus Basis Data",
+    "import": "Impor",
+    "export": "Ekspor",
+    "backup": "Cadangan",
+    "tables": "Tabel",
+    "rows": "Baris",
+    "size": "Ukuran"
+}

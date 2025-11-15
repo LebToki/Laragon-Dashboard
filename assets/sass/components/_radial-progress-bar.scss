@@ -1,0 +1,27 @@
+/* ====================== Animated Radial Progress bar Css Start ======================== */
+.radial-progress {
+    height: auto;
+    max-width: 44px;
+    transform: rotate(-90deg);
+    width: 100%;
+    circle {
+        fill: rgba(0,0,0,0);
+        stroke: #fff;
+        stroke-dashoffset: 219.91148575129; 
+        stroke-width: 4;
+        stroke: var(--primary-600);
+        stroke-linecap: round;
+        &.incomplete { 
+            opacity: 0.2; 
+        }
+        &.complete { 
+            stroke-dasharray: 219.91148575129; 
+        }
+    }
+    text {
+        fill: var(--text-secondary-light);
+        font-size: 24px !important;
+        text-anchor: middle;
+    }
+}
+/* ====================== Animated Radial Progress bar Css End ======================== */

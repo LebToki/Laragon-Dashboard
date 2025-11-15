@@ -1,0 +1,21 @@
+{
+    "title": "Preferences",
+    "general_settings": "General Settings",
+    "appearance": "Appearance",
+    "language": "Language",
+    "theme": "Theme",
+    "light": "Light",
+    "dark": "Dark",
+    "monochrome": "Monochrome",
+    "laragon_settings": "Laragon Settings",
+    "laragon_path": "Laragon Path",
+    "document_root": "Document Root",
+    "mysql_settings": "MySQL Settings",
+    "mysql_host": "MySQL Host",
+    "mysql_user": "MySQL User",
+    "mysql_password": "MySQL Password",
+    "save_preferences": "Save Preferences",
+    "preferences_saved": "Preferences saved successfully",
+    "reset_to_defaults": "Reset to Defaults"
+}
+

@@ -1,0 +1,21 @@
+{
+    "title": "Werkzeuge",
+    "manage_tools": "Werkzeuge verwalten",
+    "tool_name": "Werkzeugname",
+    "description": "Beschreibung",
+    "category": "Kategorie",
+    "actions": "Aktionen",
+    "run": "Ausführen",
+    "open": "Öffnen",
+    "composer": "Composer",
+    "npm": "NPM",
+    "git": "Git",
+    "node": "Node.js",
+    "python": "Python",
+    "terminal": "Terminal",
+    "file_manager": "Dateimanager",
+    "phpmyadmin": "phpMyAdmin",
+    "redis_commander": "Redis Commander",
+    "mongodb_compass": "MongoDB Compass"
+}
+

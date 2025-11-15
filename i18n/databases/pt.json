@@ -1,0 +1,21 @@
+{
+    "title": "Bancos de Dados",
+    "manage_databases": "Gerenciar Bancos de Dados",
+    "create_database": "Criar Banco de Dados",
+    "edit_database": "Editar Banco de Dados",
+    "database_name": "Nome do Banco de Dados",
+    "charset": "Conjunto de Caracteres",
+    "collation": "Collation",
+    "created_at": "Criado Em",
+    "actions": "Ações",
+    "no_databases": "Nenhum banco de dados encontrado",
+    "add_new_database": "Adicionar Novo Banco de Dados",
+    "database_details": "Detalhes do Banco de Dados",
+    "delete_database": "Excluir Banco de Dados",
+    "import": "Importar",
+    "export": "Exportar",
+    "backup": "Backup",
+    "tables": "Tabelas",
+    "rows": "Linhas",
+    "size": "Tamanho"
+}

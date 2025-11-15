@@ -1,0 +1,20 @@
+{
+    "title": "الأدوات",
+    "manage_tools": "إدارة الأدوات",
+    "tool_name": "اسم الأداة",
+    "description": "الوصف",
+    "category": "الفئة",
+    "actions": "الإجراءات",
+    "run": "تشغيل",
+    "open": "فتح",
+    "composer": "Composer",
+    "npm": "NPM",
+    "git": "Git",
+    "node": "Node.js",
+    "python": "Python",
+    "terminal": "الطرفية",
+    "file_manager": "مدير الملفات",
+    "phpmyadmin": "phpMyAdmin",
+    "redis_commander": "Redis Commander",
+    "mongodb_compass": "MongoDB Compass"
+}

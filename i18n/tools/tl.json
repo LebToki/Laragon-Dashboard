@@ -1,0 +1,21 @@
+{
+    "title": "Mga Tool",
+    "manage_tools": "Pamahalaan ang Mga Tool",
+    "tool_name": "Pangalan ng Tool",
+    "description": "Paglalarawan",
+    "category": "Kategorya",
+    "actions": "Mga Aksyon",
+    "run": "Patakbuhin",
+    "open": "Buksan",
+    "composer": "Composer",
+    "npm": "NPM",
+    "git": "Git",
+    "node": "Node.js",
+    "python": "Python",
+    "terminal": "Terminal",
+    "file_manager": "File Manager",
+    "phpmyadmin": "phpMyAdmin",
+    "redis_commander": "Redis Commander",
+    "mongodb_compass": "MongoDB Compass"
+}
+

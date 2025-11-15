@@ -1,0 +1,183 @@
+.border {
+  border: 1px solid var(--border-color) !important;
+}
+
+.border-start {
+  border-inline-start: 1px solid var(--border-color) !important;
+}
+
+.border-end {
+  border-inline-end: 1px solid var(--border-color) !important;
+}
+.border-bottom {
+  border-bottom: 1px solid var(--border-color) !important;
+}
+
+@each $property, $value in $border-light-colors {
+  .border-#{$property} {
+    border-color: var(--#{$property}) !important;
+  }
+}
+
+
+.br-success {
+  border-color: var(--success-border) !important;
+}
+
+.br-white {
+  border-color: var(--base) !important;
+}
+
+.border-light-white {
+  border-color: rgba(255, 255, 255, 0.38) !important;
+}
+
+.input-form-light {
+  border-color: var(--input-form-light) !important;
+}
+
+.input-form-dark {
+  border-color: var(--input-form-dark) !important;
+}
+
+// border hover 
+.br-hover-primary {
+  @include transition(all 0.3s);
+  &:hover {
+    border-color: var(--primary-600) !important;
+  }
+}
+
+.br-hover-success {
+  @include transition(all 0.3s);
+  &:hover {
+    border-color: var(--success-main) !important;
+  }
+}
+
+.br-hover-info {
+  @include transition(all 0.3s);
+  &:hover {
+    border-color: var(--info-main) !important;
+  }
+}
+
+.br-hover-warning {
+  @include transition(all 0.3s);
+  &:hover {
+    border-color: var(--warning-main) !important;
+  }
+}
+
+.br-hover-danger {
+  @include transition(all 0.3s);
+  &:hover {
+    border-color: var(--danger-main) !important;
+  }
+}
+
+
+@each $color, $shades in $colors {
+  @each $shade, $value in $shades {
+    .border-#{$color}-#{$shade} {
+      border-color: var(--#{$color}-#{$shade}) !important;
+    }
+  }
+}
+
+@each $color, $shades in $semantic-colors {
+  @each $shade, $value in $shades {
+    .border-#{$color}-#{$shade} {
+      border-color: var(--#{$color}-#{$shade}) !important;
+    }
+  }
+}
+
+
+@each $property, $value in $extra-colors {
+  .border-#{$property} {
+    border-color: var(--#{$property}) !important;
+  }
+}
+  
+.border-width {
+  &-2-px {
+    border-width: 2px !important;
+  }
+  &-3-px {
+    border-width: 3px !important;
+  }
+  &-4-px {
+    border-width: 4px !important;
+  }
+  &-5-px {
+    border-width: 5px !important;
+  }
+}
+
+.border-start-width {
+  &-2-px {
+    border-inline-start-width: 2px !important;
+  }
+  &-3-px {
+    border-inline-start-width: 3px !important;
+  }
+  &-4-px {
+    border-inline-start-width: 4px !important;
+  }
+  &-5-px {
+    border-inline-start-width: 5px !important;
+  }
+}
+
+.border-end-width {
+  &-2-px {
+    border-inline-end-width: 2px !important;
+  }
+  &-3-px {
+    border-inline-end-width: 3px !important;
+  }
+  &-4-px {
+    border-inline-end-width: 4px !important;
+  }
+  &-5-px {
+    border-inline-end-width: 5px !important;
+  }
+  &-6-px {
+    border-inline-end-width: 6px !important;
+  }
+}
+
+.border-top-0 {
+  border-top: 0!important;
+}
+
+.border-end-0 {
+  border-right: 0!important;
+}
+
+.border-start-0 {
+  border-left: 0!important;
+}
+
+.border-bottom-0 {
+  border-bottom: 0!important;
+}
+
+
+.border-dashed {
+  border-style: dashed !important;
+}
+
+.center-border {
+  position: relative;
+  &::before {
+    position: absolute;
+    content: "";
+    width: 1px;
+    height: calc(100% - 9px);
+    background-color: var(--neutral-300);
+    left: 50%;
+    transform: translateX(-50%);
+  }
+}

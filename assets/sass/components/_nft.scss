@@ -1,0 +1,22 @@
+/* Nft Promo Card Css Start */
+.nft-page {
+    .card {
+        border-radius: 16px !important;
+        overflow: hidden;
+    }
+}
+
+.nft-promo-card {
+    padding: 28px clamp(1.5rem, -7.5935rem + 10.4vw, 4.75rem);
+    border-radius: 12px !important;
+    &__inner {
+        gap: clamp(1.5rem, -9.2425rem + 12vw, 5rem);
+        @media (max-width: 576px) {
+            flex-direction: column; 
+        }
+    }
+    &__thumb {
+        min-width: 200px;
+    }
+}
+/* Nft Promo Card Css End */

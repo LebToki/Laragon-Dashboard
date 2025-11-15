@@ -1,0 +1,242 @@
+// width 
+@each $property, $value in $spaces {
+  .w-#{$property}-px {
+    width: $value !important;
+  }
+}
+
+.py-res-120 {
+  padding: clamp(3.75rem, -0.8142rem + 9.5087vw, 7.5rem) 0;
+}
+
+.w-100-px {
+  width: 100px;
+}
+.h-100-px {
+  height: 100px;
+}
+
+.h {
+  &-100vh {
+    height: 100vh;
+  } 
+}
+
+.min-w-max-content {
+  min-width: max-content;
+}
+.w-190-px {
+  width: 190px;
+}
+
+.max-w-740-px {
+  max-width: 740px;
+  @media (max-width: 1399px) {
+    max-width: 500px;
+  }
+  @media (max-width: 991px) {
+    max-width: 350px;
+  }
+  @media (max-width: 767px) {
+    max-width: 250px;
+  }
+}
+
+.textarea-max-height {
+  height: 44px;
+}
+
+.resize-none {
+  resize: none;
+}
+
+.min-w-450-px {
+  min-width: 450px;
+}
+
+.min-w-132-px {
+  min-width: 132px;
+}
+
+@each $property, $value in $spaces {
+  .h-#{$property}-px {
+    height: $value !important;
+  }
+}
+
+.max-h-258-px {
+  max-height: 258px;
+}
+.max-h-350-px {
+  max-height: 350px;
+}
+
+.max-h-266-px {
+  max-height: 266px;
+}
+
+.max-w-100-px {
+  max-width: 100px;
+}
+
+.max-h-100-px {
+  max-height: 100px;
+}
+.max-h-400-px {
+  max-height: 400px;
+}
+.max-h-612-px {
+  max-height: 612px !important;
+}
+.min-h-612-px {
+  min-height: 612px !important;
+}
+
+
+/* Min max width & height Start */
+.min-w-120-px {
+  min-width: 120px;
+}
+.min-h-320-px {
+  min-height: 320px;
+}
+.max-w-150-px {
+  max-width: 150px;
+}
+.max-w-135-px {
+  max-width: 135px;
+}
+.max-h-135-px {
+  max-height: 135px;
+}
+.max-h-194-px {
+  max-height: 194px;
+}
+.max-w-440-px {
+  max-width: 440px;
+}
+.max-w-464-px {
+  max-width: 464px;
+}
+.max-w-500-px {
+  max-width: 500px;
+}
+.max-w-290-px {
+  max-width: 290px;
+}
+.max-w-634-px {
+  max-width: 634px;
+}
+.max-w-700-px {
+  max-width: 700px;
+}
+.max-w-1000-px {
+  max-width: 1000px;
+}
+/* Min max width & height End */
+
+.text-w-200-px {
+  max-width: 200px; 
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.text-w-100-px {
+  max-width: 100px; 
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.top-auto {
+  top: auto;
+}
+.bottom-3px {
+  bottom: 3px;
+}
+
+
+
+@media (min-width: 1700px) {
+  .row-cols-xxxl-5>* {
+      flex: 0 0 auto;
+      width: 20%;
+  }
+}
+
+@media (min-width: 1600px) {
+  .col-xxxl-8 {
+      flex: 0 0 auto;
+      width: 66.66666667%;
+  }
+  .col-xxxl-4 {
+    flex: 0 0 auto;
+    width: 33.33333333%;
+  }
+  .col-xxxl-9 {
+    flex: 0 0 auto;
+    width: 75%;
+  }
+  .col-xxxl-3 {
+    flex: 0 0 auto;
+    width: 25%;
+  }
+}
+
+
+.kanban-wrapper {
+  min-width: 1560px;
+}
+
+
+@media (min-width: 425px) and (max-width: 575px) {
+    .col-xs-6 {
+      width: 50%;
+    }
+}
+
+
+.transition-2 {
+  transition: .2s !important;
+}
+.text-xxs {
+  font-size: 10px !important;
+}
+
+.ms--48 {
+  margin-inline-start: clamp(1.5rem, 1.02rem + 2.4vw, 3rem);
+}
+
+.blog__thumb {
+  width: 110px !important;
+}
+.blog__content {
+  width: calc(100% - 110px) !important;
+  padding-inline-start: 16px;
+}      
+
+.height-200 {
+  .ql-editor {
+    min-height: 200px;
+  }
+}
+
+.countdown-item {
+  @media (max-width: 1199px) {
+    width: 90px !important;  
+    height: 90px !important;  
+  }
+  @media (max-width: 767px) {
+    width: 80px !important;  
+    height: 80px !important;  
+  }
+  @media (max-width: 424px) {
+    width: 60px !important;  
+    height: 60px !important;  
+  }
+}
+
+.container--xl {
+  max-width: 1620px;
+}

@@ -1,0 +1,22 @@
+{
+    "title": "Projects",
+    "manage_projects": "Manage Projects",
+    "create_project": "Create Project",
+    "edit_project": "Edit Project",
+    "project_name": "Project Name",
+    "project_path": "Project Path",
+    "project_url": "Project URL",
+    "project_type": "Project Type",
+    "php_version": "PHP Version",
+    "database": "Database",
+    "created_at": "Created At",
+    "updated_at": "Updated At",
+    "actions": "Actions",
+    "no_projects": "No projects found",
+    "add_new_project": "Add New Project",
+    "project_details": "Project Details",
+    "open_project": "Open Project",
+    "delete_project": "Delete Project",
+    "project_settings": "Project Settings"
+}
+

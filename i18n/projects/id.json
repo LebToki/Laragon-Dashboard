@@ -1,0 +1,21 @@
+{
+    "title": "Proyek",
+    "manage_projects": "Kelola Proyek",
+    "create_project": "Buat Proyek",
+    "edit_project": "Edit Proyek",
+    "project_name": "Nama Proyek",
+    "project_path": "Path Proyek",
+    "project_url": "URL Proyek",
+    "project_type": "Jenis Proyek",
+    "php_version": "Versi PHP",
+    "database": "Basis Data",
+    "created_at": "Dibuat Pada",
+    "updated_at": "Diperbarui Pada",
+    "actions": "Tindakan",
+    "no_projects": "Tidak ada proyek ditemukan",
+    "add_new_project": "Tambah Proyek Baru",
+    "project_details": "Detail Proyek",
+    "open_project": "Buka Proyek",
+    "delete_project": "Hapus Proyek",
+    "project_settings": "Pengaturan Proyek"
+}

@@ -1,0 +1,15 @@
+{
+    "server_vitals": "Server Vitals",
+    "dashboard": "Dashboard",
+    "cpu_usage": "CPU Usage",
+    "memory_usage": "Memory Usage",
+    "disk_usage": "Disk Usage",
+    "network": "Network",
+    "network_traffic": "Network Traffic",
+    "service_status": "Service Status",
+    "last_24_hours": "Last 24 Hours",
+    "active": "Active",
+    "mbps": "Mbps",
+    "running": "Running",
+    "stopped": "Stopped"
+}

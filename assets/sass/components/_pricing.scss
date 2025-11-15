@@ -1,0 +1,36 @@
+/* Pricing Css Start */
+ .pricing-plan-wrapper {
+    @media (min-width: 1400px) {
+        padding-left: 0;
+        padding-right: 0;
+    }
+ }
+
+ .pricing-plan {
+    padding: 50px 40px;
+    @media (max-width: 1699px) {
+        padding: 24px;
+    }
+ }
+
+ .pricing-tab {
+    margin-bottom: 40px;
+    @media (min-width: 1400px) { 
+        margin-bottom: 110px;
+    }
+ }
+
+.scale-item {
+    @media (min-width: 1400px) {
+        transform: scale(1.04);
+        margin-top: -50px;
+        z-index: 1;
+    }
+}
+
+.featured-item {
+    @media (min-width: 1400px) {
+        margin-top: -50px;
+    }
+}
+/* Pricing Css End */

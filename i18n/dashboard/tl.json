@@ -1,0 +1,22 @@
+{
+    "title": "Dashboard",
+    "welcome": "Maligayang pagdating sa Laragon Dashboard",
+    "welcome_back": "Maligayang pagbabalik!",
+    "overview": "Pangkalahatang-ideya",
+    "server_status": "Status ng Server",
+    "services_status": "Status ng Mga Serbisyo",
+    "system_info": "Impormasyon ng Sistema",
+    "quick_actions": "Mabilis na Mga Aksyon",
+    "recent_projects": "Mga Kamakailang Proyekto",
+    "server_uptime": "Oras ng Pagtakbo ng Server",
+    "memory_usage": "Paggamit ng Memory",
+    "disk_usage": "Paggamit ng Disk",
+    "cpu_usage": "Paggamit ng CPU",
+    "php_version": "Bersyon ng PHP",
+    "mysql_version": "Bersyon ng MySQL",
+    "apache_version": "Bersyon ng Apache",
+    "good_morning": "Magandang umaga",
+    "good_afternoon": "Magandang hapon",
+    "good_evening": "Magandang gabi"
+}
+

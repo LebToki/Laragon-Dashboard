@@ -1,0 +1,78 @@
+/* Progress bar css start */
+.max-w-66 {
+    max-width: 66px;
+}
+.max-w-112 {
+    max-width: 112px;
+}
+
+.progress {
+    background-color: var(--neutral-200);
+}
+
+.progress-sm {
+    height: 8px;
+}
+
+/* animated bar */
+.animated-bar {
+    animation-name: animateBar;
+    animation-iteration-count: 1;
+    animation-timing-function: linear;
+    animation-duration: 2s;
+}
+@keyframes animateBar {
+    0% {
+        transform: translateX(-100%);
+    }
+    100% {
+        transform: translateX(0);
+    }
+}
+/* Progress bar css End */
+
+
+/* Floating Label Css Start */
+.floating-label {
+    transform: translateX(-25px);
+    left: 0;
+    top: 0;
+    animation-name: animateFloatingLabel;
+    animation-iteration-count: 1;
+    animation-timing-function: linear;
+    animation-duration: 2s;
+}
+@keyframes animateFloatingLabel {
+    from {
+      left: 0;
+    }
+    to {
+      left: var(--left-percentage);
+    }
+  }
+/* Floating Label Css End */
+
+
+/* Semi Circle Floating */
+.barOverflow { /* Wraps the rotating .bar */
+    position: relative;
+    overflow: hidden; /* Comment this line to understand the trick */
+    width: inherit; 
+    height: inherit; /* Half circle (overflow) */
+    margin-bottom: -14px; /* bring the numbers up */
+}
+.circleBar {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: calc(100% + -2px);
+    height: calc(100% + 44px);
+    border-radius: 50%;
+    box-sizing: border-box;
+    border: 5px solid var(--primary-50);     /* half gray, */
+    border-bottom-color: var(--primary-600);  /* half azure */
+    border-right-color: var(--primary-600);
+}
+
+
+/* Semi Circle Floating */

@@ -1,0 +1,118 @@
+//margin css
+@each $property, $value in $spaces {
+  .m-#{$property} {
+    margin: var(--size-#{$property});
+  }
+}
+
+@each $property, $value in $spaces {
+  .mx-#{$property} {
+    margin-inline: var(--size-#{$property}) !important;
+  }
+}
+
+@each $property, $value in $spaces {
+  .my-#{$property} {
+    margin-block: var(--size-#{$property}) !important;
+  }
+}
+
+@each $property, $value in $spaces {
+  .ms-#{$property} {
+    margin-inline-start: var(--size-#{$property}) !important;
+  }
+}
+
+@each $property, $value in $spaces {
+  .me-#{$property} {
+    margin-inline-end: var(--size-#{$property}) !important;
+  }
+}
+
+@each $property, $value in $spaces {
+  .mt-#{$property} {
+    margin-block-start: var(--size-#{$property}) !important;
+  }
+}
+
+@each $property, $value in $spaces {
+  .mb-#{$property} {
+    margin-block-end: var(--size-#{$property}) !important;
+  }
+}
+
+
+// padding css 
+@each $property, $value in $spaces {
+  .p-#{$property} {
+    padding: var(--size-#{$property}) !important;
+  }
+}
+
+@each $property, $value in $spaces {
+  .px-#{$property} {
+    padding-inline: var(--size-#{$property}) !important;
+  }
+}
+
+@each $property, $value in $spaces {
+  .py-#{$property} {
+    padding-block: var(--size-#{$property}) !important;
+  }
+}
+
+@each $property, $value in $spaces {
+  .ps-#{$property} {
+    padding-inline-start: var(--size-#{$property}) !important;
+  }
+}
+
+@each $property, $value in $spaces {
+  .pe-#{$property} {
+    padding-inline-end: var(--size-#{$property}) !important;
+  }
+}
+
+@each $property, $value in $spaces {
+  .pt-#{$property} {
+    padding-block-start: var(--size-#{$property}) !important;
+  }
+}
+
+@each $property, $value in $spaces {
+  .pb-#{$property} {
+    padding-block-end: var(--size-#{$property}) !important;
+  }
+}
+
+.pe-0 {
+  padding-right: 0!important;
+}
+
+.ms--10px {
+    margin-left: -10px;
+}
+
+.mt--50 {
+  margin-top: -50px;
+}
+
+.mt--100 {
+  margin-top: -100px;
+}
+
+.w-30 {
+  width: 30%;
+}
+
+.w-70 {
+  width: 70%;
+}
+
+
+/* Gap Css */
+@each $property, $value in $spaces {
+  .gap-#{$property} {
+    gap: var(--size-#{$property});
+  }
+}

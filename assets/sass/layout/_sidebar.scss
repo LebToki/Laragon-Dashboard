@@ -1,0 +1,317 @@
+.sidebar {
+  position: fixed;
+  inset-block-start: 0;
+  inset-inline-start: -100%;
+  width: rem(250px);
+  height: 100vh;
+  background-color: var(--white);
+  z-index: 3;
+  @include media(xl) {
+    inset-inline-start: 0;
+    width: rem(220px);
+  }
+  @include media(xxl) {
+    width: rem(275px);
+  }
+  @include media(3xl) {
+    width: rem(312px);
+  }
+  &-close-btn {
+    position: absolute;
+    top: rem(10px);
+    inset-inline-end: rem(10px);
+    width: rem(28px);
+    height: rem(28px);
+    border: 1px solid var(--input-form-light);
+    @include border-radius(50%);
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    @include media(xl) {
+      display: none;
+    }
+  }
+  &.sidebar-open {
+    inset-inline-start: 0;
+  }
+  &.active {
+    width: 86px;
+    &:hover {
+      width: auto;
+    }
+    .sidebar-menu li a i {
+      margin-inline-end: 16px;
+    }
+    &:hover {
+      @include media(xl) {
+        inset-inline-start: 0;
+      }
+      @include media(xxl) {
+        width: rem(275px);
+      }
+      @include media(3xl) {
+        width: rem(312px);
+      }
+      .sidebar-logo {
+        img {
+          &.light-logo {
+            display: inline-block;
+          }
+          &.logo-icon {
+            display: none;
+          }
+        }
+      }
+      .sidebar-menu {
+        li {
+          a {
+            span {
+              display: inline-block;
+            }
+            .menu-icon {
+              margin-inline-end: rem(8px);
+            }
+          }
+          &.dropdown.dropdown-open,
+          &.dropdown.open {
+            .sidebar-submenu {
+              display: block !important;
+            }
+          }
+          &.sidebar-menu-group-title {
+            display: inline-block;
+          }
+          &.dropdown {
+            a {
+              &::after {
+                display: inline-block;
+              }
+            }
+          }
+        }
+      }
+    }
+    .sidebar-logo {
+      img {
+        &.light-logo,
+        &.dark-logo {
+          display: none;
+        }
+        &.logo-icon {
+          display: inline-block;
+        }
+      }
+    }
+    .sidebar-menu {
+      li {
+        a {
+          span {
+            display: none;
+          }
+          .menu-icon {
+            margin-inline-end: 0;
+          }
+        }
+        &.sidebar-menu-group-title {
+          display: none;
+        }
+        &.dropdown {
+          &.dropdown-open,
+          &.open {
+            .sidebar-submenu {
+              display: none !important;
+            }
+          }
+          a {
+            &::after {
+              display: none;
+            }
+          }
+        }
+      }
+    }
+  }
+  &-logo {
+    height: rem(72px);
+    padding: rem(14px) rem(16px);
+    border-inline-end: 1px solid var(--neutral-200);
+    border-block-end: 1px solid var(--neutral-200);
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    img {
+      max-height: rem(55px);
+      &.dark-logo {
+        display: none;
+      }
+      &.logo-icon {
+        display: none;
+      }
+    }
+  }
+  &-menu-area {
+    height: calc(100vh - 72px);
+    padding: rem(12px) rem(16px);
+    overflow-y: auto;
+    border-inline-end: 1px solid var(--neutral-200);
+    &:hover {
+      &::-webkit-scrollbar-thumb {
+        background-color: var(--neutral-200);
+      }
+    }
+    &::-webkit-scrollbar {
+      width: 6px;
+      background-color: var(--white);
+    }
+    &::-webkit-scrollbar-thumb {
+      background-color: var(--white);
+    }
+  }
+}
+
+[data-theme="dark"] {
+  .sidebar {
+    &.active {
+      &:hover {
+        .sidebar-logo {
+          img {
+            &.light-logo {
+              display: none;
+            }
+            &.dark-logo {
+              display: inline-block;
+            }
+          }
+        }
+      }
+      .sidebar-logo {
+        img {
+          &.light-logo {
+            display: none;
+          }
+        }
+      }
+    }
+    &-logo {
+      img {
+        &.light-logo {
+          display: none;
+        }
+        &.dark-logo {
+          display: inline-block;
+        }
+      }
+    }
+  }
+}
+
+.sidebar-menu {
+  li {
+    &.dropdown {
+      > a {
+        position: relative;
+        &::after {
+          position: absolute;
+          content: "\ea6e";
+          font-family: remixicon;
+          font-style: normal;
+          inset-block-start: 50%;
+          inset-inline-end: rem(12px);
+          @include transform(translateY(-50%));
+          font-size: rem(18px);
+          @include media(3xl) {
+            font-size: rem(22px);
+          }
+        }
+      }
+      &.open,
+      &.dropdown-open {
+        > a {
+          background-color: var(--brand);
+          color: #fff;
+          &:hover {
+            color: #fff;
+          }
+          &::after {
+            @include transform(translateY(-50%) rotate(90deg));
+          }
+        }
+      }
+      &.open {
+        .sidebar-submenu {
+          display: block;
+        }
+      }
+    }
+    > a {
+      &.active-page {
+        background-color: var(--brand);
+        color: #fff;
+        &:hover {
+          color: #fff;
+        } 
+      }
+    }
+    a {
+      padding: rem(10px) rem(12px);
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      color: var(--text-secondary-light);
+      @include border-radius(8px);
+      font-size: rem(14px);
+      @include media(3xl) {
+        font-size: rem(16px);
+      }
+      &:hover {
+        color: var(--brand);
+      }
+      .menu-icon {
+        font-size: rem(18px);
+        margin-inline-end: rem(8px);
+        @include media(3xl) {
+          font-size: rem(22px);
+          margin-inline-end: rem(12px);
+        }
+      }
+      i {
+        line-height: 1.2;
+        width: 24px;
+        margin-inline-end: rem(12px);
+        font-size: rem(22px);
+      }
+      .circle-icon {
+        font-size: rem(10px);
+      }
+    }
+  }
+  .sidebar-submenu {
+    padding-block-start: rem(12px);
+    display: none;
+    padding-inline-start: rem(24px);
+    transition: none;
+    @include media(3xl) {
+      padding-inline-start: rem(44px);
+    }
+    li {
+      &.active-page {
+        a {
+          background-color: var(--button-secondary);
+          color: var(--text-primary-light);
+        }
+      }
+      a {
+        padding: rem(7px) rem(12px);
+      }
+    }
+  }
+  .sidebar-menu-group-title {
+    color: var(--neutral-500);
+    font-weight: 600;
+    margin-block: rem(8px);
+    font-size: rem(14px);
+    @include media(3xl) {
+      font-size: rem(16px);
+    }
+  }
+}

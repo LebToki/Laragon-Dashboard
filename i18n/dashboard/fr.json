@@ -1,0 +1,22 @@
+{
+    "title": "Tableau de bord",
+    "welcome": "Bienvenue sur le Tableau de bord Laragon",
+    "welcome_back": "Bon retour !",
+    "overview": "Aperçu",
+    "server_status": "État du serveur",
+    "services_status": "État des services",
+    "system_info": "Informations système",
+    "quick_actions": "Actions rapides",
+    "recent_projects": "Projets récents",
+    "server_uptime": "Temps de fonctionnement du serveur",
+    "memory_usage": "Utilisation de la mémoire",
+    "disk_usage": "Utilisation du disque",
+    "cpu_usage": "Utilisation du processeur",
+    "php_version": "Version PHP",
+    "mysql_version": "Version MySQL",
+    "apache_version": "Version Apache",
+    "good_morning": "Bonjour",
+    "good_afternoon": "Bon après-midi",
+    "good_evening": "Bonsoir"
+}
+

@@ -1,0 +1,198 @@
+.apexcharts-tooltip-style-1 {
+  .apexcharts-tooltip {
+    padding: rem(12px) rem(8px);
+    background-color: var();
+    border: 1px solid var(--input-bg);
+    background-color: var(--white);
+    box-shadow: 0 12px 20px rgba(#000, 0.1);
+    @include border-radius(rem(8px));
+    &-title {
+      padding: 0 !important;
+      background-color: transparent !important;
+      font-size: rem(14px) !important;
+      color: var(--text-primary-light) !important;
+      font-weight: 600 !important;
+      border: none !important;
+    }
+    &-series-group {
+      padding: 0;
+      display: flex;
+      align-items: center;
+      padding: 0 !important;
+      .apexcharts-tooltip-y-group {
+        padding: 0 !important;
+      }
+      .apexcharts-tooltip-z-group {
+        display: none !important;
+      }
+    }
+  }
+}
+
+
+/* Home Two Widget Chart Css Start*/
+.remove-tooltip-title {
+  .apexcharts-tooltip-title {
+      display: none;
+  }
+}
+
+.rounded-tooltip-value {
+  .apexcharts-tooltip.apexcharts-theme-light {
+      background: #fff;
+      width: 40px;
+      height: 40px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+  }
+  .apexcharts-tooltip-text-y-label {
+      display: none;
+  }
+  
+  .apexcharts-tooltip-marker {
+      display: none;
+  }
+  .apexcharts-tooltip-text-y-value {
+      margin-left: 0;
+  }
+
+  .apexcharts-tooltip-text {
+      display: flex;
+  }
+}
+/* Home Two Widget Chart Css End*/
+
+/* Chart's text color Css End*/
+.apexcharts-xaxis-label, .apexcharts-yaxis-label  {
+  fill: #8a929f
+}
+/* Chart's text color Css End*/
+
+
+/* Home Two Donut Chart Css Start*/
+.apexcharts-tooltip-z-none {
+  .apexcharts-tooltip-z-group {
+    display: none;
+  }
+}
+
+.title-style {
+  .apexcharts-text.apexcharts-datalabel-value {
+    display: none;
+  }
+  .apexcharts-text.apexcharts-datalabel-label {
+    fill: #4B5563 !important;
+    font-size: 14px;
+    font-weight: 700 !important;
+    font-family:Inter,sans-serif
+  }
+}
+
+.circle-none {
+  circle {
+    display: none;
+  }
+}
+
+#donutChart {
+  height: 0px;
+  min-height: 163px !important;
+  margin-top: -32px;
+}
+
+.margin-16-minus {
+  margin: -16px;
+}
+/* Home Two Donut Chart Css End*/
+
+/* Home Five Radial Chart Css End*/
+#semiCircleGauge {
+  transform: translateY(22px) translateX(14px);
+}
+/* Home Five Radial Chart Css End*/
+
+
+
+.barChart .apexcharts-bar-area:hover {
+  fill: var(--primary-600);
+}
+
+.apexcharts-datalabels text {
+  filter: none !important; /* Remove any filter applied to data labels */
+  text-shadow: none !important; /* Remove any text shadow */
+}
+.apexcharts-legend-text {
+  color: var(--text-secondary-light) !important;
+}
+
+.square-marker .apexcharts-legend-marker {
+  border-radius: 4px !important;
+  width: 16px !important;
+  height: 16px !important;
+}
+
+.series-gap-24 {
+  .apexcharts-legend-series {
+    margin: 4px 12px !important;
+  }
+}
+
+.check-marker {
+    .apexcharts-legend-marker {
+      position: relative;
+      &::after {
+        position: absolute;
+        content: "\eb7a";
+        font-family: remixicon;
+        display: inline-block;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%,-50%);
+        font-size: 10px;
+        color: #fff;
+        transition: .2s;
+      }
+    }
+}
+
+
+.apexcharts-yaxis {
+  transform: translateX(10px);
+}
+
+
+[data-theme="dark"] {
+  .apexcharts-tooltip.apexcharts-theme-light {
+    color: #fff !important;
+    background: rgba(30, 30, 30, .8) !important;
+  }
+
+  .apexcharts-tooltip.apexcharts-theme-light .apexcharts-tooltip-title {
+    background: rgba(0, 0, 0, .7) !important;
+    border-bottom: 1px solid #333 !important;
+  }
+
+  .apexcharts-tooltip-series-group {
+    background: rgba(0, 0, 0, .7) !important;
+  }
+}
+
+
+.yaxies-more{
+  .apexcharts-yaxis {
+    transform: translateX(20px);
+  }
+}
+
+.apexcharts-canvas {
+  transition: 0s !important;
+}
+
+
+@media (min-width: 768px) {
+  .md-position-absolute {
+    position: absolute;    
+  }
+}

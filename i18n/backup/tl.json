@@ -1,0 +1,21 @@
+{
+    "title": "Backup",
+    "create_backup": "Lumikha ng Backup",
+    "restore_backup": "I-restore ang Backup",
+    "backup_name": "Pangalan ng Backup",
+    "backup_type": "Uri ng Backup",
+    "created_at": "Nilikha Sa",
+    "size": "Laki",
+    "status": "Status",
+    "actions": "Mga Aksyon",
+    "download": "I-download",
+    "delete": "Tanggalin",
+    "full_backup": "Buong Backup",
+    "database_backup": "Backup ng Database",
+    "files_backup": "Backup ng Mga File",
+    "scheduled_backups": "Mga Naka-schedule na Backup",
+    "backup_settings": "Mga Setting ng Backup",
+    "auto_backup": "Auto Backup",
+    "backup_location": "Lokasyon ng Backup"
+}
+

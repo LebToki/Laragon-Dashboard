@@ -1,0 +1,88 @@
+@each $color, $shades in $colors {
+  @each $shade, $value in $shades {
+    .text-#{$color}-#{$shade} {
+      color: var(--#{$color}-#{$shade}) !important;
+    }
+  }
+}
+
+@each $color, $shades in $colors {
+  @each $shade, $value in $shades {
+    .text-hover-#{$color}-#{$shade} {
+      &:hover {
+        color: var(--#{$color}-#{$shade}) !important;
+      }
+    }
+  }
+}
+
+@each $color, $shades in $semantic-colors {
+  @each $shade, $value in $shades {
+    .text-#{$color}-#{$shade} {
+      color: var(--#{$color}-#{$shade});
+    }
+  }
+}
+
+@each $property, $value in $extra-colors {
+  .text-#{$property} {
+    color: var(--#{$property});
+  }
+}
+
+.text-primary-light {
+  color: var(--text-primary-light) !important;
+}
+
+.text-secondary-light {
+  color: var(--text-secondary-light);
+}
+
+.text-secondary-dark {
+  color: var(--text-secondary-dark);
+}
+
+.text-base {
+  color: var(--white) !important;
+}
+
+.text-black {
+  color: var(--black) !important;
+}
+
+
+.hover-text-primary, .btn.hover-text-primary {
+  &:hover {
+    color: var(--primary-600) !important;
+  }
+}
+
+.hover-text-success, .btn.hover-text-success {
+  &:hover {
+    color: var(--success-main) !important;
+  }
+}
+
+.hover-text-info, .btn.hover-text-info {
+  &:hover {
+    color: var(--info-main) !important;
+  }
+}
+
+.hover-text-warning, .btn.hover-text-warning {
+  &:hover {
+    color: var(--warning-main) !important;
+  }
+}
+
+.hover-text-danger, .btn.hover-text-danger {
+  &:hover {
+    color: var(--danger-main) !important;
+  }
+}
+
+.hover-text-white, .btn.hover-text-white {
+  &:hover {
+    color: var(--base) !important;
+  }
+}

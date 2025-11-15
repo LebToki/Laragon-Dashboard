@@ -1,0 +1,21 @@
+{
+    "title": "Bases de données",
+    "manage_databases": "Gérer les bases de données",
+    "create_database": "Créer une base de données",
+    "edit_database": "Modifier la base de données",
+    "database_name": "Nom de la base de données",
+    "charset": "Jeu de caractères",
+    "collation": "Collation",
+    "created_at": "Créé le",
+    "actions": "Actions",
+    "no_databases": "Aucune base de données trouvée",
+    "add_new_database": "Ajouter une nouvelle base de données",
+    "database_details": "Détails de la base de données",
+    "delete_database": "Supprimer la base de données",
+    "import": "Importer",
+    "export": "Exporter",
+    "backup": "Sauvegarde",
+    "tables": "Tables",
+    "rows": "Lignes",
+    "size": "Taille"
+}

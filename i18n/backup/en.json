@@ -1,0 +1,21 @@
+{
+    "title": "Backup",
+    "create_backup": "Create Backup",
+    "restore_backup": "Restore Backup",
+    "backup_name": "Backup Name",
+    "backup_type": "Backup Type",
+    "created_at": "Created At",
+    "size": "Size",
+    "status": "Status",
+    "actions": "Actions",
+    "download": "Download",
+    "delete": "Delete",
+    "full_backup": "Full Backup",
+    "database_backup": "Database Backup",
+    "files_backup": "Files Backup",
+    "scheduled_backups": "Scheduled Backups",
+    "backup_settings": "Backup Settings",
+    "auto_backup": "Auto Backup",
+    "backup_location": "Backup Location"
+}
+

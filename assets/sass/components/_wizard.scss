@@ -1,0 +1,185 @@
+/* ========================= Wizard Css Start ========================= */
+.form-wizard {
+    .wizard-fieldset {
+        display: none;
+        &.show {
+            display: block !important;
+        }
+    }
+    .wizard-form-error {
+        display: none;
+        background-color: transparent;
+        position: absolute;
+        inset-inline-start: 0;
+        inset-block-start: 0;
+        height: 100%;
+        width: 100%;
+        border-radius: 6px;
+        border: 1px solid var(--danger-main);
+        pointer-events: none;
+    }
+    &-header {
+        text-align: center;
+    }
+    &-list {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        min-width: 455px;
+        &__item {
+            width: 20%;
+            &.active {
+                .count {
+                    color: var(--primary-600);
+                    border-color: var(--primary-600);
+                    font-weight: 700;
+                }
+                .text {
+                    color: var(--primary-600);
+                }
+            }
+            &.activated {
+                .count {
+                    background-color: var(--primary-600);
+                    border-color: var(--primary-600);
+                    color: #fff;
+                }
+                .text {
+                    color: var(--primary-600);
+                }
+                .form-wizard-list__line::before {
+                    width: 100%;
+                }
+            }
+            &:last-child {
+                .form-wizard-list__line {
+                    &::after, &::before {
+                        display: none;
+                    }
+                }
+            }
+        }
+        &__line {
+            position: relative;
+            &::after, &::before {
+                background-color: var(--neutral-300);
+                content: "";
+                height: 2px;
+                left: 50%;
+                position: absolute;
+                right: 0;
+                top: 50%;
+                transform: translateY(-50%);
+                width: 100%;
+                transition: .3s linear;
+            }
+            &::before {
+                width: 0;
+                background-color: var(--primary-600);
+                z-index: 1;
+            }
+        }
+        .count {
+            background-color: var(--white);
+            border-radius: 50%;
+            display: inline-block;
+            height: 40px;
+            line-height: 40px;
+            width: 40px;
+            position: relative;
+            text-align: center;
+            z-index: 1;
+            border: 2px solid var(--neutral-300);
+            font-size: 18px;
+        }
+    }
+}
+
+/* Style Two */
+.form-wizard-list{
+    &.style-two  {
+        gap: 8px;
+        min-width: max-content;
+        .form-wizard-list {
+            .count {
+                height: 32px;
+                line-height: 32px;
+                width: 32px;
+                font-size: 16px;
+            }
+            &__line {
+                &::after, &::before {
+                    display: none;
+                }
+            }
+            &__item {
+                width: 25%;
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                text-align: start;
+                padding: 8px;
+                position: relative;
+                clip-path: polygon(0 0, 85% 0, 100% 50%, 85% 100%, 0 100%, 0% 50%);
+                background-color: var(--neutral-200);
+                border-radius: 50px;
+                &:first-child {
+                    padding-inline-start: 8px;
+                }
+                &:last-child {
+                    padding-inline-end: 8px;
+                }
+                &.active {
+                    .count {
+                        background-color: var(--primary-600);
+                        color: #fff;
+                    }
+                }
+                &.activated {
+                    background-color: var(--primary-600);
+                    .count {
+                        background-color: #fff;
+                        color: var(--primary-600);
+                    }
+                    .text {
+                        color: #fff;
+                    }
+                }
+                .text {
+                    font-size: 13px !important;
+                    font-weight: 700 !important;
+                }
+                
+            }
+        }
+    }
+}
+
+/* Style Three */
+.form-wizard-list{
+    &.style-three  {
+        min-width: max-content;
+        .form-wizard-list {
+            &__line {
+                &::after, &::before {
+                    display: none;
+                }
+            }
+        }
+    }
+}
+
+
+
+
+.form-wizard {
+    input::placeholder {
+        font-size: 14px !important;
+        color: var(--neutral-400);
+    }
+}
+
+.gif-image {
+    max-width: 60px;
+}
+/* ========================= Wizard Css End ========================= */

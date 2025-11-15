@@ -1,0 +1,126 @@
+/* Full Calendar Customize Css Start */
+.fc-border-separate tr.fc-last th {
+  background: var(--neutral-50);
+  padding: 12px;
+  color: var(--text-primary-light);
+  a {
+    transition: 0s;
+  }
+}
+
+.fc-day.fc-tue.fc-widget-content.fc-today.fc-state-highlight {
+  position: relative;
+  background: linear-gradient(
+      180deg,
+      rgba(72, 127, 255, 0.13) 0%,
+      rgba(72, 127, 255, 0.12) 0.01%,
+      rgba(72, 127, 255, 0.05) 100%
+    );
+    &::before {
+      position: absolute;
+      content: "";
+      width: 100%;
+      height: 4px;
+      background: var(--primary-600);
+    }
+}
+
+.fc-event {
+  border: 0;
+  padding: 4px;
+  border-radius: 4px;
+  background-color: var(--primary-50) !important;
+  color: var(--primary-600) !important;
+  &.important {
+    background-color: var(--danger-100) !important;
+    color: var(--danger-600) !important;
+  }
+  &.info {
+    background-color: var(--lilac-100) !important;
+    color: var(--lilac-600) !important;
+  }
+}
+.fc-border-separate tr.fc-last th {
+  border-color: var(--neutral-200) !important;
+}
+
+table.fc-header, #calendar {
+  background-color: transparent;
+}
+.fc-week .fc-day:hover .fc-day-number {
+  background-color: var(--primary-100) !important;
+  color: var(--primary-600) !important;
+}
+
+.fc-state-highlight>div>div.fc-day-number {
+  background-color: var(--primary-600) !important;
+  color: #fff !important;
+}
+
+#calendar, table.fc-header {
+  background-color: transparent !important;
+}
+.fc-header-title h2 {
+  font-size: 24px !important;
+  font-weight: 600;
+}
+.fc-state-default {
+  border-color: var(--primary-600) !important;
+  color: var(--primary-600) !important;
+  &:hover {
+    background-color: var(--primary-50) !important;
+  }
+}
+
+.fc-state-active, .fc-state-down {
+  background-color: var(--primary-600) !important;
+  color: #fff !important;
+  &:hover {
+    color: #fff !important;
+  background-color: var(--primary-600) !important;  }
+}
+// .fc-button.fc-button-month.fc-state-default.fc-state-active
+
+.fc-button.fc-button-today {
+  border-color: var(--primary-50) !important;
+  background-color: var(--primary-50) !important;
+  color: var(--primary-600) !important;
+  &.fc-state-disabled {
+    border-color: var(--primary-600) !important;
+    background-color: var(--primary-600) !important;
+    color: #fff !important;
+    cursor: no-drop;
+  }
+}
+
+td.fc-header-center {
+  text-align: end;
+}
+.fc-widget-content {
+  border-color:  var(--border-color)!important;
+}
+.fc-last  td {
+  border-width: 1px 0 1px 1px;
+}
+
+.fc-agenda-axis.fc-widget-header {
+  color: var(--text-primary-light);
+  border-color: var(--border-color);
+}
+.fc-header td {
+  padding: 0;
+}
+
+#calendar {
+  overflow-x: auto;
+  .fc-content { 
+    min-width: max-content;
+  }
+  table.fc-header tr {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    justify-content: space-between;
+}
+}
+/* Full Calendar Customize Css End */

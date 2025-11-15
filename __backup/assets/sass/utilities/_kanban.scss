@@ -1,0 +1,22 @@
+/* =============================== Kanban Card Css Start =============================== */
+.ui-sortable-handle {
+    cursor: move !important;
+}
+.ui-sortable-helper {
+    box-shadow: 0px 5px 20px 3px var(--neutral-300);
+    box-shadow: 0 4px 30px 0 rgba(4, 6, 15, 0.5) !important
+}
+
+.ui-sortable-placeholder {
+    background-color: var(--neutral-100) !important;
+    visibility: visible !important;
+    padding: 100px !important;
+    border: 1px dashed var(--neutral-400);
+}
+
+#taskImagePreview {
+    display:none; 
+    margin-top: 10px; 
+    max-width: 100%;
+}
+/* =============================== Kanban Card Css End =============================== */

@@ -1,0 +1,43 @@
+.dashboard-main {
+  margin-inline-start: 0;
+  display: flex;
+  flex-wrap: wrap;
+  flex-flow: column;
+  min-height: 100vh;
+  transition: all 0.3s;
+  @include media(xl) {
+    margin-inline-start: rem(220px);
+  }
+  @include media(xxl) {
+    margin-inline-start: rem(275px);
+  }
+  @include media(3xl) {
+    margin-inline-start: rem(312px);
+  }
+  &-body {
+    padding: rem(15px);
+    @include media(xxl) {
+      padding: rem(24px);
+    }
+  }
+  &.active {
+    @media (min-width: 1199px) {
+      margin-inline-start: rem(86px);
+    }
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

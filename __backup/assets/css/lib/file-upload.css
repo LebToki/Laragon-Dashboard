@@ -1,0 +1,48 @@
+:root{
+    --file-container-bg:  #eeeeee;
+    --file-bg:  #f8f8f8;
+    --file-border-color: #606060;
+    --file-color: #2b2b2b;
+    --table-border-color: #dbdbdb;
+    --delete-button-bg: #f53636;
+    --delete-button-color: #ffffff;
+    --font-size: 0.875em;
+    --font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    --shadow: 0px 8px 15px -8px rgba(0, 0, 0, 0.5);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+.file-container {
+    width: 100%;
+    font-family: var(--font-family);
+
+    .file-upload {
+        width: 100%;
+        display: flex;
+        transition: all 0.3s;
+        text-align: center;
+        >div {
+            border: 1px solid #ddd;
+            padding: 24px;
+            width: 100%;
+            >p,
+            span,
+            div {
+                font-size: var(--font-size);
+                line-height: 30px;
+            }
+
+            >div {
+                width: max-content;
+                padding: 0 10px;
+                margin: 0 auto;
+                border: 1px solid var(--file-border-color);
+            }
+        }
+    }
+}

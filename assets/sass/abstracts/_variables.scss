@@ -1,0 +1,361 @@
+$colors: (
+  primary: (
+    "50": #E4F1FF,
+    "100": #BFDCFF,
+    "200": #95C7FF,
+    "300": #6BB1FF,
+    "400": #519FFF,
+    "500": #458EFF,
+    "600": #487FFF, // main theme color
+    "700": #486CEA,
+    "800": #4759D6,
+    "900": #4536B6
+  ),
+
+  neutral: (
+    "50": #F5F6FA,
+    "100": #F3F4F6,
+    "200": #EBECEF,
+    "300": #D1D5DB,
+    "400": #9CA3AF,
+    "500": #6B7280,
+    "600": #4B5563,
+    "700": #374151,
+    "800": #1F2937,
+    "900": #111827
+  ),
+
+  danger: (
+    "50": #FEF2F2,
+    "100": #FEE2E2,
+    "200": #FECACA,
+    "300": #FCA5A5,
+    "400": #F87171,
+    "500": #EF4444,
+    "600": #DC2626,
+    "700": #B91C1C,
+    "800": #991B1B,
+    "900": #7F1D1D
+  ),
+
+  success: (
+    "50": #F0FDF4,
+    "100": #DCFCE7,
+    "200": #BBF7D0,
+    "300": #86EFAC,
+    "400": #4ADE80,
+    "500": #22C55E,
+    "600": #16A34A,
+    "700": #15803D,
+    "800": #166534,
+    "900": #14532D
+  ),
+
+  warning: (
+    "50": #FEFCE8,  
+    "100": #FEF9C3,
+    "200": #FEF08A,
+    "300": #FDE047,
+    "400": #FACC15,
+    "500": #EAB308,
+    "600": #FF9F29,
+    "700": #f39016,
+    "800": #e58209,
+    "900": #d77907
+  ),
+
+  info: (
+    "50": #EFF6FF,
+    "100": #DBEAFE,
+    "200": #BFDBFE,
+    "300": #93C5FD,
+    "400": #60A5FA,
+    "500": #3B82F6,
+    "600": #2563EB,
+    "700": #1D4ED8,
+    "800": #1E40AF,
+    "900": #1E3A8A
+  ),
+  "cyan": (
+    "50": #e2f5fb,
+    "100": #DAF6FF,
+    "200": #85daf4,
+    "300": #6cdafc,
+    "400": #48cef7,
+    "500": #2bc9f9,
+    "600": #00b8f2,
+    "700": #03a9dc,
+    "800": #049dcb,
+    "900": #0390bb
+  ),
+
+  dark: (
+    "1": #1B2431,
+    "2": #273142,
+    "3": #323D4E,
+  ),
+  lilac: (
+    "50": #f0e1ff,
+    "100": #EBD7FF,
+    "200": #dcc0f8,
+    "300": #cd9ffa,
+    "400": #c48afe,
+    "500": #b66dff,
+    "600": #8252E9,
+    "700": #6f37e6,
+    "800": #601eef,
+  ),
+  light: (
+    "50": #F5F6FA,
+    "100": #F3F4F6,
+    "600": #E4F1FF,
+    "700": #374151,
+    "800": #1F2937,
+  ),
+);
+
+$neutral-dark: (
+  "50": #1B2431,
+  "100": #273142,
+  "200": #323D4E,
+  "300": #4B5563,
+  "400": #6B7280,
+  "500": #9CA3AF,
+  "600": #D1D5DB,
+  "700": #EBECEF,
+  "800": #F3F4F6,
+  "900": #F5F6FA
+);
+
+$semantic-colors: (
+  success: (
+    "main": #45B369,
+    "surface": #DAF0E1,
+    "border": #B5E1C3,
+    "hover": #009F5E,
+    "pressed": #006038,
+    "focus": #45b36926,
+  ),
+
+  info: (
+    "main": #144BD6,
+    "surface": #E7EEFC,
+    "border": #AECAFC,
+    "hover": #0A51CE,
+    "pressed": #06307C,
+    "focus": #144bd626
+  ),
+
+  warning: (
+    "main": #FF9F29,
+    "surface": #FFF9E2,
+    "border": #FFEBA6,
+    "hover": #D69705,
+    "pressed": #C28800,
+    "focus": #ffc02d26
+  ),
+  
+  danger: (
+    "main": #EF4A00,
+    "surface": #FCDAE2,
+    "border": #F9B5C6,
+    "hover": #D53128,
+    "pressed": #801D18,
+    "focus": #ef477026
+  )
+);
+
+$extra-colors: (
+  "cyan": "#00B8F2",
+  "indigo": "#7F27FF",
+  "purple": "#8252E9",
+  "red": "#E30A0A",
+  "yellow": "#F4941E",
+  "orange": "#F86624",
+  "pink": "#DE3ACE",
+);
+
+
+$bg-light-colors: (
+  "primary-light": "rgba(72, 127, 255, 0.15)",
+  "yellow-light": "rgba(255, 159, 41, 0.15)",
+  "purple-light": "rgba(130, 82, 233, 0.15)",
+  "pink-light": "rgba(250, 54, 230, 0.15)",
+);
+
+$border-light-colors: (
+  "primary-light-white": "rgba(72, 127, 255, 0.25)",
+  "yellow-light-white": "rgba(255, 159, 41, 0.25)",
+  "purple-light-white": "rgba(132, 90, 223, 0.25)",
+  "pink-light-white": "rgba(250, 54, 230, 0.25)",
+);
+
+
+$spaces: (
+  "2": #{rem(2px)},
+  "4": #{rem(4px)},
+  "6": #{rem(6px)},
+  "8": #{rem(8px)},
+  "9": #{rem(9px)},
+  "10": #{rem(10px)},
+  "11": #{rem(11px)},
+  "12": #{rem(12px)},
+  "13": #{rem(13px)},
+  "16": #{rem(16px)},
+  "20": #{rem(20px)},
+  "24": #{rem(24px)},
+  "28": #{rem(24px)},
+  "32": #{rem(32px)},
+  "36": #{rem(32px)},
+  "40": #{rem(40px)}, 
+  "44": #{rem(44px)}, 
+  "48": #{rem(48px)},
+  "50": #{rem(50px)},
+  "56": #{rem(56px)},
+  "60": #{rem(60px)},
+  "64": #{rem(64px)},
+  "72": #{rem(72px)},
+  "76": #{rem(76px)},
+  "80": #{rem(80px)},
+  "90": #{rem(90px)},
+  "110": #{rem(110px)},
+  "120": #{rem(120px)},
+  "144": #{rem(144px)},
+  "160": #{rem(160px)},
+  "170": #{rem(170px)},
+  "190": #{rem(190px)},
+  "200": #{rem(200px)},
+  "240": #{rem(240px)},
+  "440": #{rem(440px)},
+);
+
+$shadows: (
+  "1": 0 4px 60px 0 rgba(#04060F, 0.8),
+  "2": 0 4px 60px 0 rgba(#04060F, 0.5),
+  "3": 0 20px 100px 0 rgba(#04060F, 0.8),
+  "4": 4px 8px 24px 0 rgba(#B6B6B6, 0.20),
+  "5": 4px 12px 32px 0 rgba(#00A99E, 0.10),
+  "6": 4px 16px 32px 0 rgba(#00A99E, 0.10)
+);
+
+$font-sizes: (
+  "2xxl": #{rem(32px)},
+  "2xl": #{rem(28px)},
+  "xxl": #{rem(24px)},
+  "xl": #{rem(20px)},
+  "lg": #{rem(18px)},
+  "md": #{rem(16px)},
+  "sm": #{rem(14px)},
+  "xs": #{rem(12px)},
+  "xxs": #{rem(10px)}
+);
+
+:root {
+  // Font Family 
+  --default-font: ;
+
+  // font sizes
+  --h1: clamp(2rem, 1.2rem + 4vw, 4.5rem); //72px > 32px
+  --h2: clamp(1.75rem, 1.11rem + 3.2vw, 3.75rem); //60px > 28px
+  --h3: clamp(1.5rem, 1.02rem + 2.4vw, 3rem); //48px > 24px
+  --h4: clamp(1.375rem, 1.095rem + 1.4vw, 2.25rem); //36px > 22px 
+  --h5: clamp(1.25rem, 1.05rem + 1vw, 1.875rem); //30px > 20px
+  --h6: clamp(1.125rem, 1.005rem + 0.6vw, 1.5rem); //24px > 18px
+
+  // spacing
+  @each $property, $value in $spaces {
+    --size-#{$property}: #{$value};
+  }
+
+  // Border Radius 
+  @each $property, $value in $spaces {
+    --rounded-#{$property}: #{$value};
+  }
+
+  // shadows
+  @each $property, $value in $shadows {
+    --shadow-#{$property}: #{$value};
+  }  
+
+  // font sizes
+  @each $property, $value in $font-sizes {
+    --font-#{$property}: #{$value};
+  }  
+
+  // colors
+  @each $color, $shades in $colors {
+    @each $shade, $value in $shades {
+      --#{$color}-#{$shade}: #{$value};
+    }
+  }
+  
+  @each $color, $shades in $semantic-colors {
+    @each $shade, $value in $shades {
+      --#{$color}-#{$shade}: #{$value};
+		}
+	}
+
+  // extra colors
+  @each $property, $value in $extra-colors {
+    --#{$property}: #{$value};
+  }  
+  
+  // bg light colors
+  @each $property, $value in $bg-light-colors {
+    --#{$property}: #{$value};
+  }  
+  
+  // border light colors
+  @each $property, $value in $border-light-colors {
+    --#{$property}: #{$value};
+  }  
+  
+  // Design Token variables
+  --base: #fff;
+  --brand: var(--primary-600);
+  --button-secondary: var(--primary-50);
+  --black: var(--dark-2);
+  --white: var(--base);
+  --bg-color: var(--neutral-50);
+  --text-primary-light: var(--neutral-900);
+  --text-secondary-light: var(--neutral-600);
+  --text-secondary-dark: var(--neutral-300);
+
+  --input-form-light: var(--neutral-300);
+  --input-form-dark: var(--neutral-500);
+  --input-bg: var(--neutral-50);
+  --input-stroke: var(--neutral-300);
+
+  --border-color: #d1d5db80;
+}
+
+[data-theme="dark"] {
+  // Design Token variables
+  --button-secondary: var(--neutral-300);
+  --black: var(--base);
+  --white: var(--dark-2);
+  --bg-color: var(--dark-1);
+  --text-primary-light: var(--base);
+  --text-secondary-light: #D1D5DB;
+  --text-secondary-dark: var(--dark-2);
+
+  --input-form-light: #6B7280;
+  --input-form-dark: #D1D5DB;
+  --input-bg: var(--dark-3);
+  --input-stroke: #F3F4F6;
+
+  --primary-50: #e4f1ff0f;
+  --info-50: #EFF6FF0f;
+  --warning-50: #FEFCE80f;
+  --success-50: #F0FDF40f;
+  --danger-50: #FEF2F20f;
+  --lilac-100: #EBD7FF0f;
+  --success-100: #DCFCE70f;
+  --danger-100: rgba(239, 71, 112, 0.1490196078);
+
+  --border-color: #d1d5db33;
+
+  @each $shade, $value in $neutral-dark {
+    --neutral-#{$shade}: #{$value};
+  }
+}

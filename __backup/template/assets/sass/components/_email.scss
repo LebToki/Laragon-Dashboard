@@ -1,0 +1,48 @@
+/* Email Css Start */
+.item-active {
+    > a {
+        background-color: var(--primary-50)!important;
+        color: var(--text-primary-light);
+        .icon {
+            color: var(--primary-600) !important;
+        }
+    }
+}
+
+.email-item {
+    &:hover {
+        box-shadow: var(--box-shadow);
+    }
+    &.active {
+        background-color: var(--primary-50) !important;
+    }
+}
+
+.reload-button {
+    transition: .2s linear;
+    &:active {
+        transform: rotate(180deg);
+    }
+}
+
+.starred-button {
+    &.active {
+        .icon-outline {
+            visibility: hidden;                
+            opacity: 0;
+            width: 0;
+        }
+        .icon-fill {
+            visibility: visible;
+            opacity: 1;
+            width: auto;
+        }
+    }
+    .icon-fill {
+        visibility: hidden;
+        opacity: 0;
+        width: 0;
+    }
+}
+
+/* Email Css End */

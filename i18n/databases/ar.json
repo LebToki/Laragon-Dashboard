@@ -1,0 +1,22 @@
+{
+    "title": "قواعد البيانات",
+    "manage_databases": "إدارة قواعد البيانات",
+    "create_database": "إنشاء قاعدة بيانات",
+    "edit_database": "تعديل قاعدة بيانات",
+    "database_name": "اسم قاعدة البيانات",
+    "charset": "مجموعة الأحرف",
+    "collation": "الترتيب",
+    "created_at": "تاريخ الإنشاء",
+    "actions": "الإجراءات",
+    "no_databases": "لم يتم العثور على قواعد بيانات",
+    "add_new_database": "إضافة قاعدة بيانات جديدة",
+    "database_details": "تفاصيل قاعدة البيانات",
+    "delete_database": "حذف قاعدة البيانات",
+    "import": "استيراد",
+    "export": "تصدير",
+    "backup": "نسخ احتياطي",
+    "tables": "الجداول",
+    "rows": "الصفوف",
+    "size": "الحجم"
+}
+

@@ -1,0 +1,39 @@
+/* Tooltip css start */
+.tooltip {
+    --bs-tooltip-color: #fff;
+    &-primary {
+        --bs-tooltip-bg: var(--primary-600);
+    }
+    &-purple {
+        --bs-tooltip-bg: var(--lilac-600);
+    }
+    &-success {
+        --bs-tooltip-bg: var(--success-600);
+    }
+    &-info {
+        --bs-tooltip-bg: var(--info-600);
+    }
+    &-warning {
+        --bs-tooltip-bg: var(--warning-600);
+    }
+    &-danger {
+        --bs-tooltip-bg: var(--danger-600);
+    }
+    &-dark {
+        --bs-tooltip-bg: var(--neutral-900);
+    }
+    &-white {
+        --bs-tooltip-bg: var(--base);
+        --bs-tooltip-color: #fff;
+    }
+}
+
+.tip-content {
+    display: none;
+}
+
+.list-decimal {
+    list-style: decimal;
+    padding-left: 18px;
+}
+/* Tooltip css End */

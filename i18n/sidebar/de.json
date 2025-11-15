@@ -1,0 +1,16 @@
+{
+    "dashboard": "Dashboard",
+    "development": "Entwicklung",
+    "projects": "Projekte",
+    "databases": "Datenbanken",
+    "services": "Dienste",
+    "server_vitals": "Server-Vitalwerte",
+    "system": "System",
+    "mailbox": "Postfach",
+    "logs": "Protokolle",
+    "tools": "Werkzeuge",
+    "quick_tools": "Schnellwerkzeuge",
+    "backup": "Backup",
+    "preferences": "Einstellungen"
+}
+

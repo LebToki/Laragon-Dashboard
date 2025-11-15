@@ -1,0 +1,16 @@
+{
+    "dashboard": "Panel",
+    "development": "Desarrollo",
+    "projects": "Proyectos",
+    "databases": "Bases de datos",
+    "services": "Servicios",
+    "server_vitals": "Vitales del servidor",
+    "system": "Sistema",
+    "mailbox": "Buzón",
+    "logs": "Registros",
+    "tools": "Herramientas",
+    "quick_tools": "Herramientas rápidas",
+    "backup": "Respaldo",
+    "preferences": "Preferencias"
+}
+

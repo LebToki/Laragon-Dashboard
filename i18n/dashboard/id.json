@@ -1,0 +1,22 @@
+{
+    "title": "Dasbor",
+    "welcome": "Selamat datang di Dasbor Laragon",
+    "welcome_back": "Selamat datang kembali!",
+    "overview": "Ringkasan",
+    "server_status": "Status Server",
+    "services_status": "Status Layanan",
+    "system_info": "Informasi Sistem",
+    "quick_actions": "Tindakan Cepat",
+    "recent_projects": "Proyek Terbaru",
+    "server_uptime": "Waktu Aktif Server",
+    "memory_usage": "Penggunaan Memori",
+    "disk_usage": "Penggunaan Disk",
+    "cpu_usage": "Penggunaan CPU",
+    "php_version": "Versi PHP",
+    "mysql_version": "Versi MySQL",
+    "apache_version": "Versi Apache",
+    "good_morning": "Selamat pagi",
+    "good_afternoon": "Selamat siang",
+    "good_evening": "Selamat malam"
+}
+

@@ -1,0 +1,21 @@
+{
+    "title": "لوحة التحكم",
+    "welcome": "مرحباً بك في لوحة تحكم لاراجون",
+    "welcome_back": "مرحباً بعودتك!",
+    "overview": "نظرة عامة",
+    "server_status": "حالة الخادم",
+    "services_status": "حالة الخدمات",
+    "system_info": "معلومات النظام",
+    "quick_actions": "إجراءات سريعة",
+    "recent_projects": "المشاريع الأخيرة",
+    "server_uptime": "وقت تشغيل الخادم",
+    "memory_usage": "استخدام الذاكرة",
+    "disk_usage": "استخدام القرص",
+    "cpu_usage": "استخدام المعالج",
+    "php_version": "إصدار PHP",
+    "mysql_version": "إصدار MySQL",
+    "apache_version": "إصدار Apache",
+    "good_morning": "صباح الخير",
+    "good_afternoon": "مساء الخير",
+    "good_evening": "مساء الخير"
+}

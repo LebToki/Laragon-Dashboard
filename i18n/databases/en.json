@@ -1,0 +1,22 @@
+{
+    "title": "Databases",
+    "manage_databases": "Manage Databases",
+    "create_database": "Create Database",
+    "edit_database": "Edit Database",
+    "database_name": "Database Name",
+    "charset": "Charset",
+    "collation": "Collation",
+    "created_at": "Created At",
+    "actions": "Actions",
+    "no_databases": "No databases found",
+    "add_new_database": "Add New Database",
+    "database_details": "Database Details",
+    "delete_database": "Delete Database",
+    "import": "Import",
+    "export": "Export",
+    "backup": "Backup",
+    "tables": "Tables",
+    "rows": "Rows",
+    "size": "Size"
+}
+

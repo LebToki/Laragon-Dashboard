@@ -1,0 +1,16 @@
+{
+    "dashboard": "Dashboard",
+    "development": "Pag-unlad",
+    "projects": "Mga Proyekto",
+    "databases": "Mga Database",
+    "services": "Mga Serbisyo",
+    "server_vitals": "Mga Vital ng Server",
+    "system": "Sistema",
+    "mailbox": "Mailbox",
+    "logs": "Mga Log",
+    "tools": "Mga Tool",
+    "quick_tools": "Mabilis na Mga Tool",
+    "backup": "Backup",
+    "preferences": "Mga Kagustuhan"
+}
+

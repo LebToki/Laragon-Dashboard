@@ -1,0 +1,67 @@
+/* =========================== Accordion Css start ============================= */
+.accordion .accordion-item {
+    border: 1px solid var(--border-color)!important; 
+    background-color: var(--white) !important;
+    border-radius: 12px;
+    overflow: hidden;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0px 4px 30px 0px rgba(46, 45, 116, 0.05);
+    &:last-child {
+        margin-bottom: 0;
+    }
+}
+
+.accordion .accordion-body {
+    background-color: transparent;
+    padding: 0;
+    padding-top: 8px;
+    color: var(--text-secondary-light);
+}
+
+.accordion .accordion-button {
+    padding: 0;
+    background: transparent;
+    padding-inline-end: 68px;
+}
+
+
+.accordion .accordion-button::after {
+    background-image: none;
+}
+
+.accordion .accordion-button:focus {
+    box-shadow: none;
+}
+
+.accordion .accordion-button:not(.collapsed) {
+    box-shadow: none;
+}
+
+.accordion .accordion-button:not(.collapsed)::after {
+    background-image: none;
+    color: var(--primary-600);
+}
+
+.accordion .accordion-button[aria-expanded=true]::after, .accordion .accordion-button[aria-expanded=false]::after {
+    content: "\F1AF";
+    font-family: remixicon;
+    display: inline-block;
+    position: absolute;
+    inset-inline-end: 32px;
+    height: 24px;
+    width: 24px;
+    border: 2px solid var(--primary-600);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1rem;
+    border-radius: 50%;
+    line-height: 1;
+    color: var(--primary-600);
+}
+
+.accordion .accordion-button[aria-expanded=false]::after {
+    content: "\EA13";
+}
+/* ================================= Accordion Css End =========================== */

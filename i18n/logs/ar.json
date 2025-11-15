@@ -1,0 +1,19 @@
+{
+    "title": "السجلات",
+    "view_logs": "عرض السجلات",
+    "log_file": "ملف السجل",
+    "log_level": "مستوى السجل",
+    "timestamp": "الطابع الزمني",
+    "message": "الرسالة",
+    "clear_logs": "مسح السجلات",
+    "download_logs": "تنزيل السجلات",
+    "refresh": "تحديث",
+    "no_logs": "لا توجد سجلات متاحة",
+    "error_logs": "سجلات الأخطاء",
+    "access_logs": "سجلات الوصول",
+    "apache_logs": "سجلات Apache",
+    "mysql_logs": "سجلات MySQL",
+    "php_logs": "سجلات PHP",
+    "application_logs": "سجلات التطبيق"
+}
+

@@ -1,0 +1,63 @@
+{
+    "name": "Laragon Dashboard",
+    "short_name": "Laragon",
+    "description": "Modern web-based dashboard for managing Laragon development environment",
+    "start_url": "/",
+    "scope": "/",
+    "icons": [
+        {
+            "src": "android-chrome-192x192.png",
+            "sizes": "192x192",
+            "type": "image/png",
+            "purpose": "any maskable"
+        }, {
+            "src": "android-chrome-512x512.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "any maskable"
+        }
+    ],
+    "theme_color": "#4f46e5",
+    "background_color": "#FFFFFF",
+    "display": "standalone",
+    "orientation": "portrait-primary",
+    "categories": ["developer", "utilities", "productivity"],
+    "shortcuts": [
+        {
+            "name": "Dashboard",
+            "short_name": "Dashboard",
+            "description": "Open Laragon Dashboard",
+            "url": "/",
+            "icons": [
+                {
+                    "src": "android-chrome-192x192.png",
+                    "sizes": "192x192"
+                }
+            ]
+        },
+        {
+            "name": "Projects",
+            "short_name": "Projects",
+            "description": "Manage Projects",
+            "url": "/?page=projects",
+            "icons": [
+                {
+                    "src": "android-chrome-192x192.png",
+                    "sizes": "192x192"
+                }
+            ]
+        },
+        {
+            "name": "Services",
+            "short_name": "Services",
+            "description": "Manage Services",
+            "url": "/?page=services",
+            "icons": [
+                {
+                    "src": "android-chrome-192x192.png",
+                    "sizes": "192x192"
+                }
+            ]
+        }
+    ]
+}

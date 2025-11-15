@@ -1,0 +1,22 @@
+{
+    "title": "Datenbanken",
+    "manage_databases": "Datenbanken verwalten",
+    "create_database": "Datenbank erstellen",
+    "edit_database": "Datenbank bearbeiten",
+    "database_name": "Datenbankname",
+    "charset": "Zeichensatz",
+    "collation": "Sortierung",
+    "created_at": "Erstellt am",
+    "actions": "Aktionen",
+    "no_databases": "Keine Datenbanken gefunden",
+    "add_new_database": "Neue Datenbank hinzufügen",
+    "database_details": "Datenbankdetails",
+    "delete_database": "Datenbank löschen",
+    "import": "Importieren",
+    "export": "Exportieren",
+    "backup": "Backup",
+    "tables": "Tabellen",
+    "rows": "Zeilen",
+    "size": "Größe"
+}
+

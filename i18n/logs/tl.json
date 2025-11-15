@@ -1,0 +1,18 @@
+{
+    "title": "Mga Log",
+    "view_logs": "Tingnan ang Mga Log",
+    "log_file": "File ng Log",
+    "log_level": "Level ng Log",
+    "timestamp": "Timestamp",
+    "message": "Mensahe",
+    "clear_logs": "Linisin ang Mga Log",
+    "download_logs": "I-download ang Mga Log",
+    "refresh": "I-refresh",
+    "no_logs": "Walang available na log",
+    "error_logs": "Mga Log ng Error",
+    "access_logs": "Mga Log ng Access",
+    "apache_logs": "Mga Log ng Apache",
+    "mysql_logs": "Mga Log ng MySQL",
+    "php_logs": "Mga Log ng PHP",
+    "application_logs": "Mga Log ng Application"
+}

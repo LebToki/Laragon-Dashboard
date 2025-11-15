@@ -1,0 +1,19 @@
+{
+    "title": "Log",
+    "view_logs": "Lihat Log",
+    "log_file": "File Log",
+    "log_level": "Level Log",
+    "timestamp": "Timestamp",
+    "message": "Pesan",
+    "clear_logs": "Hapus Log",
+    "download_logs": "Unduh Log",
+    "refresh": "Muat Ulang",
+    "no_logs": "Tidak ada log tersedia",
+    "error_logs": "Log Kesalahan",
+    "access_logs": "Log Akses",
+    "apache_logs": "Log Apache",
+    "mysql_logs": "Log MySQL",
+    "php_logs": "Log PHP",
+    "application_logs": "Log Aplikasi"
+}
+

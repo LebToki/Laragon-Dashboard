@@ -1,0 +1,24 @@
+{
+    "title": "Layanan",
+    "manage_services": "Kelola Layanan",
+    "service_name": "Nama Layanan",
+    "status": "Status",
+    "version": "Versi",
+    "port": "Port",
+    "actions": "Tindakan",
+    "start": "Mulai",
+    "stop": "Berhenti",
+    "restart": "Mulai Ulang",
+    "running": "Berjalan",
+    "stopped": "Berhenti",
+    "apache": "Apache",
+    "mysql": "MySQL",
+    "nginx": "Nginx",
+    "redis": "Redis",
+    "memcached": "Memcached",
+    "postgresql": "PostgreSQL",
+    "mongodb": "MongoDB",
+    "service_status": "Status Layanan",
+    "all_services": "Semua Layanan"
+}
+

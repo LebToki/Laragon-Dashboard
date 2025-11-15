@@ -1,0 +1,21 @@
+{
+    "title": "Mga Database",
+    "manage_databases": "Pamahalaan ang Mga Database",
+    "create_database": "Lumikha ng Database",
+    "edit_database": "I-edit ang Database",
+    "database_name": "Pangalan ng Database",
+    "charset": "Charset",
+    "collation": "Collation",
+    "created_at": "Nilikha Sa",
+    "actions": "Mga Aksyon",
+    "no_databases": "Walang nahanap na database",
+    "add_new_database": "Magdagdag ng Bagong Database",
+    "database_details": "Mga Detalye ng Database",
+    "delete_database": "Tanggalin ang Database",
+    "import": "I-import",
+    "export": "I-export",
+    "backup": "Backup",
+    "tables": "Mga Talahanayan",
+    "rows": "Mga Row",
+    "size": "Laki"
+}

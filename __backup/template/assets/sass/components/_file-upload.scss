@@ -1,0 +1,86 @@
+/* ============================ Image Upload Css Start ==================== */
+.image-upload {
+    border-radius: 8px !important;
+    overflow: hidden;
+    position: relative;
+    border-radius: inherit;
+    border: 1px dashed var(--input-form-light) !important;
+    cursor: pointer;
+    transition: 0.2s;
+    height: 150px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    max-width: 180px;
+    &:hover {
+        background-color: var(--neutral-100);
+    }    
+    &__box {
+        border-radius: inherit !important;
+        cursor: pointer;
+        padding: 16px !important;
+        flex-direction: column;
+        justify-content: center;
+    }
+    &__boxInner {
+        padding: 0 !important;
+        border: 0 !important;
+        display: inline-flex;
+        justify-content: center;
+        flex-direction: column;
+        width: 100% !important;
+        margin: 0 auto;
+        position: relative;
+        border-radius: inherit;
+    }
+    &__icon {
+        font-size: 32px !important;
+        color: var(--primary-600);
+        line-height: 1;
+    }
+    &__image {
+        border-radius: inherit;
+        max-width: 100%;
+    }
+    &__imageName {
+        margin-top: 4px;
+    }
+    &__deleteBtn {
+        position: absolute;
+        right: -6px;
+        top: -6px;
+        z-index: 1;
+        background: var(--neutral-100);
+        color: hsl(var(--neutral-900));
+        border-radius: 50%;
+        width: 20px;
+        height: 20px;
+        font-size: 12px;
+        transition: 0.2s;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        &:hover {
+            background: var(--danger-600);
+            transform: scale(1.1);
+            color: #fff;
+        }
+    }
+    &__anotherFileIcon {
+        font-size: 16px !important;
+        color: hsl(var(--body-color)) !important;
+        width: 40px;
+        height: 40px;
+        border: 1px solid var(--neutral-100);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        border-radius: inherit;
+    }
+}
+
+
+.image-upload__boxInner p, .image-upload__boxInner span {
+    line-height: 1.2 !important;
+}
+/* ============================ Image Upload Css End ==================== */

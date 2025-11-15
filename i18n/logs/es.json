@@ -1,0 +1,19 @@
+{
+    "title": "Registros",
+    "view_logs": "Ver Registros",
+    "log_file": "Archivo de Registro",
+    "log_level": "Nivel de Registro",
+    "timestamp": "Marca de Tiempo",
+    "message": "Mensaje",
+    "clear_logs": "Limpiar Registros",
+    "download_logs": "Descargar Registros",
+    "refresh": "Actualizar",
+    "no_logs": "No hay registros disponibles",
+    "error_logs": "Registros de Errores",
+    "access_logs": "Registros de Acceso",
+    "apache_logs": "Registros de Apache",
+    "mysql_logs": "Registros de MySQL",
+    "php_logs": "Registros de PHP",
+    "application_logs": "Registros de Aplicación"
+}
+

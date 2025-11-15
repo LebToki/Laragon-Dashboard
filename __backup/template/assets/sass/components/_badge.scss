@@ -1,0 +1,10 @@
+// // Add badges class name and color through sass loop
+// $colors: "primary" $primary, "secondary" $secondary, "success" $success, "danger" $danger, "warning" $warning, "info" $info, "light" $light, "dark" $dark, "base" $base-color;
+
+// @each $name, $color in $colors {
+//   .badge-#{$name} {
+//     background-color: rgba($color, 0.15);
+//     border: 1px solid $color;
+//     color: $color;
+//   }
+// }

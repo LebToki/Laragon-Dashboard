@@ -1,0 +1,23 @@
+.card {
+  background-color: var(--white);
+  @include border-radius(8px);
+  box-shadow: 0 rem(4px) rem(30px) rgba(#2E2D74, 0.05);
+  border: none;
+  position: initial;
+  color: var(--text-secondary-light);
+  .card-header {
+    background-color: var(--white);
+    padding: rem(14px) rem(24px);
+    border-color: var(--border-color);
+    color: var(--text-secondary-light);
+  }
+  .card-title {
+    font-size: rem(18px) !important;
+    font-weight: 600;
+    color: var(--text-primary-light);
+  }
+  .card-body {
+    padding: rem(14px) rem(24px);
+    color: var(--text-secondary-light);
+  }
+}

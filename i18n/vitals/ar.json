@@ -1,0 +1,16 @@
+{
+    "server_vitals": "حالة الخادم",
+    "dashboard": "لوحة التحكم",
+    "cpu_usage": "استخدام المعالج",
+    "memory_usage": "استخدام الذاكرة",
+    "disk_usage": "استخدام القرص",
+    "network": "الشبكة",
+    "network_traffic": "حركة الشبكة",
+    "service_status": "حالة الخدمات",
+    "last_24_hours": "آخر 24 ساعة",
+    "active": "نشط",
+    "mbps": "ميجابت/ثانية",
+    "running": "يعمل",
+    "stopped": "متوقف"
+}
+

@@ -1,0 +1,15 @@
+.modal {
+  &-header {
+    border-color: var(--input-form-light);
+    .btn-close {
+      margin-inline-start: auto;
+      margin-inline-end: 0;
+    }
+  }
+  &-content {
+    background-color: var(--white);
+  }
+  &-footer {
+    border-color: var(--input-form-light);
+  }
+}

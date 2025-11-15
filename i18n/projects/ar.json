@@ -1,0 +1,22 @@
+{
+    "title": "المشاريع",
+    "manage_projects": "إدارة المشاريع",
+    "create_project": "إنشاء مشروع",
+    "edit_project": "تعديل مشروع",
+    "project_name": "اسم المشروع",
+    "project_path": "مسار المشروع",
+    "project_url": "رابط المشروع",
+    "project_type": "نوع المشروع",
+    "php_version": "إصدار PHP",
+    "database": "قاعدة البيانات",
+    "created_at": "تاريخ الإنشاء",
+    "updated_at": "تاريخ التحديث",
+    "actions": "الإجراءات",
+    "no_projects": "لم يتم العثور على مشاريع",
+    "add_new_project": "إضافة مشروع جديد",
+    "project_details": "تفاصيل المشروع",
+    "open_project": "فتح المشروع",
+    "delete_project": "حذف المشروع",
+    "project_settings": "إعدادات المشروع"
+}
+

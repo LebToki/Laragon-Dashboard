@@ -1,0 +1,512 @@
+.form-select, .form-control, textarea {  
+  border: 1px solid var(--input-form-light);
+  color: var(--text-primary-light) !important;
+  background-color: var(--white);
+  padding: rem(9px) rem(20px);
+  &::placeholder {
+    color: var(--text-secondary-light);
+    font-size: 1rem !important;
+  }
+  &:focus,
+  &:active {
+    box-shadow: none;
+    border-color:  var(--primary-600) !important;
+    background-color: transparent;
+  }
+}
+
+.form-select {
+  padding: rem(9px) rem(30px) rem(9px) rem(15px);
+  background-position-x: right;
+  &.form-select-lg {
+    height: 56px;
+    font-size: rem(18px);
+  }
+  &.form-select-sm {
+    height: 40px;
+    font-size: rem(14px);
+  }
+}
+
+[dir="rtl"] { 
+  .form-select {
+    background-position-x: left;
+  }
+}
+
+.form-select, .form-control:not(textarea) {
+  height: rem(44px);
+}
+
+.form-control {
+  &[type="file"] {
+    line-height: 2;
+  }
+  &[readonly] {
+    background-color: var(--neutral-50);
+  }
+  &.form-control-lg {
+    height: 56px;
+    font-size: rem(18px);
+    &[type="file"] {
+      line-height: 2.1;
+    }
+  }
+  &.form-control-sm {
+    height: 40px;
+    font-size: rem(14px);
+    &[type="file"] {
+      line-height: 2.2;
+    }
+  }
+}
+
+.invoive-form-control {
+  width: 130px;
+  border-bottom: 1px solid var(--input-form-light);
+}
+
+.form-label {
+  font-size: rem(14px);
+  font-weight: 600;
+  color: var(--text-secondary-light);;
+}
+
+.input-group-text {
+  color: var(--text-secondary-light);
+}
+
+.form-control.is-invalid, .was-validated .form-control:invalid {
+  border-color: var(--danger-main);
+}
+
+.invalid-feedback {
+  color: var(--danger-main);
+}
+
+/* icon field css start */
+.icon-field {
+  position: relative;
+  .icon {
+    position: absolute;
+    top: 12px;
+    inset-inline-start: 0;
+    width: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: rem(20px);
+    color: var(--text-secondary-light);
+  }
+  .form-control {
+    padding-inline-start: rem(40px);
+    &.form-control-lg {
+      ~ .icon {
+        top: 18px;
+      }
+    }
+    &.form-control-sm {
+      ~ .icon {
+        top: 10px;
+      }
+    }
+  }
+}
+/* icon field css end */
+
+
+/* input Radio Css Start */
+.form-check-input {
+  cursor: pointer;
+}
+
+.form-check {
+  margin-bottom: 0;
+  padding-left: 0;
+  gap: 12px;
+  &.style-check {
+    .form-check-input { 
+      &::before {
+        width: calc(100% + 1px);
+        height: calc(100% + 1px);
+        transform: translate(-50%, -50%) scale(1);
+        transition: .2s linear;
+      }
+      &::after {
+        position: absolute;
+        content: "\EB7A"; 
+        font-family: 'remixicon';
+        display: inline-block;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        font-size: 12px;
+        color: #fff;
+        visibility: hidden;
+        opacity: 0;
+        transition: .2s linear;
+        border-radius: inherit !important;
+      }
+      &:checked {
+        border-color: var(--primary-600) !important;
+        &::after {
+          visibility: visible;
+          opacity: 1;
+        }
+      }
+    }  
+  }
+  .form-check-input {
+    border: 1px solid var(--text-secondary-light);
+    background: transparent;
+    width: 18px;
+    height: 18px;
+    position: relative;
+    flex-shrink: 0;
+    margin-left: 0;
+    margin-top: 0;
+    cursor: pointer;
+    &:checked[type=radio] {
+      background-image: none;
+      border-color: var(--primary-600);
+    }
+    &:checked {
+      &::before {
+        transform: translate(-50%, -50%) scale(1);
+        visibility: visible;
+        opacity: 1;
+      }
+      ~ label {
+        color: var(--text-primary-light) !important;
+      }
+    }
+    &::before {
+      position: absolute;
+      content: "";
+      width: calc(100% - 4px);
+      height: calc(100% - 4px);
+      background-color: var(--primary-600);
+      border-radius: inherit;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%) scale(.5);
+      visibility: hidden;
+      opacity: 0;
+      transition: .2s linear;
+    }
+    &:focus {
+      box-shadow: none;
+    }
+  }
+}
+/* input Radio Css End */
+
+/* input check checked Css Start */
+.checked {
+  &-primary {
+    .form-check-input {
+      &:checked[type=radio] {
+        border-color: var(--primary-600);
+        
+      }
+      &:checked {
+        &::before {
+          background-color: var(--primary-600);
+        }
+        ~ label {
+          color: var(--primary-600) !important;
+        }
+      }
+    }
+  }
+  &-success {
+    .form-check-input {
+      &:checked[type=radio] {
+        border-color: var(--success-600);
+        
+      }
+      &:checked {
+        &::before {
+          background-color: var(--success-600);
+        }
+        ~ label {
+          color: var(--success-600) !important;
+        }
+      }
+    }
+  }
+  &-warning {
+    .form-check-input {
+      &:checked[type=radio] {
+        border-color: var(--warning-600);
+        
+      }
+      &:checked {
+        &::before {
+          background-color: var(--warning-600);
+        }
+        ~ label {
+          color: var(--warning-600) !important;
+        }
+      }
+    }
+  }
+  &-danger {
+    .form-check-input {
+      &:checked[type=radio] {
+        border-color: var(--danger-600);
+        
+      }
+      &:checked {
+        &::before {
+          background-color: var(--danger-600);
+        }
+        ~ label {
+          color: var(--danger-600) !important;
+        }
+      }
+    }
+  }
+  &-info {
+    .form-check-input {
+      &:checked[type=radio] {
+        border-color: var(--info-600);
+        
+      }
+      &:checked {
+        &::before {
+          background-color: var(--info-600);
+        }
+        ~ label {
+          color: var(--info-600) !important;
+        }
+      }
+    }
+  }
+  &-secondary {
+    .form-check-input {
+      &:checked[type=radio] {
+        border-color: var(--lilac-600);
+        
+      }
+      &:checked {
+        &::before {
+          background-color: var(--lilac-600);
+        }
+        ~ label {
+          color: var(--lilac-600) !important;
+        }
+      }
+    }
+  }
+  &-dark {
+    .form-check-input {
+      &:checked[type=radio] {
+        border-color: var(--neutral-600);
+        
+      }
+      &:checked {
+        &::before {
+          background-color: var(--neutral-900);
+        }
+        ~ label {
+          color: var(--neutral-900) !important;
+        }
+      }
+    }
+  }
+}
+/* input check checked Css End */
+
+/* Switch Css Start */
+.form-switch {
+  padding-inline-start: 0;
+  .form-check-input {
+    box-shadow: none !important;  
+    margin: 0;
+    position: relative;
+    background-color: var(--neutral-400);
+    border: 0;
+    background-image: none !important;
+    width: 36px;
+    height: 20px;
+    &:checked {
+      background-color: var(--primary-600);
+      &::before {
+        left: calc(100% - 18px);
+        transition: .2s linear;
+      }
+      ~ .form-check-label {
+        color: var(--text-primary-light) !important;
+      }
+    }    
+    &::before {
+      position: absolute;
+      content: "";
+      width: 16px;
+      height: 16px;
+      background: #fff;
+      border-radius: 50%;
+      top: 50%;
+      transform: translateY(-50%);
+      left: 2px;
+      transition: .2s linear;
+    }
+  }
+}
+/* Switch Css End */
+
+/* Switch different Color Css start */
+.switch {
+  &-primary {
+    .form-check-input {
+      &:checked {
+        background-color: var(--primary-600) !important;
+        ~ .form-check-label {
+          color: var(--primary-600) !important;
+        }
+      }    
+    }
+  }
+  &-info {
+    .form-check-input {
+      &:checked {
+        background-color: var(--info-600) !important;
+        ~ .form-check-label {
+          color: var(--info-600) !important;
+        }
+      }    
+    }
+  }
+  &-success {
+    .form-check-input {
+      &:checked {
+        background-color: var(--success-600) !important;
+        ~ .form-check-label {
+          color: var(--success-600) !important;
+        }
+      }    
+    }
+  }
+  &-danger {
+    .form-check-input {
+      &:checked {
+        background-color: var(--danger-600) !important;
+        ~ .form-check-label {
+          color: var(--danger-600) !important;
+        }
+      }    
+    }
+  }
+  &-warning {
+    .form-check-input {
+      &:checked {
+        background-color: var(--warning-600) !important;
+        ~ .form-check-label {
+          color: var(--warning-600) !important;
+        }
+      }    
+    }
+  }
+  &-dark {
+    .form-check-input {
+      &:checked {
+        background-color: var(--neutral-900) !important;
+        ~ .form-check-label {
+          color: var(--neutral-900) !important;
+        }
+      }    
+    }
+  }
+  &-purple {
+    .form-check-input {
+      &:checked {
+        background-color: var(--lilac-600) !important;
+        ~ .form-check-label {
+          color: var(--lilac-600) !important;
+        }
+      }    
+    }
+  }
+}
+/* Switch different Color Css End */
+
+
+/* input Group Checkbox Css Start */
+.btn-check:checked+.btn {
+  color: #fff !important;
+}
+.btn-check:checked {
+  &+.btn-outline-warning-600 {
+    background-color: var(--warning-600) !important;
+    border-color: var(--warning-600) !important;
+  }
+  &+.btn-outline-primary-600 {
+    background-color: var(--primary-600) !important;
+    border-color: var(--primary-600) !important;
+  }
+  &+.btn-outline-danger-600 {
+    background-color: var(--danger-600) !important;
+    border-color: var(--danger-600) !important;
+  }
+  &+.btn-outline-success-600 {
+    background-color: var(--success-600) !important;
+    border-color: var(--success-600) !important;
+  }
+  &+.btn-outline-warning-600 {
+    background-color: var(--warning-600) !important;
+    border-color: var(--warning-600) !important;
+  }
+  &+.btn-outline-info-600 {
+    background-color: var(--info-600) !important;
+    border-color: var(--info-600) !important;
+  }
+  &+.btn-outline-lilac-600 {
+    background-color: var(--lilac-600) !important;
+    border-color: var(--lilac-600) !important;
+  }
+}
+/* input Group Checkbox Css End */
+
+/* custom form fields css start */
+.form-mobile-field {
+  position: relative;
+  .form-select {
+    width: auto;
+    position: absolute;
+    top: 0;
+    inset-inline-start: 0;
+    border: 0;
+    background-color: transparent;
+  }
+  .form-control {
+    padding-inline-start: rem(70px);
+  }
+}
+
+select option {
+  background-color: var(--white);
+}
+
+.was-validated {
+  .form-mobile-field {
+    .form-control {
+      padding-inline-start: rem(95px);
+    }
+  }
+}
+/* custom form fields css end */
+
+[data-theme=dark] {
+  .form-select {
+    background-image: url(../images/arrow-down.png);
+    background-size: 11px 7px;
+    background-repeat: no-repeat;
+  }
+  .btn-close {
+    background-image: url(../images/times.png);
+    background-size: auto;
+    background-repeat: no-repeat;
+    opacity: 1
+  }
+}

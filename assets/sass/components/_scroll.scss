@@ -1,0 +1,20 @@
+.scroll-sm {
+    &::-webkit-scrollbar {
+      width: 4px !important;
+      height: 4px !important;
+      border-radius: 40px;
+    }
+    &::-webkit-scrollbar-thumb {
+      background-color: #b1b3b8;
+      border-radius: 40px;
+      &:hover {
+        background-color: #939393;
+      }
+    }
+    &::-webkit-scrollbar-track {
+      background-color: #d6d9de;
+      border-radius: 40px;
+    }
+}
+
+

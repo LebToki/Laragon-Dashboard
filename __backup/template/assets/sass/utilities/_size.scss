@@ -1,0 +1,125 @@
+// width 
+@each $property, $value in $spaces {
+  .w-#{$property}-px {
+    width: $value !important;
+  }
+}
+
+.min-w-max-content {
+  min-width: max-content;
+}
+.w-190-px {
+  width: 190px;
+}
+
+.max-w-740-px {
+  max-width: 740px;
+  @media (max-width: 1399px) {
+    max-width: 500px;
+  }
+  @media (max-width: 991px) {
+    max-width: 350px;
+  }
+  @media (max-width: 767px) {
+    max-width: 250px;
+  }
+}
+
+.textarea-max-height {
+  height: 44px;
+}
+
+.resize-none {
+  resize: none;
+}
+
+.min-w-450-px {
+  min-width: 450px;
+}
+
+.min-w-132-px {
+  min-width: 132px;
+}
+
+@each $property, $value in $spaces {
+  .h-#{$property}-px {
+    height: $value !important;
+  }
+}
+
+.max-h-258-px {
+  max-height: 258px;
+}
+.max-h-350-px {
+  max-height: 350px;
+}
+
+.max-h-266-px {
+  max-height: 266px;
+}
+.max-h-400-px {
+  max-height: 400px;
+}
+.max-h-612-px {
+  max-height: 612px !important;
+}
+.min-h-612-px {
+  min-height: 612px !important;
+}
+
+
+/* Min max width & height Start */
+.min-w-120-px {
+  min-width: 120px;
+}
+.max-w-150-px {
+  max-width: 150px;
+}
+.max-w-440-px {
+  max-width: 440px;
+}
+.max-w-464-px {
+  max-width: 464px;
+}
+.max-w-290-px {
+  max-width: 290px;
+}
+.max-w-634-px {
+  max-width: 634px;
+}
+/* Min max width & height End */
+
+.text-w-200-px {
+  max-width: 200px; 
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.text-w-100-px {
+  max-width: 100px; 
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.top-auto {
+  top: auto;
+}
+.bottom-3px {
+  bottom: 3px;
+}
+
+
+
+@media (min-width: 1700px) {
+  .row-cols-xxxl-5>* {
+      flex: 0 0 auto;
+      width: 20%;
+  }
+}
+
+
+.kanban-wrapper {
+  min-width: 1560px;
+}
