@@ -91,6 +91,30 @@ include __DIR__ . '/../partials/layouts/layoutTop.php';
                                 </div>
                             </div>
                             
+                            <div class="mb-24">
+                                <strong><p class="fw-semibold mb-16"><?php echo t_preferences('update_settings', 'Update Settings'); ?></p></strong>
+                                
+                                <div class="mb-16">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="auto_update_check" id="auto-update-check" value="1" <?php echo (isset($prefs['auto_update_check']) && $prefs['auto_update_check'] !== false) ? 'checked' : ''; ?>>
+                                        <label class="form-check-label fw-medium" for="auto-update-check">
+                                            <?php echo t_preferences('auto_update_check', 'Automatically Check for Updates'); ?>
+                                        </label>
+                                        <small class="text-secondary-light text-sm mt-4 d-block"><?php echo t_preferences('auto_update_check_desc', 'Check for updates when the dashboard loads'); ?></small>
+                                    </div>
+                                </div>
+                                
+                                <div class="mb-16">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="auto_update_install" id="auto-update-install" value="1" <?php echo (isset($prefs['auto_update_install']) && $prefs['auto_update_install'] == true) ? 'checked' : ''; ?>>
+                                        <label class="form-check-label fw-medium" for="auto-update-install">
+                                            <?php echo t_preferences('auto_update_install', 'Auto-Install Updates (with confirmation)'); ?>
+                                        </label>
+                                        <small class="text-secondary-light text-sm mt-4 d-block"><?php echo t_preferences('auto_update_install_desc', 'Automatically download and install updates after user confirmation'); ?></small>
+                                    </div>
+                                </div>
+                            </div>
+                            
                             <div class="d-flex align-items-center justify-content-end gap-2">
                                 <button type="button" class="btn btn-secondary" onclick="resetPreferences()"><?php echo t_preferences('reset', 'Reset'); ?></button>
                                 <button type="submit" class="btn btn-primary-600">

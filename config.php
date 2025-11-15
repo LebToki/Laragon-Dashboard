@@ -205,6 +205,9 @@ function getDashboardPreferences() {
         'mysql_password' => null,
         'document_root' => null,
         'domain_suffix' => null,
+        'auto_update_check' => true, // Enable automatic update checking
+        'auto_update_install' => false, // Auto-install updates (requires manual confirmation)
+        'last_update_check' => null, // Timestamp of last update check
     ];
     
     if (file_exists($prefsFile)) {

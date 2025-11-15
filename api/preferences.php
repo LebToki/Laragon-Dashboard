@@ -23,17 +23,30 @@ try {
         case 'save':
             $input = json_decode(file_get_contents('php://input'), true);
             
-            $prefs = [
-                'laragon_root' => $input['laragon_root'] ?? '',
-                'mysql_host' => $input['mysql_host'] ?? '',
-                'mysql_user' => $input['mysql_user'] ?? '',
-                'mysql_password' => $input['mysql_password'] ?? ''
-            ];
+            $prefs = [];
             
-            // Remove empty values
-            $prefs = array_filter($prefs, function($value) {
-                return $value !== '';
-            });
+            // Only include provided values
+            if (isset($input['laragon_root'])) {
+                $prefs['laragon_root'] = $input['laragon_root'];
+            }
+            if (isset($input['mysql_host'])) {
+                $prefs['mysql_host'] = $input['mysql_host'];
+            }
+            if (isset($input['mysql_user'])) {
+                $prefs['mysql_user'] = $input['mysql_user'];
+            }
+            if (isset($input['mysql_password'])) {
+                $prefs['mysql_password'] = $input['mysql_password'];
+            }
+            if (isset($input['auto_update_check'])) {
+                $prefs['auto_update_check'] = $input['auto_update_check'] == '1';
+            }
+            if (isset($input['auto_update_install'])) {
+                $prefs['auto_update_install'] = $input['auto_update_install'] == '1';
+            }
+            if (isset($input['last_update_check'])) {
+                $prefs['last_update_check'] = $input['last_update_check'];
+            }
             
             $result = saveDashboardPreferences($prefs);
             echo json_encode([

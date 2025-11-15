@@ -2509,4 +2509,242 @@ if (substr($assetsUrl, 0, 1) !== '/') {
     </script>
     <?php endif; ?>
 
+    <!-- Auto-Update Check Script -->
+    <script>
+    (function() {
+        'use strict';
+        
+        const UPDATE_API = '<?php echo defined("BASE_URL") ? BASE_URL : ""; ?>/api/update.php';
+        const PREFERENCES_API = '<?php echo defined("BASE_URL") ? BASE_URL : ""; ?>/api/preferences.php';
+        
+        // Check if auto-update is enabled
+        let autoUpdateEnabled = true;
+        let autoInstallEnabled = false;
+        let lastCheckTime = null;
+        const CHECK_INTERVAL = 3600000; // 1 hour in milliseconds
+        
+        // Load preferences
+        function loadPreferences() {
+            return fetch(PREFERENCES_API + '?action=get')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success && data.preferences) {
+                        autoUpdateEnabled = data.preferences.auto_update_check !== false;
+                        autoInstallEnabled = data.preferences.auto_update_install === true;
+                        lastCheckTime = data.preferences.last_update_check;
+                    }
+                })
+                .catch(error => {
+                    console.error('Failed to load preferences:', error);
+                });
+        }
+        
+        // Check for updates
+        function checkForUpdates(showNotification = true) {
+            if (!autoUpdateEnabled) {
+                return;
+            }
+            
+            // Don't check too frequently (at least 30 minutes between checks)
+            if (lastCheckTime) {
+                const timeSinceLastCheck = Date.now() - (lastCheckTime * 1000);
+                if (timeSinceLastCheck < 1800000) { // 30 minutes
+                    return;
+                }
+            }
+            
+            fetch(UPDATE_API + '?action=check')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success && data.data && data.data.available) {
+                        showUpdateNotification(data.data);
+                        
+                        // Update last check time
+                        saveLastCheckTime();
+                    } else {
+                        // No update available
+                        if (showNotification) {
+                            saveLastCheckTime();
+                        }
+                    }
+                })
+                .catch(error => {
+                    console.error('Update check failed:', error);
+                });
+        }
+        
+        // Show update notification
+        function showUpdateNotification(updateInfo) {
+            const indicator = document.getElementById('update-indicator');
+            const notificationCount = document.getElementById('notification-count');
+            const notificationsList = document.getElementById('notifications-list');
+            
+            if (indicator) {
+                indicator.style.display = 'block';
+            }
+            
+            if (notificationCount) {
+                const currentCount = parseInt(notificationCount.textContent) || 0;
+                notificationCount.textContent = currentCount + 1;
+            }
+            
+            if (notificationsList) {
+                const existingUpdate = notificationsList.querySelector('.update-notification');
+                if (existingUpdate) {
+                    existingUpdate.remove();
+                }
+                
+                const notification = document.createElement('div');
+                notification.className = 'update-notification px-24 py-16 border-bottom';
+                notification.innerHTML = `
+                    <div class="d-flex align-items-start gap-3">
+                        <div class="w-40-px h-40-px bg-success-subtle rounded-circle d-flex justify-content-center align-items-center flex-shrink-0">
+                            <iconify-icon icon="solar:download-bold" class="text-success-main text-xl"></iconify-icon>
+                        </div>
+                        <div class="flex-grow-1">
+                            <p class="fw-semibold mb-4">Update Available: ${updateInfo.latest_version}</p>
+                            <p class="text-secondary-light text-sm mb-8">Current: ${updateInfo.current_version}</p>
+                            <div class="d-flex gap-2">
+                                <button class="btn btn-primary-600 btn-sm" onclick="installUpdate('${updateInfo.download_url}', '${updateInfo.version}')">
+                                    <iconify-icon icon="solar:download-bold" class="icon"></iconify-icon>
+                                    Update Now
+                                </button>
+                                <a href="${updateInfo.release_url}" target="_blank" class="btn btn-secondary btn-sm">
+                                    View Release
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                const emptyMsg = notificationsList.querySelector('.px-24.py-12.text-center');
+                if (emptyMsg) {
+                    emptyMsg.remove();
+                }
+                
+                notificationsList.insertBefore(notification, notificationsList.firstChild);
+            }
+        }
+        
+        // Install update
+        window.installUpdate = function(downloadUrl, version) {
+            if (!confirm(`Install update to version ${version}? This will create a backup and may take a few minutes.`)) {
+                return;
+            }
+            
+            const progressModal = document.createElement('div');
+            progressModal.className = 'modal fade show';
+            progressModal.style.display = 'block';
+            progressModal.innerHTML = `
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Installing Update</h5>
+                        </div>
+                        <div class="modal-body">
+                            <div class="progress mb-16">
+                                <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: 0%"></div>
+                            </div>
+                            <p id="update-status">Preparing update...</p>
+                        </div>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(progressModal);
+            
+            const progressBar = progressModal.querySelector('.progress-bar');
+            const statusText = progressModal.querySelector('#update-status');
+            
+            // Step 1: Backup
+            statusText.textContent = 'Creating backup...';
+            progressBar.style.width = '25%';
+            
+            fetch(UPDATE_API + '?action=backup')
+                .then(response => response.json())
+                .then(data => {
+                    if (!data.success) {
+                        throw new Error(data.error || 'Backup failed');
+                    }
+                    
+                    // Step 2: Download
+                    statusText.textContent = 'Downloading update...';
+                    progressBar.style.width = '50%';
+                    
+                    return fetch(UPDATE_API + '?action=download', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ download_url: downloadUrl })
+                    });
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (!data.success) {
+                        throw new Error(data.error || 'Download failed');
+                    }
+                    
+                    // Step 3: Install
+                    statusText.textContent = 'Installing update...';
+                    progressBar.style.width = '75%';
+                    
+                    return fetch(UPDATE_API + '?action=install', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            zip_path: data.zip_path,
+                            backup_path: data.backup_path || ''
+                        })
+                    });
+                })
+                .then(response => response.json())
+                .then(data => {
+                    progressBar.style.width = '100%';
+                    
+                    if (data.success && data.verified) {
+                        statusText.textContent = 'Update installed successfully! Reloading...';
+                        setTimeout(() => {
+                            window.location.reload();
+                        }, 2000);
+                    } else {
+                        throw new Error(data.message || 'Installation failed');
+                    }
+                })
+                .catch(error => {
+                    statusText.textContent = 'Error: ' + error.message;
+                    progressBar.className = 'progress-bar bg-danger';
+                    setTimeout(() => {
+                        progressModal.remove();
+                    }, 5000);
+                });
+        };
+        
+        // Save last check time
+        function saveLastCheckTime() {
+            fetch(PREFERENCES_API, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    last_update_check: Math.floor(Date.now() / 1000)
+                })
+            }).catch(error => {
+                console.error('Failed to save last check time:', error);
+            });
+        }
+        
+        // Initialize
+        loadPreferences().then(() => {
+            // Check on page load (after a short delay)
+            setTimeout(() => {
+                checkForUpdates(false);
+            }, 3000);
+            
+            // Check periodically if enabled
+            if (autoUpdateEnabled) {
+                setInterval(() => {
+                    checkForUpdates(false);
+                }, CHECK_INTERVAL);
+            }
+        });
+    })();
+    </script>
+
     <?php echo (isset($script) ? $script   : '')?>
