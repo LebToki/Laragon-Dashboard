@@ -1,8 +1,8 @@
 # 🚀 Laragon Dashboard
 
-A modern, feature-rich web-based dashboard for managing Laragon development environment. Version 3.1.1 aims to be a comprehensive MAMP competitor on Windows, replicating Laragon control panel functionality in a modern, themed web interface.
+A modern, feature-rich web-based dashboard for managing Laragon development environment. Version 3.1.2 aims to be a comprehensive MAMP competitor on Windows, replicating Laragon control panel functionality in a modern, themed web interface.
 
-[![Version](https://img.shields.io/badge/version-3.1.1-blue.svg)](https://github.com/LebToki/Laragon-Dashboard)
+[![Version](https://img.shields.io/badge/version-3.1.2-blue.svg)](https://github.com/LebToki/Laragon-Dashboard)
 [![PHP](https://img.shields.io/badge/PHP-7.4%2B-green.svg)](https://php.net)
 [![Bootstrap](https://img.shields.io/badge/Bootstrap-5.3.2-purple.svg)](https://getbootstrap.com)
 [![License](https://img.shields.io/badge/license-MIT-orange.svg)](LICENSE)
@@ -25,7 +25,7 @@ A modern, feature-rich web-based dashboard for managing Laragon development envi
 ## 📋 Project Information
 
 - **Project Name**: Laragon Dashboard
-- **Version**: 3.1.1
+- **Version**: 3.1.2
 - **Author**: Tarek Tarabichi
 - **Company**: 2TInteractive (2tinteractive.com)
 - **Project Start**: Early 2024
@@ -663,7 +663,13 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 See [CHANGELOG.md](CHANGELOG.md) for detailed version history.
 
-### Version 3.1.1 (Current)
+### Version 3.1.2 (Current)
+- **FIXED**: Server status card icons now fully visible with solid colored backgrounds
+- **FIXED**: Project card icons now fully visible in dashboard and projects page
+- **FIXED**: Debug banner completely disabled by default (will not show unless explicitly enabled)
+- **IMPROVED**: Platform detection now correctly identifies PHP, Python, and HTML5 projects instead of "Other"
+- **IMPROVED**: Icon styling consistency across all views with explicit font-size
+- **IMPROVED**: Debug banner control logic for better preference handling
 - **NEW**: Time-based greeting and clock display in navbar (Good morning/afternoon/evening)
 - **NEW**: Local time and date display with customizable formats
 - **NEW**: Time format preferences (12-hour/24-hour) with auto-detection
