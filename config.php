@@ -1,7 +1,7 @@
 <?php
 /**
  * Laragon Dashboard Configuration
- * Version: 3.0.7
+ * Version: 3.0.8
  * Author: Tarek Tarabichi
  * Company: 2TInteractive (2tinteractive.com)
  * Project Start: Early 2024
@@ -13,7 +13,7 @@ if (!defined('APP_NAME')) {
     define('APP_NAME', 'Laragon Dashboard');
 }
 if (!defined('APP_VERSION')) {
-    define('APP_VERSION', '3.0.7');
+    define('APP_VERSION', '3.0.8');
 }
 if (!defined('APP_AUTHOR')) {
     define('APP_AUTHOR', 'Tarek Tarabichi');
@@ -81,11 +81,13 @@ if (!defined('BASE_URL')) {
     // Method 1: Use SCRIPT_NAME (most reliable - always reflects the actual script being executed)
     // When accessing via index.php?page=projects, SCRIPT_NAME is /Laragon-Dashboard/index.php
     // When accessing pages/projects.php directly, SCRIPT_NAME is /Laragon-Dashboard/pages/projects.php
+    // When accessing via custom domain (laragon-dashboard.local), SCRIPT_NAME is /index.php
     $scriptName = $_SERVER['SCRIPT_NAME'] ?? $_SERVER['PHP_SELF'] ?? '';
     if (!empty($scriptName)) {
         $basePath = dirname($scriptName);
         // Normalize: dirname('/Laragon-Dashboard/index.php') = '/Laragon-Dashboard'
         // dirname('/index.php') = '/' or '.'
+        // For custom domains, if script is in subdirectory, preserve it
         if ($basePath === '.' || $basePath === '/' || $basePath === '\\') {
             $basePath = '';
         }
@@ -101,6 +103,46 @@ if (!defined('BASE_URL')) {
             $basePath = dirname($requestPath);
             if ($basePath === '.' || $basePath === '/' || $basePath === '\\') {
                 $basePath = '';
+            }
+        }
+    }
+    
+    // Method 3: Detect from document root if dashboard is in a known subdirectory
+    if (empty($basePath) || $basePath === '') {
+        $docRoot = $_SERVER['DOCUMENT_ROOT'] ?? '';
+        $scriptFile = $_SERVER['SCRIPT_FILENAME'] ?? __FILE__;
+        
+        // If script is in a subdirectory of document root, calculate the path
+        if (!empty($docRoot) && !empty($scriptFile)) {
+            $docRoot = str_replace('\\', '/', rtrim($docRoot, '/\\'));
+            $scriptFile = str_replace('\\', '/', $scriptFile);
+            
+            // Check if script is inside document root
+            if (strpos($scriptFile, $docRoot) === 0) {
+                $relativePath = substr($scriptFile, strlen($docRoot));
+                $relativeDir = dirname($relativePath);
+                
+                // For D:\Dev_Sites\Laragon-Dashboard, relativeDir should be /Laragon-Dashboard
+                if ($relativeDir !== '.' && $relativeDir !== '/' && $relativeDir !== '\\') {
+                    $basePath = $relativeDir;
+                } else {
+                    // If we're at root level but in a subdirectory, check if Laragon-Dashboard exists
+                    // This handles cases where document root is D:\Dev_Sites and script is in Laragon-Dashboard subfolder
+                    if (strpos(strtolower($docRoot), 'dev_sites') !== false) {
+                        // Check if we're in Laragon-Dashboard folder
+                        $scriptDir = dirname($scriptFile);
+                        if (strpos(strtolower($scriptDir), 'laragon-dashboard') !== false) {
+                            // Extract Laragon-Dashboard from path
+                            $parts = explode('Laragon-Dashboard', $scriptDir);
+                            if (!empty($parts)) {
+                                $before = str_replace('\\', '/', $parts[0]);
+                                $before = str_replace($docRoot, '', $before);
+                                $basePath = $before . '/Laragon-Dashboard';
+                                $basePath = str_replace('//', '/', $basePath);
+                            }
+                        }
+                    }
+                }
             }
         }
     }
@@ -267,6 +309,22 @@ function getLaragonRoot() {
     $commonDrives = ['C', 'D', 'E', 'F'];
     foreach ($commonDrives as $drive) {
         $drives[] = $drive . ':/laragon';
+        // Also check uppercase Laragon (case-insensitive handling)
+        $drives[] = $drive . ':/Laragon';
+    }
+    
+    // 4. Check specific known paths (for users with custom setups)
+    $specificPaths = [
+        'D:/Laragon',
+        'D:/laragon',
+        'C:/Laragon',
+        'C:/laragon',
+        'D:/Dev_Sites/../Laragon', // If dashboard is in D:/Dev_Sites/Laragon-Dashboard
+    ];
+    foreach ($specificPaths as $path) {
+        if (!in_array($path, $drives)) {
+            $drives[] = $path;
+        }
     }
     
     // Scan all available drives dynamically
@@ -286,17 +344,36 @@ function getLaragonRoot() {
         }
     }
     
-    // Check each drive for Laragon installation
+    // Check each drive for Laragon installation (case-insensitive)
     foreach ($drives as $path) {
-        if (is_dir($path) && file_exists($path . '/laragon.exe')) {
-            // Verify it's a valid Laragon installation by checking for usr/laragon.ini
-            if (file_exists($path . '/usr/laragon.ini')) {
-                return rtrim(str_replace('\\', '/', $path), '/');
+        // Normalize path
+        $normalizedPath = rtrim(str_replace('\\', '/', $path), '/');
+        
+        // Check if directory exists (case-insensitive on Windows)
+        if (is_dir($normalizedPath)) {
+            // Check for laragon.exe (case-insensitive)
+            $exeFound = false;
+            $exeVariants = ['/laragon.exe', '/Laragon.exe', '/LARAGON.EXE'];
+            foreach ($exeVariants as $exe) {
+                if (file_exists($normalizedPath . $exe)) {
+                    $exeFound = true;
+                    break;
+                }
+            }
+            
+            if ($exeFound) {
+                // Verify it's a valid Laragon installation by checking for usr/laragon.ini
+                $iniVariants = ['/usr/laragon.ini', '/usr/Laragon.ini', '/usr/LARAGON.INI'];
+                foreach ($iniVariants as $ini) {
+                    if (file_exists($normalizedPath . $ini)) {
+                        return $normalizedPath;
+                    }
+                }
             }
         }
     }
     
-    // 4. Try to detect from document root or script path
+    // 5. Try to detect from document root or script path
     $docRoot = $_SERVER['DOCUMENT_ROOT'] ?? '';
     $scriptPath = $_SERVER['SCRIPT_FILENAME'] ?? __FILE__;
     
@@ -341,7 +418,7 @@ function getLaragonRoot() {
         $depth++;
     }
     
-    // 5. Try reading from laragon.ini in common locations (if ini file exists but exe doesn't)
+    // 6. Try reading from laragon.ini in common locations (if ini file exists but exe doesn't)
     foreach ($drives as $path) {
         $iniFile = $path . '/usr/laragon.ini';
         if (file_exists($iniFile)) {
@@ -350,7 +427,54 @@ function getLaragonRoot() {
         }
     }
     
-    // 6. Default fallback
+    // 7. Try to detect from Dev_Sites or custom document roots
+    $docRoot = $_SERVER['DOCUMENT_ROOT'] ?? '';
+    if (!empty($docRoot)) {
+        $docRootLower = strtolower($docRoot);
+        
+        // If document root contains 'dev_sites', try to find Laragon
+        if (strpos($docRootLower, 'dev_sites') !== false) {
+            // Method 1: Replace Dev_Sites with Laragon in same path
+            $possibleLaragon = str_replace('Dev_Sites', 'Laragon', $docRoot);
+            $possibleLaragon = str_replace('dev_sites', 'Laragon', $possibleLaragon);
+            if (is_dir($possibleLaragon)) {
+                // Check for laragon.exe (case-insensitive)
+                $exeVariants = ['/laragon.exe', '/Laragon.exe', '/LARAGON.EXE'];
+                foreach ($exeVariants as $exe) {
+                    if (file_exists($possibleLaragon . $exe)) {
+                        return rtrim(str_replace('\\', '/', $possibleLaragon), '/');
+                    }
+                }
+            }
+            
+            // Method 2: Go up one level and check for Laragon
+            $parentDir = dirname($docRoot);
+            $possibleLaragon = $parentDir . '/Laragon';
+            if (is_dir($possibleLaragon)) {
+                $exeVariants = ['/laragon.exe', '/Laragon.exe', '/LARAGON.EXE'];
+                foreach ($exeVariants as $exe) {
+                    if (file_exists($possibleLaragon . $exe)) {
+                        return rtrim(str_replace('\\', '/', $possibleLaragon), '/');
+                    }
+                }
+            }
+            
+            // Method 3: Check D:\Laragon directly (common setup)
+            $directPaths = ['D:/Laragon', 'D:/laragon', 'd:/Laragon', 'd:/laragon'];
+            foreach ($directPaths as $directPath) {
+                if (is_dir($directPath)) {
+                    $exeVariants = ['/laragon.exe', '/Laragon.exe', '/LARAGON.EXE'];
+                    foreach ($exeVariants as $exe) {
+                        if (file_exists($directPath . $exe)) {
+                            return rtrim(str_replace('\\', '/', $directPath), '/');
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+    // 8. Default fallback
     return 'C:/laragon';
 }
 

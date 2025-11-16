@@ -2,6 +2,7 @@
 backup/
 backup_old_files/
 __backup/
+backups/
 
 # Development files (kept in devfiles/)
 *.log
@@ -13,6 +14,13 @@ __backup/
 *.swp
 *.swo
 *~
+.cursor/
+
+# GitHub
+.github/
+
+# Responses directory (for GitHub issue responses)
+responses/
 
 # OS files
 .DS_Store

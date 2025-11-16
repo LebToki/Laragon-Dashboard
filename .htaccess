@@ -1,0 +1,33 @@
+# Laragon Dashboard .htaccess
+# Enable rewrite engine
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteBase /Laragon-Dashboard/
+    
+    # If accessing root, redirect to index.php
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteRule ^$ index.php [L]
+    
+    # If file doesn't exist and is not a directory, try index.php routing
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{REQUEST_URI} !^/Laragon-Dashboard/assets/
+    RewriteCond %{REQUEST_URI} !^/Laragon-Dashboard/api/
+    RewriteRule ^(.*)$ index.php?page=$1 [QSA,L]
+</IfModule>
+
+# Security headers
+<IfModule mod_headers.c>
+    # Prevent clickjacking
+    Header set X-Frame-Options "SAMEORIGIN"
+    # XSS Protection
+    Header set X-XSS-Protection "1; mode=block"
+    # Prevent MIME type sniffing
+    Header set X-Content-Type-Options "nosniff"
+</IfModule>
+
+# Enable error reporting (remove in production)
+# php_flag display_errors On
+# php_value error_reporting E_ALL
+
