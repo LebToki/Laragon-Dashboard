@@ -11,14 +11,21 @@ A modern, feature-rich web-based dashboard for managing Laragon development envi
 
 ## ✨ Screenshots
 
-<img width="1897" height="870" alt="image" src="https://github.com/user-attachments/assets/15a4ea21-8fd6-4d2b-a8f0-960f7d74ef68" />
-<img width="1881" height="884" alt="image" src="https://github.com/user-attachments/assets/3b365184-b31a-4949-aa0b-830a1fd5b7f5" />
-<img width="1662" height="910" alt="image" src="https://github.com/user-attachments/assets/9ef3dba4-de0b-483a-8ad2-d0771e7f9f51" />
-<img width="1650" height="912" alt="image" src="https://github.com/user-attachments/assets/49eca78e-5bfe-4322-8302-b65c929e7d9a" />
-<img width="1663" height="916" alt="image" src="https://github.com/user-attachments/assets/19d0fb09-1b4d-4702-a89e-85916f11bfd3" />
-<img width="1660" height="914" alt="image" src="https://github.com/user-attachments/assets/44045854-c75f-40fb-87e2-1dbcbc1cf617" />
-<img width="1898" height="910" alt="image" src="https://github.com/user-attachments/assets/43dfe841-8e53-4208-9bea-ad38364ebf4e" />
-<img width="1896" height="909" alt="image" src="https://github.com/user-attachments/assets/aac174e3-6b30-4a03-b8be-f594aabb3786" />
+<img width="1899" height="913" alt="Dashboard" src="https://github.com/user-attachments/assets/3c26a59d-fd56-4129-ad6b-2b94851622ba" />
+<img width="1898" height="915" alt="Projects" src="https://github.com/user-attachments/assets/299063cd-6d35-4441-9daf-12646a94d141" />
+<img width="1915" height="915" alt="Databases" src="https://github.com/user-attachments/assets/a9902815-fcb6-4435-875e-05ed61cf132f" />
+<img width="1892" height="905" alt="Services" src="https://github.com/user-attachments/assets/7897a08a-e58c-44e1-b350-2d26cd9aae77" />
+<img width="1902" height="909" alt="Server Vitals" src="https://github.com/user-attachments/assets/c57dcd21-f318-4f42-861d-2338f7f2e075" />
+<img width="1914" height="914" alt="Mailbox" src="https://github.com/user-attachments/assets/c7d6eb7d-3814-4bd4-970e-5ed56ed9bdb7" />
+<img width="1893" height="881" alt="Logs" src="https://github.com/user-attachments/assets/95e20f6e-5b13-4ace-a0c1-d297a1580a79" />
+<img width="1902" height="906" alt="Tools" src="https://github.com/user-attachments/assets/7e445d07-afde-4b9b-8d02-0a20e22808b6" />
+<img width="1914" height="916" alt="Backup" src="https://github.com/user-attachments/assets/58416b1f-e01b-4654-ad62-86a8ba8054bf" />
+<img width="1903" height="911" alt="Sites Enabled" src="https://github.com/user-attachments/assets/ad0568d1-af9a-4923-991f-5479f7bd8bed" />
+<img width="1895" height="912" alt="Server Configurations" src="https://github.com/user-attachments/assets/a5db0350-4b27-4795-a7ea-6ed0cb67c838" />
+<img width="1892" height="914" alt="preferences" src="https://github.com/user-attachments/assets/5e6667c6-5796-4e0d-bc5a-eb8af8ca2150" />
+<img width="1898" height="908" alt="Ignore Project From Listing" src="https://github.com/user-attachments/assets/400571a4-8771-4a65-82b8-ceeac31daa98" />
+<img width="1914" height="911" alt="Project Creation Wizard" src="https://github.com/user-attachments/assets/6fc31790-2aa0-48f3-8db7-06019d721139" />
+<img width="1908" height="911" alt="Share Project Online" src="https://github.com/user-attachments/assets/b2dc7c64-82f2-4b1f-9055-21ed1aedcc58" />
 
 ---
 
@@ -670,6 +677,8 @@ See [CHANGELOG.md](CHANGELOG.md) for detailed version history.
 - **IMPROVED**: Platform detection now correctly identifies PHP, Python, and HTML5 projects instead of "Other"
 - **IMPROVED**: Icon styling consistency across all views with explicit font-size
 - **IMPROVED**: Debug banner control logic for better preference handling
+
+### Version 3.1.1
 - **NEW**: Time-based greeting and clock display in navbar (Good morning/afternoon/evening)
 - **NEW**: Local time and date display with customizable formats
 - **NEW**: Time format preferences (12-hour/24-hour) with auto-detection
