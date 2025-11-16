@@ -1,8 +1,8 @@
 # 🚀 Laragon Dashboard
 
-A modern, feature-rich web-based dashboard for managing Laragon development environment. Version 3.0.6 aims to be a comprehensive MAMP competitor on Windows, replicating Laragon control panel functionality in a modern, themed web interface.
+A modern, feature-rich web-based dashboard for managing Laragon development environment. Version 3.0.7 aims to be a comprehensive MAMP competitor on Windows, replicating Laragon control panel functionality in a modern, themed web interface.
 
-[![Version](https://img.shields.io/badge/version-3.0.6-blue.svg)](https://github.com/LebToki/Laragon-Dashboard)
+[![Version](https://img.shields.io/badge/version-3.0.7-blue.svg)](https://github.com/LebToki/Laragon-Dashboard)
 [![PHP](https://img.shields.io/badge/PHP-7.4%2B-green.svg)](https://php.net)
 [![Bootstrap](https://img.shields.io/badge/Bootstrap-5.3.2-purple.svg)](https://getbootstrap.com)
 [![License](https://img.shields.io/badge/license-MIT-orange.svg)](LICENSE)
@@ -25,7 +25,7 @@ A modern, feature-rich web-based dashboard for managing Laragon development envi
 ## 📋 Project Information
 
 - **Project Name**: Laragon Dashboard
-- **Version**: 3.0.6
+- **Version**: 3.0.7
 - **Author**: Tarek Tarabichi
 - **Company**: 2TInteractive (2tinteractive.com)
 - **Project Start**: Early 2024
@@ -587,7 +587,13 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 See [CHANGELOG.md](CHANGELOG.md) for detailed version history.
 
-### Version 3.0.6 (Current)
+### Version 3.0.7 (Current)
+- Fixed Laragon detection for custom dashboard locations (e.g., D:\Dev_Sites)
+- Improved auto-detection to scan script paths and traverse directory trees
+- Better handling of dashboards placed outside standard Laragon www directory
+- Enhanced path detection from document root, script location, and environment variables
+
+### Version 3.0.6
 - Added automatic self-update functionality
 - Update notifications in navbar
 - User preferences for auto-update settings

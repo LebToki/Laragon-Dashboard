@@ -1,7 +1,7 @@
 <?php
 /**
  * Laragon Dashboard Configuration
- * Version: 3.0.6
+ * Version: 3.0.7
  * Author: Tarek Tarabichi
  * Company: 2TInteractive (2tinteractive.com)
  * Project Start: Early 2024
@@ -13,7 +13,7 @@ if (!defined('APP_NAME')) {
     define('APP_NAME', 'Laragon Dashboard');
 }
 if (!defined('APP_VERSION')) {
-    define('APP_VERSION', '3.0.6');
+    define('APP_VERSION', '3.0.7');
 }
 if (!defined('APP_AUTHOR')) {
     define('APP_AUTHOR', 'Tarek Tarabichi');
