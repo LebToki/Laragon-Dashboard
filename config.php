@@ -1,7 +1,7 @@
 <?php
 /**
  * Laragon Dashboard Configuration
- * Version: 3.1.1
+ * Version: 3.1.3
  * Author: Tarek Tarabichi
  * Company: 2TInteractive (2tinteractive.com)
  * Project Start: Early 2024
@@ -13,7 +13,7 @@ if (!defined('APP_NAME')) {
     define('APP_NAME', 'Laragon Dashboard');
 }
 if (!defined('APP_VERSION')) {
-    define('APP_VERSION', '3.1.1');
+    define('APP_VERSION', '3.1.3');
 }
 if (!defined('APP_AUTHOR')) {
     define('APP_AUTHOR', 'Tarek Tarabichi');
@@ -740,6 +740,12 @@ if (!defined('SENDMAIL_OUTPUT_DIR')) {
 }
 if (!defined('DOMAIN_SUFFIX')) {
     define('DOMAIN_SUFFIX', getenv('DOMAIN_SUFFIX') ?: getLaragonDomainSuffix());
+}
+
+// Force HTTPS for project URLs (if your Laragon uses HTTPS)
+// Set to true if all your projects should use HTTPS instead of HTTP
+if (!defined('FORCE_HTTPS')) {
+    define('FORCE_HTTPS', getenv('FORCE_HTTPS') === 'true' || getenv('FORCE_HTTPS') === '1');
 }
 if (!defined('APP_VERSION_DETECTED')) {
     define('APP_VERSION_DETECTED', getenv('APP_VERSION') ?: getAppVersion());

@@ -741,10 +741,29 @@ if (!function_exists('getAllProjects')) {
         }
         
         // Determine URL protocol
+        // Priority: 1) Config override, 2) Current request protocol, 3) Laragon config, 4) Default HTTP
         $url = 'http';
-        if (isset($laraconfig['SSLEnabled']) && $laraconfig['SSLEnabled'] == 1) {
+        
+        // Check for config override (force HTTPS)
+        if (defined('FORCE_HTTPS') && FORCE_HTTPS === true) {
             $url = 'https';
-        } elseif (isset($laraconfig['Port']) && $laraconfig['Port'] == 443) {
+        }
+        // Check current request protocol (if dashboard is accessed via HTTPS, likely projects are too)
+        elseif (isset($_SERVER['HTTPS']) && ($_SERVER['HTTPS'] === 'on' || $_SERVER['HTTPS'] === '1')) {
+            $url = 'https';
+        }
+        elseif (isset($_SERVER['SERVER_PORT']) && $_SERVER['SERVER_PORT'] == 443) {
+            $url = 'https';
+        }
+        // Check Laragon config
+        elseif (isset($laraconfig['SSLEnabled']) && $laraconfig['SSLEnabled'] == 1) {
+            $url = 'https';
+        }
+        elseif (isset($laraconfig['Port']) && $laraconfig['Port'] == 443) {
+            $url = 'https';
+        }
+        // Check for HTTPS port in HTTP_HOST (e.g., localhost:443)
+        elseif (isset($_SERVER['HTTP_HOST']) && strpos($_SERVER['HTTP_HOST'], ':443') !== false) {
             $url = 'https';
         }
         
