@@ -481,7 +481,47 @@ Add new languages by creating JSON files in `i18n/[module]/[language].json`:
 
 ## 🐛 Troubleshooting
 
+### Diagnostic Tool
+
+If you're experiencing issues with path detection, CSS loading, or 404 errors, use the built-in diagnostic tool:
+
+1. **Access the diagnostic page**:
+   ```
+   http://localhost/Laragon-Dashboard/diagnostic.php
+   ```
+   or
+   ```
+   http://laragon-dashboard.local/diagnostic.php
+   ```
+
+2. **Review the output** - The tool will show:
+   - Server configuration and paths
+   - Laragon detection status
+   - File system checks
+   - Asset path verification
+   - URL access tests
+
+3. **Share results** - If you need help, share the diagnostic output for faster troubleshooting
+
 ### Common Issues
+
+**404 Errors:**
+- Run the diagnostic tool to identify path issues
+- Verify Apache's document root matches your setup
+- Check that `.htaccess` file exists and is readable
+- Ensure `index.php` is accessible directly
+
+**CSS/JS Not Loading:**
+- Check browser console (F12) for 404 errors on assets
+- Verify `ASSETS_URL` is correctly calculated (use diagnostic tool)
+- Clear browser cache and hard refresh (Ctrl+F5)
+- Ensure assets directory exists and is readable
+
+**Laragon Not Detected:**
+- Use the diagnostic tool to verify detection
+- Manually set Laragon path in Preferences if auto-detection fails
+- Check that `laragon.exe` and `usr/laragon.ini` exist in Laragon root
+- Verify file permissions allow PHP to read Laragon directory
 
 **Email not loading:**
 - Check `SENDMAIL_OUTPUT_DIR` path in config.php
@@ -590,6 +630,8 @@ See [CHANGELOG.md](CHANGELOG.md) for detailed version history.
 ### Version 3.0.8 (Current)
 - **CRITICAL FIX**: Complete CSS loading fix - all assets now use absolute paths
 - **CRITICAL FIX**: Fixed Laragon detection for D:\Laragon and D:\Dev_Sites setups
+- **NEW**: Added diagnostic tool (`diagnostic.php`) for troubleshooting path and configuration issues
+- **NEW**: Added `.htaccess` file for improved URL rewriting and routing
 - Added specific path checks for D:\Laragon, D:\Dev_Sites configurations
 - Case-insensitive Laragon detection (handles both Laragon and laragon)
 - Improved BASE_URL detection for custom domains (laragon-dashboard.local)
