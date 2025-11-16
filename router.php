@@ -27,6 +27,17 @@ if ($requestPath === '/favicon.ico' || $requestPath === 'favicon.ico') {
     return true;
 }
 
+// Handle common CSS path variations
+// Redirect assets/styles.css to assets/css/style.css
+if ($requestPath === '/assets/styles.css' || $requestPath === 'assets/styles.css') {
+    $stylePath = __DIR__ . '/assets/css/style.css';
+    if (file_exists($stylePath)) {
+        header('Content-Type: text/css');
+        readfile($stylePath);
+        return true;
+    }
+}
+
 // Remove leading slash
 $filePath = ltrim($requestPath, '/');
 
