@@ -33,6 +33,13 @@ include $headPath;
     include $sidebarPath;
     ?>
 
+    <?php 
+    // Debug banner (only if APP_DEBUG is enabled)
+    if (defined('APP_DEBUG') && APP_DEBUG && file_exists(__DIR__ . '/../debug_banner.php')) {
+        include __DIR__ . '/../debug_banner.php';
+    }
+    ?>
+    
     <main class="dashboard-main">
         <?php 
         // Use absolute path to ensure it works regardless of where it's included from
