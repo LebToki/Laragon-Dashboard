@@ -80,17 +80,37 @@ self.addEventListener('fetch', (event) => {
         return;
     }
 
+    // Skip requests that look like they're redirecting to login
+    const url = new URL(event.request.url);
+    if (url.pathname.includes('/login') || url.searchParams.has('redirect')) {
+        // Don't cache login redirects, just fetch normally
+        return;
+    }
+
     event.respondWith(
         caches.match(event.request)
             .then((cachedResponse) => {
-                if (cachedResponse) {
+                // Only use cache if it's a valid response (not 404, not redirect)
+                if (cachedResponse && cachedResponse.status === 200 && cachedResponse.type === 'basic') {
                     return cachedResponse;
+                }
+
+                // If cached response is bad, delete it
+                if (cachedResponse) {
+                    caches.open(RUNTIME_CACHE).then((cache) => {
+                        cache.delete(event.request);
+                    });
                 }
 
                 return fetch(event.request)
                     .then((response) => {
-                        // Don't cache if not a valid response
+                        // Don't cache if not a valid response (404, redirects, errors)
                         if (!response || response.status !== 200 || response.type !== 'basic') {
+                            return response;
+                        }
+
+                        // Don't cache if response is a redirect
+                        if (response.redirected || response.url.includes('/login')) {
                             return response;
                         }
 
@@ -110,6 +130,8 @@ self.addEventListener('fetch', (event) => {
                         if (event.request.destination === 'document') {
                             return caches.match(BASE_PATH + '/index.php') || caches.match(BASE_PATH + '/');
                         }
+                        // For assets, return the failed response (don't cache 404s)
+                        return new Response('', { status: 404, statusText: 'Not Found' });
                     });
             })
     );

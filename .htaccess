@@ -10,10 +10,12 @@
     RewriteRule ^$ index.php [L]
     
     # If file doesn't exist and is not a directory, try index.php routing
+    # BUT exclude assets, API, and common file types
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteCond %{REQUEST_FILENAME} !-d
     RewriteCond %{REQUEST_URI} !^/Laragon-Dashboard/assets/
     RewriteCond %{REQUEST_URI} !^/Laragon-Dashboard/api/
+    RewriteCond %{REQUEST_URI} !\.(css|js|png|jpg|jpeg|gif|ico|svg|woff|woff2|ttf|eot|map|json)$ [NC]
     RewriteRule ^(.*)$ index.php?page=$1 [QSA,L]
 </IfModule>
 

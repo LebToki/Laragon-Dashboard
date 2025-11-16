@@ -260,8 +260,16 @@ if (substr($assetsUrl, 0, 1) !== '/') {
                 let iconHtml = '';
                 if (project.favicon) {
                     // Favicon URLs are relative to www root, prepend "/" to make absolute
-                    const faviconUrl = '/' + (project.favicon.startsWith('/') ? project.favicon.substring(1) : project.favicon);
-                    iconHtml = `<img src="${faviconUrl}" alt="${escapeHtml(project.name)}" class="w-40-px h-40-px object-fit-cover rounded" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';" style="max-width: 40px; max-height: 40px;"><iconify-icon icon="${project.iconify || project.icon}" class="text-white text-2xl mb-0" style="display: none;"></iconify-icon>`;
+                    let faviconUrl = '/' + (project.favicon.startsWith('/') ? project.favicon.substring(1) : project.favicon);
+                    // Ensure favicon URL doesn't contain login redirects
+                    if (faviconUrl.includes('/login') || faviconUrl.includes('redirect=')) {
+                        faviconUrl = null; // Skip favicon if it looks like a redirect
+                    }
+                    if (faviconUrl) {
+                        iconHtml = `<img src="${faviconUrl}" alt="${escapeHtml(project.name)}" class="w-40-px h-40-px object-fit-cover rounded" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';" style="max-width: 40px; max-height: 40px;"><iconify-icon icon="${project.iconify || project.icon}" class="text-white text-2xl mb-0" style="display: none;"></iconify-icon>`;
+                    } else {
+                        iconHtml = `<iconify-icon icon="${project.iconify || project.icon}" class="text-white text-2xl mb-0"></iconify-icon>`;
+                    }
                 } else {
                     // Platform icon when no favicon
                     iconHtml = `<iconify-icon icon="${project.iconify || project.icon}" class="text-white text-2xl mb-0"></iconify-icon>`;
