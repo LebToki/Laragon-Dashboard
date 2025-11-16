@@ -82,8 +82,21 @@ if (!defined('BASE_URL')) {
     // When accessing via index.php?page=projects, SCRIPT_NAME is /Laragon-Dashboard/index.php
     // When accessing pages/projects.php directly, SCRIPT_NAME is /Laragon-Dashboard/pages/projects.php
     // When accessing via custom domain (laragon-dashboard.local), SCRIPT_NAME is /index.php
+    // When using PHP built-in server with -t ., SCRIPT_NAME is /index.php and DOCUMENT_ROOT is the dashboard dir
     $scriptName = $_SERVER['SCRIPT_NAME'] ?? $_SERVER['PHP_SELF'] ?? '';
-    if (!empty($scriptName)) {
+    $docRoot = $_SERVER['DOCUMENT_ROOT'] ?? '';
+    $scriptFile = $_SERVER['SCRIPT_FILENAME'] ?? __FILE__;
+    
+    // Check if we're using PHP built-in server with dashboard as document root
+    // In this case, DOCUMENT_ROOT will be the dashboard directory itself
+    $appRootNormalized = str_replace('\\', '/', rtrim(APP_ROOT, '/\\'));
+    $docRootNormalized = str_replace('\\', '/', rtrim($docRoot, '/\\'));
+    
+    if ($docRootNormalized === $appRootNormalized) {
+        // PHP built-in server with -t . (dashboard is document root)
+        // BASE_URL should be empty since we're at root
+        $basePath = '';
+    } else if (!empty($scriptName)) {
         $basePath = dirname($scriptName);
         // Normalize: dirname('/Laragon-Dashboard/index.php') = '/Laragon-Dashboard'
         // dirname('/index.php') = '/' or '.'
@@ -166,11 +179,23 @@ if (!defined('BASE_URL')) {
 if (!defined('ASSETS_URL')) {
     // Always use absolute path from web root for assets
     // This ensures CSS/JS files load correctly regardless of routing or direct access
-    if (BASE_URL === '') {
+    
+    // Check if we're using PHP built-in server with dashboard as document root
+    $docRoot = $_SERVER['DOCUMENT_ROOT'] ?? '';
+    $appRootNormalized = str_replace('\\', '/', rtrim(APP_ROOT, '/\\'));
+    $docRootNormalized = str_replace('\\', '/', rtrim($docRoot, '/\\'));
+    
+    if ($docRootNormalized === $appRootNormalized) {
+        // PHP built-in server: dashboard IS the document root, so assets are at /assets
+        $assetsPath = '/assets';
+    } else if (BASE_URL === '') {
+        // Normal Apache: dashboard is in subdirectory but BASE_URL is empty (shouldn't happen, but handle it)
         $assetsPath = '/assets';
     } else {
+        // Normal Apache: dashboard is in subdirectory, use BASE_URL
         $assetsPath = BASE_URL . '/assets';
     }
+    
     // Ensure it starts with / (absolute path)
     if (substr($assetsPath, 0, 1) !== '/') {
         $assetsPath = '/' . $assetsPath;

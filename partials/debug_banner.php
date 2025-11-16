@@ -15,6 +15,13 @@ $assetsUrl = defined('ASSETS_URL') ? ASSETS_URL : 'NOT SET';
 $documentRoot = $_SERVER['DOCUMENT_ROOT'] ?? 'NOT SET';
 $scriptName = $_SERVER['SCRIPT_NAME'] ?? 'NOT SET';
 $requestUri = $_SERVER['REQUEST_URI'] ?? 'NOT SET';
+$scriptFile = $_SERVER['SCRIPT_FILENAME'] ?? 'NOT SET';
+
+// Detect server type
+$appRootNormalized = str_replace('\\', '/', rtrim(defined('APP_ROOT') ? APP_ROOT : __DIR__ . '/..', '/\\'));
+$docRootNormalized = str_replace('\\', '/', rtrim($documentRoot, '/\\'));
+$isBuiltInServer = ($docRootNormalized === $appRootNormalized);
+$serverType = $isBuiltInServer ? 'PHP Built-in Server' : 'Apache/Nginx';
 
 // Check if CSS files exist
 $cssFiles = [
@@ -46,15 +53,18 @@ $swScope = '';
     
     <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 10px; font-size: 10px;">
         <div>
+            <strong>Server Type:</strong> <span style="background: rgba(0,0,0,0.2); padding: 2px 4px; border-radius: 2px; color: <?php echo $isBuiltInServer ? '#ffd43b' : '#51cf66'; ?>;"><?php echo htmlspecialchars($serverType); ?></span><br>
             <strong>Paths:</strong><br>
-            BASE_URL: <span style="background: rgba(0,0,0,0.2); padding: 2px 4px; border-radius: 2px;"><?php echo htmlspecialchars($baseUrl); ?></span><br>
+            BASE_URL: <span style="background: rgba(0,0,0,0.2); padding: 2px 4px; border-radius: 2px; <?php echo $baseUrl === '' ? 'color: #ffd43b;' : ''; ?>"><?php echo $baseUrl === '' ? '(empty - OK for built-in server)' : htmlspecialchars($baseUrl); ?></span><br>
             ASSETS_URL: <span style="background: rgba(0,0,0,0.2); padding: 2px 4px; border-radius: 2px;"><?php echo htmlspecialchars($assetsUrl); ?></span><br>
-            DOCUMENT_ROOT: <span style="background: rgba(0,0,0,0.2); padding: 2px 4px; border-radius: 2px;"><?php echo htmlspecialchars($documentRoot); ?></span>
+            DOCUMENT_ROOT: <span style="background: rgba(0,0,0,0.2); padding: 2px 4px; border-radius: 2px;"><?php echo htmlspecialchars($documentRoot); ?></span><br>
+            APP_ROOT: <span style="background: rgba(0,0,0,0.2); padding: 2px 4px; border-radius: 2px;"><?php echo htmlspecialchars(defined('APP_ROOT') ? APP_ROOT : 'NOT SET'); ?></span>
         </div>
         
         <div>
             <strong>Request Info:</strong><br>
             SCRIPT_NAME: <span style="background: rgba(0,0,0,0.2); padding: 2px 4px; border-radius: 2px;"><?php echo htmlspecialchars($scriptName); ?></span><br>
+            SCRIPT_FILENAME: <span style="background: rgba(0,0,0,0.2); padding: 2px 4px; border-radius: 2px;"><?php echo htmlspecialchars($scriptFile); ?></span><br>
             REQUEST_URI: <span style="background: rgba(0,0,0,0.2); padding: 2px 4px; border-radius: 2px;"><?php echo htmlspecialchars($requestUri); ?></span>
         </div>
         
