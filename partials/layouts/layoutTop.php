@@ -19,11 +19,23 @@ if (function_exists('get_text_direction')) {
 <!DOCTYPE html>
 <html lang="<?php echo htmlspecialchars($currentLang); ?>" data-theme="<?php echo htmlspecialchars($currentTheme); ?>" dir="<?php echo htmlspecialchars($textDirection); ?>">
 
-<?php include __DIR__ . '/../head.php' ?>
+<?php 
+// Use absolute path to ensure it works regardless of where it's included from
+$headPath = defined('PARTIALS_ROOT') ? PARTIALS_ROOT . '/head.php' : __DIR__ . '/../head.php';
+include $headPath;
+?>
 
 <body>
 
-    <?php include __DIR__ . '/../sidebar.php' ?>
+    <?php 
+    // Use absolute path to ensure it works regardless of where it's included from
+    $sidebarPath = defined('PARTIALS_ROOT') ? PARTIALS_ROOT . '/sidebar.php' : __DIR__ . '/../sidebar.php';
+    include $sidebarPath;
+    ?>
 
     <main class="dashboard-main">
-        <?php include __DIR__ . '/../navbar.php' ?>
+        <?php 
+        // Use absolute path to ensure it works regardless of where it's included from
+        $navbarPath = defined('PARTIALS_ROOT') ? PARTIALS_ROOT . '/navbar.php' : __DIR__ . '/../navbar.php';
+        include $navbarPath;
+        ?>
