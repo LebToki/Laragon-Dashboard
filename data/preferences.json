@@ -1,0 +1,7 @@
+{
+    "laragon_root": "C:/laragon",
+    "mysql_host": "localhost",
+    "mysql_user": "root",
+    "auto_update_check": true,
+    "auto_update_install": true
+}
