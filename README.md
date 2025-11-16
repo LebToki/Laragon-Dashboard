@@ -670,6 +670,14 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 See [CHANGELOG.md](CHANGELOG.md) for detailed version history.
 
+<<<<<<< HEAD
+### Version 3.1.3 (Current)
+- **FIXED**: HTTP/HTTPS protocol detection - projects now correctly use HTTPS when Laragon is configured for SSL
+- **FIXED**: Enhanced protocol detection with multiple fallback methods (request protocol, Laragon config, port detection)
+- **NEW**: `FORCE_HTTPS` configuration option to force HTTPS for all project URLs
+- **IMPROVED**: Root directory cleanup - organized test files, diagnostic tools, and release notes into `_ignored/` directory
+- **IMPROVED**: Better file organization with dedicated directories for releases, responses, and tests
+
 ### Version 3.1.3 (Current)
 - **FIXED**: HTTP/HTTPS protocol detection - projects now correctly use HTTPS when Laragon is configured for SSL
 - **FIXED**: Enhanced protocol detection with multiple fallback methods (request protocol, Laragon config, port detection)
