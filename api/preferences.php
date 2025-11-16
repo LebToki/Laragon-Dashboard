@@ -47,6 +47,15 @@ try {
             if (isset($input['last_update_check'])) {
                 $prefs['last_update_check'] = $input['last_update_check'];
             }
+            if (isset($input['debug_banner'])) {
+                $prefs['debug_banner'] = $input['debug_banner'] == '1';
+            }
+            if (isset($input['time_format'])) {
+                $prefs['time_format'] = $input['time_format'] === '' ? null : $input['time_format'];
+            }
+            if (isset($input['date_format'])) {
+                $prefs['date_format'] = $input['date_format'] === '' ? null : $input['date_format'];
+            }
             
             $result = saveDashboardPreferences($prefs);
             echo json_encode([

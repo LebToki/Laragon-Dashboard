@@ -1,11 +1,25 @@
 <?php
 /**
  * Debug Banner - Shows path and asset loading information
- * Remove this file once CSS loading issues are resolved
+ * Can be enabled/disabled via Preferences page
  */
 
-// Only show if APP_DEBUG is enabled
-if (!defined('APP_DEBUG') || !APP_DEBUG) {
+// Check if debug banner is enabled (via preferences or APP_DEBUG constant)
+$showDebugBanner = false;
+
+// First check user preferences
+if (function_exists('getDashboardPreferences')) {
+    $prefs = getDashboardPreferences();
+    $showDebugBanner = isset($prefs['debug_banner']) ? (bool)$prefs['debug_banner'] : false;
+}
+
+// Fall back to APP_DEBUG constant if preferences not set
+if (!$showDebugBanner && defined('APP_DEBUG')) {
+    $showDebugBanner = APP_DEBUG;
+}
+
+// Don't show if disabled
+if (!$showDebugBanner) {
     return;
 }
 

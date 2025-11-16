@@ -19,8 +19,10 @@ require_once __DIR__ . '/../config.php';
 // Clear any output that may have been generated
 ob_clean();
 
-// Set JSON header before any output
-header('Content-Type: application/json');
+// Set JSON header before any output (only if not included from another file)
+if (!isset($GLOBALS['_backup_include_mode'])) {
+    header('Content-Type: application/json');
+}
 
 $action = $_GET['action'] ?? 'list';
 
@@ -261,7 +263,8 @@ function deleteBackup($projectName, $timestamp) {
     return ['success' => !empty($deleted), 'deleted' => $deleted];
 }
 
-// Handle requests
+// Handle requests (only if not included from another file)
+if (!isset($GLOBALS['_backup_include_mode'])) {
 try {
     switch ($action) {
         case 'list':
@@ -400,4 +403,5 @@ try {
     ]);
     ob_end_flush();
 }
+} // End of request handling (only if not included)
 

@@ -92,6 +92,50 @@ include __DIR__ . '/../partials/layouts/layoutTop.php';
                             </div>
                             
                             <div class="mb-24">
+                                <strong><p class="fw-semibold mb-16"><?php echo t_preferences('display_settings', 'Display Settings'); ?></p></strong>
+                                
+                                <div class="row mb-16">
+                                    <div class="col-md-6">
+                                        <label class="form-label fw-medium mb-8"><?php echo t_preferences('time_format', 'Time Format'); ?></label>
+                                        <select class="form-select" id="time-format" name="time_format">
+                                            <option value="" <?php echo (empty($prefs['time_format'])) ? 'selected' : ''; ?>><?php echo t_preferences('auto_detect', 'Auto-detect'); ?></option>
+                                            <option value="12" <?php echo (isset($prefs['time_format']) && $prefs['time_format'] === '12') ? 'selected' : ''; ?>>12-hour (AM/PM)</option>
+                                            <option value="24" <?php echo (isset($prefs['time_format']) && $prefs['time_format'] === '24') ? 'selected' : ''; ?>>24-hour</option>
+                                        </select>
+                                        <small class="text-secondary-light text-sm mt-4 d-block"><?php echo t_preferences('time_format_desc', 'Choose how time is displayed in the navbar'); ?></small>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label fw-medium mb-8"><?php echo t_preferences('date_format', 'Date Format'); ?></label>
+                                        <select class="form-select" id="date-format" name="date_format">
+                                            <option value="" <?php echo (empty($prefs['date_format'])) ? 'selected' : ''; ?>><?php echo t_preferences('auto_detect', 'Auto-detect'); ?></option>
+                                            <option value="Y-m-d" <?php echo (isset($prefs['date_format']) && $prefs['date_format'] === 'Y-m-d') ? 'selected' : ''; ?>>YYYY-MM-DD (ISO)</option>
+                                            <option value="m/d/Y" <?php echo (isset($prefs['date_format']) && $prefs['date_format'] === 'm/d/Y') ? 'selected' : ''; ?>>MM/DD/YYYY (US)</option>
+                                            <option value="d/m/Y" <?php echo (isset($prefs['date_format']) && $prefs['date_format'] === 'd/m/Y') ? 'selected' : ''; ?>>DD/MM/YYYY (EU)</option>
+                                            <option value="d M Y" <?php echo (isset($prefs['date_format']) && $prefs['date_format'] === 'd M Y') ? 'selected' : ''; ?>>DD Mon YYYY</option>
+                                            <option value="M d, Y" <?php echo (isset($prefs['date_format']) && $prefs['date_format'] === 'M d, Y') ? 'selected' : ''; ?>>Mon DD, YYYY</option>
+                                        </select>
+                                        <small class="text-secondary-light text-sm mt-4 d-block"><?php echo t_preferences('date_format_desc', 'Choose how date is displayed in the navbar'); ?></small>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-24">
+                                <strong><p class="fw-semibold mb-16"><?php echo t_preferences('debug_settings', 'Debug Settings'); ?></p></strong>
+                                
+                                <div class="mb-16">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="debug_banner" id="debug-banner" value="1" <?php echo (isset($prefs['debug_banner']) && $prefs['debug_banner'] !== false) ? 'checked' : ''; ?>>
+                                        <label class="form-check-label fw-medium" for="debug-banner">
+                                            <?php echo t_preferences('show_debug_banner', 'Show Debug Banner'); ?>
+                                        </label>
+                                        <small class="text-secondary-light text-sm d-block mt-4">
+                                            <?php echo t_preferences('debug_banner_desc', 'Display diagnostic information banner at the top of pages (useful for troubleshooting CSS loading and path issues)'); ?>
+                                        </small>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-24">
                                 <strong><p class="fw-semibold mb-16"><?php echo t_preferences('update_settings', 'Update Settings'); ?></p></strong>
                                 
                                 <div class="mb-16">

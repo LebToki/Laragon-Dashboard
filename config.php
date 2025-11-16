@@ -1,7 +1,7 @@
 <?php
 /**
  * Laragon Dashboard Configuration
- * Version: 3.1.0
+ * Version: 3.1.1
  * Author: Tarek Tarabichi
  * Company: 2TInteractive (2tinteractive.com)
  * Project Start: Early 2024
@@ -13,7 +13,7 @@ if (!defined('APP_NAME')) {
     define('APP_NAME', 'Laragon Dashboard');
 }
 if (!defined('APP_VERSION')) {
-    define('APP_VERSION', '3.1.0');
+    define('APP_VERSION', '3.1.1');
 }
 if (!defined('APP_AUTHOR')) {
     define('APP_AUTHOR', 'Tarek Tarabichi');
@@ -33,10 +33,12 @@ if (!defined('APP_START_YEAR')) {
 
 // Application Settings (only define if not already defined)
 if (!defined('APP_DEBUG')) {
-    define('APP_DEBUG', true); // Set to false in production
+    // Default to false - debug banner is now controlled via user preferences
+    // The debug banner itself will check preferences when rendering
+    define('APP_DEBUG', false);
 }
 if (!defined('APP_ENV')) {
-    define('APP_ENV', 'development'); // development, staging, production
+    define('APP_ENV', 'production'); // development, staging, production
 }
 
 // Suppress errors for API endpoints (they handle their own error reporting)
@@ -275,6 +277,9 @@ function getDashboardPreferences() {
         'auto_update_check' => true, // Enable automatic update checking
         'auto_update_install' => false, // Auto-install updates (requires manual confirmation)
         'last_update_check' => null, // Timestamp of last update check
+        'debug_banner' => false, // Debug banner visibility (disabled by default)
+        'time_format' => null, // null means auto-detect from system, '12' or '24'
+        'date_format' => null, // null means auto-detect, or custom format like 'Y-m-d', 'm/d/Y', etc.
     ];
     
     if (file_exists($prefsFile)) {
@@ -817,8 +822,61 @@ if ($isApiEndpoint) {
     ini_set('display_errors', 0);
 }
 
-// Timezone
-date_default_timezone_set('UTC');
+// Timezone - try to detect from system or use UTC
+$timezone = getenv('TZ') ?: date_default_timezone_get();
+if (empty($timezone) || $timezone === 'UTC') {
+    // Try to detect Windows timezone
+    if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
+        $output = @shell_exec('tzutil /g 2>nul');
+        if ($output) {
+            // Map Windows timezone to PHP timezone
+            $windowsTz = trim($output);
+            $tzMap = [
+                'Eastern Standard Time' => 'America/New_York',
+                'Central Standard Time' => 'America/Chicago',
+                'Mountain Standard Time' => 'America/Denver',
+                'Pacific Standard Time' => 'America/Los_Angeles',
+                'GMT Standard Time' => 'Europe/London',
+                'Central European Standard Time' => 'Europe/Paris',
+            ];
+            if (isset($tzMap[$windowsTz])) {
+                $timezone = $tzMap[$windowsTz];
+            }
+        }
+    }
+}
+date_default_timezone_set($timezone);
+
+// Time and Date Format Configuration (can be overridden in config.php)
+if (!defined('TIME_FORMAT')) {
+    $prefs = getDashboardPreferences();
+    $timeFormat = $prefs['time_format'] ?? getenv('TIME_FORMAT');
+    if (empty($timeFormat)) {
+        // Auto-detect: check system locale
+        $locale = setlocale(LC_TIME, 0);
+        if (strpos(strtolower($locale), 'us') !== false || strpos(strtolower($locale), 'en_us') !== false) {
+            $timeFormat = '12'; // US typically uses 12-hour
+        } else {
+            $timeFormat = '24'; // Most other locales use 24-hour
+        }
+    }
+    define('TIME_FORMAT', $timeFormat);
+}
+
+if (!defined('DATE_FORMAT')) {
+    $prefs = getDashboardPreferences();
+    $dateFormat = $prefs['date_format'] ?? getenv('DATE_FORMAT');
+    if (empty($dateFormat)) {
+        // Auto-detect: check system locale
+        $locale = setlocale(LC_TIME, 0);
+        if (strpos(strtolower($locale), 'us') !== false || strpos(strtolower($locale), 'en_us') !== false) {
+            $dateFormat = 'm/d/Y'; // US format
+        } else {
+            $dateFormat = 'Y-m-d'; // ISO format
+        }
+    }
+    define('DATE_FORMAT', $dateFormat);
+}
 
 // Ensure required directories exist
 $requiredDirs = [LOGS_ROOT, CACHE_ROOT];

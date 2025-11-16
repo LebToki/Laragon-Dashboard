@@ -34,8 +34,19 @@ include $headPath;
     ?>
 
     <?php 
-    // Debug banner (only if APP_DEBUG is enabled)
-    if (defined('APP_DEBUG') && APP_DEBUG && file_exists(__DIR__ . '/../debug_banner.php')) {
+    // Debug banner (only if explicitly enabled via preferences - disabled by default)
+    // Check preferences first, then APP_DEBUG constant as fallback
+    $showDebugBanner = false;
+    if (function_exists('getDashboardPreferences')) {
+        $prefs = getDashboardPreferences();
+        $showDebugBanner = isset($prefs['debug_banner']) ? (bool)$prefs['debug_banner'] : false;
+    }
+    // Only check APP_DEBUG if preferences not explicitly set
+    if (!$showDebugBanner && defined('APP_DEBUG')) {
+        $showDebugBanner = APP_DEBUG;
+    }
+    // Only include if explicitly enabled (default is false)
+    if ($showDebugBanner && file_exists(__DIR__ . '/../debug_banner.php')) {
         include __DIR__ . '/../debug_banner.php';
     }
     ?>

@@ -42,6 +42,135 @@ if (substr($assetsUrl, 0, 1) !== '/') {
     <!-- main js -->
     <script src="<?php echo $assetsUrl; ?>/js/app.js"></script>
 
+    <!-- Time Greeting and Clock Script -->
+    <script>
+    (function() {
+        'use strict';
+        
+        // Get preferences for time/date format
+        const timeFormat = <?php echo defined('TIME_FORMAT') ? json_encode(TIME_FORMAT) : 'null'; ?>;
+        const dateFormat = <?php echo defined('DATE_FORMAT') ? json_encode(DATE_FORMAT) : 'null'; ?>;
+        
+        // Get translations for greetings
+        const greetings = {
+            morning: '<?php echo function_exists("t") ? t("dashboard.good_morning", "Good morning") : "Good morning"; ?>',
+            afternoon: '<?php echo function_exists("t") ? t("dashboard.good_afternoon", "Good afternoon") : "Good afternoon"; ?>',
+            evening: '<?php echo function_exists("t") ? t("dashboard.good_evening", "Good evening") : "Good evening"; ?>'
+        };
+        
+        // Get greeting icon based on time
+        function getGreetingIcon(hour) {
+            if (hour >= 5 && hour < 12) {
+                return 'solar:sun-bold'; // Morning
+            } else if (hour >= 12 && hour < 17) {
+                return 'solar:sun-2-bold'; // Afternoon
+            } else {
+                return 'solar:moon-bold'; // Evening/Night
+            }
+        }
+        
+        // Get greeting text based on time
+        function getGreeting(hour) {
+            if (hour >= 5 && hour < 12) {
+                return greetings.morning;
+            } else if (hour >= 12 && hour < 17) {
+                return greetings.afternoon;
+            } else {
+                return greetings.evening;
+            }
+        }
+        
+        // Format time based on preferences
+        function formatTime(date, format) {
+            const hour = date.getHours();
+            const minute = date.getMinutes();
+            const second = date.getSeconds();
+            
+            if (format === '12') {
+                const hour12 = hour % 12 || 12;
+                const ampm = hour >= 12 ? 'PM' : 'AM';
+                return String(hour12).padStart(2, '0') + ':' + 
+                       String(minute).padStart(2, '0') + ':' + 
+                       String(second).padStart(2, '0') + ' ' + ampm;
+            } else {
+                return String(hour).padStart(2, '0') + ':' + 
+                       String(minute).padStart(2, '0') + ':' + 
+                       String(second).padStart(2, '0');
+            }
+        }
+        
+        // Format date based on preferences
+        function formatDate(date, format) {
+            if (!format) {
+                format = 'Y-m-d'; // Default
+            }
+            
+            const year = date.getFullYear();
+            const month = date.getMonth() + 1;
+            const day = date.getDate();
+            
+            const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+            const monthFullNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+            
+            let formatted = format;
+            formatted = formatted.replace('Y', year);
+            formatted = formatted.replace('y', String(year).slice(-2));
+            formatted = formatted.replace('m', String(month).padStart(2, '0'));
+            formatted = formatted.replace('M', monthNames[month - 1]);
+            formatted = formatted.replace('F', monthFullNames[month - 1]);
+            formatted = formatted.replace('d', String(day).padStart(2, '0'));
+            formatted = formatted.replace('j', String(day));
+            
+            return formatted;
+        }
+        
+        // Update greeting and time
+        function updateGreetingAndTime() {
+            const now = new Date();
+            const hour = now.getHours();
+            
+            // Update greeting
+            const greetingEl = document.getElementById('time-greeting');
+            const iconEl = document.getElementById('greeting-icon');
+            if (greetingEl) {
+                greetingEl.textContent = getGreeting(hour);
+            }
+            if (iconEl) {
+                iconEl.setAttribute('icon', getGreetingIcon(hour));
+            }
+            
+            // Update time
+            const timeEl = document.getElementById('local-time');
+            const dateEl = document.getElementById('local-date');
+            if (timeEl) {
+                timeEl.textContent = formatTime(now, timeFormat || '24');
+            }
+            if (dateEl) {
+                dateEl.textContent = formatDate(now, dateFormat || 'Y-m-d');
+            }
+            
+            // Update display container to show date and time on one line
+            const displayEl = document.getElementById('local-time-display');
+            if (displayEl && dateEl && timeEl) {
+                displayEl.innerHTML = '<span id="local-date">' + dateEl.textContent + '</span> <span id="local-time">' + timeEl.textContent + '</span>';
+            }
+        }
+        
+        // Initialize on page load
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', function() {
+                updateGreetingAndTime();
+                // Update every second
+                setInterval(updateGreetingAndTime, 1000);
+            });
+        } else {
+            updateGreetingAndTime();
+            // Update every second
+            setInterval(updateGreetingAndTime, 1000);
+        }
+    })();
+    </script>
+
     <!-- Theme Switcher Script -->
     <script>
     (function() {
@@ -615,8 +744,27 @@ if (substr($assetsUrl, 0, 1) !== '/') {
                 })
                 .then(data => {
                     // Handle both direct Mailpit response and proxy response
-                    const emails = data.messages || [];
-                    const total = data.total || 0;
+                    // Mailpit API returns: { "total": X, "messages": [...] }
+                    let emails = [];
+                    let total = 0;
+                    
+                    if (data && typeof data === 'object') {
+                        // Check if it's a direct Mailpit response
+                        if (Array.isArray(data.messages)) {
+                            emails = data.messages;
+                            total = data.total || data.messages.length;
+                        } else if (Array.isArray(data)) {
+                            // Sometimes Mailpit might return array directly
+                            emails = data;
+                            total = data.length;
+                        } else if (data.success === false) {
+                            // Error response
+                            throw new Error(data.error || data.message || 'Failed to load emails');
+                        }
+                    }
+                    
+                    console.log('Mailpit API Response:', { emails: emails.length, total: total, data: data });
+                    
                     renderEmailList(emails);
                     updateCounts({ total: total, messages: emails });
                 })
@@ -2535,6 +2683,133 @@ if (substr($assetsUrl, 0, 1) !== '/') {
                     alert('Error: ' + error.message);
                 });
         };
+        
+        // SMTP Configuration Fix
+        const SMTP_API = 'api/fix_smtp.php';
+        
+        // Check SMTP status on page load
+        function checkSmtpStatus() {
+            const statusEl = document.getElementById('smtp-status');
+            const formEl = document.getElementById('smtp-config-form');
+            const spinnerEl = document.getElementById('smtp-status-spinner');
+            
+            fetch(SMTP_API + '?action=check')
+                .then(response => response.json())
+                .then(data => {
+                    spinnerEl.style.display = 'none';
+                    
+                    if (!data.success) {
+                        statusEl.innerHTML = '<div class="alert alert-danger mb-0"><iconify-icon icon="solar:danger-triangle-bold" class="icon"></iconify-icon> ' + (data.error || 'Failed to check SMTP configuration') + '</div>';
+                        return;
+                    }
+                    
+                    // Show status
+                    let statusHtml = '<div class="mb-8">';
+                    statusHtml += '<p class="text-sm mb-4"><strong>PHP ini:</strong> <code class="text-xs">' + (data.php_ini_path || 'Not found') + '</code></p>';
+                    statusHtml += '<p class="text-sm mb-4"><strong>Writable:</strong> ' + (data.php_ini_writable ? '<span class="text-success-main">Yes</span>' : '<span class="text-danger-main">No</span>') + '</p>';
+                    
+                    if (data.mailpit) {
+                        statusHtml += '<p class="text-sm mb-4"><strong>Mailpit:</strong> ';
+                        statusHtml += data.mailpit.enabled ? '<span class="text-success-main">Enabled</span>' : '<span class="text-warning-main">Disabled</span>';
+                        statusHtml += ' (Port: ' + (data.mailpit.port || 'N/A') + ')</p>';
+                    }
+                    
+                    if (data.current_config) {
+                        statusHtml += '<p class="text-sm mb-4"><strong>Current SMTP:</strong> ' + (data.current_config.smtp || 'Not set') + '</p>';
+                        statusHtml += '<p class="text-sm mb-0"><strong>SMTP Port:</strong> ' + (data.current_config.smtp_port || 'Not set') + '</p>';
+                    }
+                    
+                    statusHtml += '</div>';
+                    
+                    // Show recommendation
+                    if (data.recommendation === 'ok') {
+                        statusHtml += '<div class="alert alert-success mb-0"><iconify-icon icon="solar:check-circle-bold" class="icon"></iconify-icon> SMTP is already configured for Mailpit!</div>';
+                    } else if (data.recommendation === 'configure') {
+                        statusHtml += '<div class="alert alert-warning mb-0"><iconify-icon icon="solar:danger-triangle-bold" class="icon"></iconify-icon> SMTP needs to be configured for Mailpit.</div>';
+                        formEl.style.display = 'block';
+                        if (data.mailpit && data.mailpit.port) {
+                            document.getElementById('smtp-port').value = data.mailpit.port;
+                        }
+                    } else {
+                        statusHtml += '<div class="alert alert-info mb-0"><iconify-icon icon="solar:info-circle-bold" class="icon"></iconify-icon> Please enable Mailpit in Laragon first.</div>';
+                    }
+                    
+                    statusEl.innerHTML = statusHtml;
+                })
+                .catch(error => {
+                    spinnerEl.style.display = 'none';
+                    statusEl.innerHTML = '<div class="alert alert-danger mb-0"><iconify-icon icon="solar:danger-triangle-bold" class="icon"></iconify-icon> Error: ' + error.message + '</div>';
+                });
+        }
+        
+        // Fix SMTP configuration
+        document.addEventListener('DOMContentLoaded', function() {
+            const fixBtn = document.getElementById('fix-smtp-btn');
+            if (fixBtn) {
+                checkSmtpStatus();
+                
+                fixBtn.addEventListener('click', function() {
+                    if (!confirm('This will modify your php.ini file. A backup will be created automatically. Continue?')) {
+                        return;
+                    }
+                    
+                    const btn = this;
+                    const originalText = btn.innerHTML;
+                    btn.disabled = true;
+                    btn.innerHTML = '<iconify-icon icon="solar:loading-bold" class="icon spin"></iconify-icon> Configuring...';
+                    
+                    const smtpPort = document.getElementById('smtp-port').value;
+                    const fromEmail = document.getElementById('from-email').value;
+                    const outputEl = document.getElementById('smtp-output');
+                    const alertEl = document.getElementById('smtp-alert');
+                    const messageEl = document.getElementById('smtp-message');
+                    
+                    const formData = new FormData();
+                    formData.append('smtp_port', smtpPort);
+                    formData.append('from_email', fromEmail);
+                    
+                    fetch(SMTP_API + '?action=configure', {
+                        method: 'POST',
+                        body: formData
+                    })
+                        .then(response => response.json())
+                        .then(data => {
+                            outputEl.style.display = 'block';
+                            
+                            if (data.success) {
+                                alertEl.className = 'alert alert-success';
+                                let message = '<iconify-icon icon="solar:check-circle-bold" class="icon"></iconify-icon> <strong>Success!</strong> ';
+                                message += data.message || 'SMTP configuration updated successfully.';
+                                if (data.backup) {
+                                    message += '<br><small>Backup created: ' + data.backup.split(/[\\/]/).pop() + '</small>';
+                                }
+                                if (data.config) {
+                                    message += '<br><small>SMTP: ' + data.config.smtp + ':' + data.config.smtp_port + '</small>';
+                                }
+                                messageEl.innerHTML = message;
+                                
+                                // Reload status after 2 seconds
+                                setTimeout(() => {
+                                    checkSmtpStatus();
+                                }, 2000);
+                            } else {
+                                alertEl.className = 'alert alert-danger';
+                                messageEl.innerHTML = '<iconify-icon icon="solar:danger-triangle-bold" class="icon"></iconify-icon> <strong>Error:</strong> ' + (data.error || 'Failed to configure SMTP');
+                            }
+                            
+                            btn.disabled = false;
+                            btn.innerHTML = originalText;
+                        })
+                        .catch(error => {
+                            outputEl.style.display = 'block';
+                            alertEl.className = 'alert alert-danger';
+                            messageEl.innerHTML = '<iconify-icon icon="solar:danger-triangle-bold" class="icon"></iconify-icon> <strong>Error:</strong> ' + error.message;
+                            btn.disabled = false;
+                            btn.innerHTML = originalText;
+                        });
+                });
+            }
+        });
     })();
     </script>
     <?php endif; ?>

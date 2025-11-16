@@ -61,6 +61,20 @@ $GLOBALS['navbarAssetsImageUrl'] = $assetsImageUrl;
                 </div>
             </div>
         </div>
+        <div class="col-auto d-none d-md-flex">
+            <div class="d-flex flex-wrap align-items-center gap-3">
+                <!-- Time-based Greeting and Clock -->
+                <div class="d-flex align-items-center gap-2 px-12 py-6 bg-neutral-100 rounded-8">
+                    <iconify-icon icon="solar:clock-circle-bold" class="text-primary-600 text-lg" id="greeting-icon"></iconify-icon>
+                    <div>
+                        <div class="fw-semibold text-xs text-secondary-light mb-1" id="time-greeting">Good Evening</div>
+                        <div class="fw-medium text-xxs text-secondary-light" id="local-time-display">
+                            <span id="local-date"></span> <span id="local-time"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
         <div class="col-auto">
             <div class="d-flex flex-wrap align-items-center gap-3">
                 <!-- Theme Switcher: Light/Dark Toggle -->

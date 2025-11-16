@@ -104,10 +104,10 @@ include __DIR__ . '/../partials/layouts/layoutTop.php';
                         <div class="card-body p-0">
                             <!-- Compose Button -->
                             <div class="p-16 border-bottom">
-                                <button type="button" class="btn btn-primary-600 w-100" id="compose-btn">
-                                    <iconify-icon icon="solar:pen-bold" class="icon"></iconify-icon>
-                                    <?php echo t_mailbox('compose', 'Compose'); ?>
-                                </button>
+                        <button type="button" class="btn btn-primary-600 w-100 radius-8 px-20 py-11 d-flex align-items-center gap-2" id="compose-btn">
+                            <iconify-icon icon="solar:pen-bold" class="text-xl"></iconify-icon>
+                            <?php echo t_mailbox('compose', 'Compose'); ?>
+                        </button>
                             </div>
 
                             <!-- Folders -->
@@ -261,8 +261,11 @@ include __DIR__ . '/../partials/layouts/layoutTop.php';
                 </form>
             </div>
             <div class="modal-footer border-top">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><?php echo t_mailbox('cancel', 'Cancel'); ?></button>
-                <button type="button" class="btn btn-primary-600" id="send-email"><?php echo t_mailbox('send', 'Send'); ?></button>
+                <button type="button" class="btn btn-secondary radius-8 px-20 py-11 d-flex align-items-center gap-2" data-bs-dismiss="modal"><?php echo t_mailbox('cancel', 'Cancel'); ?></button>
+                <button type="button" class="btn btn-primary-600 radius-8 px-20 py-11 d-flex align-items-center gap-2" id="send-email">
+                    <iconify-icon icon="solar:letter-opened-bold" class="text-xl"></iconify-icon>
+                    <?php echo t_mailbox('send', 'Send'); ?>
+                </button>
             </div>
         </div>
     </div>

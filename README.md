@@ -1,8 +1,8 @@
 # 🚀 Laragon Dashboard
 
-A modern, feature-rich web-based dashboard for managing Laragon development environment. Version 3.1.0 aims to be a comprehensive MAMP competitor on Windows, replicating Laragon control panel functionality in a modern, themed web interface.
+A modern, feature-rich web-based dashboard for managing Laragon development environment. Version 3.1.1 aims to be a comprehensive MAMP competitor on Windows, replicating Laragon control panel functionality in a modern, themed web interface.
 
-[![Version](https://img.shields.io/badge/version-3.1.0-blue.svg)](https://github.com/LebToki/Laragon-Dashboard)
+[![Version](https://img.shields.io/badge/version-3.1.1-blue.svg)](https://github.com/LebToki/Laragon-Dashboard)
 [![PHP](https://img.shields.io/badge/PHP-7.4%2B-green.svg)](https://php.net)
 [![Bootstrap](https://img.shields.io/badge/Bootstrap-5.3.2-purple.svg)](https://getbootstrap.com)
 [![License](https://img.shields.io/badge/license-MIT-orange.svg)](LICENSE)
@@ -25,7 +25,7 @@ A modern, feature-rich web-based dashboard for managing Laragon development envi
 ## 📋 Project Information
 
 - **Project Name**: Laragon Dashboard
-- **Version**: 3.1.0
+- **Version**: 3.1.1
 - **Author**: Tarek Tarabichi
 - **Company**: 2TInteractive (2tinteractive.com)
 - **Project Start**: Early 2024
@@ -67,6 +67,9 @@ Laragon is currently Windows-only. For future cross-platform support, the dashbo
 - **Project Search/Filter** - Quick search and filtering capabilities
 - **Quick Access Links** - Direct links to project admin panels
 - **Framework-Specific Icons** - Visual identification of project types
+- **Project Actions Menu** - 3-dot dropdown menu for quick actions (Ignore Project)
+- **Smart WP Admin Button** - Only displays for WordPress projects, hides automatically for others
+- **Project Ignoring** - Hide projects from the list via dropdown menu or right-click context menu
 
 ### 🗄️ Database Management
 - **Database Browser** - Browse all databases and view sizes
@@ -105,6 +108,7 @@ Laragon is currently Windows-only. For future cross-platform support, the dashbo
 - **Composer Commands** - Install, update, dump-autoload, clear-cache
 - **NPM Commands** - Install, update, run build/dev/prod
 - **PHP Info** - Quick access to PHP configuration
+- **SMTP Configuration Fix** - Automatically configure PHP to use Mailpit SMTP instead of sendmail.exe
 
 ### 💾 Backup & Export
 - **Full Project Backup** - Backup projects with database
@@ -228,10 +232,23 @@ MYSQL_PASSWORD = ''
 
 // Application Settings
 APP_NAME = 'Laragon Dashboard'
-APP_DEBUG = false
+APP_DEBUG = false  // Debug banner is DISABLED by default (line 38)
+APP_ENV = 'production'  // development, staging, production (line 41)
 SESSION_TIMEOUT = 3600
 MAX_LOGIN_ATTEMPTS = 5
+
+// Time and Date Format (optional overrides)
+TIME_FORMAT = null  // null = auto-detect, '12' = 12-hour, '24' = 24-hour
+DATE_FORMAT = null  // null = auto-detect, or custom format like 'Y-m-d', 'm/d/Y'
 ```
+
+**Important Notes:**
+
+- **Debug Banner**: The debug banner is **disabled by default** (`APP_DEBUG = false` on line 38). You won't see it unless you enable it for troubleshooting. Only enable it if you're experiencing CSS loading issues, asset path problems, or need to debug routing/URL issues. You can also enable it via the Preferences page.
+
+- **Environment**: The dashboard runs in `production` mode by default (`APP_ENV = 'production'` on line 41). This ensures optimal performance and security. Change to `development` only if you need additional debugging features.
+
+- **Time/Date Format**: Time and date formats are auto-detected from your system locale. You can override them in `config.php` or via the Preferences page.
 
 **Laragon Path Auto-Detection Order:**
 1. `LARAGON_ROOT` environment variable
@@ -543,18 +560,37 @@ If you're experiencing issues with path detection, CSS loading, or 404 errors, u
 - Check log files for errors
 - Monitor memory usage
 
-### Debug Mode
+### Debug Banner
 
-Enable debug mode in `config.php`:
+**The debug banner is disabled by default** and you won't see it unless you enable it. This is intentional - it's only needed when troubleshooting issues.
 
-```php
-define('APP_DEBUG', true);
-```
+**To enable the debug banner:**
 
-This will show:
-- Detailed error messages
-- Performance metrics
-- Debug information in footer
+1. **Via Preferences** (Recommended):
+   - Go to **Preferences** page
+   - Under **Debug Settings**, check "Show Debug Banner"
+   - Save preferences
+
+2. **Via config.php**:
+   ```php
+   // In config.php (line 38)
+   define('APP_DEBUG', true); // Only enable if troubleshooting
+   ```
+
+**When to enable it:**
+- If you're experiencing CSS loading issues
+- If assets (images, JS, CSS) aren't loading correctly
+- If you need to troubleshoot path detection problems
+- If you're debugging routing or URL issues
+
+**What it shows:**
+- Base URL and Assets URL
+- Document root path
+- Laragon root detection
+- Current script path
+- Server variables
+
+**Note**: The debug banner is controlled by `APP_DEBUG` in `config.php` (line 38) and can also be toggled via user preferences. It's set to `false` by default for a clean user experience.
 
 ## 📈 Performance
 
@@ -627,7 +663,35 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 See [CHANGELOG.md](CHANGELOG.md) for detailed version history.
 
-### Version 3.0.9 (Current)
+### Version 3.1.1 (Current)
+- **NEW**: Time-based greeting and clock display in navbar (Good morning/afternoon/evening)
+- **NEW**: Local time and date display with customizable formats
+- **NEW**: Time format preferences (12-hour/24-hour) with auto-detection
+- **NEW**: Date format preferences (ISO, US, EU formats) with auto-detection
+- **NEW**: 3-dot dropdown menu on project cards for quick actions
+- **NEW**: "Ignore Project" feature via dropdown menu or right-click context menu
+- **IMPROVED**: WP Admin button now only shows for WordPress projects (hides automatically for others)
+- **IMPROVED**: PHPMyAdmin card - direct link in "Manage MySQL" text, removed separate button
+- **IMPROVED**: Navbar layout - greeting and time display positioned in center
+- **IMPROVED**: Project card layout - 3-dot menu in top-left, icon/favicon in top-right
+- **IMPROVED**: Button styling consistency across all project cards (WowDash pattern)
+- **IMPROVED**: Share and Delete buttons added to dashboard project cards
+- **NOTE**: Debug banner is disabled by default in `config.php` (line 38). Only enable if you're troubleshooting issues.
+
+### Version 3.1.0
+- **NEW**: Auto-update system with GitHub integration
+- **NEW**: User preferences system with JSON storage
+- **NEW**: Debug banner for troubleshooting (can be enabled in Preferences)
+- **NEW**: Project deletion with database cleanup and backup options
+- **NEW**: SMTP configuration fix tool for Mailpit integration
+- **NEW**: Tunneling services integration (ngrok, LocalTunnel, Cloudflare Tunnel, Expose.dev)
+- **IMPROVED**: Mailpit API integration with better error handling
+- **IMPROVED**: Laragon path detection for custom installations
+- **IMPROVED**: CSS compilation from SCSS source files
+- **FIXED**: CSS loading issues for custom document root setups
+- **FIXED**: Mailpit email count display issues
+
+### Version 3.0.9
 - **COMPLETE CODEBASE UPDATE**: Full repository sync with latest working installation
 - All files updated to match production-ready codebase
 - Comprehensive testing and validation
@@ -696,3 +760,28 @@ See [CHANGELOG.md](CHANGELOG.md) for detailed version history.
 **Made with ❤️ for the Laragon community**
 
 **Author**: Tarek Tarabichi | **Company**: 2TInteractive | **Website**: https://2tinteractive.com
+
+---
+
+## 💼 Professional Services & Premium Solutions
+
+### 🚀 2TInteractive - Your Development Partner
+
+Looking for **custom development**, **premium solutions**, or **professional services**?
+
+**2TInteractive** offers:
+
+- **Custom Web Development** - Tailored solutions for your business needs
+- **Premium Dashboard Solutions** - Enterprise-grade dashboard and admin panel development
+- **Laragon Dashboard Customization** - Custom features, integrations, and modifications
+- **Full-Stack Development** - Modern web applications with cutting-edge technologies
+- **Consulting Services** - Expert guidance for your development projects
+- **Maintenance & Support** - Ongoing support and updates for your applications
+
+**Visit us**: [https://2tinteractive.com](https://2tinteractive.com)
+
+**Contact**: For inquiries about premium solutions, custom development, or professional services, please visit our website or reach out through our contact channels.
+
+---
+
+*This dashboard is open-source and free to use. For enterprise features, custom integrations, or professional support, consider our premium services.*

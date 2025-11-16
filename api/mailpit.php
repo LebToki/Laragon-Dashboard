@@ -11,7 +11,11 @@ require_once __DIR__ . '/../config.php';
 header('Content-Type: application/json');
 
 // Mailpit API configuration
-$mailpitApiUrl = 'http://localhost:8025/api/v1';
+// Try to get Mailpit port from Laragon config
+$laraconfig = function_exists('getLaragonConfig') ? getLaragonConfig() : [];
+$mailpitHttpPort = $laraconfig['MailpitHTTPPort'] ?? '8025';
+$mailpitApiUrl = 'http://localhost:' . $mailpitHttpPort . '/api/v1';
+
 $action = $_GET['action'] ?? 'messages';
 $messageId = $_GET['id'] ?? '';
 
@@ -22,6 +26,8 @@ function checkMailpitRunning() {
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
     curl_setopt($ch, CURLOPT_TIMEOUT, 2);
     curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 2);
+    curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
     curl_exec($ch);
     $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
     curl_close($ch);
@@ -85,6 +91,8 @@ try {
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
     curl_setopt($ch, CURLOPT_TIMEOUT, 10);
     curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5);
+    curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
     
     if (isset($method) && $method === 'DELETE') {
         curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'DELETE');
@@ -104,13 +112,34 @@ try {
         echo json_encode([
             'success' => false,
             'error' => 'Mailpit API error',
-            'http_code' => $httpCode
+            'http_code' => $httpCode,
+            'response' => substr($response, 0, 200) // Include first 200 chars for debugging
         ]);
         exit;
     }
     
-    // Return the response
-    echo $response;
+    // Decode and re-encode to ensure valid JSON and add debugging info
+    $decoded = json_decode($response, true);
+    
+    if (json_last_error() !== JSON_ERROR_NONE) {
+        // If response is not valid JSON, return error
+        throw new Exception('Invalid JSON response from Mailpit: ' . json_last_error_msg() . '. Response: ' . substr($response, 0, 200));
+    }
+    
+    // For messages action, ensure we have the expected structure
+    if ($action === 'messages') {
+        // Mailpit API returns: { "total": X, "messages": [...] }
+        // Ensure messages array exists even if empty
+        if (!isset($decoded['messages'])) {
+            $decoded['messages'] = [];
+        }
+        if (!isset($decoded['total'])) {
+            $decoded['total'] = count($decoded['messages']);
+        }
+    }
+    
+    // Return the properly formatted response
+    echo json_encode($decoded);
     
 } catch (Exception $e) {
     http_response_code(500);

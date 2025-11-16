@@ -76,8 +76,8 @@ include __DIR__ . '/../partials/layouts/layoutTop.php';
                         </select>
                     </div>
                     <div class="col-md-6">
-                        <button type="button" class="btn btn-primary-600" onclick="showPhpInfo()">
-                            <iconify-icon icon="solar:code-bold" class="icon"></iconify-icon>
+                        <button type="button" class="btn btn-primary-600 radius-8 px-20 py-11 d-flex align-items-center gap-2" onclick="showPhpInfo()">
+                            <iconify-icon icon="solar:code-bold" class="text-xl"></iconify-icon>
                             <?php echo t_tools('view_php_info', 'View PHP Info'); ?>
                         </button>
                     </div>
@@ -217,6 +217,57 @@ include __DIR__ . '/../partials/layouts/layoutTop.php';
                         </div>
                         <div id="cache-output" class="bg-neutral-50 p-16 radius-8" style="min-height: 100px; max-height: 300px; overflow-y: auto; font-family: monospace; font-size: 12px; display: none;">
                             <pre class="mb-0 text-sm" id="cache-output-text"></pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- SMTP Configuration Fix -->
+            <div class="col-lg-6">
+                <div class="card shadow-none border radius-12 h-100">
+                    <div class="card-header border-bottom bg-base py-16 px-24">
+                        <div class="d-flex align-items-center gap-2">
+                            <iconify-icon icon="solar:letter-bold" class="text-xl text-primary-600"></iconify-icon>
+                            <strong><p class="fw-semibold mb-0"><?php echo t_tools('smtp_fix', 'SMTP Configuration'); ?></p></strong>
+                        </div>
+                    </div>
+                    <div class="card-body p-24">
+                        <p class="text-secondary-light text-sm mb-16">
+                            <?php echo t_tools('smtp_fix_desc', 'Laragon\'s sendmail.exe often fails. This tool configures PHP to use Mailpit SMTP instead.'); ?>
+                        </p>
+                        
+                        <div id="smtp-status" class="mb-16">
+                            <div class="d-flex align-items-center gap-2 mb-8">
+                                <div class="spinner-border spinner-border-sm text-primary-600" role="status" id="smtp-status-spinner">
+                                    <span class="visually-hidden">Loading...</span>
+                                </div>
+                                <span class="text-sm"><?php echo t_tools('checking_smtp', 'Checking SMTP configuration...'); ?></span>
+                            </div>
+                        </div>
+                        
+                        <div id="smtp-config-form" style="display: none;">
+                            <div class="mb-16">
+                                <label class="form-label fw-medium mb-8"><?php echo t_tools('smtp_port', 'SMTP Port'); ?></label>
+                                <input type="number" class="form-control" id="smtp-port" value="1025" min="1" max="65535">
+                                <small class="text-secondary-light text-sm mt-4 d-block"><?php echo t_tools('smtp_port_desc', 'Mailpit SMTP port (default: 1025)'); ?></small>
+                            </div>
+                            
+                            <div class="mb-16">
+                                <label class="form-label fw-medium mb-8"><?php echo t_tools('from_email', 'From Email'); ?></label>
+                                <input type="email" class="form-control" id="from-email" value="noreply@localhost">
+                                <small class="text-secondary-light text-sm mt-4 d-block"><?php echo t_tools('from_email_desc', 'Default sender email address'); ?></small>
+                            </div>
+                            
+                            <button type="button" class="btn btn-primary-600 w-100 radius-8 px-20 py-11 d-flex align-items-center gap-2" id="fix-smtp-btn">
+                                <iconify-icon icon="solar:settings-bold" class="text-xl"></iconify-icon>
+                                <?php echo t_tools('fix_smtp', 'Fix SMTP Configuration'); ?>
+                            </button>
+                        </div>
+                        
+                        <div id="smtp-output" class="mt-16" style="display: none;">
+                            <div class="alert" id="smtp-alert">
+                                <span id="smtp-message"></span>
+                            </div>
                         </div>
                     </div>
                 </div>

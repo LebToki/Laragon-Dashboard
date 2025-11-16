@@ -438,6 +438,7 @@ if (!function_exists('getPlatformIcon')) {
             'React' => 'devicon-plain:react',
             'Angular' => 'devicon-plain:angular',
             'PHP' => 'devicon-plain:php',
+            'HTML5' => 'mdi:language-html5',
             'ASP.NET' => 'devicon-plain:dotnetcore',
             'TypeScript' => 'devicon-plain:typescript',
             'Node.js' => 'devicon-plain:nodejs',
@@ -641,7 +642,7 @@ if (!function_exists('detectProjectPlatform')) {
             $platform = 'CakePHP';
             $icon = 'solar:cake-bold';
             $color = 'secondary';
-        } elseif (file_exists($folderPath . '/app.py') || (is_dir($folderPath . '/static') && file_exists($folderPath . '/requirements.txt'))) {
+        } elseif (file_exists($folderPath . '/app.py') || file_exists($folderPath . '/main.py') || file_exists($folderPath . '/manage.py') || (is_dir($folderPath . '/static') && file_exists($folderPath . '/requirements.txt'))) {
             $platform = 'Python';
             $icon = 'solar:code-2-bold';
             $color = 'warning';
@@ -673,11 +674,22 @@ if (!function_exists('detectProjectPlatform')) {
                 file_exists($folderPath . '/tsconfig.json') ? [$folderPath . '/tsconfig.json'] : []
             );
             $jsFiles = file_exists($folderPath . '/package.json') ? [$folderPath . '/package.json'] : [];
+            $pyFiles = glob($folderPath . '/*.py');
+            $htmlFiles = glob($folderPath . '/*.html');
+            $indexHtml = file_exists($folderPath . '/index.html');
             
             if (!empty($phpFiles)) {
                 $platform = 'PHP';
                 $icon = 'devicon-plain:php';
                 $color = 'info';
+            } elseif (!empty($pyFiles)) {
+                $platform = 'Python';
+                $icon = 'devicon-plain:python';
+                $color = 'warning';
+            } elseif (!empty($htmlFiles) || $indexHtml) {
+                $platform = 'HTML5';
+                $icon = 'mdi:language-html5';
+                $color = 'danger';
             } elseif (!empty($aspxFiles)) {
                 $platform = 'ASP.NET';
                 $icon = 'devicon-plain:dotnetcore';
@@ -691,6 +703,7 @@ if (!function_exists('detectProjectPlatform')) {
                 $icon = 'devicon-plain:nodejs';
                 $color = 'success';
             }
+            // If still no match, it remains 'Other'
         }
         
         // Get iconify icon for platform
@@ -738,6 +751,14 @@ if (!function_exists('getAllProjects')) {
         $domainSuffix = defined('DOMAIN_SUFFIX') ? DOMAIN_SUFFIX : '.local';
         
         $ignore_dirs = ['.', '..', 'logs', 'access-logs', 'vendor', 'favicon_io', 'ablepro-90', 'assets', 'Laragon-Dashboard', 'phpmyadmin'];
+        
+        // Get user-ignored projects from preferences
+        $ignoredProjects = [];
+        if (function_exists('getDashboardPreferences')) {
+            $prefs = getDashboardPreferences();
+            $ignoredProjects = $prefs['ignored_projects'] ?? [];
+        }
+        
         $folders = array_filter(glob($documentRoot . '/*'), 'is_dir');
         sort($folders, SORT_NATURAL | SORT_FLAG_CASE);
         
@@ -745,7 +766,9 @@ if (!function_exists('getAllProjects')) {
         
         foreach ($folders as $folderPath) {
             $host = basename($folderPath);
-            if (in_array($host, $ignore_dirs) || !is_dir($folderPath)) {
+            
+            // Check if in ignore list or user-ignored
+            if (in_array($host, $ignore_dirs) || in_array($host, $ignoredProjects) || !is_dir($folderPath)) {
                 continue;
             }
             

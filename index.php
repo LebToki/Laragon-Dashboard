@@ -118,8 +118,8 @@ include './partials/layouts/layoutTop.php' ?>
                             <p class="fw-medium text-secondary-light mb-1 text-sm">Apache</p>
                             <h6 class="mb-0"><?php echo htmlspecialchars(getApacheVersion()); ?></h6>
                         </div>
-                        <div class="w-50-px h-50-px bg-white bg-opacity-20 rounded-circle d-flex justify-content-center align-items-center">
-                            <iconify-icon icon="mdi:web" class="text-white text-2xl mb-0"></iconify-icon>
+                        <div class="w-50-px h-50-px bg-primary-600 rounded-circle d-flex justify-content-center align-items-center">
+                            <iconify-icon icon="mdi:web" class="text-white text-2xl" style="font-size: 24px;"></iconify-icon>
                         </div>
                     </div>
                     <p class="fw-medium text-sm text-secondary-light mt-12 mb-0 d-flex align-items-center gap-2">
@@ -139,8 +139,8 @@ include './partials/layouts/layoutTop.php' ?>
                             <p class="fw-medium text-secondary-light mb-1 text-sm">PHP</p>
                             <h6 class="mb-0"><?php echo htmlspecialchars(getCurrentPHPVersion()); ?></h6>
                         </div>
-                        <div class="w-50-px h-50-px bg-white bg-opacity-20 rounded-circle d-flex justify-content-center align-items-center">
-                            <iconify-icon icon="mdi:language-php" class="text-white text-2xl mb-0"></iconify-icon>
+                        <div class="w-50-px h-50-px bg-primary-600 rounded-circle d-flex justify-content-center align-items-center">
+                            <iconify-icon icon="mdi:language-php" class="text-white text-2xl" style="font-size: 24px;"></iconify-icon>
                         </div>
                     </div>
                     <p class="fw-medium text-sm text-secondary-light mt-12 mb-0 d-flex align-items-center gap-2">
@@ -159,8 +159,8 @@ include './partials/layouts/layoutTop.php' ?>
                             <p class="fw-medium text-secondary-light mb-1 text-sm">MySQL</p>
                             <h6 class="mb-0"><?php echo htmlspecialchars(getMySQLVersion()); ?></h6>
                         </div>
-                        <div class="w-50-px h-50-px bg-white bg-opacity-20 rounded-circle d-flex justify-content-center align-items-center">
-                            <iconify-icon icon="mdi:database" class="text-white text-2xl mb-0"></iconify-icon>
+                        <div class="w-50-px h-50-px bg-success-main rounded-circle d-flex justify-content-center align-items-center">
+                            <iconify-icon icon="mdi:database" class="text-white text-2xl" style="font-size: 24px;"></iconify-icon>
                         </div>
                     </div>
                     <p class="fw-medium text-sm text-secondary-light mt-12 mb-0 d-flex align-items-center gap-2">
@@ -179,8 +179,8 @@ include './partials/layouts/layoutTop.php' ?>
                             <p class="fw-medium text-secondary-light mb-1 text-sm">OpenSSL</p>
                             <h6 class="mb-0"><?php echo htmlspecialchars(getOpenSSLVersion()); ?></h6>
                         </div>
-                        <div class="w-50-px h-50-px bg-white bg-opacity-20 rounded-circle d-flex justify-content-center align-items-center">
-                            <iconify-icon icon="mdi:lock" class="text-white text-2xl mb-0"></iconify-icon>
+                        <div class="w-50-px h-50-px bg-warning-main rounded-circle d-flex justify-content-center align-items-center">
+                            <iconify-icon icon="mdi:lock" class="text-white text-2xl" style="font-size: 24px;"></iconify-icon>
                         </div>
                     </div>
                     <p class="fw-medium text-sm text-secondary-light mt-12 mb-0 d-flex align-items-center gap-2">
@@ -199,8 +199,8 @@ include './partials/layouts/layoutTop.php' ?>
                             <p class="fw-medium text-secondary-light mb-1 text-sm">PHP SAPI</p>
                             <h6 class="mb-0"><?php echo htmlspecialchars(getPHPSAPI()); ?></h6>
                         </div>
-                        <div class="w-50-px h-50-px bg-white bg-opacity-20 rounded-circle d-flex justify-content-center align-items-center">
-                            <iconify-icon icon="mdi:code-tags" class="text-white text-2xl mb-0"></iconify-icon>
+                        <div class="w-50-px h-50-px bg-danger-main rounded-circle d-flex justify-content-center align-items-center">
+                            <iconify-icon icon="mdi:code-tags" class="text-white text-2xl" style="font-size: 24px;"></iconify-icon>
                         </div>
                     </div>
                     <p class="fw-medium text-sm text-secondary-light mt-12 mb-0 d-flex align-items-center gap-2">
@@ -219,8 +219,8 @@ include './partials/layouts/layoutTop.php' ?>
                             <p class="fw-medium text-secondary-light mb-1 text-sm">Document Root</p>
                             <h6 class="mb-0"><?php echo htmlspecialchars(getDocumentRoot()); ?></h6>
                         </div>
-                        <div class="w-50-px h-50-px bg-white bg-opacity-20 rounded-circle d-flex justify-content-center align-items-center">
-                            <iconify-icon icon="mdi:folder-network" class="text-white text-2xl mb-0"></iconify-icon>
+                        <div class="w-50-px h-50-px bg-info-main rounded-circle d-flex justify-content-center align-items-center">
+                            <iconify-icon icon="mdi:folder-network" class="text-white text-2xl" style="font-size: 24px;"></iconify-icon>
                         </div>
                     </div>
                     <p class="fw-medium text-sm text-secondary-light mt-12 mb-0 d-flex align-items-center gap-2">
@@ -237,23 +237,16 @@ include './partials/layouts/layoutTop.php' ?>
                     <div class="d-flex flex-wrap align-items-center justify-content-between gap-8">
                         <div>
                             <p class="fw-medium text-secondary-light mb-1 text-sm">PHPMyAdmin</p>
-                            <h6 class="mb-0">Manage MySQL</h6>
+                            <h6 class="mb-0">
+                                <a href="http://localhost/phpmyadmin" target="_blank" class="text-white text-decoration-none hover-opacity-80 d-inline-flex align-items-center gap-1">
+                                    Manage MySQL
+                                    <iconify-icon icon="solar:link-bold" class="text-sm"></iconify-icon>
+                                </a>
+                            </h6>
                         </div>
-                        <div class="w-50-px h-50-px bg-white bg-opacity-20 rounded-circle d-flex justify-content-center align-items-center">
-                            <iconify-icon icon="mdi:database-search" class="text-white text-2xl mb-0"></iconify-icon>
+                        <div class="w-50-px h-50-px bg-info-main rounded-circle d-flex justify-content-center align-items-center">
+                            <iconify-icon icon="mdi:database-search" class="text-white text-2xl" style="font-size: 24px;"></iconify-icon>
                         </div>
-                    </div>
-                    <div class="row g-2 mt-12">
-                        <div class="col-6">
-                            <a href="http://localhost/phpmyadmin" target="_blank" class="text-white text-sm fw-medium hover-opacity-80 d-inline-flex align-items-center gap-1" style="background-image: url('assets/images/phpmyadmin-cover.png'); background-size: cover; background-position: center; background-repeat: no-repeat; padding: 8px 16px; border-radius: 6px; position: relative; overflow: hidden; display: inline-flex;">
-                                <span style="position: relative; z-index: 1; text-shadow: 0 1px 2px rgba(0,0,0,0.5);">
-                                    <iconify-icon icon="solar:link-bold" class="icon text-sm"></iconify-icon>
-                                    Open
-                                </span>
-                                <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.3); z-index: 0;"></div>
-                            </a>
-                        </div>
-                        <div class="col-6"></div>
                     </div>
                 </div>
             </div>
@@ -269,7 +262,7 @@ include './partials/layouts/layoutTop.php' ?>
                             <h6 class="mb-0"><?php echo htmlspecialchars(getLaragonVersion()); ?></h6>
                         </div>
                         <div class="w-50-px h-50-px bg-info-main rounded-circle d-flex justify-content-center align-items-center">
-                            <iconify-icon icon="mdi:elephant" class="text-white text-2xl mb-0"></iconify-icon>
+                            <iconify-icon icon="mdi:elephant" class="text-white text-2xl" style="font-size: 24px;"></iconify-icon>
                         </div>
                     </div>
                     <p class="fw-medium text-sm text-secondary-light mt-12 mb-0 d-flex align-items-center gap-2">
@@ -284,8 +277,8 @@ include './partials/layouts/layoutTop.php' ?>
         <div class="mt-24">
             <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-16">
                 <h6 class="fw-semibold mb-0">Projects</h6>
-                <button type="button" class="btn btn-primary-600" data-bs-toggle="modal" data-bs-target="#projectWizardModal">
-                    <iconify-icon icon="solar:add-circle-bold" class="icon"></iconify-icon>
+                <button type="button" class="btn btn-primary-600 radius-8 px-20 py-11 d-flex align-items-center gap-2" data-bs-toggle="modal" data-bs-target="#projectWizardModal">
+                    <iconify-icon icon="solar:add-circle-bold" class="text-xl"></iconify-icon>
                     Create New Project
                 </button>
             </div>
@@ -324,40 +317,72 @@ include './partials/layouts/layoutTop.php' ?>
                         $gradientVariant = $project['gradient'] ?? (($index % 10) + 1);
                         $iconifyIcon = $project['iconify'] ?? $project['icon'] ?? 'solar:folder-bold';
                     ?>
-                    <div class="col-lg-3 col-md-4 col-sm-6 project-card" data-project-name="<?php echo htmlspecialchars(strtolower($project['name'])); ?>" data-platform="<?php echo htmlspecialchars(strtolower($project['platform'])); ?>">
-                        <div class="card shadow-none border radius-12 bg-gradient-start-<?php echo $gradientVariant; ?> h-100">
+                    <div class="col-lg-3 col-md-4 col-sm-6 project-card" 
+                         data-project-name="<?php echo htmlspecialchars($project['name']); ?>" 
+                         data-platform="<?php echo htmlspecialchars(strtolower($project['platform'])); ?>"
+                         oncontextmenu="if(typeof showProjectContextMenu === 'function') { showProjectContextMenu(event, '<?php echo htmlspecialchars($project['name']); ?>'); return false; }">
+                        <div class="card shadow-none border radius-12 bg-gradient-start-<?php echo $gradientVariant; ?> h-100 position-relative">
                             <div class="card-body p-16">
+                                <!-- 3-Dot Dropdown Menu (Top Left) -->
+                                <div class="dropdown position-absolute top-0 start-0 ms-16 mt-16">
+                                    <button type="button" data-bs-toggle="dropdown" aria-expanded="false" class="bg-white bg-opacity-20 w-32-px h-32-px radius-8 border border-white border-opacity-30 d-flex justify-content-center align-items-center text-white hover-opacity-80" style="backdrop-filter: blur(4px);">
+                                        <iconify-icon icon="entypo:dots-three-vertical" class="icon text-lg"></iconify-icon>
+                                    </button>
+                                    <ul class="dropdown-menu p-12 border bg-base shadow">
+                                        <li>
+                                            <button type="button" class="ignore-project-btn dropdown-item px-16 py-8 rounded text-secondary-light bg-hover-neutral-200 text-hover-neutral-900 d-flex align-items-center gap-10" data-project-name="<?php echo htmlspecialchars($project['name']); ?>">
+                                                <iconify-icon icon="solar:eye-closed-bold" class="icon"></iconify-icon>
+                                                Ignore Project
+                                            </button>
+                                        </li>
+                                    </ul>
+                                </div>
+                                
                                 <div class="d-flex flex-wrap align-items-center justify-content-between gap-8">
-                                    <div>
+                                    <div style="padding-left: 48px;">
                                         <p class="fw-medium text-secondary-light mb-1 text-sm"><?php echo htmlspecialchars($project['platform']); ?></p>
                                         <h6 class="mb-0 text-truncate" title="<?php echo htmlspecialchars($project['name']); ?>"><?php echo htmlspecialchars($project['name']); ?></h6>
                                     </div>
-                                    <div class="w-50-px h-50-px bg-white bg-opacity-20 rounded-circle d-flex justify-content-center align-items-center">
+                                    <div class="w-50-px h-50-px bg-primary-600 rounded-circle d-flex justify-content-center align-items-center">
                                         <?php if ($faviconUrl): ?>
                                             <img src="<?php echo htmlspecialchars($faviconUrl); ?>" alt="<?php echo htmlspecialchars($project['name']); ?>" class="w-40-px h-40-px object-fit-cover rounded-circle" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';" style="max-width: 40px; max-height: 40px;">
-                                            <iconify-icon icon="<?php echo htmlspecialchars($iconifyIcon); ?>" class="text-white text-2xl mb-0" style="display: none;"></iconify-icon>
+                                            <iconify-icon icon="<?php echo htmlspecialchars($iconifyIcon); ?>" class="text-white text-2xl" style="font-size: 24px; display: none;"></iconify-icon>
                                         <?php else: ?>
-                                            <iconify-icon icon="<?php echo htmlspecialchars($iconifyIcon); ?>" class="text-white text-2xl mb-0"></iconify-icon>
+                                            <iconify-icon icon="<?php echo htmlspecialchars($iconifyIcon); ?>" class="text-white text-2xl" style="font-size: 24px;"></iconify-icon>
                                         <?php endif; ?>
                                     </div>
                                 </div>
                                 <div class="row g-2 mt-12">
-                                    <div class="col-6">
-                                        <a href="<?php echo htmlspecialchars($project['url']); ?>" target="_blank" class="text-white text-sm fw-medium hover-opacity-80 d-flex align-items-center gap-1">
-                                            <iconify-icon icon="solar:link-bold" class="icon text-sm"></iconify-icon>
+                                    <div class="<?php echo ($project['is_wordpress'] ?? false) ? 'col-6' : 'col-12'; ?>">
+                                        <a href="<?php echo htmlspecialchars($project['url']); ?>" target="_blank" class="btn btn-sm btn-info w-100 radius-8 px-12 py-8 d-flex align-items-center gap-2">
+                                            <iconify-icon icon="solar:link-bold" class="text-lg"></iconify-icon>
                                             Open
                                         </a>
                                     </div>
-                                    <?php if ($project['is_wordpress']): ?>
+                                    <?php if ($project['is_wordpress'] ?? false): ?>
+                                    <div class="col-6">
+                                        <a href="<?php echo htmlspecialchars($project['url']); ?>/wp-admin" target="_blank" class="btn btn-sm btn-primary-600 w-100 radius-8 px-12 py-8 d-flex align-items-center gap-2">
+                                            <iconify-icon icon="solar:settings-bold" class="text-lg"></iconify-icon>
+                                            WP Admin
+                                        </a>
+                                    </div>
+                                    <?php endif; ?>
+                                </div>
+                                <div class="mt-8 pt-8 border-top border-white border-opacity-20">
+                                    <div class="row g-2">
                                         <div class="col-6">
-                                            <a href="<?php echo htmlspecialchars($project['url']); ?>/wp-admin" target="_blank" class="text-white text-sm fw-medium hover-opacity-80 d-flex align-items-center gap-1">
-                                                <iconify-icon icon="solar:settings-bold" class="icon text-sm"></iconify-icon>
-                                                WP Admin
+                                            <a href="index.php?page=projects" class="btn btn-sm btn-success w-100 radius-8 px-12 py-8 d-flex align-items-center gap-2">
+                                                <iconify-icon icon="solar:share-bold" class="text-lg"></iconify-icon>
+                                                Share
                                             </a>
                                         </div>
-                                    <?php else: ?>
-                                        <div class="col-6"></div>
-                                    <?php endif; ?>
+                                        <div class="col-6">
+                                            <a href="index.php?page=projects" class="btn btn-sm btn-danger w-100 radius-8 px-12 py-8 d-flex align-items-center gap-2">
+                                                <iconify-icon icon="solar:trash-bin-trash-bold" class="text-lg"></iconify-icon>
+                                                Delete
+                                            </a>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -454,5 +479,64 @@ include './partials/layouts/layoutTop.php' ?>
 
     </div>
 </div>
+
+<script>
+// Handle ignore project from dropdown menu (for index.php)
+document.addEventListener('DOMContentLoaded', function() {
+    const PROJECTS_API = 'api/projects.php';
+    
+    document.querySelectorAll('.ignore-project-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const projectName = this.getAttribute('data-project-name');
+            if (!projectName) {
+                return;
+            }
+            
+            // Close dropdown
+            const dropdownElement = this.closest('.dropdown').querySelector('[data-bs-toggle="dropdown"]');
+            const dropdown = bootstrap.Dropdown.getInstance(dropdownElement);
+            if (dropdown) {
+                dropdown.hide();
+            }
+            
+            if (!confirm('Ignore "' + projectName + '"? This project will be hidden from the list.')) {
+                return;
+            }
+            
+            const formData = new FormData();
+            formData.append('action', 'ignore');
+            formData.append('project', projectName);
+            
+            fetch(PROJECTS_API, {
+                method: 'POST',
+                body: formData
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // Remove the project card
+                        const projectCard = document.querySelector(`[data-project-name="${projectName}"]`);
+                        if (projectCard) {
+                            projectCard.style.transition = 'opacity 0.3s';
+                            projectCard.style.opacity = '0';
+                            setTimeout(() => {
+                                projectCard.remove();
+                            }, 300);
+                        }
+                        
+                        // Show success message
+                        alert('Project "' + projectName + '" has been ignored and will not appear in the list.');
+                    } else {
+                        alert('Error: ' + (data.error || 'Failed to ignore project'));
+                    }
+                })
+                .catch(error => {
+                    console.error('Error ignoring project:', error);
+                    alert('Error: ' + error.message);
+                });
+        });
+    });
+});
+</script>
 
 <?php include './partials/layouts/layoutBottom.php' ?>
