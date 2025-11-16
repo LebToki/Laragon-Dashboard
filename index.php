@@ -34,7 +34,44 @@ if (!empty($page)) {
         
         // Verify file exists
         if (file_exists($pageFile)) {
-            include $pageFile;
+            // Enable error reporting temporarily for debugging (only if APP_DEBUG is true)
+            if (defined('APP_DEBUG') && APP_DEBUG) {
+                error_reporting(E_ALL);
+                ini_set('display_errors', 1);
+            }
+            
+            try {
+                include $pageFile;
+                exit;
+            } catch (Throwable $e) {
+                // If there's an error, show it in debug mode, otherwise show 404
+                if (defined('APP_DEBUG') && APP_DEBUG) {
+                    http_response_code(500);
+                    echo '<h1>Error Loading Page</h1>';
+                    echo '<p>' . htmlspecialchars($e->getMessage()) . '</p>';
+                    echo '<pre>' . htmlspecialchars($e->getTraceAsString()) . '</pre>';
+                } else {
+                    http_response_code(404);
+                    if (file_exists(__DIR__ . '/pages/404.php')) {
+                        include __DIR__ . '/pages/404.php';
+                    } else {
+                        include __DIR__ . '/partials/layouts/layoutTop.php';
+                        echo '<div class="dashboard-main-body"><div class="container-fluid"><div class="card shadow-none border radius-12"><div class="card-body p-24 text-center"><h6 class="fw-semibold mb-16">404 - Page Not Found</h6><p class="text-secondary-light mb-16">The requested page could not be found.</p><a href="index.php" class="btn btn-primary-600">Go to Dashboard</a></div></div></div></div>';
+                        include __DIR__ . '/partials/layouts/layoutBottom.php';
+                    }
+                }
+                exit;
+            }
+        } else {
+            // File doesn't exist - show 404
+            http_response_code(404);
+            if (file_exists(__DIR__ . '/pages/404.php')) {
+                include __DIR__ . '/pages/404.php';
+            } else {
+                include __DIR__ . '/partials/layouts/layoutTop.php';
+                echo '<div class="dashboard-main-body"><div class="container-fluid"><div class="card shadow-none border radius-12"><div class="card-body p-24 text-center"><h6 class="fw-semibold mb-16">404 - Page Not Found</h6><p class="text-secondary-light mb-16">The requested page file does not exist: ' . htmlspecialchars($pageFile) . '</p><a href="index.php" class="btn btn-primary-600">Go to Dashboard</a></div></div></div></div>';
+                include __DIR__ . '/partials/layouts/layoutBottom.php';
+            }
             exit;
         }
     }
@@ -46,7 +83,7 @@ if (!empty($page)) {
     } else {
         // Simple 404 fallback
         include __DIR__ . '/partials/layouts/layoutTop.php';
-        echo '<div class="dashboard-main-body"><div class="container-fluid"><div class="card shadow-none border radius-12"><div class="card-body p-24 text-center"><h6 class="fw-semibold mb-16">404 - Page Not Found</h6><p class="text-secondary-light mb-16">The requested page could not be found.</p><a href="index.php" class="btn btn-primary-600">Go to Dashboard</a></div></div></div></div>';
+        echo '<div class="dashboard-main-body"><div class="container-fluid"><div class="card shadow-none border radius-12"><div class="card-body p-24 text-center"><h6 class="fw-semibold mb-16">404 - Page Not Found</h6><p class="text-secondary-light mb-16">The requested page "' . htmlspecialchars($page) . '" is not valid.</p><a href="index.php" class="btn btn-primary-600">Go to Dashboard</a></div></div></div></div>';
         include __DIR__ . '/partials/layouts/layoutBottom.php';
     }
     exit;
