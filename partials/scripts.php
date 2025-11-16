@@ -194,6 +194,28 @@ if (substr($assetsUrl, 0, 1) !== '/') {
                     .then(function(registration) {
                         console.log('ServiceWorker registration successful with scope: ', registration.scope);
                         
+                        // Clear cache if requested (for troubleshooting CSS issues)
+                        if (window.location.search.includes('clearcache=true') || 
+                            (typeof sessionStorage !== 'undefined' && sessionStorage.getItem('sw_cleared') !== 'true')) {
+                            registration.unregister().then(function() {
+                                return caches.keys();
+                            }).then(function(cacheNames) {
+                                return Promise.all(cacheNames.map(function(cacheName) {
+                                    return caches.delete(cacheName);
+                                }));
+                            }).then(function() {
+                                console.log('Service Worker and caches cleared');
+                                if (typeof sessionStorage !== 'undefined') {
+                                    sessionStorage.setItem('sw_cleared', 'true');
+                                }
+                                // Reload after clearing
+                                setTimeout(function() {
+                                    window.location.reload();
+                                }, 500);
+                            });
+                            return;
+                        }
+                        
                         // Check for updates
                         registration.addEventListener('updatefound', function() {
                             const newWorker = registration.installing;
