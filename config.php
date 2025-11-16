@@ -296,14 +296,49 @@ function getLaragonRoot() {
         }
     }
     
-    // 4. Try to detect from document root
+    // 4. Try to detect from document root or script path
     $docRoot = $_SERVER['DOCUMENT_ROOT'] ?? '';
+    $scriptPath = $_SERVER['SCRIPT_FILENAME'] ?? __FILE__;
+    
+    // Check if document root contains 'laragon'
     if (strpos($docRoot, 'laragon') !== false) {
         $parts = explode('laragon', $docRoot);
-        $detectedPath = $parts[0] . 'laragon';
-        if (is_dir($detectedPath) && file_exists($detectedPath . '/laragon.exe') && file_exists($detectedPath . '/usr/laragon.ini')) {
-            return str_replace('\\', '/', $detectedPath);
+        if (!empty($parts[0])) {
+            $detectedPath = $parts[0] . 'laragon';
+            if (is_dir($detectedPath) && file_exists($detectedPath . '/laragon.exe') && file_exists($detectedPath . '/usr/laragon.ini')) {
+                return str_replace('\\', '/', $detectedPath);
+            }
         }
+    }
+    
+    // Check if script path contains 'laragon' (for custom locations)
+    if (strpos($scriptPath, 'laragon') !== false) {
+        $parts = explode('laragon', $scriptPath);
+        if (!empty($parts[0])) {
+            $detectedPath = $parts[0] . 'laragon';
+            if (is_dir($detectedPath) && file_exists($detectedPath . '/laragon.exe') && file_exists($detectedPath . '/usr/laragon.ini')) {
+                return str_replace('\\', '/', $detectedPath);
+            }
+        }
+    }
+    
+    // Try to find Laragon by going up from current script directory
+    $currentDir = dirname($scriptPath);
+    $maxDepth = 10; // Prevent infinite loops
+    $depth = 0;
+    while ($depth < $maxDepth && $currentDir !== dirname($currentDir)) {
+        // Check if we're in a Laragon subdirectory
+        if (strpos($currentDir, 'laragon') !== false) {
+            $parts = explode('laragon', $currentDir);
+            if (!empty($parts[0])) {
+                $detectedPath = $parts[0] . 'laragon';
+                if (is_dir($detectedPath) && file_exists($detectedPath . '/laragon.exe') && file_exists($detectedPath . '/usr/laragon.ini')) {
+                    return str_replace('\\', '/', $detectedPath);
+                }
+            }
+        }
+        $currentDir = dirname($currentDir);
+        $depth++;
     }
     
     // 5. Try reading from laragon.ini in common locations (if ini file exists but exe doesn't)
