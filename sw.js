@@ -3,8 +3,8 @@
  * Enables offline functionality and caching for PWA
  */
 
-const CACHE_NAME = 'laragon-dashboard-v1.1';
-const RUNTIME_CACHE = 'laragon-dashboard-runtime-v1.1';
+const CACHE_NAME = 'laragon-dashboard-v1.2';
+const RUNTIME_CACHE = 'laragon-dashboard-runtime-v1.2';
 
 // Get base path from scope
 const BASE_PATH = self.location.pathname.replace('/sw.js', '');
