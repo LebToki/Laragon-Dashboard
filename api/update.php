@@ -41,13 +41,18 @@ try {
             break;
             
         case 'backup':
-            $backupPath = $updateManager->backupCurrentInstallation();
-            ob_clean();
-            echo json_encode([
-                'success' => true,
-                'message' => 'Backup created successfully',
-                'backup_path' => $backupPath
-            ]);
+            try {
+                $backupPath = $updateManager->backupCurrentInstallation();
+                ob_clean();
+                echo json_encode([
+                    'success' => true,
+                    'message' => 'Backup created successfully',
+                    'backup_path' => $backupPath
+                ]);
+            } catch (Exception $e) {
+                error_log("Update API: Backup failed - " . $e->getMessage());
+                throw $e;
+            }
             break;
             
         case 'download':
@@ -56,34 +61,57 @@ try {
                 throw new Exception('Download URL required');
             }
             
-            $zipPath = $updateManager->downloadUpdate($downloadUrl);
-            ob_clean();
-            echo json_encode([
-                'success' => true,
-                'message' => 'Update downloaded successfully',
-                'zip_path' => $zipPath
-            ]);
+            try {
+                $zipPath = $updateManager->downloadUpdate($downloadUrl);
+                ob_clean();
+                echo json_encode([
+                    'success' => true,
+                    'message' => 'Update downloaded successfully',
+                    'zip_path' => $zipPath
+                ]);
+            } catch (Exception $e) {
+                error_log("Update API: Download failed - " . $e->getMessage());
+                throw $e;
+            }
             break;
             
         case 'install':
             $zipPath = $_POST['zip_path'] ?? $_GET['zip_path'] ?? null;
             $backupPath = $_POST['backup_path'] ?? $_GET['backup_path'] ?? null;
             
-            if (!$zipPath || !$backupPath) {
-                throw new Exception('ZIP path and backup path required');
+            if (!$zipPath) {
+                throw new Exception('ZIP path is required');
             }
             
-            $result = $updateManager->installUpdate($zipPath, $backupPath);
+            if (!$backupPath) {
+                throw new Exception('Backup path is required. Cannot install without backup.');
+            }
             
-            // Verify installation
-            $verified = $updateManager->verifyInstallation();
+            // Verify paths exist
+            if (!file_exists($zipPath)) {
+                throw new Exception('ZIP file not found: ' . $zipPath);
+            }
             
-            ob_clean();
-            echo json_encode([
-                'success' => $result && $verified,
-                'message' => $verified ? 'Update installed successfully' : 'Update installed but verification failed',
-                'verified' => $verified
-            ]);
+            if (!is_dir($backupPath)) {
+                throw new Exception('Backup directory not found: ' . $backupPath);
+            }
+            
+            try {
+                $result = $updateManager->installUpdate($zipPath, $backupPath);
+                
+                // Verify installation
+                $verified = $updateManager->verifyInstallation();
+                
+                ob_clean();
+                echo json_encode([
+                    'success' => $result && $verified,
+                    'message' => $verified ? 'Update installed successfully' : 'Update installed but verification failed',
+                    'verified' => $verified
+                ]);
+            } catch (Exception $e) {
+                error_log("Update API: Installation failed - " . $e->getMessage());
+                throw $e;
+            }
             break;
             
         case 'rollback':

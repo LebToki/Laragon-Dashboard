@@ -2969,6 +2969,9 @@ if (substr($assetsUrl, 0, 1) !== '/') {
             const progressBar = progressModal.querySelector('.progress-bar');
             const statusText = progressModal.querySelector('#update-status');
             
+            // Store backup path for use in install step
+            let backupPath = null;
+            
             // Step 1: Backup
             statusText.textContent = 'Creating backup...';
             progressBar.style.width = '25%';
@@ -2978,6 +2981,12 @@ if (substr($assetsUrl, 0, 1) !== '/') {
                 .then(data => {
                     if (!data.success) {
                         throw new Error(data.error || 'Backup failed');
+                    }
+                    
+                    // Store backup path for later use
+                    backupPath = data.backup_path;
+                    if (!backupPath) {
+                        throw new Error('Backup path not returned from backup operation');
                     }
                     
                     // Step 2: Download
@@ -2996,6 +3005,10 @@ if (substr($assetsUrl, 0, 1) !== '/') {
                         throw new Error(data.error || 'Download failed');
                     }
                     
+                    if (!data.zip_path) {
+                        throw new Error('Download path not returned from download operation');
+                    }
+                    
                     // Step 3: Install
                     statusText.textContent = 'Installing update...';
                     progressBar.style.width = '75%';
@@ -3005,7 +3018,7 @@ if (substr($assetsUrl, 0, 1) !== '/') {
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({
                             zip_path: data.zip_path,
-                            backup_path: data.backup_path || ''
+                            backup_path: backupPath
                         })
                     });
                 })
@@ -3023,11 +3036,24 @@ if (substr($assetsUrl, 0, 1) !== '/') {
                     }
                 })
                 .catch(error => {
-                    statusText.textContent = 'Error: ' + error.message;
+                    console.error('Update installation error:', error);
+                    statusText.textContent = 'Error: ' + (error.message || 'Unknown error occurred');
                     progressBar.className = 'progress-bar bg-danger';
+                    progressBar.style.width = '100%';
+                    
+                    // Add a close button
+                    const closeBtn = document.createElement('button');
+                    closeBtn.className = 'btn btn-secondary mt-3';
+                    closeBtn.textContent = 'Close';
+                    closeBtn.onclick = () => progressModal.remove();
+                    progressModal.querySelector('.modal-body').appendChild(closeBtn);
+                    
+                    // Auto-remove after 10 seconds instead of 5
                     setTimeout(() => {
-                        progressModal.remove();
-                    }, 5000);
+                        if (progressModal.parentNode) {
+                            progressModal.remove();
+                        }
+                    }, 10000);
                 });
         };
         

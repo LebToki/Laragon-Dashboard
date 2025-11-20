@@ -3,7 +3,8 @@
  * Laragon Dashboard - Update Manager
  * Handles automatic updates from GitHub while preserving user configuration
  * 
- * Version: 1.0.0
+ * Version: 1.1.0
+ * Enhanced with better error handling, logging, and version detection
  */
 
 if (!class_exists('UpdateManager')) {
@@ -34,18 +35,30 @@ if (!class_exists('UpdateManager')) {
          * @return array Update information or false if no update available
          */
         public function checkForUpdates() {
-            $currentVersion = defined('APP_VERSION') ? APP_VERSION : '3.0.0';
+            // Use getAppVersion() if available, otherwise fall back to APP_VERSION constant
+            if (function_exists('getAppVersion')) {
+                $currentVersion = getAppVersion();
+            } else {
+                $currentVersion = defined('APP_VERSION') ? APP_VERSION : '3.0.0';
+            }
             
             try {
                 $url = "{$this->githubApiUrl}/{$this->githubRepo}/releases/latest";
                 $release = $this->fetchFromGitHub($url);
                 
                 if (!$release) {
+                    error_log("UpdateManager: Failed to fetch release information from GitHub");
                     return ['available' => false, 'error' => 'Failed to fetch release information'];
                 }
                 
                 $latestVersion = $this->normalizeVersion($release['tag_name']);
                 $currentVersionNormalized = $this->normalizeVersion($currentVersion);
+                
+                // Skip update check if current version is a dev version (starts with 'dev-')
+                if (strpos($currentVersionNormalized, 'dev-') === 0) {
+                    error_log("UpdateManager: Skipping update check for dev version: {$currentVersionNormalized}");
+                    return ['available' => false, 'current_version' => $currentVersion, 'latest_version' => $release['tag_name'], 'dev_version' => true];
+                }
                 
                 $updateAvailable = version_compare($latestVersion, $currentVersionNormalized, '>');
                 
@@ -86,9 +99,16 @@ if (!class_exists('UpdateManager')) {
          */
         public function backupCurrentInstallation() {
             $timestamp = date('Y-m-d_His');
-            $currentVersion = defined('APP_VERSION') ? APP_VERSION : '3.0.0';
+            // Use getAppVersion() if available, otherwise fall back to APP_VERSION constant
+            if (function_exists('getAppVersion')) {
+                $currentVersion = getAppVersion();
+            } else {
+                $currentVersion = defined('APP_VERSION') ? APP_VERSION : '3.0.0';
+            }
             $backupName = "{$timestamp}_v{$currentVersion}";
             $backupPath = $this->backupDir . '/' . $backupName;
+            
+            error_log("UpdateManager: Creating backup: {$backupPath}");
             
             if (!is_dir($backupPath)) {
                 @mkdir($backupPath, 0755, true);
@@ -126,8 +146,13 @@ if (!class_exists('UpdateManager')) {
                 'config_keys' => $this->extractConfigKeys()
             ];
             
-            file_put_contents($backupPath . '/manifest.json', json_encode($manifest, JSON_PRETTY_PRINT));
+            $manifestPath = $backupPath . '/manifest.json';
+            if (@file_put_contents($manifestPath, json_encode($manifest, JSON_PRETTY_PRINT)) === false) {
+                error_log("UpdateManager: Failed to write manifest file: {$manifestPath}");
+                throw new Exception('Failed to create backup manifest');
+            }
             
+            error_log("UpdateManager: Backup created successfully: {$backupPath}");
             return $backupPath;
         }
         
@@ -138,27 +163,54 @@ if (!class_exists('UpdateManager')) {
          * @return string Path to downloaded ZIP file
          */
         public function downloadUpdate($downloadUrl) {
+            if (empty($downloadUrl)) {
+                throw new Exception('Download URL is required');
+            }
+            
             $zipPath = $this->tempDir . '/update.zip';
+            
+            // Clean up any existing update file
+            if (file_exists($zipPath)) {
+                @unlink($zipPath);
+            }
+            
+            error_log("UpdateManager: Downloading update from: {$downloadUrl}");
             
             // Download file
             $ch = curl_init($downloadUrl);
             $fp = fopen($zipPath, 'wb');
+            if (!$fp) {
+                curl_close($ch);
+                throw new Exception("Failed to create temporary file for download");
+            }
+            
             curl_setopt($ch, CURLOPT_FILE, $fp);
             curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
             curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
             curl_setopt($ch, CURLOPT_USERAGENT, 'Laragon-Dashboard-Updater/1.0');
             curl_setopt($ch, CURLOPT_TIMEOUT, 300); // 5 minutes
+            curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 30);
             
             $success = curl_exec($ch);
             $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+            $error = curl_error($ch);
             curl_close($ch);
             fclose($fp);
             
             if (!$success || $httpCode !== 200) {
                 @unlink($zipPath);
-                throw new Exception("Failed to download update: HTTP {$httpCode}");
+                $errorMsg = $error ?: "HTTP {$httpCode}";
+                error_log("UpdateManager: Download failed: {$errorMsg}");
+                throw new Exception("Failed to download update: {$errorMsg}");
             }
             
+            // Verify file was downloaded and has content
+            if (!file_exists($zipPath) || filesize($zipPath) === 0) {
+                @unlink($zipPath);
+                throw new Exception("Downloaded file is empty or invalid");
+            }
+            
+            error_log("UpdateManager: Download completed successfully: " . filesize($zipPath) . " bytes");
             return $zipPath;
         }
         
@@ -170,33 +222,63 @@ if (!class_exists('UpdateManager')) {
          * @return bool Success status
          */
         public function installUpdate($zipPath, $backupPath) {
+            if (empty($zipPath) || !file_exists($zipPath)) {
+                throw new Exception('Update package not found');
+            }
+            
+            if (empty($backupPath) || !is_dir($backupPath)) {
+                throw new Exception('Backup directory not found. Cannot proceed without backup.');
+            }
+            
+            error_log("UpdateManager: Starting installation. ZIP: {$zipPath}, Backup: {$backupPath}");
+            
             $extractPath = $this->tempDir . '/extracted';
             
             // Clean extract directory
             if (is_dir($extractPath)) {
                 $this->deleteDirectory($extractPath);
             }
-            @mkdir($extractPath, 0755, true);
-            
-            // Extract ZIP
-            $zip = new ZipArchive();
-            if ($zip->open($zipPath) !== true) {
-                throw new Exception('Failed to open update package');
+            if (!@mkdir($extractPath, 0755, true)) {
+                throw new Exception('Failed to create extraction directory');
             }
             
-            $zip->extractTo($extractPath);
+            // Extract ZIP
+            error_log("UpdateManager: Extracting ZIP file...");
+            $zip = new ZipArchive();
+            $zipResult = $zip->open($zipPath);
+            if ($zipResult !== true) {
+                $errorMsg = "Failed to open ZIP file (code: {$zipResult})";
+                error_log("UpdateManager: {$errorMsg}");
+                throw new Exception($errorMsg);
+            }
+            
+            if (!$zip->extractTo($extractPath)) {
+                $zip->close();
+                throw new Exception('Failed to extract update package');
+            }
             $zip->close();
+            error_log("UpdateManager: ZIP extracted successfully");
             
             // Find the actual dashboard directory in extracted files
             $dashboardPath = $this->findDashboardDirectory($extractPath);
             
-            if (!$dashboardPath) {
+            if (!$dashboardPath || !file_exists($dashboardPath . '/config.php')) {
+                $this->deleteDirectory($extractPath);
                 throw new Exception('Could not find dashboard directory in update package');
             }
             
+            error_log("UpdateManager: Dashboard directory found: {$dashboardPath}");
+            
             // Migrate configuration before replacing files
-            $configMigrator = new ConfigMigrator();
-            $configMigrator->migrateConfiguration($backupPath, $dashboardPath);
+            try {
+                error_log("UpdateManager: Migrating configuration...");
+                $configMigrator = new ConfigMigrator();
+                $configMigrator->migrateConfiguration($backupPath, $dashboardPath);
+                error_log("UpdateManager: Configuration migrated successfully");
+            } catch (Exception $e) {
+                error_log("UpdateManager: Configuration migration failed: " . $e->getMessage());
+                // Don't fail the update if migration fails, but log it
+            }
             
             // Files/directories to preserve (user data)
             $preservePaths = [
@@ -209,12 +291,15 @@ if (!class_exists('UpdateManager')) {
             ];
             
             // Replace files while preserving user data
+            error_log("UpdateManager: Replacing files...");
             $this->replaceFiles($dashboardPath, $preservePaths);
+            error_log("UpdateManager: Files replaced successfully");
             
             // Clean up
             $this->deleteDirectory($extractPath);
             @unlink($zipPath);
             
+            error_log("UpdateManager: Installation completed successfully");
             return true;
         }
         
@@ -225,32 +310,70 @@ if (!class_exists('UpdateManager')) {
          * @return bool Success status
          */
         public function rollback($backupPath) {
-            if (!is_dir($backupPath)) {
-                throw new Exception('Backup directory not found');
+            if (empty($backupPath) || !is_dir($backupPath)) {
+                throw new Exception('Backup directory not found: ' . $backupPath);
             }
             
             $manifestPath = $backupPath . '/manifest.json';
             if (!file_exists($manifestPath)) {
-                throw new Exception('Backup manifest not found');
+                throw new Exception('Backup manifest not found: ' . $manifestPath);
             }
             
-            $manifest = json_decode(file_get_contents($manifestPath), true);
+            error_log("UpdateManager: Starting rollback from backup: {$backupPath}");
+            
+            $manifestContent = @file_get_contents($manifestPath);
+            if (!$manifestContent) {
+                throw new Exception('Failed to read backup manifest');
+            }
+            
+            $manifest = json_decode($manifestContent, true);
+            if (!is_array($manifest) || !isset($manifest['files'])) {
+                throw new Exception('Invalid backup manifest format');
+            }
+            
+            $restoredFiles = [];
+            $failedFiles = [];
             
             // Restore backed up files
             foreach ($manifest['files'] as $file) {
+                if (!isset($file['backup_path']) || !isset($file['path'])) {
+                    error_log("UpdateManager: Invalid file entry in manifest: " . json_encode($file));
+                    continue;
+                }
+                
                 $sourcePath = $file['backup_path'];
                 $destPath = $this->appRoot . '/' . $file['path'];
                 
-                $destDir = dirname($destPath);
-                if (!is_dir($destDir)) {
-                    @mkdir($destDir, 0755, true);
+                if (!file_exists($sourcePath)) {
+                    error_log("UpdateManager: Backup file not found: {$sourcePath}");
+                    $failedFiles[] = $file['path'];
+                    continue;
                 }
                 
-                if (file_exists($sourcePath)) {
-                    @copy($sourcePath, $destPath);
+                $destDir = dirname($destPath);
+                if (!is_dir($destDir)) {
+                    if (!@mkdir($destDir, 0755, true)) {
+                        error_log("UpdateManager: Failed to create directory: {$destDir}");
+                        $failedFiles[] = $file['path'];
+                        continue;
+                    }
                 }
+                
+                if (!@copy($sourcePath, $destPath)) {
+                    error_log("UpdateManager: Failed to restore file: {$destPath}");
+                    $failedFiles[] = $file['path'];
+                    continue;
+                }
+                
+                $restoredFiles[] = $file['path'];
             }
             
+            if (!empty($failedFiles)) {
+                error_log("UpdateManager: Rollback completed with errors. Failed files: " . implode(', ', $failedFiles));
+                throw new Exception('Rollback completed but some files failed to restore: ' . implode(', ', $failedFiles));
+            }
+            
+            error_log("UpdateManager: Rollback completed successfully. Restored " . count($restoredFiles) . " files");
             return true;
         }
         
@@ -260,26 +383,63 @@ if (!class_exists('UpdateManager')) {
          * @return bool Verification status
          */
         public function verifyInstallation() {
+            error_log("UpdateManager: Verifying installation...");
+            
             // Check if config.php loads without errors
             try {
+                // Check critical files exist
+                $criticalFiles = [
+                    'config.php',
+                    'index.php',
+                    'includes/helpers.php'
+                ];
+                
+                foreach ($criticalFiles as $file) {
+                    $filePath = $this->appRoot . '/' . $file;
+                    if (!file_exists($filePath)) {
+                        error_log("UpdateManager: Critical file missing: {$file}");
+                        return false;
+                    }
+                }
+                
+                // Try to load config
                 if (!defined('APP_ROOT')) {
                     require_once $this->appRoot . '/config.php';
                 }
                 
                 // Test critical functions
-                if (!function_exists('getLaragonRoot')) {
+                $criticalFunctions = [
+                    'getLaragonRoot',
+                    'getDashboardPreferences',
+                    'saveDashboardPreferences'
+                ];
+                
+                foreach ($criticalFunctions as $func) {
+                    if (!function_exists($func)) {
+                        error_log("UpdateManager: Critical function missing: {$func}");
+                        return false;
+                    }
+                }
+                
+                // Verify config values are preserved (preferences should still exist)
+                try {
+                    $prefs = getDashboardPreferences();
+                    if ($prefs === null) {
+                        error_log("UpdateManager: Preferences could not be loaded");
+                        return false;
+                    }
+                } catch (Exception $e) {
+                    error_log("UpdateManager: Error loading preferences: " . $e->getMessage());
                     return false;
                 }
                 
-                // Verify config values are preserved
-                $prefs = getDashboardPreferences();
-                if ($prefs === null) {
-                    return false;
-                }
-                
+                error_log("UpdateManager: Installation verified successfully");
                 return true;
             } catch (Exception $e) {
-                error_log("Update verification failed: " . $e->getMessage());
+                error_log("UpdateManager: Verification failed: " . $e->getMessage());
+                return false;
+            } catch (Error $e) {
+                error_log("UpdateManager: Verification error: " . $e->getMessage());
                 return false;
             }
         }
@@ -318,21 +478,49 @@ if (!class_exists('UpdateManager')) {
          * Fetch data from GitHub API
          */
         private function fetchFromGitHub($url) {
+            if (empty($url)) {
+                error_log("UpdateManager: Empty URL provided to fetchFromGitHub");
+                return false;
+            }
+            
+            error_log("UpdateManager: Fetching from GitHub API: {$url}");
+            
             $ch = curl_init($url);
+            if (!$ch) {
+                error_log("UpdateManager: Failed to initialize cURL");
+                return false;
+            }
+            
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
             curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
             curl_setopt($ch, CURLOPT_USERAGENT, 'Laragon-Dashboard/1.0');
             curl_setopt($ch, CURLOPT_TIMEOUT, 30);
+            curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 10);
+            curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
             
             $response = curl_exec($ch);
             $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+            $error = curl_error($ch);
             curl_close($ch);
             
             if ($httpCode !== 200) {
+                $errorMsg = $error ?: "HTTP {$httpCode}";
+                error_log("UpdateManager: GitHub API request failed: {$errorMsg}");
                 return false;
             }
             
-            return json_decode($response, true);
+            if ($response === false) {
+                error_log("UpdateManager: Failed to fetch response from GitHub API");
+                return false;
+            }
+            
+            $data = json_decode($response, true);
+            if (json_last_error() !== JSON_ERROR_NONE) {
+                error_log("UpdateManager: Failed to decode JSON response: " . json_last_error_msg());
+                return false;
+            }
+            
+            return $data;
         }
         
         /**
@@ -341,6 +529,19 @@ if (!class_exists('UpdateManager')) {
         private function normalizeVersion($version) {
             // Remove 'v' prefix if present
             $version = ltrim($version, 'vV');
+            
+            // Handle dev versions (e.g., "dev-abc123" or "3.1.4-dev")
+            if (strpos($version, 'dev-') === 0) {
+                // Extract base version if possible (e.g., "3.1.4-dev-abc123" -> "3.1.4")
+                if (preg_match('/^(\d+\.\d+\.\d+)/', $version, $matches)) {
+                    return $matches[1];
+                }
+                return $version; // Return as-is if no base version found
+            }
+            
+            // Remove any dev suffix (e.g., "3.1.4-dev" -> "3.1.4")
+            $version = preg_replace('/-dev.*$/', '', $version);
+            
             return $version;
         }
         
@@ -368,40 +569,80 @@ if (!class_exists('UpdateManager')) {
          * Replace files while preserving user data
          */
         private function replaceFiles($sourcePath, $preservePaths) {
-            $iterator = new RecursiveIteratorIterator(
-                new RecursiveDirectoryIterator($sourcePath, RecursiveDirectoryIterator::SKIP_DOTS),
-                RecursiveIteratorIterator::SELF_FIRST
-            );
+            if (!is_dir($sourcePath)) {
+                throw new Exception('Source path is not a directory: ' . $sourcePath);
+            }
             
-            foreach ($iterator as $item) {
-                $relativePath = str_replace($sourcePath . '/', '', $item->getPathname());
+            $replacedCount = 0;
+            $skippedCount = 0;
+            $errorCount = 0;
+            
+            try {
+                $iterator = new RecursiveIteratorIterator(
+                    new RecursiveDirectoryIterator($sourcePath, RecursiveDirectoryIterator::SKIP_DOTS),
+                    RecursiveIteratorIterator::SELF_FIRST
+                );
                 
-                // Skip preserved paths
-                $shouldPreserve = false;
-                foreach ($preservePaths as $preservePath) {
-                    if (strpos($relativePath, $preservePath) === 0) {
-                        $shouldPreserve = true;
-                        break;
+                foreach ($iterator as $item) {
+                    $relativePath = str_replace($sourcePath . DIRECTORY_SEPARATOR, '', $item->getPathname());
+                    $relativePath = str_replace('\\', '/', $relativePath); // Normalize path separators
+                    
+                    // Skip preserved paths
+                    $shouldPreserve = false;
+                    foreach ($preservePaths as $preservePath) {
+                        $preservePath = str_replace('\\', '/', $preservePath);
+                        if (strpos($relativePath, $preservePath) === 0) {
+                            $shouldPreserve = true;
+                            $skippedCount++;
+                            break;
+                        }
+                    }
+                    
+                    if ($shouldPreserve) {
+                        continue;
+                    }
+                    
+                    $destPath = $this->appRoot . '/' . $relativePath;
+                    
+                    try {
+                        if ($item->isDir()) {
+                            if (!is_dir($destPath)) {
+                                if (!@mkdir($destPath, 0755, true)) {
+                                    error_log("UpdateManager: Failed to create directory: {$destPath}");
+                                    $errorCount++;
+                                }
+                            }
+                        } else {
+                            $destDir = dirname($destPath);
+                            if (!is_dir($destDir)) {
+                                if (!@mkdir($destDir, 0755, true)) {
+                                    error_log("UpdateManager: Failed to create directory: {$destDir}");
+                                    $errorCount++;
+                                    continue;
+                                }
+                            }
+                            
+                            if (!@copy($item->getPathname(), $destPath)) {
+                                error_log("UpdateManager: Failed to copy file: {$relativePath}");
+                                $errorCount++;
+                            } else {
+                                $replacedCount++;
+                            }
+                        }
+                    } catch (Exception $e) {
+                        error_log("UpdateManager: Error processing {$relativePath}: " . $e->getMessage());
+                        $errorCount++;
                     }
                 }
                 
-                if ($shouldPreserve) {
-                    continue;
-                }
+                error_log("UpdateManager: File replacement completed. Replaced: {$replacedCount}, Skipped: {$skippedCount}, Errors: {$errorCount}");
                 
-                $destPath = $this->appRoot . '/' . $relativePath;
-                
-                if ($item->isDir()) {
-                    if (!is_dir($destPath)) {
-                        @mkdir($destPath, 0755, true);
-                    }
-                } else {
-                    $destDir = dirname($destPath);
-                    if (!is_dir($destDir)) {
-                        @mkdir($destDir, 0755, true);
-                    }
-                    @copy($item->getPathname(), $destPath);
+                if ($errorCount > 0) {
+                    error_log("UpdateManager: Warning: {$errorCount} files failed to replace");
                 }
+            } catch (Exception $e) {
+                error_log("UpdateManager: Fatal error in replaceFiles: " . $e->getMessage());
+                throw $e;
             }
         }
         
