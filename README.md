@@ -7,6 +7,7 @@ A modern, feature-rich web-based dashboard for managing Laragon development envi
 [![Bootstrap](https://img.shields.io/badge/Bootstrap-5.3.2-purple.svg)](https://getbootstrap.com)
 [![License](https://img.shields.io/badge/license-MIT-orange.svg)](LICENSE)
 
+![Laragon Dashboard](assets/images/og_banner.png)
 ---
 
 ## ✨ Screenshots
