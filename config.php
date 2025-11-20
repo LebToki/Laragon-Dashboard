@@ -1,7 +1,7 @@
 <?php
 /**
  * Laragon Dashboard Configuration
- * Version: 3.1.3
+ * Version: 3.1.4
  * Author: Tarek Tarabichi
  * Company: 2TInteractive (2tinteractive.com)
  * Project Start: Early 2024
@@ -277,7 +277,7 @@ function getDashboardPreferences() {
         'auto_update_check' => true, // Enable automatic update checking
         'auto_update_install' => false, // Auto-install updates (requires manual confirmation)
         'last_update_check' => null, // Timestamp of last update check
-        'debug_banner' => false, // Debug banner visibility (disabled by default)
+        'debug_banner' => false, // Show debug banner (only available in non-production environments)
         'time_format' => null, // null means auto-detect from system, '12' or '24'
         'date_format' => null, // null means auto-detect, or custom format like 'Y-m-d', 'm/d/Y', etc.
     ];
@@ -308,7 +308,8 @@ function saveDashboardPreferences(array $preferences) {
     $existing = getDashboardPreferences();
     $merged = array_merge($existing, $preferences);
     
-    // Remove null values to allow auto-detection
+    // Remove null and empty string values to allow auto-detection
+    // But keep false values for checkboxes so they can be explicitly unset
     $merged = array_filter($merged, function($value) {
         return $value !== null && $value !== '';
     });

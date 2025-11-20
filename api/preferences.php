@@ -38,17 +38,18 @@ try {
             if (isset($input['mysql_password'])) {
                 $prefs['mysql_password'] = $input['mysql_password'];
             }
+            // Handle checkbox fields - explicitly process them even when set to '0' to allow unsetting
             if (isset($input['auto_update_check'])) {
                 $prefs['auto_update_check'] = $input['auto_update_check'] == '1';
             }
             if (isset($input['auto_update_install'])) {
                 $prefs['auto_update_install'] = $input['auto_update_install'] == '1';
             }
-            if (isset($input['last_update_check'])) {
-                $prefs['last_update_check'] = $input['last_update_check'];
-            }
             if (isset($input['debug_banner'])) {
                 $prefs['debug_banner'] = $input['debug_banner'] == '1';
+            }
+            if (isset($input['last_update_check'])) {
+                $prefs['last_update_check'] = $input['last_update_check'];
             }
             if (isset($input['time_format'])) {
                 $prefs['time_format'] = $input['time_format'] === '' ? null : $input['time_format'];

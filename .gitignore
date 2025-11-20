@@ -41,3 +41,6 @@ cache/
 # Logs directory
 logs/
 
+# User preferences (contains sensitive data like passwords)
+data/preferences.json
+

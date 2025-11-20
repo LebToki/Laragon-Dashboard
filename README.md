@@ -1,8 +1,8 @@
 # 🚀 Laragon Dashboard
 
-A modern, feature-rich web-based dashboard for managing Laragon development environment. Version 3.1.3 aims to be a comprehensive MAMP competitor on Windows, replicating Laragon control panel functionality in a modern, themed web interface.
+A modern, feature-rich web-based dashboard for managing Laragon development environment. Version 3.1.4 aims to be a comprehensive MAMP competitor on Windows, replicating Laragon control panel functionality in a modern, themed web interface.
 
-[![Version](https://img.shields.io/badge/version-3.1.3-blue.svg)](https://github.com/LebToki/Laragon-Dashboard)
+[![Version](https://img.shields.io/badge/version-3.1.4-blue.svg)](https://github.com/LebToki/Laragon-Dashboard)
 [![PHP](https://img.shields.io/badge/PHP-7.4%2B-green.svg)](https://php.net)
 [![Bootstrap](https://img.shields.io/badge/Bootstrap-5.3.2-purple.svg)](https://getbootstrap.com)
 [![License](https://img.shields.io/badge/license-MIT-orange.svg)](LICENSE)
@@ -32,7 +32,7 @@ A modern, feature-rich web-based dashboard for managing Laragon development envi
 ## 📋 Project Information
 
 - **Project Name**: Laragon Dashboard
-- **Version**: 3.1.3
+- **Version**: 3.1.4
 - **Author**: Tarek Tarabichi
 - **Company**: 2TInteractive (2tinteractive.com)
 - **Project Start**: Early 2024
@@ -670,7 +670,14 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 See [CHANGELOG.md](CHANGELOG.md) for detailed version history.
 
-### Version 3.1.3 (Current)
+### Version 3.1.4 (Current)
+- **FIXED**: Checkbox settings in Preferences can now be properly unset - fixed issue where settings like "Show Debug Banner" couldn't be disabled once enabled
+- **FIXED**: All checkbox preferences (debug_banner, auto_update_check, auto_update_install) now correctly save their unchecked state
+- **IMPROVED**: Enhanced preferences API to handle checkbox unsetting by explicitly processing false/0 values
+- **IMPROVED**: JavaScript form submission now includes all checkbox fields even when unchecked
+- **IMPROVED**: Added data/preferences.json to .gitignore to protect sensitive user data
+
+### Version 3.1.3
 - **FIXED**: HTTP/HTTPS protocol detection - projects now correctly use HTTPS when Laragon is configured for SSL
 - **FIXED**: Enhanced protocol detection with multiple fallback methods (request protocol, Laragon config, port detection)
 - **NEW**: `FORCE_HTTPS` configuration option to force HTTPS for all project URLs

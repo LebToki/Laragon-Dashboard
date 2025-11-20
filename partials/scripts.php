@@ -2381,6 +2381,15 @@ if (substr($assetsUrl, 0, 1) !== '/') {
                     data[key] = value;
                 });
                 
+                // Explicitly include all checkbox fields to handle unchecked state
+                // Checkboxes that are unchecked don't appear in FormData, so we need to add them explicitly
+                const checkboxFields = ['debug_banner', 'auto_update_check', 'auto_update_install'];
+                checkboxFields.forEach(field => {
+                    if (!data.hasOwnProperty(field)) {
+                        data[field] = '0'; // Explicitly set to '0' when unchecked
+                    }
+                });
+                
                 fetch(PREFERENCES_API, {
                     method: 'POST',
                     headers: {
