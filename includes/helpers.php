@@ -182,7 +182,60 @@ if (!function_exists('getCurrentPHPVersion')) {
         // Get the actual PHP executable path
         $phpExecutable = PHP_BINARY;
         
-        // Try to get Laragon's configured PHP version for comparison
+        $laragonRoot = defined('LARAGON_ROOT') ? LARAGON_ROOT : '';
+        // Normalize paths for comparison (handle both forward and backslashes)
+        $laragonRootNormalized = str_replace('\\', '/', strtolower($laragonRoot));
+        $phpExecutableNormalized = str_replace('\\', '/', strtolower($phpExecutable));
+        $isLaragonPHP = !empty($laragonRoot) && strpos($phpExecutableNormalized, $laragonRootNormalized) !== false;
+        
+        // Try to detect Laragon's configured PHP version
+        // Laragon doesn't store PHPVersion in laragon.ini, so we check the PHP directories
+        if ($laragonRoot && is_dir($laragonRoot . '/bin/php')) {
+            // Get all PHP directories
+            $phpDirs = glob($laragonRoot . '/bin/php/php-*');
+            if (!empty($phpDirs)) {
+                // Sort by modification time (most recently modified = likely active)
+                usort($phpDirs, function($a, $b) {
+                    return filemtime($b) - filemtime($a);
+                });
+                
+                // Check each PHP directory for version
+                foreach ($phpDirs as $phpDir) {
+                    if (preg_match('/php-(\d+\.\d+\.\d+)/i', basename($phpDir), $matches)) {
+                        $configuredVersion = $matches[1];
+                        
+                        // If configured version differs from running version, show both
+                        if ($configuredVersion !== $runningVersion) {
+                            // Check if the running PHP executable matches the configured version directory
+                            $configuredPhpPath = $laragonRoot . '/bin/php/php-' . $configuredVersion . '*';
+                            $configuredPhpDirs = glob($configuredPhpPath);
+                            $isRunningConfiguredVersion = false;
+                            
+                            if (!empty($configuredPhpDirs)) {
+                                foreach ($configuredPhpDirs as $configuredPhpDir) {
+                                    if (strpos($phpExecutable, $configuredPhpDir) !== false) {
+                                        $isRunningConfiguredVersion = true;
+                                        break;
+                                    }
+                                }
+                            }
+                            
+                            if (!$isLaragonPHP) {
+                                // PHP is coming from system PATH, not Laragon
+                                return $runningVersion . ' (configured: ' . $configuredVersion . ' - check system PATH)';
+                            } elseif (!$isRunningConfiguredVersion) {
+                                // PHP is from Laragon but wrong version - needs restart
+                                return $runningVersion . ' (configured: ' . $configuredVersion . ' - restart Laragon)';
+                            }
+                        }
+                        // Found a match, break
+                        break;
+                    }
+                }
+            }
+        }
+        
+        // Fallback: Try to get from Laragon config (if it exists)
         if (function_exists('getLaragonConfig')) {
             $laraconfig = getLaragonConfig();
             if (!empty($laraconfig['PHPVersion'])) {
@@ -193,10 +246,6 @@ if (!function_exists('getCurrentPHPVersion')) {
                     
                     // If configured version differs from running version, show both with helpful note
                     if ($configuredVersion !== $runningVersion) {
-                        // Check if PHP executable is in Laragon's PHP directory
-                        $laragonRoot = defined('LARAGON_ROOT') ? LARAGON_ROOT : '';
-                        $isLaragonPHP = !empty($laragonRoot) && strpos($phpExecutable, $laragonRoot) !== false;
-                        
                         if (!$isLaragonPHP) {
                             // PHP is coming from system PATH, not Laragon
                             return $runningVersion . ' (configured: ' . $configuredVersion . ' - check system PATH)';
