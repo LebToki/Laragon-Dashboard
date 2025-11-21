@@ -5,8 +5,11 @@ A modern, feature-rich web-based dashboard for managing Laragon development envi
 [![Version](https://img.shields.io/badge/version-3.1.5-blue.svg)](https://github.com/LebToki/Laragon-Dashboard)
 [![PHP](https://img.shields.io/badge/PHP-7.4%2B-green.svg)](https://php.net)
 [![Bootstrap](https://img.shields.io/badge/Bootstrap-5.3.2-purple.svg)](https://getbootstrap.com)
+[![Platform](https://img.shields.io/badge/platform-windows-lightgrey.svg)]()
 [![License](https://img.shields.io/badge/license-MIT-orange.svg)](LICENSE)
+[![GitHub](https://img.shields.io/github/stars/LebToki/Laragon-Dashboard?style=social)](https://github.com/LebToki/Laragon-Dashboard)
 
+![Laragon Dashboard](assets/images/og_banner.png)
 ---
 
 ## ✨ Screenshots
