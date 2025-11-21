@@ -47,6 +47,7 @@ if (!function_exists('getLaragonConfig')) {
 
 /**
  * Get Apache version
+ * Returns the actual running Apache version, or Laragon's configured version if available
  */
 if (!function_exists('getApacheVersion')) {
     function getApacheVersion() {
@@ -54,36 +55,66 @@ if (!function_exists('getApacheVersion')) {
             return 'Unknown';
         }
         
+        $runningVersion = null;
+        
+        // Get running version from SERVER_SOFTWARE
         $serverSoftware = $_SERVER['SERVER_SOFTWARE'] ?? '';
         if (preg_match('/Apache\/([\d.]+)/i', $serverSoftware, $matches)) {
-            return $matches[1];
+            $runningVersion = $matches[1];
         }
         
-        // Try to get from Laragon path
-        $laragonPath = LARAGON_ROOT;
-        $apacheGlob = glob($laragonPath . '/bin/apache/apache*/bin/httpd.exe');
-        if (!empty($apacheGlob)) {
-            $httpdPath = $apacheGlob[0];
-            $command = 'powershell -Command "(Get-Item \'' . str_replace("'", "''", $httpdPath) . '\').VersionInfo.FileVersion"';
-            $version = @shell_exec($command);
-            if ($version && trim($version) !== '') {
-                $parts = explode('.', trim($version));
-                if (count($parts) >= 2) {
-                    return $parts[0] . '.' . $parts[1] . '.' . ($parts[2] ?? '0');
+        // Try to get from Laragon path if not found
+        if (!$runningVersion) {
+            $laragonPath = LARAGON_ROOT;
+            $apacheGlob = glob($laragonPath . '/bin/apache/apache*/bin/httpd.exe');
+            if (!empty($apacheGlob)) {
+                $httpdPath = $apacheGlob[0];
+                $command = 'powershell -Command "(Get-Item \'' . str_replace("'", "''", $httpdPath) . '\').VersionInfo.FileVersion"';
+                $version = @shell_exec($command);
+                if ($version && trim($version) !== '') {
+                    $parts = explode('.', trim($version));
+                    if (count($parts) >= 2) {
+                        $runningVersion = $parts[0] . '.' . $parts[1] . '.' . ($parts[2] ?? '0');
+                    } else {
+                        $runningVersion = trim($version);
+                    }
                 }
-                return trim($version);
             }
         }
         
-        return 'Unknown';
+        // Try to get Laragon's configured Apache version for comparison
+        if (function_exists('getLaragonConfig')) {
+            $laraconfig = getLaragonConfig();
+            if (!empty($laraconfig['ApacheVersion'])) {
+                $configuredVersion = $laraconfig['ApacheVersion'];
+                // Extract version if it's in a path format (e.g., "apache-2.4.64" -> "2.4.64")
+                if (preg_match('/(\d+\.\d+\.\d+)/', $configuredVersion, $matches)) {
+                    $configuredVersion = $matches[1];
+                    
+                    // If configured version differs from running version, show both
+                    if ($runningVersion && $configuredVersion !== $runningVersion) {
+                        return $runningVersion . ' (configured: ' . $configuredVersion . ')';
+                    }
+                    // If no running version but we have configured, return configured
+                    if (!$runningVersion) {
+                        return $configuredVersion;
+                    }
+                }
+            }
+        }
+        
+        return $runningVersion ?: 'Unknown';
     }
 }
 
 /**
  * Get MySQL version
+ * Returns the actual running MySQL version, or Laragon's configured version if available
  */
 if (!function_exists('getMySQLVersion')) {
     function getMySQLVersion() {
+        $runningVersion = null;
+        
         try {
             $laraconfig = getLaragonConfig();
             $oldErrorReporting = error_reporting(0);
@@ -103,25 +134,68 @@ if (!function_exists('getMySQLVersion')) {
                 $link = @mysqli_connect($mysqlHost, $mysqlUser, '');
             }
             if ($link) {
-                $version = mysqli_get_server_info($link);
+                $runningVersion = mysqli_get_server_info($link);
                 mysqli_close($link);
                 error_reporting($oldErrorReporting);
-                return htmlspecialchars($version);
+            } else {
+                error_reporting($oldErrorReporting);
             }
-            error_reporting($oldErrorReporting);
         } catch (Exception $e) {
             // Silently fail
         }
-        return 'MySQL not running!';
+        
+        // Try to get Laragon's configured MySQL version for comparison
+        if (function_exists('getLaragonConfig')) {
+            $laraconfig = getLaragonConfig();
+            if (!empty($laraconfig['MySQLVersion'])) {
+                $configuredVersion = $laraconfig['MySQLVersion'];
+                // Extract version if it's in a path format (e.g., "mysql-8.0.36" -> "8.0.36")
+                if (preg_match('/(\d+\.\d+\.\d+)/', $configuredVersion, $matches)) {
+                    $configuredVersion = $matches[1];
+                    
+                    // If configured version differs from running version, show both
+                    if ($runningVersion && $configuredVersion !== $runningVersion) {
+                        return htmlspecialchars($runningVersion) . ' (configured: ' . $configuredVersion . ')';
+                    }
+                    // If no running version but we have configured, return configured
+                    if (!$runningVersion) {
+                        return $configuredVersion . ' (not running)';
+                    }
+                }
+            }
+        }
+        
+        return $runningVersion ? htmlspecialchars($runningVersion) : 'MySQL not running!';
     }
 }
 
 /**
  * Get PHP version
+ * Returns the actual running PHP version, or Laragon's configured version if available
  */
 if (!function_exists('getCurrentPHPVersion')) {
     function getCurrentPHPVersion() {
-        return PHP_VERSION;
+        // Get the actual running PHP version
+        $runningVersion = PHP_VERSION;
+        
+        // Try to get Laragon's configured PHP version for comparison
+        if (function_exists('getLaragonConfig')) {
+            $laraconfig = getLaragonConfig();
+            if (!empty($laraconfig['PHPVersion'])) {
+                // Extract version from Laragon format (e.g., "php-8.5.0-Win32-vs16-x64" -> "8.5.0")
+                $configuredVersion = $laraconfig['PHPVersion'];
+                if (preg_match('/php-(\d+\.\d+\.\d+)/i', $configuredVersion, $matches)) {
+                    $configuredVersion = $matches[1];
+                    
+                    // If configured version differs from running version, show both
+                    if ($configuredVersion !== $runningVersion) {
+                        return $runningVersion . ' (configured: ' . $configuredVersion . ')';
+                    }
+                }
+            }
+        }
+        
+        return $runningVersion;
     }
 }
 
