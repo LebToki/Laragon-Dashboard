@@ -172,11 +172,15 @@ if (!function_exists('getMySQLVersion')) {
 /**
  * Get PHP version
  * Returns the actual running PHP version, or Laragon's configured version if available
+ * Detects PATH mismatches and provides helpful information
  */
 if (!function_exists('getCurrentPHPVersion')) {
     function getCurrentPHPVersion() {
         // Get the actual running PHP version
         $runningVersion = PHP_VERSION;
+        
+        // Get the actual PHP executable path
+        $phpExecutable = PHP_BINARY;
         
         // Try to get Laragon's configured PHP version for comparison
         if (function_exists('getLaragonConfig')) {
@@ -187,9 +191,19 @@ if (!function_exists('getCurrentPHPVersion')) {
                 if (preg_match('/php-(\d+\.\d+\.\d+)/i', $configuredVersion, $matches)) {
                     $configuredVersion = $matches[1];
                     
-                    // If configured version differs from running version, show both
+                    // If configured version differs from running version, show both with helpful note
                     if ($configuredVersion !== $runningVersion) {
-                        return $runningVersion . ' (configured: ' . $configuredVersion . ')';
+                        // Check if PHP executable is in Laragon's PHP directory
+                        $laragonRoot = defined('LARAGON_ROOT') ? LARAGON_ROOT : '';
+                        $isLaragonPHP = !empty($laragonRoot) && strpos($phpExecutable, $laragonRoot) !== false;
+                        
+                        if (!$isLaragonPHP) {
+                            // PHP is coming from system PATH, not Laragon
+                            return $runningVersion . ' (configured: ' . $configuredVersion . ' - check system PATH)';
+                        } else {
+                            // PHP is from Laragon but wrong version - might need restart
+                            return $runningVersion . ' (configured: ' . $configuredVersion . ' - restart Laragon)';
+                        }
                     }
                 }
             }
