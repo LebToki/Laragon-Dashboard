@@ -122,7 +122,7 @@ include __DIR__ . '/../partials/layouts/layoutTop.php';
                         <div class="card-body p-16">
                             <!-- 3-Dot Dropdown Menu (Top Left) -->
                             <div class="dropdown position-absolute top-0 start-0 ms-16 mt-16">
-                                <button type="button" data-bs-toggle="dropdown" aria-expanded="false" class="bg-white bg-opacity-20 w-32-px h-32-px radius-8 border border-white border-opacity-30 d-flex justify-content-center align-items-center text-white hover-opacity-80" style="backdrop-filter: blur(4px);">
+                                <button type="button" data-bs-toggle="dropdown" aria-expanded="false" class="bg-white bg-opacity-20 w-32-px h-32-px radius-8 border border-white border-opacity-30 d-flex justify-content-center align-items-center text-base hover-opacity-80" style="backdrop-filter: blur(4px);">
                                     <iconify-icon icon="entypo:dots-three-vertical" class="icon text-lg"></iconify-icon>
                                 </button>
                                 <ul class="dropdown-menu p-12 border bg-base shadow">
@@ -135,20 +135,24 @@ include __DIR__ . '/../partials/layouts/layoutTop.php';
                                 </ul>
                             </div>
                             
-                            <div class="d-flex flex-wrap align-items-center justify-content-between gap-8">
-                                <div style="padding-left: 48px;">
-                                    <p class="fw-medium text-secondary-light mb-1 text-sm"><?php echo htmlspecialchars($project['platform']); ?></p>
-                                    <h6 class="mb-0 text-truncate" title="<?php echo htmlspecialchars($project['name']); ?>"><?php echo htmlspecialchars($project['name']); ?></h6>
+                            <!-- Top row: 3-dots, icon, and platform -->
+                            <div class="d-flex align-items-center justify-content-between gap-8 mb-8">
+                                <div class="d-flex align-items-center gap-8">
+                                    <!-- Platform label -->
+                                    <p class="fw-medium text-secondary-light mb-0 text-sm"><?php echo htmlspecialchars($project['platform']); ?></p>
                                 </div>
-                                <div class="w-50-px h-50-px bg-primary-600 rounded-circle d-flex justify-content-center align-items-center">
+                                <!-- Icon on the right -->
+                                <div class="w-50-px h-50-px bg-primary-600 rounded-circle d-flex justify-content-center align-items-center flex-shrink-0">
                                     <?php if ($faviconUrl): ?>
                                         <img src="<?php echo htmlspecialchars($faviconUrl); ?>" alt="<?php echo htmlspecialchars($project['name']); ?>" class="w-40-px h-40-px object-fit-cover rounded-circle" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';" style="max-width: 40px; max-height: 40px;">
-                                        <iconify-icon icon="<?php echo htmlspecialchars($iconifyIcon); ?>" class="text-white text-2xl" style="font-size: 24px; display: none;"></iconify-icon>
+                                        <iconify-icon icon="<?php echo htmlspecialchars($iconifyIcon); ?>" class="text-base text-2xl" style="font-size: 24px; display: none;"></iconify-icon>
                                     <?php else: ?>
-                                        <iconify-icon icon="<?php echo htmlspecialchars($iconifyIcon); ?>" class="text-white text-2xl" style="font-size: 24px;"></iconify-icon>
+                                        <iconify-icon icon="<?php echo htmlspecialchars($iconifyIcon); ?>" class="text-base text-2xl" style="font-size: 24px;"></iconify-icon>
                                     <?php endif; ?>
                                 </div>
                             </div>
+                            <!-- Project name on full row -->
+                            <h6 class="mb-0 text-truncate" style="font-size: 18px;" title="<?php echo htmlspecialchars($project['name']); ?>"><?php echo htmlspecialchars($project['name']); ?></h6>
                             <div class="row g-2 mt-12">
                                 <div class="<?php echo ($project['is_wordpress'] ?? false) ? 'col-6' : 'col-12'; ?>">
                                     <a href="<?php echo htmlspecialchars($project['url']); ?>" target="_blank" class="btn btn-sm btn-info w-100 radius-8 px-12 py-8 d-flex align-items-center gap-2">

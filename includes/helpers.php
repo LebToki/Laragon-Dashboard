@@ -222,10 +222,10 @@ if (!function_exists('getCurrentPHPVersion')) {
                             
                             if (!$isLaragonPHP) {
                                 // PHP is coming from system PATH, not Laragon
-                                return $runningVersion . ' (configured: ' . $configuredVersion . ' - check system PATH)';
+                                return htmlspecialchars($runningVersion) . ' <small>(configured: ' . htmlspecialchars($configuredVersion) . ' - check system PATH)</small>';
                             } elseif (!$isRunningConfiguredVersion) {
                                 // PHP is from Laragon but wrong version - needs restart
-                                return $runningVersion . ' (configured: ' . $configuredVersion . ' - restart Laragon)';
+                                return htmlspecialchars($runningVersion) . ' <small>(configured: ' . htmlspecialchars($configuredVersion) . ' - restart Laragon)</small>';
                             }
                         }
                         // Found a match, break
@@ -248,10 +248,10 @@ if (!function_exists('getCurrentPHPVersion')) {
                     if ($configuredVersion !== $runningVersion) {
                         if (!$isLaragonPHP) {
                             // PHP is coming from system PATH, not Laragon
-                            return $runningVersion . ' (configured: ' . $configuredVersion . ' - check system PATH)';
+                            return htmlspecialchars($runningVersion) . ' <small>(configured: ' . htmlspecialchars($configuredVersion) . ' - check system PATH)</small>';
                         } else {
                             // PHP is from Laragon but wrong version - might need restart
-                            return $runningVersion . ' (configured: ' . $configuredVersion . ' - restart Laragon)';
+                            return htmlspecialchars($runningVersion) . ' <small>(configured: ' . htmlspecialchars($configuredVersion) . ' - restart Laragon)</small>';
                         }
                     }
                 }
