@@ -745,8 +745,12 @@ if (!defined('DOMAIN_SUFFIX')) {
 
 // Force HTTPS for project URLs (if your Laragon uses HTTPS)
 // Set to true if all your projects should use HTTPS instead of HTTP
+// Auto-enabled if SSL certificates are detected (via setup-ssl.ps1)
 if (!defined('FORCE_HTTPS')) {
-    define('FORCE_HTTPS', getenv('FORCE_HTTPS') === 'true' || getenv('FORCE_HTTPS') === '1');
+    // Check if SSL certificates exist (indicates SSL is set up)
+    $sslCertExists = file_exists('C:/laragon/etc/ssl/localhost+2.pem');
+    $envForceHttps = getenv('FORCE_HTTPS') === 'true' || getenv('FORCE_HTTPS') === '1';
+    define('FORCE_HTTPS', $envForceHttps || $sslCertExists);
 }
 if (!defined('APP_VERSION_DETECTED')) {
     define('APP_VERSION_DETECTED', getenv('APP_VERSION') ?: getAppVersion());

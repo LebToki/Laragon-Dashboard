@@ -5,7 +5,7 @@
 ## Project Information
 
 - **Project Name**: Laragon Dashboard
-- **Version**: 3.0.0 (in development)
+- **Version**: 3.1.7
 - **Author**: Tarek Tarabichi
 - **Company**: 2TInteractive (2tinteractive.com)
 - **Project Start**: Early 2024
@@ -13,14 +13,42 @@
 - **License**: MIT
 - **Goal**: MAMP competitor for Windows OS (with potential future cross-platform support)
 - **description**: A comprehensive web-based dashboard for managing Laragon development environment - MAMP competitor for Windows with modern UI
--**tags**: laragon, dashboard, development-environment, windows, php, apache, mysql, web-development, local-server, mamp-alternative
+- **tags**: laragon, dashboard, development-environment, windows, php, apache, mysql, web-development, local-server, mamp-alternative
 
+
+## Version 3.1.7 - Root Directory Cleanup
+
+**Release Date**: December 2025
+
+### Changes in v3.1.7
+
+#### 25. **Root Directory Cleanup** ✅ **COMPLETED**
+- ✅ Removed orphan files: `query`, `start`
+- ✅ Moved 9 SSL PowerShell scripts to `build/ssl/`
+- ✅ Moved 3 SSL documentation files to `build/ssl/`
+- ✅ Root now contains only essential files (9 files, 17 directories)
+- ✅ SSL tools consolidated in `build/ssl/` for better organization
+
+**Moved Files**:
+- `build/ssl/add-domain-to-cert.ps1`
+- `build/ssl/auto-add-all-domains-to-cert.ps1`
+- `build/ssl/fix-all-ssl-vhosts.ps1`
+- `build/ssl/fix-brave-ssl.ps1`
+- `build/ssl/regenerate-ssl-wildcard.ps1`
+- `build/ssl/run-ssl-setup.ps1`
+- `build/ssl/setup-ssl.ps1`
+- `build/ssl/start-laragon-services.ps1`
+- `build/ssl/verify-ssl-setup.ps1`
+- `build/ssl/BRAVE-SSL-FIX.md`
+- `build/ssl/COMPLETE-SSL-SETUP.md`
+- `build/ssl/SSL-SETUP-GUIDE.md`
 
 ## Version 3.0.0 Achievements & Updates
 
-**Last Updated**: January 2025
+**Last Updated**: December 2025
 
 ### Recent Updates (December 2024 - January 2025)
+
 
 #### 23. **Adminer Integration** ✅ **NEW**
 - ✅ Standalone Adminer module (`includes/AdminerModule.php`)

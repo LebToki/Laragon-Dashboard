@@ -4,6 +4,11 @@
     RewriteEngine On
     RewriteBase /Laragon-Dashboard/
     
+    # Force HTTPS redirect (if not already HTTPS)
+    RewriteCond %{HTTPS} off
+    RewriteCond %{HTTP:X-Forwarded-Proto} !https
+    RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [R=301,L]
+    
     # If accessing root, redirect to index.php
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteCond %{REQUEST_FILENAME} !-d
