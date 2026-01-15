@@ -9,6 +9,12 @@ A modern, feature-rich web-based dashboard for managing Laragon development envi
 [![License](https://img.shields.io/badge/license-MIT-orange.svg)](LICENSE)
 [![GitHub](https://img.shields.io/github/stars/LebToki/Laragon-Dashboard?style=social)](https://github.com/LebToki/Laragon-Dashboard)
 
+<p align="center">
+  <img src="https://img.shields.io/github/stars/LebToki/Laragon-Dashboard?style=for-the-badge" alt="Stars" />
+  <img src="https://img.shields.io/github/forks/LebToki/Laragon-Dashboard?style=for-the-badge" alt="Forks" />
+  <img src="https://img.shields.io/badge/PRs-welcome-brightgreen?style=for-the-badge" alt="PRs Welcome" />
+</p>
+
 ![Laragon Dashboard](assets/images/og_banner.png)
 ---
 
