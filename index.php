@@ -318,7 +318,7 @@ include './partials/layouts/layoutTop.php' ?>
                                 
                                 <!-- Top row: 3-dots, icon, and platform -->
                                 <div class="d-flex align-items-center justify-content-between gap-8 mb-8">
-                                    <div class="d-flex align-items-center gap-8">
+                                    <div class="d-flex align-items-center gap-8 ps-32">
                                         <!-- Platform label -->
                                         <p class="fw-medium text-secondary-light mb-0 text-sm"><?php echo htmlspecialchars($project['platform']); ?></p>
                                     </div>

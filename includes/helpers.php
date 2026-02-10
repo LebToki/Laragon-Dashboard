@@ -1,410 +1,164 @@
 <?php
 /**
  * Laragon Dashboard - Helper Functions
- * Version: 3.0.0
- * Description: Helper functions for server information and utilities
+ * Version: 3.1.6
+ * Provides utility functions for the dashboard
  */
 
-if (!defined('APP_ROOT')) {
-    require_once __DIR__ . '/../config.php';
-}
+// Start output buffering to prevent stray output
+ob_start();
 
-// Load i18n translation helper
-if (file_exists(__DIR__ . '/i18n.php')) {
-    require_once __DIR__ . '/i18n.php';
+/**
+ * Get Laragon root directory
+ */
+if (!function_exists('getLaragonRoot')) {
+    function getLaragonRoot() {
+        // Check environment variable first
+        if (getenv('LARAGON_ROOT')) {
+            return getenv('LARAGON_ROOT');
+        }
+        
+        // Check common Laragon installation paths
+        $possiblePaths = ['C:/laragon', 'D:/laragon', 'E:/laragon'];
+        
+        // Also check if we're being accessed through Laragon's web server
+        if (isset($_SERVER['DOCUMENT_ROOT'])) {
+            $docRoot = $_SERVER['DOCUMENT_ROOT'];
+            // Check if the document root contains 'laragon'
+            if (stripos($docRoot, 'laragon') !== false) {
+                return $docRoot;
+            }
+        }
+        
+        foreach ($possiblePaths as $path) {
+            if (is_dir($path)) {
+                return $path;
+            }
+        }
+        
+        // Default fallback
+        return 'C:/laragon';
+    }
 }
 
 /**
- * Get Laragon configuration from laragon.ini
+ * Get Laragon sendmail directory
  */
-if (!function_exists('getLaragonConfig')) {
-    function getLaragonConfig() {
-        if (!defined('LARAGON_ROOT')) {
-            return [];
+if (!function_exists('getLaragonSendmailDir')) {
+    function getLaragonSendmailDir() {
+        $laragonRoot = getLaragonRoot();
+        $sendmailPath = $laragonRoot . '/bin/sendmail/output/';
+        
+        // Create directory if it doesn't exist
+        if (!is_dir($sendmailPath)) {
+            @mkdir($sendmailPath, 0755, true);
         }
         
-        $laragonIniPath = LARAGON_ROOT . '/usr/laragon.ini';
-        
-        if (!file_exists($laragonIniPath)) {
-            return [];
-        }
-        
-        try {
-            $oldErrorReporting = error_reporting(0);
-            $config = parse_ini_file($laragonIniPath, false, INI_SCANNER_RAW);
-            error_reporting($oldErrorReporting);
-            
-            if ($config === false || !is_array($config)) {
-                return [];
+        return $sendmailPath;
+    }
+}
+
+/**
+ * Get Laragon domain suffix
+ */
+if (!function_exists('getLaragonDomainSuffix')) {
+    function getLaragonDomainSuffix() {
+        return '.local';
+    }
+}
+
+/**
+ * Get application version
+ */
+if (!function_exists('getAppVersion')) {
+    function getAppVersion() {
+        // Check for VERSION file
+        $versionFile = dirname(__DIR__) . '/VERSION';
+        if (file_exists($versionFile)) {
+            $version = trim(file_get_contents($versionFile));
+            if (!empty($version)) {
+                return $version;
             }
-            
-            return $config;
-        } catch (Exception | Error $e) {
-            return [];
         }
+        
+        // Try to get from Git
+        $gitHeadFile = dirname(__DIR__) . '/.git/HEAD';
+        if (file_exists($gitHeadFile)) {
+            $headContent = trim(file_get_contents($gitHeadFile));
+            if (preg_match('/refs\/heads\/(.+)$/', $headContent, $matches)) {
+                $branch = $matches[1];
+                // Try to get the latest commit hash
+                $headRefFile = dirname(__DIR__) . '/.git/' . trim(file_get_contents(dirname(__DIR__) . '/.git/HEAD'));
+                if (file_exists($headRefFile)) {
+                    $commitHash = substr(trim(file_get_contents($headRefFile)), 0, 7);
+                    return 'dev-' . $branch . '+' . $commitHash;
+                }
+                return 'dev-' . $branch;
+            } elseif (preg_match('/([a-f0-9]+)/', $headContent, $matches)) {
+                // Detached HEAD state
+                return 'dev-detached+' . substr($matches[1], 0, 7);
+            }
+        }
+        
+        // Fallback to APP_VERSION constant if defined
+        if (defined('APP_VERSION')) {
+            return APP_VERSION;
+        }
+        
+        return '3.0.0';
     }
 }
 
 /**
  * Get Apache version
- * Returns the actual running Apache version, or Laragon's configured version if available
  */
 if (!function_exists('getApacheVersion')) {
     function getApacheVersion() {
-        if (!defined('LARAGON_ROOT')) {
-            return 'Unknown';
+        $output = @shell_exec('httpd -v 2>&1');
+        if ($output && preg_match('/Apache\/(\d+\.\d+\.\d+)/', $output, $matches)) {
+            return $matches[1];
         }
         
-        $runningVersion = null;
-        
-        // Get running version from SERVER_SOFTWARE
-        $serverSoftware = $_SERVER['SERVER_SOFTWARE'] ?? '';
-        if (preg_match('/Apache\/([\d.]+)/i', $serverSoftware, $matches)) {
-            $runningVersion = $matches[1];
+        // Alternative: Try to get from Laragon
+        $laragonRoot = getLaragonRoot();
+        $apachePath = $laragonRoot . '/bin/apache/httpd-2.4.*/bin/httpd.exe';
+        if (glob($apachePath)) {
+            return '2.4.x';
         }
         
-        // Try to get from Laragon path if not found
-        if (!$runningVersion) {
-            $laragonPath = LARAGON_ROOT;
-            $apacheGlob = glob($laragonPath . '/bin/apache/apache*/bin/httpd.exe');
-            if (!empty($apacheGlob)) {
-                $httpdPath = $apacheGlob[0];
-                $command = 'powershell -Command "(Get-Item \'' . str_replace("'", "''", $httpdPath) . '\').VersionInfo.FileVersion"';
-                $version = @shell_exec($command);
-                if ($version && trim($version) !== '') {
-                    $parts = explode('.', trim($version));
-                    if (count($parts) >= 2) {
-                        $runningVersion = $parts[0] . '.' . $parts[1] . '.' . ($parts[2] ?? '0');
-                    } else {
-                        $runningVersion = trim($version);
-                    }
-                }
-            }
-        }
-        
-        // Try to get Laragon's configured Apache version for comparison
-        if (function_exists('getLaragonConfig')) {
-            $laraconfig = getLaragonConfig();
-            if (!empty($laraconfig['ApacheVersion'])) {
-                $configuredVersion = $laraconfig['ApacheVersion'];
-                // Extract version if it's in a path format (e.g., "apache-2.4.64" -> "2.4.64")
-                if (preg_match('/(\d+\.\d+\.\d+)/', $configuredVersion, $matches)) {
-                    $configuredVersion = $matches[1];
-                    
-                    // If configured version differs from running version, show both
-                    if ($runningVersion && $configuredVersion !== $runningVersion) {
-                        return $runningVersion . ' (configured: ' . $configuredVersion . ')';
-                    }
-                    // If no running version but we have configured, return configured
-                    if (!$runningVersion) {
-                        return $configuredVersion;
-                    }
-                }
-            }
-        }
-        
-        return $runningVersion ?: 'Unknown';
+        return 'Unknown';
+    }
+}
+
+/**
+ * Get current PHP version (simplified to avoid truncation)
+ */
+if (!function_exists('getCurrentPHPVersion')) {
+    function getCurrentPHPVersion() {
+        // Simply return the running PHP version to avoid truncation
+        return htmlspecialchars(PHP_VERSION);
     }
 }
 
 /**
  * Get MySQL version
- * Returns the actual running MySQL version, or Laragon's configured version if available
  */
 if (!function_exists('getMySQLVersion')) {
     function getMySQLVersion() {
-        $runningVersion = null;
-        
-        try {
-            $laraconfig = getLaragonConfig();
-            $oldErrorReporting = error_reporting(0);
-            
-            // Get MySQL password
-            $mysqlPassword = defined('MYSQL_PASSWORD') ? MYSQL_PASSWORD : '';
-            if (!$mysqlPassword && is_array($laraconfig) && isset($laraconfig['MySQLRootPassword'])) {
-                $mysqlPassword = $laraconfig['MySQLRootPassword'];
-            }
-            
-            // Get MySQL host and user
-            $mysqlHost = defined('MYSQL_HOST') ? MYSQL_HOST : 'localhost';
-            $mysqlUser = defined('MYSQL_USER') ? MYSQL_USER : 'root';
-            
-            $link = @mysqli_connect($mysqlHost, $mysqlUser, $mysqlPassword);
-            if (!$link) {
-                $link = @mysqli_connect($mysqlHost, $mysqlUser, '');
-            }
-            if ($link) {
-                $runningVersion = mysqli_get_server_info($link);
-                mysqli_close($link);
-                error_reporting($oldErrorReporting);
-            } else {
-                error_reporting($oldErrorReporting);
-            }
-        } catch (Exception $e) {
-            // Silently fail
+        // Try to get MySQL version from command line
+        $output = @shell_exec('mysql -V 2>&1');
+        if ($output && preg_match('/(\d+\.\d+\.\d+)/', $output, $matches)) {
+            return $matches[1] . ' (MySQL)';
         }
         
-        // Try to get Laragon's configured MySQL version for comparison
-        if (function_exists('getLaragonConfig')) {
-            $laraconfig = getLaragonConfig();
-            if (!empty($laraconfig['MySQLVersion'])) {
-                $configuredVersion = $laraconfig['MySQLVersion'];
-                // Extract version if it's in a path format (e.g., "mysql-8.0.36" -> "8.0.36")
-                if (preg_match('/(\d+\.\d+\.\d+)/', $configuredVersion, $matches)) {
-                    $configuredVersion = $matches[1];
-                    
-                    // If configured version differs from running version, show both
-                    if ($runningVersion && $configuredVersion !== $runningVersion) {
-                        return htmlspecialchars($runningVersion) . ' (configured: ' . $configuredVersion . ')';
-                    }
-                    // If no running version but we have configured, return configured
-                    if (!$runningVersion) {
-                        return $configuredVersion . ' (not running)';
-                    }
-                }
-            }
+        // Alternative: Try Laragon's MySQL path
+        $laragonRoot = getLaragonRoot();
+        $mysqlPath = $laragonRoot . '/bin/mysql/mysql-*/bin/mysql.exe';
+        if (glob($mysqlPath)) {
+            return 'MySQL (Laragon)';
         }
         
-        return $runningVersion ? htmlspecialchars($runningVersion) : 'MySQL not running!';
-    }
-}
-
-/**
- * Get PHP version
- * Returns the actual running PHP version, or Laragon's configured version if available
- * Detects PATH mismatches and provides helpful information
- */
-if (!function_exists('getCurrentPHPVersion')) {
-    function getCurrentPHPVersion() {
-        // Get the actual running PHP version
-        $runningVersion = PHP_VERSION;
-        
-        // Get the actual PHP executable path
-        $phpExecutable = PHP_BINARY;
-        
-        $laragonRoot = defined('LARAGON_ROOT') ? LARAGON_ROOT : '';
-        // Normalize paths for comparison (handle both forward and backslashes)
-        $laragonRootNormalized = str_replace('\\', '/', strtolower($laragonRoot));
-        $phpExecutableNormalized = str_replace('\\', '/', strtolower($phpExecutable));
-        $isLaragonPHP = !empty($laragonRoot) && strpos($phpExecutableNormalized, $laragonRootNormalized) !== false;
-        
-        // Try to detect Laragon's configured PHP version
-        // Laragon doesn't store PHPVersion in laragon.ini, so we check the PHP directories
-        if ($laragonRoot && is_dir($laragonRoot . '/bin/php')) {
-            // Get all PHP directories
-            $phpDirs = glob($laragonRoot . '/bin/php/php-*');
-            if (!empty($phpDirs)) {
-                // Sort by modification time (most recently modified = likely active)
-                usort($phpDirs, function($a, $b) {
-                    return filemtime($b) - filemtime($a);
-                });
-                
-                // Check each PHP directory for version
-                foreach ($phpDirs as $phpDir) {
-                    if (preg_match('/php-(\d+\.\d+\.\d+)/i', basename($phpDir), $matches)) {
-                        $configuredVersion = $matches[1];
-                        
-                        // If configured version differs from running version, show both
-                        if ($configuredVersion !== $runningVersion) {
-                            // Check if the running PHP executable matches the configured version directory
-                            $configuredPhpPath = $laragonRoot . '/bin/php/php-' . $configuredVersion . '*';
-                            $configuredPhpDirs = glob($configuredPhpPath);
-                            $isRunningConfiguredVersion = false;
-                            
-                            if (!empty($configuredPhpDirs)) {
-                                foreach ($configuredPhpDirs as $configuredPhpDir) {
-                                    if (strpos($phpExecutable, $configuredPhpDir) !== false) {
-                                        $isRunningConfiguredVersion = true;
-                                        break;
-                                    }
-                                }
-                            }
-                            
-                            if (!$isLaragonPHP) {
-                                // PHP is coming from system PATH, not Laragon
-                                return htmlspecialchars($runningVersion) . ' <small>(configured: ' . htmlspecialchars($configuredVersion) . ' - check system PATH)</small>';
-                            } elseif (!$isRunningConfiguredVersion) {
-                                // PHP is from Laragon but wrong version - needs restart
-                                return htmlspecialchars($runningVersion) . ' <small>(configured: ' . htmlspecialchars($configuredVersion) . ' - restart Laragon)</small>';
-                            }
-                        }
-                        // Found a match, break
-                        break;
-                    }
-                }
-            }
-        }
-        
-        // Fallback: Try to get from Laragon config (if it exists)
-        if (function_exists('getLaragonConfig')) {
-            $laraconfig = getLaragonConfig();
-            if (!empty($laraconfig['PHPVersion'])) {
-                // Extract version from Laragon format (e.g., "php-8.5.0-Win32-vs16-x64" -> "8.5.0")
-                $configuredVersion = $laraconfig['PHPVersion'];
-                if (preg_match('/php-(\d+\.\d+\.\d+)/i', $configuredVersion, $matches)) {
-                    $configuredVersion = $matches[1];
-                    
-                    // If configured version differs from running version, show both with helpful note
-                    if ($configuredVersion !== $runningVersion) {
-                        if (!$isLaragonPHP) {
-                            // PHP is coming from system PATH, not Laragon
-                            return htmlspecialchars($runningVersion) . ' <small>(configured: ' . htmlspecialchars($configuredVersion) . ' - check system PATH)</small>';
-                        } else {
-                            // PHP is from Laragon but wrong version - might need restart
-                            return htmlspecialchars($runningVersion) . ' <small>(configured: ' . htmlspecialchars($configuredVersion) . ' - restart Laragon)</small>';
-                        }
-                    }
-                }
-            }
-        }
-        
-        return $runningVersion;
-    }
-}
-
-/**
- * Get PHP ini file path
- */
-if (!function_exists('getPHPIniPath')) {
-    function getPHPIniPath() {
-        $laragonRoot = defined('LARAGON_ROOT') ? LARAGON_ROOT : '';
-        if (empty($laragonRoot)) {
-            return null;
-        }
-        
-        // Get PHP version (e.g., "8.3.16")
-        $phpVersion = PHP_VERSION;
-        
-        // Try to find php.ini in Laragon's PHP directory
-        $phpDirs = glob($laragonRoot . '/bin/php/php-*');
-        if (empty($phpDirs)) {
-            return null;
-        }
-        
-        // Find the directory that matches the current PHP version
-        foreach ($phpDirs as $phpDir) {
-            if (strpos(basename($phpDir), $phpVersion) !== false || 
-                strpos($phpDir, str_replace('.', '', $phpVersion)) !== false) {
-                $iniPath = $phpDir . '/php.ini';
-                if (file_exists($iniPath)) {
-                    return $iniPath;
-                }
-            }
-        }
-        
-        // Fallback: use php --ini output
-        $output = @shell_exec('php --ini 2>&1');
-        if ($output && preg_match('/Loaded Configuration File:\s*(.+)/i', $output, $matches)) {
-            $iniPath = trim($matches[1]);
-            if (file_exists($iniPath)) {
-                return $iniPath;
-            }
-        }
-        
-        // Last fallback: check the most recent PHP directory
-        usort($phpDirs, function($a, $b) {
-            return filemtime($b) - filemtime($a);
-        });
-        $iniPath = $phpDirs[0] . '/php.ini';
-        if (file_exists($iniPath)) {
-            return $iniPath;
-        }
-        
-        return null;
-    }
-}
-
-/**
- * Get MySQL ini file path
- */
-if (!function_exists('getMySQLIniPath')) {
-    function getMySQLIniPath() {
-        $laragonRoot = defined('LARAGON_ROOT') ? LARAGON_ROOT : '';
-        if (empty($laragonRoot)) {
-            return null;
-        }
-        
-        // Get MySQL version
-        $mysqlVersion = getMySQLVersion();
-        if ($mysqlVersion === 'MySQL not running!' || empty($mysqlVersion)) {
-            // Try to find any MySQL installation
-            $mysqlDirs = glob($laragonRoot . '/bin/mysql/mysql-*');
-            if (!empty($mysqlDirs)) {
-                // Sort by modification time (most recent first)
-                usort($mysqlDirs, function($a, $b) {
-                    return filemtime($b) - filemtime($a);
-                });
-                
-                // Check common locations for my.ini
-                foreach ($mysqlDirs as $mysqlDir) {
-                    $possiblePaths = [
-                        $mysqlDir . '/bin/my.ini',
-                        $mysqlDir . '/my.ini',
-                        $mysqlDir . '/my-default.ini'
-                    ];
-                    
-                    foreach ($possiblePaths as $iniPath) {
-                        if (file_exists($iniPath)) {
-                            return $iniPath;
-                        }
-                    }
-                }
-            }
-            return null;
-        }
-        
-        // Extract version number from MySQL version string (e.g., "8.0.35" from "8.0.35-0ubuntu0.22.04.1")
-        if (preg_match('/(\d+\.\d+\.\d+)/', $mysqlVersion, $matches)) {
-            $versionNum = $matches[1];
-        } else {
-            $versionNum = '';
-        }
-        
-        // Find MySQL directory matching the version
-        $mysqlDirs = glob($laragonRoot . '/bin/mysql/mysql-*');
-        if (empty($mysqlDirs)) {
-            return null;
-        }
-        
-        // Try to find directory matching the version
-        foreach ($mysqlDirs as $mysqlDir) {
-            $dirName = basename($mysqlDir);
-            if (!empty($versionNum) && strpos($dirName, $versionNum) !== false) {
-                // Check common locations for my.ini
-                $possiblePaths = [
-                    $mysqlDir . '/bin/my.ini',
-                    $mysqlDir . '/my.ini',
-                    $mysqlDir . '/my-default.ini'
-                ];
-                
-                foreach ($possiblePaths as $iniPath) {
-                    if (file_exists($iniPath)) {
-                        return $iniPath;
-                    }
-                }
-            }
-        }
-        
-        // Fallback: use the most recent MySQL directory
-        usort($mysqlDirs, function($a, $b) {
-            return filemtime($b) - filemtime($a);
-        });
-        
-        foreach ($mysqlDirs as $mysqlDir) {
-            $possiblePaths = [
-                $mysqlDir . '/bin/my.ini',
-                $mysqlDir . '/my.ini',
-                $mysqlDir . '/my-default.ini'
-            ];
-            
-            foreach ($possiblePaths as $iniPath) {
-                if (file_exists($iniPath)) {
-                    return $iniPath;
-                }
-            }
-        }
-        
-        return null;
+        return 'MySQL';
     }
 }
 
@@ -413,24 +167,12 @@ if (!function_exists('getMySQLIniPath')) {
  */
 if (!function_exists('getOpenSSLVersion')) {
     function getOpenSSLVersion() {
-        try {
-            if (function_exists('openssl_version_text')) {
-                $openssl = @openssl_version_text();
-                if ($openssl && preg_match('/OpenSSL\s+([\d.]+)/i', $openssl, $matches)) {
-                    return $matches[1];
-                }
-            }
-            
-            // Fallback: try to get from SERVER_SOFTWARE
-            $serverSoftware = $_SERVER['SERVER_SOFTWARE'] ?? '';
-            if (preg_match('/OpenSSL\/([\d.]+)/i', $serverSoftware, $matches)) {
-                return $matches[1];
-            }
-        } catch (Exception $e) {
-            // Silently fail
+        $output = @shell_exec('openssl version 2>&1');
+        if ($output && preg_match('/OpenSSL\s+(\S+)/', $output, $matches)) {
+            return $matches[1];
         }
         
-        return 'Unknown';
+        return 'OpenSSL';
     }
 }
 
@@ -439,48 +181,30 @@ if (!function_exists('getOpenSSLVersion')) {
  */
 if (!function_exists('getPHPSAPI')) {
     function getPHPSAPI() {
-        return php_sapi_name();
+        return PHP_SAPI;
     }
 }
 
 /**
- * Get Document Root
+ * Get document root
  */
 if (!function_exists('getDocumentRoot')) {
     function getDocumentRoot() {
-        return $_SERVER['DOCUMENT_ROOT'] ?? 'Unknown';
-    }
-}
-
-/**
- * Get language configuration
- */
-if (!function_exists('getLanguageConfig')) {
-    function getLanguageConfig() {
-        try {
-            // Try multiple possible paths for language config
-            $possiblePaths = [
-                APP_ROOT . '/i18n/languages.php',
-                __DIR__ . '/../i18n/languages.php',
-            ];
-            
-            foreach ($possiblePaths as $configFile) {
-                if ($configFile && file_exists($configFile)) {
-                    $config = @require $configFile;
-                    return is_array($config) ? $config : [];
-                }
-            }
-        } catch (Exception $e) {
-            // Silently fail
+        $docRoot = $_SERVER['DOCUMENT_ROOT'] ?? '';
+        
+        // Check if it's a Laragon www directory
+        if (stripos($docRoot, 'laragon') !== false) {
+            return $docRoot;
         }
         
-        // Return default language config if file not found
-        return [
-            'en' => ['name' => 'English', 'flag' => 'US'],
-            'fr' => ['name' => 'French', 'flag' => 'FR'],
-            'de' => ['name' => 'German', 'flag' => 'DE'],
-            'es' => ['name' => 'Spanish', 'flag' => 'ES'],
-        ];
+        // Check if there's a www subdirectory in Laragon
+        $laragonRoot = getLaragonRoot();
+        $wwwPath = $laragonRoot . '/www';
+        if (is_dir($wwwPath)) {
+            return $wwwPath;
+        }
+        
+        return $docRoot ?: $laragonRoot . '/www';
     }
 }
 
@@ -489,492 +213,63 @@ if (!function_exists('getLanguageConfig')) {
  */
 if (!function_exists('getLaragonVersion')) {
     function getLaragonVersion() {
-        if (!defined('LARAGON_ROOT')) {
-            return 'Unknown';
+        $laragonRoot = getLaragonRoot();
+        $versionFile = $laragonRoot . '/laragon.ini';
+        
+        if (file_exists($versionFile)) {
+            $content = @file_get_contents($versionFile);
+            if (preg_match('/version=(\d+\.\d+\.\d+)/', $content, $matches)) {
+                return $matches[1];
+            }
         }
         
-        try {
-            $laragonIniPath = LARAGON_ROOT . '/usr/laragon.ini';
-            
-            // Try to get version from laragon.exe
-            $laragonExePath = LARAGON_ROOT . '/laragon.exe';
-            if (file_exists($laragonExePath) && function_exists('shell_exec')) {
-                $oldErrorReporting = error_reporting(0);
-                $command = 'powershell -Command "(Get-Item \'' . str_replace("'", "''", $laragonExePath) . '\').VersionInfo.FileVersion"';
-                $version = @shell_exec($command);
-                error_reporting($oldErrorReporting);
-                
-                if ($version && trim($version) !== '') {
-                    $versionParts = explode('.', trim($version));
-                    if (count($versionParts) >= 3) {
-                        $major = $versionParts[0];
-                        $minor = $versionParts[1];
-                        $patch = $versionParts[2];
-                        $build = isset($versionParts[3]) ? $versionParts[3] : '';
-                        
-                        // Try to get build number from ini
-                        $buildNumber = '';
-                        if (file_exists($laragonIniPath)) {
-                            $oldErrorReporting = error_reporting(0);
-                            $laraconfig = parse_ini_file($laragonIniPath, false, INI_SCANNER_RAW);
-                            error_reporting($oldErrorReporting);
-                            if ($laraconfig !== false && is_array($laraconfig)) {
-                                $buildNumber = $laraconfig['Build'] ?? '';
-                            }
-                        }
-                        if ($buildNumber) {
-                            return $major . '.' . $minor . '.' . $patch . '.' . $build . ' (' . $buildNumber . ')';
-                        }
-                        if ($build) {
-                            return $major . '.' . $minor . '.' . $patch . '.' . $build;
-                        }
-                        return $major . '.' . $minor . '.' . $patch;
-                    }
-                    return trim($version);
-                }
+        // Try to find Laragon executable
+        $laragonExe = $laragonRoot . '/laragon.exe';
+        if (file_exists($laragonExe)) {
+            $versionInfo = @file_get_contents($laragonExe, false, null, 0, 100);
+            if (preg_match('/(\d+\.\d+\.\d+)/', $versionInfo, $matches)) {
+                return $matches[1];
             }
-            
-            // Fallback to ini file
-            if (file_exists($laragonIniPath)) {
-                $oldErrorReporting = error_reporting(0);
-                $laraconfig = parse_ini_file($laragonIniPath, false, INI_SCANNER_RAW);
-                error_reporting($oldErrorReporting);
-                
-                if ($laraconfig !== false && is_array($laraconfig)) {
-                    $version = $laraconfig['Version'] ?? '';
-                    $build = $laraconfig['Build'] ?? '';
-                    if ($version && $build) {
-                        return $version . ' (' . $build . ')';
-                    }
-                    return $version ?: 'Unknown';
-                }
-            }
-        } catch (Exception $e) {
-            // Silently fail
         }
         
-        return 'Unknown';
+        return 'Laragon';
     }
 }
 
 /**
- * Get platform icon and gradient variant
- */
-if (!function_exists('getPlatformIcon')) {
-    function getPlatformIcon($platform) {
-        $icons = [
-            'WordPress' => 'devicon-plain:wordpress',
-            'Laravel' => 'devicon-plain:laravel',
-            'Drupal' => 'devicon-plain:drupal',
-            'Joomla' => 'devicon-plain:joomla',
-            'Symfony' => 'devicon-plain:symfony',
-            'CakePHP' => 'devicon-plain:cakephp',
-            'Python' => 'devicon-plain:python',
-            'Next.js' => 'devicon-plain:nextjs',
-            'Vue.js' => 'devicon-plain:vuejs',
-            'React' => 'devicon-plain:react',
-            'Angular' => 'devicon-plain:angular',
-            'PHP' => 'devicon-plain:php',
-            'HTML5' => 'mdi:language-html5',
-            'ASP.NET' => 'devicon-plain:dotnetcore',
-            'TypeScript' => 'devicon-plain:typescript',
-            'Node.js' => 'devicon-plain:nodejs',
-            'Other' => 'solar:folder-bold'
-        ];
-        
-        return $icons[$platform] ?? $icons['Other'];
-    }
-}
-
-/**
- * Get gradient variant number (1-10) for platform
- */
-if (!function_exists('getPlatformGradient')) {
-    function getPlatformGradient($platform, $index = 0) {
-        // Map platforms to gradient variants (1-10)
-        $gradientMap = [
-            'WordPress' => 1,
-            'Laravel' => 2,
-            'Drupal' => 3,
-            'Joomla' => 4,
-            'Symfony' => 5,
-            'CakePHP' => 6,
-            'Python' => 7,
-            'Next.js' => 8,
-            'Vue.js' => 9,
-            'React' => 10,
-            'Angular' => 1, // Cycle back
-            'Other' => 2
-        ];
-        
-        $baseGradient = $gradientMap[$platform] ?? (($index % 10) + 1);
-        
-        // If we have multiple projects of same platform, cycle through variants
-        return (($baseGradient + $index) % 10) + 1;
-    }
-}
-
-/**
- * Detect favicon in common locations
- */
-if (!function_exists('detectFavicon')) {
-    function detectFavicon($folderPath) {
-        // Common favicon locations (in order of priority)
-        $faviconPaths = [
-            // Root directory
-            $folderPath . '/favicon.ico',
-            $folderPath . '/favicon.png',
-            $folderPath . '/favicon.jpg',
-            $folderPath . '/favicon.jpeg',
-            $folderPath . '/favicon.svg',
-            
-            // images/ directory
-            $folderPath . '/images/favicon.ico',
-            $folderPath . '/images/favicon.png',
-            $folderPath . '/images/favicon.jpg',
-            $folderPath . '/images/favicon.jpeg',
-            $folderPath . '/images/favicon.svg',
-            
-            // assets/images/ directory
-            $folderPath . '/assets/images/favicon.ico',
-            $folderPath . '/assets/images/favicon.png',
-            $folderPath . '/assets/images/favicon.jpg',
-            $folderPath . '/assets/images/favicon.jpeg',
-            $folderPath . '/assets/images/favicon.svg',
-            
-            // public/ directory (common in Laravel, Symfony, etc.)
-            $folderPath . '/public/favicon.ico',
-            $folderPath . '/public/favicon.png',
-            $folderPath . '/public/favicon.jpg',
-            $folderPath . '/public/favicon.jpeg',
-            $folderPath . '/public/favicon.svg',
-            
-            // public/images/ directory
-            $folderPath . '/public/images/favicon.ico',
-            $folderPath . '/public/images/favicon.png',
-            $folderPath . '/public/images/favicon.jpg',
-            $folderPath . '/public/images/favicon.jpeg',
-            $folderPath . '/public/images/favicon.svg',
-            
-            // static/ directory (common in Python/Django)
-            $folderPath . '/static/favicon.ico',
-            $folderPath . '/static/favicon.png',
-            $folderPath . '/static/images/favicon.ico',
-            $folderPath . '/static/images/favicon.png',
-            
-            // assets/ directory
-            $folderPath . '/assets/favicon.ico',
-            $folderPath . '/assets/favicon.png',
-            
-            // img/ directory
-            $folderPath . '/img/favicon.ico',
-            $folderPath . '/img/favicon.png',
-        ];
-        
-        // Check each path
-        foreach ($faviconPaths as $faviconPath) {
-            if (file_exists($faviconPath) && is_file($faviconPath)) {
-                return $faviconPath;
-            }
-        }
-        
-        // Check WordPress theme favicons
-        if (is_dir($folderPath . '/wp-content/themes')) {
-            $themeDirs = glob($folderPath . '/wp-content/themes/*', GLOB_ONLYDIR);
-            foreach ($themeDirs as $themeDir) {
-                $themeFavicons = [
-                    $themeDir . '/favicon.ico',
-                    $themeDir . '/favicon.png',
-                    $themeDir . '/images/favicon.ico',
-                    $themeDir . '/images/favicon.png',
-                    $themeDir . '/assets/images/favicon.ico',
-                    $themeDir . '/assets/images/favicon.png',
-                ];
-                foreach ($themeFavicons as $themeFavicon) {
-                    if (file_exists($themeFavicon) && is_file($themeFavicon)) {
-                        return $themeFavicon;
-                    }
-                }
-            }
-        }
-        
-        // Try to extract favicon from HTML files (index.html, index.php, etc.)
-        $htmlFiles = [
-            $folderPath . '/index.html',
-            $folderPath . '/index.php',
-            $folderPath . '/index.htm',
-            $folderPath . '/public/index.html',
-            $folderPath . '/public/index.php',
-        ];
-        
-        foreach ($htmlFiles as $htmlFile) {
-            if (file_exists($htmlFile) && is_file($htmlFile)) {
-                $content = @file_get_contents($htmlFile);
-                if ($content) {
-                    // Look for favicon links in HTML
-                    if (preg_match('/<link[^>]*rel=["\'](?:shortcut\s+)?icon["\'][^>]*href=["\']([^"\']+)["\']/i', $content, $matches)) {
-                        $faviconHref = $matches[1];
-                        // Resolve relative paths
-                        if (strpos($faviconHref, 'http') === 0) {
-                            continue; // Skip absolute URLs
-                        }
-                        // Remove query strings and anchors
-                        $faviconHref = preg_replace('/[?#].*$/', '', $faviconHref);
-                        // Remove leading slash if present
-                        $faviconHref = ltrim($faviconHref, '/');
-                        // Build full path
-                        $htmlDir = dirname($htmlFile);
-                        $resolvedPath = $htmlDir . '/' . $faviconHref;
-                        $resolvedPath = str_replace(['\\', '/'], DIRECTORY_SEPARATOR, $resolvedPath);
-                        // Normalize path
-                        $resolvedPath = realpath($resolvedPath);
-                        if ($resolvedPath && file_exists($resolvedPath) && is_file($resolvedPath)) {
-                            return $resolvedPath;
-                        }
-                    }
-                }
-            }
-        }
-        
-        return null;
-    }
-}
-
-/**
- * Detect project platform from directory
- */
-if (!function_exists('detectProjectPlatform')) {
-    function detectProjectPlatform($folderPath) {
-        $platform = 'Other';
-        $icon = 'solar:folder-bold';
-        $color = 'secondary';
-        
-        // Detect favicon first (comprehensive search)
-        $favicon = detectFavicon($folderPath);
-        
-        // Platform detection (check WordPress first via wp-admin)
-        $isWordPress = false;
-        if (file_exists($folderPath . '/wp-admin') || file_exists($folderPath . '/wp-config.php') || file_exists($folderPath . '/wp-load.php')) {
-            $platform = 'WordPress';
-            $icon = 'solar:document-bold';
-            $color = 'primary';
-            $isWordPress = true;
-        } elseif (file_exists($folderPath . '/artisan') && is_dir($folderPath . '/app') && file_exists($folderPath . '/composer.json')) {
-            $platform = 'Laravel';
-            $icon = 'solar:code-bold';
-            $color = 'danger';
-        } elseif ((file_exists($folderPath . '/core') || file_exists($folderPath . '/web/core')) && file_exists($folderPath . '/composer.json')) {
-            $platform = 'Drupal';
-            $icon = 'solar:code-square-bold';
-            $color = 'warning';
-        } elseif (file_exists($folderPath . '/administrator') && file_exists($folderPath . '/configuration.php')) {
-            $platform = 'Joomla';
-            $icon = 'solar:widget-5-bold';
-            $color = 'success';
-        } elseif (file_exists($folderPath . '/bin/console') && file_exists($folderPath . '/composer.json')) {
-            $platform = 'Symfony';
-            $icon = 'solar:settings-bold';
-            $color = 'info';
-        } elseif (file_exists($folderPath . '/bin/cake') && file_exists($folderPath . '/composer.json')) {
-            $platform = 'CakePHP';
-            $icon = 'solar:cake-bold';
-            $color = 'secondary';
-        } elseif (file_exists($folderPath . '/app.py') || file_exists($folderPath . '/main.py') || file_exists($folderPath . '/manage.py') || (is_dir($folderPath . '/static') && file_exists($folderPath . '/requirements.txt'))) {
-            $platform = 'Python';
-            $icon = 'solar:code-2-bold';
-            $color = 'warning';
-        } elseif (file_exists($folderPath . '/package.json') && file_exists($folderPath . '/next.config.js')) {
-            $platform = 'Next.js';
-            $icon = 'solar:code-2-bold';
-            $color = 'info';
-        } elseif (file_exists($folderPath . '/package.json') && file_exists($folderPath . '/vue.config.js')) {
-            $platform = 'Vue.js';
-            $icon = 'solar:code-2-bold';
-            $color = 'success';
-        } elseif (file_exists($folderPath . '/package.json') && file_exists($folderPath . '/angular.json')) {
-            $platform = 'Angular';
-            $icon = 'solar:code-2-bold';
-            $color = 'danger';
-        } elseif (file_exists($folderPath . '/package.json') && file_exists($folderPath . '/react')) {
-            $platform = 'React';
-            $icon = 'solar:code-2-bold';
-            $color = 'primary';
-        } else {
-            // Detect by file extensions if no framework detected
-            $phpFiles = glob($folderPath . '/*.php');
-            $aspxFiles = array_merge(
-                glob($folderPath . '/*.aspx') ?: [],
-                glob($folderPath . '/*.asp') ?: []
-            );
-            $tsFiles = array_merge(
-                glob($folderPath . '/*.ts') ?: [],
-                file_exists($folderPath . '/tsconfig.json') ? [$folderPath . '/tsconfig.json'] : []
-            );
-            $jsFiles = file_exists($folderPath . '/package.json') ? [$folderPath . '/package.json'] : [];
-            $pyFiles = glob($folderPath . '/*.py');
-            $htmlFiles = glob($folderPath . '/*.html');
-            $indexHtml = file_exists($folderPath . '/index.html');
-            
-            if (!empty($phpFiles)) {
-                $platform = 'PHP';
-                $icon = 'devicon-plain:php';
-                $color = 'info';
-            } elseif (!empty($pyFiles)) {
-                $platform = 'Python';
-                $icon = 'devicon-plain:python';
-                $color = 'warning';
-            } elseif (!empty($htmlFiles) || $indexHtml) {
-                $platform = 'HTML5';
-                $icon = 'mdi:language-html5';
-                $color = 'danger';
-            } elseif (!empty($aspxFiles)) {
-                $platform = 'ASP.NET';
-                $icon = 'devicon-plain:dotnetcore';
-                $color = 'primary';
-            } elseif (!empty($tsFiles)) {
-                $platform = 'TypeScript';
-                $icon = 'devicon-plain:typescript';
-                $color = 'info';
-            } elseif (!empty($jsFiles)) {
-                $platform = 'Node.js';
-                $icon = 'devicon-plain:nodejs';
-                $color = 'success';
-            }
-            // If still no match, it remains 'Other'
-        }
-        
-        // Get iconify icon for platform
-        $iconifyIcon = getPlatformIcon($platform);
-        
-        // If WordPress and no favicon found, ensure WordPress icon is used
-        if ($isWordPress && !$favicon) {
-            // WordPress icon will be used as fallback
-        }
-        
-        return [
-            'platform' => $platform,
-            'icon' => $iconifyIcon,
-            'iconify' => $iconifyIcon,
-            'color' => $color,
-            'favicon' => $favicon
-        ];
-    }
-}
-
-/**
- * Get all projects from document root
+ * Get all projects from www directory
  */
 if (!function_exists('getAllProjects')) {
     function getAllProjects() {
-        if (!defined('LARAGON_ROOT')) {
+        $laragonRoot = getLaragonRoot();
+        $wwwPath = $laragonRoot . '/www';
+        
+        if (!is_dir($wwwPath)) {
             return [];
         }
-        
-        $laraconfig = getLaragonConfig();
-        $documentRoot = $laraconfig['DocumentRoot'] ?? (LARAGON_ROOT . '/www');
-        
-        if (!is_dir($documentRoot)) {
-            return [];
-        }
-        
-        // Determine URL protocol
-        // Priority: 1) Config override, 2) Current request protocol, 3) Laragon config, 4) Default HTTP
-        $url = 'http';
-        
-        // Check for config override (force HTTPS)
-        if (defined('FORCE_HTTPS') && FORCE_HTTPS === true) {
-            $url = 'https';
-        }
-        // Check current request protocol (if dashboard is accessed via HTTPS, likely projects are too)
-        elseif (isset($_SERVER['HTTPS']) && ($_SERVER['HTTPS'] === 'on' || $_SERVER['HTTPS'] === '1')) {
-            $url = 'https';
-        }
-        elseif (isset($_SERVER['SERVER_PORT']) && $_SERVER['SERVER_PORT'] == 443) {
-            $url = 'https';
-        }
-        // Check Laragon config
-        elseif (isset($laraconfig['SSLEnabled']) && $laraconfig['SSLEnabled'] == 1) {
-            $url = 'https';
-        }
-        elseif (isset($laraconfig['Port']) && $laraconfig['Port'] == 443) {
-            $url = 'https';
-        }
-        // Check for HTTPS port in HTTP_HOST (e.g., localhost:443)
-        elseif (isset($_SERVER['HTTP_HOST']) && strpos($_SERVER['HTTP_HOST'], ':443') !== false) {
-            $url = 'https';
-        }
-        
-        $domainSuffix = defined('DOMAIN_SUFFIX') ? DOMAIN_SUFFIX : '.local';
-        
-        $ignore_dirs = ['.', '..', 'logs', 'access-logs', 'vendor', 'favicon_io', 'ablepro-90', 'assets', 'Laragon-Dashboard', 'phpmyadmin'];
-        
-        // Get user-ignored projects from preferences
-        $ignoredProjects = [];
-        if (function_exists('getDashboardPreferences')) {
-            $prefs = getDashboardPreferences();
-            $ignoredProjects = $prefs['ignored_projects'] ?? [];
-        }
-        
-        $folders = array_filter(glob($documentRoot . '/*'), 'is_dir');
-        sort($folders, SORT_NATURAL | SORT_FLAG_CASE);
         
         $projects = [];
+        $ignoredProjects = getIgnoredProjects();
         
-        foreach ($folders as $folderPath) {
-            $host = basename($folderPath);
+        $dirs = glob($wwwPath . '/*', GLOB_ONLYDIR);
+        
+        foreach ($dirs as $dir) {
+            $name = basename($dir);
             
-            // Check if in ignore list or user-ignored
-            if (in_array($host, $ignore_dirs) || in_array($host, $ignoredProjects) || !is_dir($folderPath)) {
+            // Skip hidden directories and common non-project directories
+            if ($name[0] === '.' || in_array($name, ['laragon', 'dashboard', 'phpmyadmin', 'adminer', 'phppgadmin'])) {
                 continue;
             }
             
-            $detection = detectProjectPlatform($folderPath);
-            
-            // Convert favicon path to web-accessible URL if it exists
-            $faviconUrl = null;
-            if ($detection['favicon']) {
-                // Normalize path separators
-                $faviconPath = str_replace('\\', '/', $detection['favicon']);
-                $documentRootNormalized = rtrim(str_replace('\\', '/', $documentRoot), '/');
-                
-                // Try to find the favicon path relative to document root
-                if (stripos($faviconPath, $documentRootNormalized) === 0) {
-                    // Favicon is within document root
-                    // Remove document root prefix and leading slash
-                    $relativePath = substr($faviconPath, strlen($documentRootNormalized));
-                    $faviconUrl = ltrim($relativePath, '/'); // Remove leading slash if present
-                } else {
-                    // Fallback: try to find relative path from project folder
-                    $projectPathNormalized = rtrim(str_replace('\\', '/', $folderPath), '/');
-                    if (stripos($faviconPath, $projectPathNormalized) === 0) {
-                        // Favicon is within project folder
-                        $relativePath = substr($faviconPath, strlen($projectPathNormalized));
-                        $relativePath = ltrim($relativePath, '/'); // Remove leading slash
-                        $faviconUrl = $host . '/' . $relativePath;
-                    } else {
-                        // Last resort: use project name + filename
-                        $faviconUrl = $host . '/' . basename($detection['favicon']);
-                    }
-                }
+            // Skip ignored projects
+            if (in_array($name, $ignoredProjects)) {
+                continue;
             }
             
-            // Get gradient variant for this project
-            $gradientVariant = getPlatformGradient($detection['platform'], count($projects));
-            
-            $project = [
-                'name' => $host,
-                'path' => $folderPath,
-                'url' => $url . '://' . $host . $domainSuffix,
-                'platform' => $detection['platform'],
-                'icon' => $detection['iconify'],
-                'iconify' => $detection['iconify'],
-                'color' => $detection['color'],
-                'favicon' => $faviconUrl,
-                'gradient' => $gradientVariant,
-                'is_wordpress' => ($detection['platform'] === 'WordPress')
-            ];
-            
-            $projects[] = $project;
+            $project = analyzeProject($dir, $name);
+            if ($project) {
+                $projects[] = $project;
+            }
         }
         
         return $projects;
@@ -982,30 +277,272 @@ if (!function_exists('getAllProjects')) {
 }
 
 /**
- * Check if phpMyAdmin is installed
+ * Analyze a project directory
  */
-if (!function_exists('isPhpMyAdminInstalled')) {
-    function isPhpMyAdminInstalled() {
-        $docRoot = $_SERVER['DOCUMENT_ROOT'] ?? '';
-        $phpmyadminPath = str_replace('\\', '/', $docRoot . '/phpmyadmin');
+if (!function_exists('analyzeProject')) {
+    function analyzeProject($path, $name) {
+        $project = [
+            'name' => $name,
+            'path' => $path,
+            'url' => 'http://' . $name . '.local',
+            'platform' => 'Unknown',
+            'icon' => 'solar:folder-bold',
+            'iconify' => null,
+            'color' => 'primary',
+            'is_wordpress' => false,
+            'has_composer' => file_exists($path . '/composer.json'),
+            'has_npm' => file_exists($path . '/package.json'),
+            'has_git' => is_dir($path . '/.git'),
+            'git_branch' => null,
+            'git_status' => null,
+            'favicon' => null,
+        ];
         
-        // Check common locations
-        if (is_dir($phpmyadminPath)) {
-            return true;
-        }
-        
-        // Check alternative location
-        $phpMyAdminPath = str_replace('\\', '/', $docRoot . '/phpMyAdmin');
-        if (is_dir($phpMyAdminPath)) {
-            return true;
-        }
-        
-        // Check Laragon www directory
-        if (defined('LARAGON_ROOT')) {
-            $laragonPhpmyadmin = LARAGON_ROOT . '/www/phpmyadmin';
-            if (is_dir($laragonPhpmyadmin)) {
-                return true;
+        // Check for WordPress
+        if (file_exists($path . '/wp-config.php') || file_exists($path . '/wp-includes/version.php')) {
+            $project['platform'] = 'WordPress';
+            $project['icon'] = 'devicon-plain:wordpress';
+            $project['color'] = 'primary';
+            $project['is_wordpress'] = true;
+            
+            // Try to find WordPress favicon
+            $wpContentPath = $path . '/wp-content';
+            if (is_dir($wpContentPath)) {
+                $faviconPath = findFile($wpContentPath, ['favicon.ico', 'favicon.png', 'site-icon.png']);
+                if ($faviconPath) {
+                    $project['favicon'] = str_replace($laragonRoot . '/www/', '', $faviconPath);
+                }
             }
+        }
+        // Check for Laravel
+        elseif (file_exists($path . '/artisan')) {
+            $project['platform'] = 'Laravel';
+            $project['icon'] = 'devicon-plain:laravel';
+            $project['color'] = 'danger';
+        }
+        // Check for Drupal
+        elseif (file_exists($path . '/core/lib/Drupal.php') || file_exists($path . '/autoload.php')) {
+            $project['platform'] = 'Drupal';
+            $project['icon'] = 'devicon-plain:drupal';
+            $project['color'] = 'info';
+        }
+        // Check for CodeIgniter
+        elseif (file_exists($path . '/index.php') && file_exists($path . '/system/core/Controller.php')) {
+            $project['platform'] = 'CodeIgniter';
+            $project['icon'] = 'devicon-plain:codeigniter';
+            $project['color'] = 'warning';
+        }
+        // Check for Symfony
+        elseif (file_exists($path . '/bin/console') || (is_dir($path . '/src') && file_exists($path . '/composer.json') && strpos(file_get_contents($path . '/composer.json'), 'symfony/framework-bundle') !== false)) {
+            $project['platform'] = 'Symfony';
+            $project['icon'] = 'devicon-plain:symfony';
+            $project['color'] = 'dark';
+        }
+        // Check for CakePHP
+        elseif (file_exists($path . '/config/bootstrap.php') && file_exists($path . '/src/Controller/AppController.php')) {
+            $project['platform'] = 'CakePHP';
+            $project['icon'] = 'devicon-plain:cakephp';
+            $project['color'] = 'success';
+        }
+        // Check for Joomla
+        elseif (file_exists($path . '/configuration.php') && (file_exists($path . '/includes/defines.php') || file_exists($path . '/libraries/cms/version/version.php'))) {
+            $project['platform'] = 'Joomla';
+            $project['icon'] = 'devicon-plain:joomla';
+            $project['color'] = 'info';
+        }
+        // Check for static HTML
+        elseif (file_exists($path . '/index.html') && !file_exists($path . '/composer.json') && !file_exists($path . '/package.json')) {
+            $project['platform'] = 'Static HTML';
+            $project['icon'] = 'devicon-plain:html5';
+            $project['color'] = 'warning';
+        }
+        // Check for Node.js
+        elseif (file_exists($path . '/package.json') && !file_exists($path . '/composer.json')) {
+            $project['platform'] = 'Node.js';
+            $project['icon'] = 'devicon-plain:nodejs';
+            $project['color'] = 'success';
+        }
+        // Default to PHP
+        else {
+            $project['platform'] = 'PHP';
+            $project['icon'] = 'devicon-plain:php';
+            $project['color'] = 'primary';
+        }
+        
+        // Try to find favicon for non-WordPress projects
+        if (!$project['favicon']) {
+            $faviconPath = findFile($path, ['favicon.ico', 'favicon.png', 'favicon.svg']);
+            if ($faviconPath) {
+                $project['favicon'] = str_replace($laragonRoot . '/www/', '', $faviconPath);
+            }
+        }
+        
+        // Check for Git branch and status
+        if ($project['has_git']) {
+            $branch = @shell_exec('cd ' . escapeshellarg($path) . ' && git rev-parse --abbrev-ref HEAD 2>&1');
+            $project['git_branch'] = trim($branch) ?: 'unknown';
+            
+            $status = @shell_exec('cd ' . escapeshellarg($path) . ' && git status --porcelain 2>&1');
+            $project['git_status'] = !empty(trim($status)) ? 'modified' : 'clean';
+        }
+        
+        return $project;
+    }
+}
+
+/**
+ * Find a file in a directory recursively
+ */
+if (!function_exists('findFile')) {
+    function findFile($dir, $filenames) {
+        foreach ($filenames as $filename) {
+            $path = $dir . '/' . $filename;
+            if (file_exists($path)) {
+                return $path;
+            }
+        }
+        
+        // Search in subdirectories
+        $subdirs = glob($dir . '/*', GLOB_ONLYDIR);
+        foreach ($subdirs as $subdir) {
+            $result = findFile($subdir, $filenames);
+            if ($result) {
+                return $result;
+            }
+        }
+        
+        return null;
+    }
+}
+
+/**
+ * Get list of ignored projects
+ */
+if (!function_exists('getIgnoredProjects')) {
+    function getIgnoredProjects() {
+        $ignoredFile = dirname(__DIR__) . '/data/ignored_projects.json';
+        
+        if (file_exists($ignoredFile)) {
+            $content = @file_get_contents($ignoredFile);
+            if ($content) {
+                $ignored = json_decode($content, true);
+                if (is_array($ignored)) {
+                    return $ignored;
+                }
+            }
+        }
+        
+        return [];
+    }
+}
+
+/**
+ * Ignore a project
+ */
+if (!function_exists('ignoreProject')) {
+    function ignoreProject($projectName) {
+        $ignored = getIgnoredProjects();
+        
+        if (!in_array($projectName, $ignored)) {
+            $ignored[] = $projectName;
+            
+            $ignoredFile = dirname(__DIR__) . '/data/ignored_projects.json';
+            @file_put_contents($ignoredFile, json_encode($ignored, JSON_PRETTY_PRINT));
+        }
+    }
+}
+
+/**
+ * Unignore a project
+ */
+if (!function_exists('unignoreProject')) {
+    function unignoreProject($projectName) {
+        $ignored = getIgnoredProjects();
+        $ignored = array_filter($ignored, function($name) use ($projectName) {
+            return $name !== $projectName;
+        });
+        
+        $ignoredFile = dirname(__DIR__) . '/data/ignored_projects.json';
+        @file_put_contents($ignoredFile, json_encode(array_values($ignored), JSON_PRETTY_PRINT));
+    }
+}
+
+/**
+ * Get services status
+ */
+if (!function_exists('getServicesStatus')) {
+    function getServicesStatus() {
+        $services = [
+            'Apache' => ['name' => 'Apache', 'display' => 'Apache', 'port' => 80],
+            'MySQL' => ['name' => 'MySQL', 'display' => 'MySQL', 'port' => 3306],
+            'Redis' => ['name' => 'Redis', 'display' => 'Redis', 'port' => 6379],
+            'Memcached' => ['name' => 'Memcached', 'display' => 'Memcached', 'port' => 11211],
+            'PostgreSQL' => ['name' => 'PostgreSQL', 'display' => 'PostgreSQL', 'port' => 5432],
+        ];
+        
+        $status = [];
+        
+        foreach ($services as $key => $service) {
+            $status[$key] = [
+                'name' => $service['display'],
+                'running' => isPortInUse($service['port']),
+                'port' => $service['port'],
+            ];
+            
+            // Try Windows service check as well
+            $output = @shell_exec('sc query "' . $service['name'] . '" 2>&1');
+            $status[$key]['windows_service'] = strpos($output, 'RUNNING') !== false;
+        }
+        
+        return $status;
+    }
+}
+
+/**
+ * Check if a port is in use
+ */
+if (!function_exists('isPortInUse')) {
+    function isPortInUse($port) {
+        $output = @shell_exec('netstat -an | findstr :' . $port . ' 2>&1');
+        return !empty(trim($output));
+    }
+}
+
+/**
+ * Get listening ports
+ */
+if (!function_exists('getListeningPorts')) {
+    function getListeningPorts() {
+        $output = @shell_exec('netstat -an 2>&1');
+        $ports = [];
+        
+        if (preg_match_all('/LISTENING\s+(\d+)\s+.*?:(\d+)/', $output, $matches, PREG_SET_ORDER)) {
+            foreach ($matches as $match) {
+                $ports[] = [
+                    'pid' => $match[1],
+                    'port' => $match[2],
+                ];
+            }
+        }
+        
+        return $ports;
+    }
+}
+
+/**
+ * Start a service
+ */
+if (!function_exists('startService')) {
+    function startService($service) {
+        $services = [
+            'Apache' => 'Apache2.4',
+            'MySQL' => 'MySQL',
+            'Nginx' => 'Nginx',
+        ];
+        
+        if (isset($services[$service])) {
+            $output = @shell_exec('net start "' . $services[$service] . '" 2>&1');
+            return strpos($output, 'was started successfully') !== false || strpos($output, 'running') !== false;
         }
         
         return false;
@@ -1013,151 +550,463 @@ if (!function_exists('isPhpMyAdminInstalled')) {
 }
 
 /**
- * Get phpMyAdmin installation path
+ * Stop a service
  */
-if (!function_exists('getPhpMyAdminPath')) {
-    function getPhpMyAdminPath() {
-        $docRoot = $_SERVER['DOCUMENT_ROOT'] ?? '';
-        $phpmyadminPath = str_replace('\\', '/', $docRoot . '/phpmyadmin');
+if (!function_exists('stopService')) {
+    function stopService($service) {
+        $services = [
+            'Apache' => 'Apache2.4',
+            'MySQL' => 'MySQL',
+            'Nginx' => 'Nginx',
+        ];
         
-        if (is_dir($phpmyadminPath)) {
-            return $phpmyadminPath;
+        if (isset($services[$service])) {
+            $output = @shell_exec('net stop "' . $services[$service] . '" 2>&1');
+            return strpos($output, 'was stopped successfully') !== false || strpos($output, 'stopped') !== false;
         }
         
-        $phpMyAdminPath = str_replace('\\', '/', $docRoot . '/phpMyAdmin');
-        if (is_dir($phpMyAdminPath)) {
-            return $phpMyAdminPath;
-        }
-        
-        if (defined('LARAGON_ROOT')) {
-            $laragonPhpmyadmin = LARAGON_ROOT . '/www/phpmyadmin';
-            if (is_dir($laragonPhpmyadmin)) {
-                return $laragonPhpmyadmin;
-            }
-        }
-        
-        return null;
+        return false;
     }
 }
 
 /**
- * Get phpMyAdmin version if available
+ * Restart a service
  */
-if (!function_exists('getPhpMyAdminVersion')) {
-    function getPhpMyAdminVersion() {
-        $path = getPhpMyAdminPath();
-        if (!$path) {
-            return null;
-        }
-        
-        // Check for VERSION file
-        $versionFile = $path . '/VERSION';
-        if (file_exists($versionFile)) {
-            $version = trim(@file_get_contents($versionFile));
-            if (!empty($version)) {
-                return $version;
-            }
-        }
-        
-        // Check for version in composer.json
-        $composerFile = $path . '/composer.json';
-        if (file_exists($composerFile)) {
-            $composer = @json_decode(file_get_contents($composerFile), true);
-            if (isset($composer['version'])) {
-                return $composer['version'];
-            }
-        }
-        
-        return null;
+if (!function_exists('restartService')) {
+    function restartService($service) {
+        stopService($service);
+        sleep(1);
+        return startService($service);
     }
 }
 
 /**
- * Check if Adminer is installed
+ * Get log files
  */
-if (!function_exists('isAdminerInstalled')) {
-    function isAdminerInstalled($basePath = 'assets/adminer') {
-        if (!class_exists('AdminerModule')) {
-            $adminerModulePath = __DIR__ . '/AdminerModule.php';
-            if (file_exists($adminerModulePath)) {
-                require_once $adminerModulePath;
+if (!function_exists('getLogFiles')) {
+    function getLogFiles() {
+        $laragonRoot = getLaragonRoot();
+        
+        $logs = [
+            'apache_error' => [
+                'name' => 'Apache Error Log',
+                'path' => $laragonRoot . '/logs/apache_error.log',
+                'type' => 'error',
+            ],
+            'apache_access' => [
+                'name' => 'Apache Access Log',
+                'path' => $laragonRoot . '/logs/apache_access.log',
+                'type' => 'access',
+            ],
+            'php_error' => [
+                'name' => 'PHP Error Log',
+                'path' => $laragonRoot . '/logs/php_error.log',
+                'type' => 'error',
+            ],
+            'mysql_error' => [
+                'name' => 'MySQL Error Log',
+                'path' => $laragonRoot . '/logs/mysql_error.log',
+                'type' => 'error',
+            ],
+            'mysql_slow' => [
+                'name' => 'MySQL Slow Query Log',
+                'path' => $laragonRoot . '/logs/mysql_slow.log',
+                'type' => 'slow',
+            ],
+            'laragon' => [
+                'name' => 'Laragon Log',
+                'path' => $laragonRoot . '/logs/laragon.log',
+                'type' => 'laragon',
+            ],
+        ];
+        
+        // Filter out non-existent logs
+        return array_filter($logs, function($log) {
+            return file_exists($log['path']);
+        });
+    }
+}
+
+/**
+ * Read log file
+ */
+if (!function_exists('readLogFile')) {
+    function readLogFile($path, $lines = 100) {
+        if (!file_exists($path)) {
+            return ['error' => 'Log file not found'];
+        }
+        
+        // Use tail command on Windows
+        $path = str_replace('\\', '/', $path);
+        $output = @shell_exec("powershell -Command \"Get-Content '$path' | Select-Object -Last $lines\" 2>&1");
+        
+        if (empty($output)) {
+            // Fallback to reading entire file
+            $output = @file_get_contents($path);
+        }
+        
+        return [
+            'content' => $output,
+            'lines' => substr_count($output, "\n") + 1,
+        ];
+    }
+}
+
+/**
+ * Clear log file
+ */
+if (!function_exists('clearLogFile')) {
+    function clearLogFile($path) {
+        if (file_exists($path)) {
+            return @file_put_contents($path, '');
+        }
+        return false;
+    }
+}
+
+/**
+ * Create a project
+ */
+if (!function_exists('createProject')) {
+    function createProject($name, $type, $options = []) {
+        $laragonRoot = getLaragonRoot();
+        $wwwPath = $laragonRoot . '/www/' . $name;
+        
+        if (is_dir($wwwPath)) {
+            return ['success' => false, 'error' => 'Project already exists'];
+        }
+        
+        $commands = [];
+        
+        switch ($type) {
+            case 'laravel':
+                // Create Laravel project using composer
+                $commands[] = 'cd ' . escapeshellarg($laragonRoot . '/www') . ' && composer create-project laravel/laravel ' . escapeshellarg($name) . ' --prefer-dist';
+                break;
+                
+            case 'wordpress':
+                // Create WordPress using WP-CLI if available, otherwise download
+                $commands[] = 'cd ' . escapeshellarg($laragonRoot . '/www') . ' && if exist wp-cli.phar (php wp-cli.phar core download --locale=en_US) else (curl -O https://wordpress.org/latest.tar.gz && tar -xzf latest.tar.gz && mv wordpress ' . escapeshellarg($name) . ' && del latest.tar.gz)';
+                break;
+                
+            case 'nodejs':
+                // Create Node.js project
+                $commands[] = 'cd ' . escapeshellarg($wwwPath) . ' && npm init -y';
+                break;
+                
+            case 'static':
+                // Create basic static files
+                $commands[] = 'mkdir ' . escapeshellarg($wwwPath);
+                $commands[] = 'echo "<!DOCTYPE html><html><head><title>' . escapeshellarg($name) . '</title></head><body><h1>' . escapeshellarg($name) . '</h1></body></html>" > ' . escapeshellarg($wwwPath . '/index.html');
+                break;
+                
+            default:
+                // Create basic PHP project
+                $commands[] = 'mkdir ' . escapeshellarg($wwwPath);
+                $commands[] = 'echo "<?php phpinfo();" > ' . escapeshellarg($wwwPath . '/index.php');
+        }
+        
+        $output = [];
+        foreach ($commands as $command) {
+            exec($command . ' 2>&1', $output);
+        }
+        
+        return [
+            'success' => is_dir($wwwPath),
+            'output' => implode("\n", $output),
+        ];
+    }
+}
+
+/**
+ * Delete a project
+ */
+if (!function_exists('deleteProject')) {
+    function deleteProject($name) {
+        $laragonRoot = getLaragonRoot();
+        $projectPath = $laragonRoot . '/www/' . $name;
+        
+        if (!is_dir($projectPath)) {
+            return ['success' => false, 'error' => 'Project not found'];
+        }
+        
+        // Use Windows rmdir to remove directory and contents
+        $output = @shell_exec('rmdir /s /q "' . str_replace('/', '\\', $projectPath) . '" 2>&1');
+        
+        return [
+            'success' => !is_dir($projectPath),
+            'output' => $output,
+        ];
+    }
+}
+
+/**
+ * Get dashboard preferences
+ */
+if (!function_exists('getDashboardPreferences')) {
+    function getDashboardPreferences() {
+        $prefsFile = dirname(__DIR__) . '/data/preferences.json';
+        
+        $defaults = [
+            'theme' => 'light',
+            'compact_sidebar' => false,
+            'default_page' => 'dashboard',
+            'refresh_interval' => 30,
+            'show_system_info' => true,
+            'language' => 'en',
+            'time_format' => '24h',
+            'date_format' => 'Y-m-d',
+            'debug_mode' => false,
+            'auto_refresh' => false,
+            'animations' => true,
+        ];
+        
+        if (file_exists($prefsFile)) {
+            $content = @file_get_contents($prefsFile);
+            if ($content) {
+                $prefs = json_decode($content, true);
+                if (is_array($prefs)) {
+                    return array_merge($defaults, $prefs);
+                }
+            }
+        }
+        
+        // Ensure data directory exists
+        $dataDir = dirname(__DIR__) . '/data';
+        if (!is_dir($dataDir)) {
+            @mkdir($dataDir, 0755, true);
+        }
+        
+        // Save defaults
+        @file_put_contents($prefsFile, json_encode($defaults, JSON_PRETTY_PRINT));
+        
+        return $defaults;
+    }
+}
+
+/**
+ * Save dashboard preferences
+ */
+if (!function_exists('saveDashboardPreferences')) {
+    function saveDashboardPreferences($prefs) {
+        $prefsFile = dirname(__DIR__) . '/data/preferences.json';
+        
+        // Ensure data directory exists
+        $dataDir = dirname(__DIR__) . '/data';
+        if (!is_dir($dataDir)) {
+            @mkdir($dataDir, 0755, true);
+        }
+        
+        return @file_put_contents($prefsFile, json_encode($prefs, JSON_PRETTY_PRINT)) !== false;
+    }
+}
+
+/**
+ * Clear all caches
+ */
+if (!function_exists('clearAllCaches')) {
+    function clearAllCaches() {
+        $results = [];
+        
+        // Clear dashboard cache
+        $cacheDir = dirname(__DIR__) . '/temp/cache';
+        if (is_dir($cacheDir)) {
+            $files = glob($cacheDir . '/*');
+            foreach ($files as $file) {
+                if (is_file($file)) {
+                    @unlink($file);
+                }
+            }
+            $results['dashboard_cache'] = true;
+        }
+        
+        // Clear session cache
+        $sessionDir = dirname(__DIR__) . '/temp/sessions';
+        if (is_dir($sessionDir)) {
+            $files = glob($sessionDir . '/*');
+            foreach ($files as $file) {
+                if (is_file($file)) {
+                    @unlink($file);
+                }
+            }
+            $results['session_cache'] = true;
+        }
+        
+        // Clear Laragon cache
+        $laragonRoot = getLaragonRoot();
+        $laragonCache = $laragonRoot . '/data/cache';
+        if (is_dir($laragonCache)) {
+            $files = glob($laragonCache . '/*');
+            foreach ($files as $file) {
+                if (is_file($file)) {
+                    @unlink($file);
+                }
+            }
+            $results['laragon_cache'] = true;
+        }
+        
+        return $results;
+    }
+}
+
+/**
+ * Optimize databases
+ */
+if (!function_exists('optimizeDatabases')) {
+    function optimizeDatabases() {
+        // This would require MySQL credentials
+        // For now, return a placeholder
+        return [
+            'success' => false,
+            'message' => 'Database optimization requires MySQL credentials. Please configure in config.php',
+        ];
+    }
+}
+
+/**
+ * Run composer command
+ */
+if (!function_exists('runComposerCommand')) {
+    function runComposerCommand($projectPath, $command = 'install') {
+        $laragonRoot = getLaragonRoot();
+        $composerPath = $laragonRoot . '/bin/composer/composer.phar';
+        
+        if (!file_exists($composerPath)) {
+            return [
+                'success' => false,
+                'output' => 'Composer not found. Please install Composer in Laragon.',
+            ];
+        }
+        
+        $fullCommand = 'php ' . escapeshellarg($composerPath) . ' ' . $command;
+        $output = @shell_exec('cd ' . escapeshellarg($projectPath) . ' && ' . $fullCommand . ' 2>&1');
+        
+        return [
+            'success' => strpos($output, 'Generating autoload files') !== false || strpos($output, 'Package operations') !== false,
+            'output' => $output,
+        ];
+    }
+}
+
+/**
+ * Run npm command
+ */
+if (!function_exists('runNpmCommand')) {
+    function runNpmCommand($projectPath, $command = 'install') {
+        $laragonRoot = getLaragonRoot();
+        $npmPath = $laragonRoot . '/bin/node/node.exe';
+        
+        if (!file_exists($npmPath)) {
+            return [
+                'success' => false,
+                'output' => 'Node.js not found. Please install Node.js in Laragon.',
+            ];
+        }
+        
+        $fullCommand = $npmPath . ' ' . $command;
+        $output = @shell_exec('cd ' . escapeshellarg($projectPath) . ' && ' . $fullCommand . ' 2>&1');
+        
+        return [
+            'success' => strpos($output, 'added') !== false || strpos($output, 'up to date') !== false,
+            'output' => $output,
+        ];
+    }
+}
+
+/**
+ * Check Git status
+ */
+if (!function_exists('checkGitStatus')) {
+    function checkGitStatus($projectPath) {
+        $branch = @shell_exec('cd ' . escapeshellarg($projectPath) . ' && git rev-parse --abbrev-ref HEAD 2>&1');
+        $status = @shell_exec('cd ' . escapeshellarg($projectPath) . ' && git status --porcelain 2>&1');
+        $remote = @shell_exec('cd ' . escapeshellarg($projectPath) . ' && git remote get-url origin 2>&1');
+        
+        return [
+            'branch' => trim($branch) ?: 'unknown',
+            'status' => !empty(trim($status)) ? 'modified' : 'clean',
+            'remote' => trim($remote) ?: null,
+        ];
+    }
+}
+
+/**
+ * Get Laragon config
+ */
+if (!function_exists('getLaragonConfig')) {
+    function getLaragonConfig() {
+        $laragonRoot = getLaragonRoot();
+        $configFile = $laragonRoot . '/laragon.ini';
+        
+        if (!file_exists($configFile)) {
+            return [];
+        }
+        
+        $content = @file_get_contents($configFile);
+        $config = [];
+        
+        if (preg_match_all('/^(\w+)=(.*)$/m', $content, $matches, PREG_SET_ORDER)) {
+            foreach ($matches as $match) {
+                $config[$match[1]] = $match[2];
+            }
+        }
+        
+        return $config;
+    }
+}
+
+/**
+ * Fix SMTP configuration
+ */
+if (!function_exists('fixSMTP')) {
+    function fixSMTP() {
+        $laragonRoot = getLaragonRoot();
+        $phpIni = $laragonRoot . '/bin/php/php.ini';
+        $sendmailIni = $laragonRoot . '/bin/sendmail/sendmail.ini';
+        
+        $results = [];
+        
+        // Fix php.ini
+        if (file_exists($phpIni)) {
+            $phpIniContent = @file_get_contents($phpIni);
+            
+            // Enable mailparse extension
+            if (strpos($phpIniContent, 'extension=mailparse') !== false && strpos($phpIniContent, 'extension=mailparse') !== false) {
+                // Extension might already be enabled
             } else {
-                return false;
+                $phpIniContent .= "\n; Mailparse extension\n";
+                $phpIniContent .= "extension=mailparse\n";
+                $results['mailparse'] = @file_put_contents($phpIniContent, $phpIni) !== false;
             }
         }
         
-        return AdminerModule::check($basePath);
+        // Configure sendmail.ini
+        if (file_exists($sendmailIni)) {
+            $sendmailContent = @file_get_contents($sendmailIni);
+            
+            // Update SMTP settings
+            $sendmailContent = str_replace('smtp_server=mail.mydomain.com', 'smtp_server=localhost', $sendmailContent);
+            $sendmailContent = str_replace('smtp_port=25', 'smtp_port=1025', $sendmailContent);
+            $sendmailContent = str_replace('auth_username=', 'auth_username=', $sendmailContent);
+            $sendmailContent = str_replace('auth_password=', 'auth_password=', $sendmailContent);
+            $sendmailContent = str_replace('force_sender=', 'force_sender=', $sendmailContent);
+            
+            $results['sendmail'] = @file_put_contents($sendmailContent, $sendmailIni) !== false;
+        }
+        
+        return $results;
     }
 }
 
 /**
- * Get Adminer URL
+ * Translation helper function
  */
-if (!function_exists('getAdminerUrl')) {
-    function getAdminerUrl($basePath = 'assets/adminer', $database = null) {
-        if (!class_exists('AdminerModule')) {
-            $adminerModulePath = __DIR__ . '/AdminerModule.php';
-            if (file_exists($adminerModulePath)) {
-                require_once $adminerModulePath;
-            } else {
-                return null;
-            }
-        }
-        
-        $instance = new AdminerModule(['base_path' => $basePath]);
-        return $instance->getUrl($database);
+if (!function_exists('t')) {
+    function t($key, $fallback = '') {
+        // This is a placeholder - actual translation would be loaded from i18n files
+        return $fallback ?: $key;
     }
 }
 
-/**
- * Simple parameter sanitization helper
- * Replaces Router::getParam() functionality
- */
-if (!function_exists('getParam')) {
-    function getParam($key, $default = '') {
-        if (!isset($_GET[$key])) {
-            return $default;
-        }
-        
-        $value = $_GET[$key];
-        
-        // Basic sanitization
-        $value = strip_tags($value);
-        $value = htmlspecialchars($value, ENT_QUOTES, 'UTF-8');
-        
-        // Prevent directory traversal
-        $value = str_replace(['../', '..\\', '/', '\\'], '', $value);
-        
-        // Limit length
-        if (strlen($value) > 255) {
-            $value = substr($value, 0, 255);
-        }
-        
-        return $value;
-    }
-}
-
-/**
- * Get current page name
- */
-if (!function_exists('getCurrentPage')) {
-    function getCurrentPage() {
-        $page = $_GET['page'] ?? '';
-        
-        // If no page, check if we're on index.php
-        if (empty($page)) {
-            $scriptName = basename($_SERVER['PHP_SELF'] ?? $_SERVER['SCRIPT_NAME'] ?? 'index.php');
-            if ($scriptName === 'index.php' || $scriptName === 'index') {
-                return 'dashboard';
-            }
-            return basename($scriptName, '.php');
-        }
-        
-        // Sanitize page name
-        $page = basename($page);
-        $page = preg_replace('/[^a-zA-Z0-9_-]/', '', $page);
-        
-        return strtolower($page);
-    }
-}
-
+// Clear any output that may have been generated
+ob_end_clean();
