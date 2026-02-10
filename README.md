@@ -1,8 +1,8 @@
 # 🚀 Laragon Dashboard
 
-A modern, feature-rich web-based dashboard for managing Laragon development environment. Version 3.1.6 aims to be a comprehensive MAMP competitor on Windows, replicating Laragon control panel functionality in a modern, themed web interface.
+A modern, feature-rich web-based dashboard for managing Laragon development environment. Version 3.1.7 aims to be a comprehensive MAMP competitor on Windows, replicating Laragon control panel functionality in a modern, themed web interface.
 
-[![Version](https://img.shields.io/badge/version-3.1.6-blue.svg)](https://github.com/LebToki/Laragon-Dashboard)
+[![Version](https://img.shields.io/badge/version-3.1.7-blue.svg)](https://github.com/LebToki/Laragon-Dashboard)
 [![PHP](https://img.shields.io/badge/PHP-7.4%2B-green.svg)](https://php.net)
 [![Bootstrap](https://img.shields.io/badge/Bootstrap-5.3.2-purple.svg)](https://getbootstrap.com)
 [![Platform](https://img.shields.io/badge/platform-windows-lightgrey.svg)]()
@@ -41,7 +41,7 @@ A modern, feature-rich web-based dashboard for managing Laragon development envi
 ## 📋 Project Information
 
 - **Project Name**: Laragon Dashboard
-- **Version**: 3.1.6
+- **Version**: 3.1.7
 - **Author**: Tarek Tarabichi
 - **Company**: 2TInteractive (2tinteractive.com)
 - **Project Start**: Early 2024
