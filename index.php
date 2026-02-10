@@ -463,6 +463,182 @@ include './partials/layouts/layoutTop.php' ?>
 </div>
 
 <script>
+// Project Creation Wizard JavaScript
+document.addEventListener('DOMContentLoaded', function() {
+    const PROJECTS_API = 'api/projects.php';
+    const CREATE_PROJECT_API = 'api/create_project.php';
+    
+    // Wizard state
+    let currentStep = 1;
+    const totalSteps = 3;
+    
+    // DOM Elements
+    const wizardModal = document.getElementById('projectWizardModal');
+    const wizardForm = document.getElementById('projectWizardForm');
+    const wizardNext = document.getElementById('wizard-next');
+    const wizardPrev = document.getElementById('wizard-prev');
+    const wizardCreate = document.getElementById('wizard-create');
+    const wizardMessage = document.getElementById('wizard-message');
+    const createDatabaseCheckbox = document.getElementById('create-database');
+    const databaseFields = document.getElementById('database-fields');
+    
+    // Initialize wizard
+    if (wizardModal) {
+        wizardModal.addEventListener('shown.bs.modal', function() {
+            // Reset wizard state
+            currentStep = 1;
+            updateWizardSteps();
+            wizardForm.reset();
+            hideMessage();
+            
+            // Focus on project name field
+            document.getElementById('project-name').focus();
+        });
+    }
+    
+    // Handle database checkbox
+    if (createDatabaseCheckbox && databaseFields) {
+        createDatabaseCheckbox.addEventListener('change', function() {
+            databaseFields.style.display = this.checked ? 'block' : 'none';
+        });
+    }
+    
+    // Handle Next button
+    if (wizardNext) {
+        wizardNext.addEventListener('click', function() {
+            if (validateStep(currentStep)) {
+                currentStep++;
+                updateWizardSteps();
+            }
+        });
+    }
+    
+    // Handle Previous button
+    if (wizardPrev) {
+        wizardPrev.addEventListener('click', function() {
+            currentStep--;
+            updateWizardSteps();
+        });
+    }
+    
+    // Handle Create Project button
+    if (wizardCreate) {
+        wizardCreate.addEventListener('click', function() {
+            if (validateStep(currentStep)) {
+                createProject();
+            }
+        });
+    }
+    
+    // Update wizard step visibility
+    function updateWizardSteps() {
+        const steps = wizardForm.querySelectorAll('.wizard-step');
+        
+        steps.forEach((step, index) => {
+            const stepNum = index + 1;
+            step.style.display = stepNum === currentStep ? 'block' : 'none';
+            
+            // Add animation
+            if (stepNum === currentStep) {
+                step.classList.add('animate-fade-in');
+            }
+        });
+        
+        // Update buttons
+        wizardPrev.style.display = currentStep > 1 ? 'inline-block' : 'none';
+        wizardNext.style.display = currentStep < totalSteps ? 'inline-block' : 'none';
+        wizardCreate.style.display = currentStep === totalSteps ? 'inline-block' : 'none';
+        
+        // Update modal title
+        const titles = [
+            'Create New Project',
+            'Database Settings',
+            'Additional Options'
+        ];
+        document.getElementById('projectWizardModalLabel').textContent = titles[currentStep - 1];
+    }
+    
+    // Validate current step
+    function validateStep(step) {
+        switch(step) {
+            case 1:
+                const projectName = document.getElementById('project-name').value.trim();
+                if (!projectName) {
+                    showMessage('Please enter a project name', 'danger');
+                    return false;
+                }
+                if (!/^[a-zA-Z0-9_-]+$/.test(projectName)) {
+                    showMessage('Project name can only contain letters, numbers, underscores, and hyphens', 'danger');
+                    return false;
+                }
+                return true;
+            case 2:
+                // Database step is optional
+                return true;
+            case 3:
+                // Options step is optional
+                return true;
+            default:
+                return true;
+        }
+    }
+    
+    // Show message
+    function showMessage(message, type) {
+        wizardMessage.textContent = message;
+        wizardMessage.className = 'alert alert-' + type + ' mb-16';
+        wizardMessage.style.display = 'block';
+        
+        // Auto-hide after 5 seconds for success messages
+        if (type === 'success') {
+            setTimeout(hideMessage, 5000);
+        }
+    }
+    
+    // Hide message
+    function hideMessage() {
+        wizardMessage.style.display = 'none';
+    }
+    
+    // Create project
+    function createProject() {
+        const formData = new FormData(wizardForm);
+        formData.append('action', 'create');
+        
+        // Disable buttons
+        wizardCreate.disabled = true;
+        wizardCreate.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Creating...';
+        
+        fetch(CREATE_PROJECT_API, {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                showMessage('Project created successfully!', 'success');
+                
+                // Close modal and reload page
+                setTimeout(() => {
+                    const modal = bootstrap.Modal.getInstance(wizardModal);
+                    modal.hide();
+                    window.location.reload();
+                }, 1500);
+            } else {
+                showMessage(data.error || 'Failed to create project', 'danger');
+                wizardCreate.disabled = false;
+                wizardCreate.innerHTML = 'Create Project';
+            }
+        })
+        .catch(error => {
+            console.error('Error creating project:', error);
+            showMessage('Error: ' + error.message, 'danger');
+            wizardCreate.disabled = false;
+            wizardCreate.innerHTML = 'Create Project';
+        });
+    }
+});
+
 // Handle ignore project from dropdown menu (for index.php)
 document.addEventListener('DOMContentLoaded', function() {
     const PROJECTS_API = 'api/projects.php';

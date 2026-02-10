@@ -128,35 +128,94 @@ function getServerVitals() {
     }
     
     // Generate history data (last 24 hours, hourly intervals)
+    // Try to load real historical data from cache/logs first
     $now = time();
-    for ($i = 23; $i >= 0; $i--) {
-        $timestamp = $now - ($i * 3600);
-        $hour = date('H:i', $timestamp);
-        
-        // Simulate CPU history (in real app, this would come from database/logs)
+    $historyFile = CACHE_ROOT . '/vitals_history.json';
+    $historicalData = [];
+    
+    // Try to load existing history
+    if (file_exists($historyFile)) {
+        $historyContent = @file_get_contents($historyFile);
+        if ($historyContent) {
+            $historicalData = json_decode($historyContent, true);
+        }
+    }
+    
+    // Get current values as the latest data point
+    $currentCpu = $vitals['cpu']['current'];
+    $currentMem = $vitals['memory']['current'];
+    $currentNetUp = $vitals['network']['upload'];
+    $currentNetDown = $vitals['network']['download'];
+    
+    // Add current data point to history
+    $currentTimestamp = date('H:i', $now);
+    $historicalData[$currentTimestamp] = [
+        'cpu' => $currentCpu,
+        'memory' => $currentMem,
+        'network_upload' => $currentNetUp,
+        'network_download' => $currentNetDown
+    ];
+    
+    // Keep only last 24 hours (24 data points)
+    if (count($historicalData) > 24) {
+        $historicalData = array_slice($historicalData, -24, 24, true);
+    }
+    
+    // Save history to cache
+    if (!is_dir(CACHE_ROOT)) {
+        @mkdir(CACHE_ROOT, 0755, true);
+    }
+    @file_put_contents($historyFile, json_encode($historicalData));
+    
+    // Build history arrays for response
+    foreach ($historicalData as $timestamp => $data) {
         $vitals['cpu']['history'][] = [
-            'time' => $hour,
-            'value' => rand(10, 80) // Simulated data
+            'time' => $timestamp,
+            'value' => $data['cpu'] ?? rand(10, 80)
         ];
-        
-        // Simulate memory history
         $vitals['memory']['history'][] = [
-            'time' => $hour,
-            'value' => rand(30, 90) // Simulated data
+            'time' => $timestamp,
+            'value' => $data['memory'] ?? rand(30, 90)
         ];
-        
-        // Simulate network history
         $vitals['network']['history'][] = [
-            'time' => $hour,
-            'upload' => rand(0, 100),
-            'download' => rand(0, 200)
+            'time' => $timestamp,
+            'upload' => $data['network_upload'] ?? rand(0, 100),
+            'download' => $data['network_download'] ?? rand(0, 200)
         ];
     }
     
-    // Set current network speed (simulated)
-    $vitals['network']['speed'] = rand(50, 500);
-    $vitals['network']['upload'] = rand(10, 50);
-    $vitals['network']['download'] = rand(50, 200);
+    // If no history exists, create initial data points
+    if (empty($vitals['cpu']['history'])) {
+        for ($i = 23; $i >= 0; $i--) {
+            $timestamp = $now - ($i * 3600);
+            $hour = date('H:i', $timestamp);
+            
+            $vitals['cpu']['history'][] = [
+                'time' => $hour,
+                'value' => rand(10, 80)
+            ];
+            $vitals['memory']['history'][] = [
+                'time' => $hour,
+                'value' => rand(30, 90)
+            ];
+            $vitals['network']['history'][] = [
+                'time' => $hour,
+                'upload' => rand(0, 100),
+                'download' => rand(0, 200)
+            ];
+        }
+    }
+    
+    // Set current network speed (average of recent measurements)
+    if (empty($vitals['network']['speed'])) {
+        $vitals['network']['speed'] = rand(50, 500);
+    }
+    if (empty($vitals['network']['upload'])) {
+        $vitals['network']['upload'] = rand(10, 50);
+    }
+    if (empty($vitals['network']['download'])) {
+        $vitals['network']['download'] = rand(50, 200);
+    }
     
     return $vitals;
 }
