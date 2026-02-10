@@ -95,7 +95,13 @@ include './partials/layouts/layoutTop.php' ?>
 
 <div class="dashboard-main-body">
     <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-24">
-        <h6 class="fw-semibold mb-0">Dashboard</h6>
+        <div class="d-flex align-items-center gap-3">
+            <h6 class="fw-semibold mb-0">Dashboard</h6>
+            <button type="button" class="btn btn-primary-600 btn-sm radius-8 px-16 py-8 d-flex align-items-center gap-2" onclick="checkForUpdates(true);">
+                <iconify-icon icon="solar:refresh-bold" class="text-lg"></iconify-icon>
+                Check for Updates
+            </button>
+        </div>
         <ul class="d-flex align-items-center gap-2">
             <li class="fw-medium">
                 <a href="index.php" class="d-flex align-items-center gap-1 hover-text-primary">
