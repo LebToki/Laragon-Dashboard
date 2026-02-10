@@ -154,7 +154,8 @@ function array_get_nested(array $array, string $key, $default = null) {
  * @param mixed ...$args Optional arguments for sprintf formatting
  * @return string Translated text or key if not found
  */
-function t(string $key, ...$args): string {
+if (!function_exists('t')) {
+    function t(string $key, ...$args): string {
     // Auto-detect module from key if dot-notation is used
     $module = 'common';
     $translationKey = $key;
@@ -177,6 +178,7 @@ function t(string $key, ...$args): string {
     }
     
     return $text;
+}
 }
 
 /**

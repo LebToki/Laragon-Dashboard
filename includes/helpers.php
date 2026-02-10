@@ -1008,5 +1008,46 @@ if (!function_exists('t')) {
     }
 }
 
+
+/**
+ * Get PHP ini path
+ */
+if (!function_exists('getPHPIniPath')) {
+    function getPHPIniPath() {
+        $laragonConfig = getLaragonConfig();
+        $phpVersion = $laragonConfig['php'] ?? null;
+        $laragonRoot = getLaragonRoot();
+        
+        if ($phpVersion) {
+            $path = $laragonRoot . '/bin/php/' . $phpVersion . '/php.ini';
+            if (file_exists($path)) return $path;
+        }
+        
+        // Fallback: try to find any PHP ini
+        $paths = glob($laragonRoot . '/bin/php/php-*/php.ini');
+        return !empty($paths) ? $paths[0] : null;
+    }
+}
+
+/**
+ * Get MySQL ini path
+ */
+if (!function_exists('getMySQLIniPath')) {
+    function getMySQLIniPath() {
+        $laragonConfig = getLaragonConfig();
+        $mysqlVersion = $laragonConfig['mysql'] ?? null;
+        $laragonRoot = getLaragonRoot();
+        
+        if ($mysqlVersion) {
+            $path = $laragonRoot . '/bin/mysql/' . $mysqlVersion . '/my.ini';
+            if (file_exists($path)) return $path;
+        }
+        
+        // Fallback: try to find any MySQL ini
+        $paths = glob($laragonRoot . '/bin/mysql/mysql-*/my.ini');
+        return !empty($paths) ? $paths[0] : null;
+    }
+}
+
 // Clear any output that may have been generated
 ob_end_clean();

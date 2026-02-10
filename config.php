@@ -33,9 +33,8 @@ if (!defined('APP_START_YEAR')) {
 
 // Application Settings (only define if not already defined)
 if (!defined('APP_DEBUG')) {
-    // Default to false - debug banner is now controlled via user preferences
-    // The debug banner itself will check preferences when rendering
-    define('APP_DEBUG', false);
+    // Default to true for debugging
+    define('APP_DEBUG', true);
 }
 if (!defined('APP_ENV')) {
     define('APP_ENV', 'production'); // development, staging, production
