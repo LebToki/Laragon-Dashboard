@@ -154,29 +154,31 @@ function array_get_nested(array $array, string $key, $default = null) {
  * @param mixed ...$args Optional arguments for sprintf formatting
  * @return string Translated text or key if not found
  */
-function t(string $key, ...$args): string {
-    // Auto-detect module from key if dot-notation is used
-    $module = 'common';
-    $translationKey = $key;
-    
-    if (strpos($key, '.') !== false) {
-        // Split on first dot: module.key or module.nested.key
-        $parts = explode('.', $key, 2);
-        $module = $parts[0];
-        $translationKey = $parts[1] ?? $key;
+if (!function_exists('t')) {
+    function t(string $key, ...$args): string {
+        // Auto-detect module from key if dot-notation is used
+        $module = 'common';
+        $translationKey = $key;
+        
+        if (strpos($key, '.') !== false) {
+            // Split on first dot: module.key or module.nested.key
+            $parts = explode('.', $key, 2);
+            $module = $parts[0];
+            $translationKey = $parts[1] ?? $key;
+        }
+        
+        $translations = load_translations($module);
+        
+        // Support nested keys (e.g., 'dashboard.title' in JSON structure)
+        $text = array_get_nested($translations, $translationKey, $key);
+        
+        // Apply sprintf if arguments provided
+        if (!empty($args)) {
+            $text = sprintf($text, ...$args);
+        }
+        
+        return $text;
     }
-    
-    $translations = load_translations($module);
-    
-    // Support nested keys (e.g., 'dashboard.title' in JSON structure)
-    $text = array_get_nested($translations, $translationKey, $key);
-    
-    // Apply sprintf if arguments provided
-    if (!empty($args)) {
-        $text = sprintf($text, ...$args);
-    }
-    
-    return $text;
 }
 
 /**

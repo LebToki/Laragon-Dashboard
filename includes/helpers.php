@@ -998,15 +998,5 @@ if (!function_exists('fixSMTP')) {
     }
 }
 
-/**
- * Translation helper function
- */
-if (!function_exists('t')) {
-    function t($key, $fallback = '') {
-        // This is a placeholder - actual translation would be loaded from i18n files
-        return $fallback ?: $key;
-    }
-}
-
 // Clear any output that may have been generated
 ob_end_clean();
