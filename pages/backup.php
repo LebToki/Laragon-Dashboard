@@ -236,7 +236,7 @@ function loadBackups() {
                     return;
                 }
                 
-                let html = '<div class="table-responsive"><table class="table table-hover table-borderless align-middle mb-0"><thead><tr><th><?php echo htmlspecialchars(t_backup('project', 'Project'), ENT_QUOTES); ?></th><th><?php echo htmlspecialchars(t_backup('database', 'Database'), ENT_QUOTES); ?></th><th><?php echo htmlspecialchars(t_backup('created', 'Created'), ENT_QUOTES); ?></th><th><?php echo htmlspecialchars(t_backup('project_size', 'Project Size'), ENT_QUOTES); ?></th><th><?php echo htmlspecialchars(t_backup('database_size', 'DB Size'), ENT_QUOTES); ?></th><th class="text-end"><?php echo htmlspecialchars(t_backup('actions', 'Actions'), ENT_QUOTES); ?></th></tr></thead><tbody>';
+                let html = '<div class="table-responsive"><table class="table basic-table table-hover table-borderless align-middle mb-0"><thead><tr><th><?php echo htmlspecialchars(t_backup('project', 'Project'), ENT_QUOTES); ?></th><th><?php echo htmlspecialchars(t_backup('database', 'Database'), ENT_QUOTES); ?></th><th><?php echo htmlspecialchars(t_backup('created', 'Created'), ENT_QUOTES); ?></th><th><?php echo htmlspecialchars(t_backup('project_size', 'Project Size'), ENT_QUOTES); ?></th><th><?php echo htmlspecialchars(t_backup('database_size', 'DB Size'), ENT_QUOTES); ?></th><th class="text-end"><?php echo htmlspecialchars(t_backup('actions', 'Actions'), ENT_QUOTES); ?></th></tr></thead><tbody>';
                 
                 backups.forEach(backup => {
                     html += '<tr>';
