@@ -14,6 +14,7 @@ Laragon Dashboard is a modern, feature-rich web-based dashboard for managing Lar
 [![License](https://img.shields.io/badge/license-MIT-orange.svg)](LICENSE)
 [![GitHub](https://img.shields.io/github/stars/LebToki/Laragon-Dashboard?style=social)](https://github.com/LebToki/Laragon-Dashboard)
 [![Buy Me A Coffee](https://img.shields.io/badge/buy%20me%20a%20coffee-donate-yellow.svg)](https://buymeacoffee.com/LebToki)
+[![Donate via Paypal](https://img.shields.io/badge/paypal-donate-blue.svg)](https://www.paypal.com/donate/?hosted_button_id=TEEJNYQJA9B6U)
 
 <p align="center">
   <img src="https://img.shields.io/github/stars/LebToki/Laragon-Dashboard?style=for-the-badge" alt="Stars" />
@@ -520,7 +521,6 @@ You can easily customize the look and feel by modifying these CSS variables:
   --warning-color: #ffc107;
   --info-color: #0dcaf0;
 }
-```
 
 ### Language Files
 
@@ -843,9 +843,10 @@ See [CHANGELOG.md](CHANGELOG.md) for detailed version history.
 
 ## ☕ Support the Project
 
-If you find Laragon Dashboard helpful and want to support its ongoing development, consider buying me a coffee! Your support helps keep the project active and enables the creation of more advanced features.
+If you find Laragon Dashboard helpful and want to support its ongoing development, consider buying me a coffee or donating via PayPal! Your support helps keep the project active and enables the creation of more advanced features.
 
 [![Buy Me A Coffee](https://img.shields.io/badge/Buy%20Me%20A%20Coffee-Donate-yellow?style=for-the-badge&logo=buy-me-a-coffee)](https://buymeacoffee.com/LebToki)
+[![Donate via Paypal](https://img.shields.io/badge/Donate%20with%20Paypal-Donate-blue?style=for-the-badge&logo=paypal)](https://www.paypal.com/donate/?hosted_button_id=TEEJNYQJA9B6U)
 
 ---
 
