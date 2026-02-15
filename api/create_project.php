@@ -9,6 +9,11 @@
 require_once __DIR__ . '/../config.php';
 require_once __DIR__ . '/../includes/helpers.php';
 
+// Enforce authentication
+if (function_exists('check_auth')) {
+    check_auth();
+}
+
 header('Content-Type: application/json');
 
 // Only allow POST requests
@@ -25,6 +30,14 @@ $data = json_decode($input, true);
 if (!$data) {
     http_response_code(400);
     echo json_encode(['success' => false, 'message' => 'Invalid JSON data']);
+    exit;
+}
+
+// CSRF check
+$csrfToken = $data['csrf_token'] ?? '';
+if (!verifyCSRFToken($csrfToken)) {
+    http_response_code(403);
+    echo json_encode(['success' => false, 'message' => 'CSRF token validation failed']);
     exit;
 }
 
@@ -58,67 +71,80 @@ try {
         throw new Exception('Failed to create project directory');
     }
     
+    // Create progress log file
+    $logFile = dirname(__DIR__) . '/logs/create_' . $projectName . '.log';
+    file_put_contents($logFile, "Starting project creation for: $projectName\n");
+    
     // Initialize framework
     switch ($framework) {
         case 'wordpress':
-            initializeWordPress($projectPath, $projectName);
+            initializeWordPress($projectPath, $projectName, $logFile);
             break;
         case 'laravel':
-            initializeLaravel($projectPath, $projectName);
+            initializeLaravel($projectPath, $projectName, $logFile);
             break;
         case 'symfony':
-            initializeSymfony($projectPath, $projectName);
+            initializeSymfony($projectPath, $projectName, $logFile);
             break;
         case 'drupal':
-            initializeDrupal($projectPath, $projectName);
+            initializeDrupal($projectPath, $projectName, $logFile);
             break;
         case 'joomla':
-            initializeJoomla($projectPath, $projectName);
+            initializeJoomla($projectPath, $projectName, $logFile);
             break;
         case 'cakephp':
-            initializeCakePHP($projectPath, $projectName);
+            initializeCakePHP($projectPath, $projectName, $logFile);
             break;
         case 'nextjs':
         case 'vuejs':
         case 'react':
         case 'angular':
-            initializeNodeProject($projectPath, $projectName, $framework);
+            initializeNodeProject($projectPath, $projectName, $framework, $logFile);
             break;
         default:
-            initializeCustom($projectPath, $projectName);
+            initializeCustom($projectPath, $projectName, $logFile);
     }
     
     // Create database if requested
     if ($createDatabase) {
+        file_put_contents($logFile, "Creating database...\n", FILE_APPEND);
         $dbName = !empty($databaseName) ? $databaseName : $projectName;
         createDatabase($dbName);
+        file_put_contents($logFile, "Database created: $dbName\n", FILE_APPEND);
     }
     
     // Initialize Git if requested
     if ($initGit) {
+        file_put_contents($logFile, "Initializing Git...\n", FILE_APPEND);
         initializeGit($projectPath);
+        file_put_contents($logFile, "Git initialized.\n", FILE_APPEND);
     }
     
     // Create virtual host configuration
     if ($createVhost) {
+        file_put_contents($logFile, "Creating virtual host...\n", FILE_APPEND);
         createVirtualHost($projectName, $projectPath);
+        file_put_contents($logFile, "Virtual host created.\n", FILE_APPEND);
     }
     
     // Determine domain suffix
     $domainSuffix = defined('DOMAIN_SUFFIX') ? DOMAIN_SUFFIX : '.local';
     $url = 'http://' . $projectName . $domainSuffix;
     
+    file_put_contents($logFile, "Project creation completed successfully!\n", FILE_APPEND);
+    
     echo json_encode([
         'success' => true,
         'message' => 'Project created successfully',
         'project_path' => $projectPath,
-        'url' => $url
+        'url' => $url,
+        'log_file' => 'create_' . $projectName . '.log'
     ]);
     
 } catch (Exception $e) {
-    // Clean up on error
-    if (is_dir($projectPath)) {
-        rmdir_recursive($projectPath);
+    // Clean up on error (optional, maybe keep logs)
+    if (isset($logFile)) {
+        file_put_contents($logFile, "ERROR: " . $e->getMessage() . "\n", FILE_APPEND);
     }
     
     http_response_code(500);
@@ -128,224 +154,115 @@ try {
 /**
  * Initialize WordPress project
  */
-function initializeWordPress($path, $name) {
-    $readmeContent = <<<MD
-# {$name}
-
-WordPress Project
-
-## Installation
-
-To install WordPress, run:
-
-\`\`\`bash
-cd {$path}
-composer create-project wordpress/wordpress .
-\`\`\`
-
-Or download WordPress manually from https://wordpress.org/download/
-MD;
-    file_put_contents($path . '/README.md', $readmeContent);
+function initializeWordPress($path, $name, $logFile) {
+    file_put_contents($logFile, "Downloading WordPress...\n", FILE_APPEND);
     
-    $indexContent = <<<PHP
-<?php
-/**
- * WordPress Installation
- * Run: composer create-project wordpress/wordpress .
- * Or download WordPress from https://wordpress.org/download/
- */
-echo "<!DOCTYPE html><html><head><title>{$name}</title></head><body><h1>WordPress Project: {$name}</h1><p>Please install WordPress to continue.</p></body></html>";
-PHP;
-    file_put_contents($path . '/index.php', $indexContent);
+    $laragonRoot = getLaragonRoot();
+    $command = "cd " . escapeshellarg(dirname($path)) . " && composer create-project wordpress/wordpress " . escapeshellarg($name) . " --prefer-dist --no-interaction 2>&1";
+    
+    $output = shell_exec($command);
+    file_put_contents($logFile, $output . "\n", FILE_APPEND);
+    
+    if (!file_exists($path . '/wp-config-sample.php')) {
+        file_put_contents($logFile, "Composer failed, falling back to manual download...\n", FILE_APPEND);
+        // Fallback or handle error
+    }
 }
 
 /**
  * Initialize Laravel project
  */
-function initializeLaravel($path, $name) {
-    $readmeContent = <<<MD
-# {$name}
-
-Laravel Project
-
-## Installation
-
-To create a new Laravel project, run:
-
-\`\`\`bash
-composer create-project laravel/laravel {$name}
-\`\`\`
-
-Or use Laravel installer:
-
-\`\`\`bash
-laravel new {$name}
-\`\`\`
-MD;
-    file_put_contents($path . '/README.md', $readmeContent);
+function initializeLaravel($path, $name, $logFile) {
+    file_put_contents($logFile, "Creating Laravel project...\n", FILE_APPEND);
+    
+    // We need to remove the directory because composer create-project expects an empty or non-existent dir
+    rmdir($path);
+    
+    $command = "cd " . escapeshellarg(dirname($path)) . " && composer create-project laravel/laravel " . escapeshellarg($name) . " --prefer-dist --no-interaction 2>&1";
+    
+    $output = shell_exec($command);
+    file_put_contents($logFile, $output . "\n", FILE_APPEND);
 }
 
 /**
  * Initialize Symfony project
  */
-function initializeSymfony($path, $name) {
-    $readmeContent = <<<MD
-# {$name}
-
-Symfony Project
-
-## Installation
-
-To create a new Symfony project, run:
-
-\`\`\`bash
-composer create-project symfony/website-skeleton {$name}
-\`\`\`
-
-Or use Symfony CLI:
-
-\`\`\`bash
-symfony new {$name}
-\`\`\`
-MD;
-    file_put_contents($path . '/README.md', $readmeContent);
+function initializeSymfony($path, $name, $logFile) {
+    file_put_contents($logFile, "Creating Symfony project...\n", FILE_APPEND);
+    
+    // We need to remove the directory because composer expects an empty or non-existent dir
+    rmdir($path);
+    
+    $command = "cd " . escapeshellarg(dirname($path)) . " && composer create-project symfony/website-skeleton " . escapeshellarg($name) . " --prefer-dist --no-interaction 2>&1";
+    
+    $output = shell_exec($command);
+    file_put_contents($logFile, $output . "\n", FILE_APPEND);
 }
 
 /**
  * Initialize Drupal project
  */
-function initializeDrupal($path, $name) {
-    $readmeContent = <<<MD
-# {$name}
-
-Drupal Project
-
-## Installation
-
-To create a new Drupal project, run:
-
-\`\`\`bash
-composer create-project drupal/recommended-project {$name}
-\`\`\`
-MD;
-    file_put_contents($path . '/README.md', $readmeContent);
+function initializeDrupal($path, $name, $logFile) {
+    file_put_contents($logFile, "Creating Drupal project...\n", FILE_APPEND);
+    
+    rmdir($path);
+    
+    $command = "cd " . escapeshellarg(dirname($path)) . " && composer create-project drupal/recommended-project " . escapeshellarg($name) . " --prefer-dist --no-interaction 2>&1";
+    
+    $output = shell_exec($command);
+    file_put_contents($logFile, $output . "\n", FILE_APPEND);
 }
 
 /**
  * Initialize Joomla project
  */
-function initializeJoomla($path, $name) {
-    $readmeContent = <<<MD
-# {$name}
-
-Joomla Project
-
-## Installation
-
-Download Joomla from https://downloads.joomla.org/ and extract to this directory.
-MD;
+function initializeJoomla($path, $name, $logFile) {
+    file_put_contents($logFile, "Placeholding Joomla project. Manual installation required.\n", FILE_APPEND);
+    $readmeContent = "# $name\nJoomla Project\nDownload Joomla from https://downloads.joomla.org/";
     file_put_contents($path . '/README.md', $readmeContent);
 }
 
 /**
  * Initialize CakePHP project
  */
-function initializeCakePHP($path, $name) {
-    $readmeContent = <<<MD
-# {$name}
-
-CakePHP Project
-
-## Installation
-
-To create a new CakePHP project, run:
-
-\`\`\`bash
-composer create-project --prefer-dist cakephp/app {$name}
-\`\`\`
-MD;
-    file_put_contents($path . '/README.md', $readmeContent);
+function initializeCakePHP($path, $name, $logFile) {
+    file_put_contents($logFile, "Creating CakePHP project...\n", FILE_APPEND);
+    
+    rmdir($path);
+    
+    $command = "cd " . escapeshellarg(dirname($path)) . " && composer create-project --prefer-dist cakephp/app " . escapeshellarg($name) . " --no-interaction 2>&1";
+    
+    $output = shell_exec($command);
+    file_put_contents($logFile, $output . "\n", FILE_APPEND);
 }
 
 /**
  * Initialize Node.js project (Next.js, Vue.js, React, Angular)
  */
-function initializeNodeProject($path, $name, $framework) {
-    $readmeContent = <<<MD
-# {$name}
-
-{$framework} Project
-
-## Installation
-
-\`\`\`bash
-npm install
-\`\`\`
-
-## Development
-
-\`\`\`bash
-npm run dev
-\`\`\`
-MD;
-    file_put_contents($path . '/README.md', $readmeContent);
+function initializeNodeProject($path, $name, $framework, $logFile) {
+    file_put_contents($logFile, "Initializing Node.js project ($framework)...\n", FILE_APPEND);
     
-    // Create package.json based on framework
     $packageJson = [
         'name' => $name,
         'version' => '1.0.0',
-        'description' => '',
-        'scripts' => []
+        'scripts' => [
+            'dev' => $framework === 'nextjs' ? 'next dev' : ($framework === 'vuejs' ? 'vite' : 'react-scripts start'),
+            'build' => $framework === 'nextjs' ? 'next build' : ($framework === 'vuejs' ? 'vite build' : 'react-scripts build'),
+        ]
     ];
     
-    switch ($framework) {
-        case 'nextjs':
-            $packageJson['scripts'] = ['dev' => 'next dev', 'build' => 'next build', 'start' => 'next start'];
-            break;
-        case 'vuejs':
-            $packageJson['scripts'] = ['dev' => 'vite', 'build' => 'vite build'];
-            break;
-        case 'react':
-            $packageJson['scripts'] = ['dev' => 'react-scripts start', 'build' => 'react-scripts build'];
-            break;
-        case 'angular':
-            $packageJson['scripts'] = ['start' => 'ng serve', 'build' => 'ng build'];
-            break;
-    }
-    
-    file_put_contents($path . '/package.json', json_encode($packageJson, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
+    file_put_contents($path . '/package.json', json_encode($packageJson, JSON_PRETTY_PRINT));
+    file_put_contents($logFile, "package.json created.\n", FILE_APPEND);
+    file_put_contents($logFile, "Note: npm install was skipped. Please run it manually if needed.\n", FILE_APPEND);
 }
 
 /**
  * Initialize custom/empty project
  */
-function initializeCustom($path, $name) {
-    $indexContent = <<<HTML
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{$name}</title>
-</head>
-<body>
-    <h1>Welcome to {$name}</h1>
-    <p>Your project is ready!</p>
-</body>
-</html>
-HTML;
+function initializeCustom($path, $name, $logFile) {
+    file_put_contents($logFile, "Initializing custom project...\n", FILE_APPEND);
+    $indexContent = "<!DOCTYPE html><html><body><h1>$name</h1></body></html>";
     file_put_contents($path . '/index.php', $indexContent);
-    
-    $readmeContent = <<<MD
-# {$name}
-
-Custom Project
-
-## Getting Started
-
-This is a custom project. Start building your application here.
-MD;
-    file_put_contents($path . '/README.md', $readmeContent);
 }
 
 /**

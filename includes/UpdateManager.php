@@ -35,7 +35,6 @@ if (!class_exists('UpdateManager')) {
          * @return array Update information or false if no update available
          */
         public function checkForUpdates() {
-            // Use getAppVersion() if available, otherwise fall back to APP_VERSION constant
             if (function_exists('getAppVersion')) {
                 $currentVersion = getAppVersion();
             } else {
@@ -43,53 +42,79 @@ if (!class_exists('UpdateManager')) {
             }
             
             try {
+                // Primary method: GitHub API
                 $url = "{$this->githubApiUrl}/{$this->githubRepo}/releases/latest";
                 $release = $this->fetchFromGitHub($url);
                 
-                if (!$release) {
-                    error_log("UpdateManager: Failed to fetch release information from GitHub");
-                    return ['available' => false, 'error' => 'Failed to fetch release information'];
+                $latestVersion = null;
+                $downloadUrl = null;
+                $releaseNotes = '';
+                
+                if ($release) {
+                    $latestVersion = $this->normalizeVersion($release['tag_name']);
+                    $releaseNotes = $release['body'];
+                    foreach ($release['assets'] as $asset) {
+                        if (strpos($asset['name'], '.zip') !== false) {
+                            $downloadUrl = $asset['browser_download_url'];
+                            break;
+                        }
+                    }
+                } else {
+                    // Fallback method: static VERSION file (pull from files)
+                    error_log("UpdateManager: Falling back to static VERSION file check");
+                    $rawUrl = "https://raw.githubusercontent.com/{$this->githubRepo}/main/VERSION";
+                    $latestVersion = $this->fetchRawFile($rawUrl);
+                    
+                    if ($latestVersion) {
+                        $latestVersion = $this->normalizeVersion($latestVersion);
+                        $downloadUrl = "https://github.com/{$this->githubRepo}/archive/refs/tags/v{$latestVersion}.zip";
+                        $releaseNotes = "New version available: v{$latestVersion}. Check GitHub for details.";
+                    }
                 }
                 
-                $latestVersion = $this->normalizeVersion($release['tag_name']);
+                if (!$latestVersion) {
+                    return ['available' => false, 'error' => 'Failed to fetch version information'];
+                }
+                
                 $currentVersionNormalized = $this->normalizeVersion($currentVersion);
                 
-                // Skip update check if current version is a dev version (starts with 'dev-')
                 if (strpos($currentVersionNormalized, 'dev-') === 0) {
-                    error_log("UpdateManager: Skipping update check for dev version: {$currentVersionNormalized}");
-                    return ['available' => false, 'current_version' => $currentVersion, 'latest_version' => $release['tag_name'], 'dev_version' => true];
+                    return ['available' => false, 'current_version' => $currentVersion, 'latest_version' => $latestVersion, 'dev_version' => true];
                 }
                 
                 $updateAvailable = version_compare($latestVersion, $currentVersionNormalized, '>');
                 
-                if ($updateAvailable) {
-                    // Find ZIP asset
-                    $zipAsset = null;
-                    foreach ($release['assets'] as $asset) {
-                        if (strpos($asset['name'], '.zip') !== false) {
-                            $zipAsset = $asset;
-                            break;
-                        }
-                    }
-                    
-                    return [
-                        'available' => true,
-                        'current_version' => $currentVersion,
-                        'latest_version' => $release['tag_name'],
-                        'version' => $release['tag_name'],
-                        'name' => $release['name'],
-                        'body' => $release['body'],
-                        'published_at' => $release['published_at'],
-                        'download_url' => $zipAsset ? $zipAsset['browser_download_url'] : null,
-                        'download_size' => $zipAsset ? $zipAsset['size'] : 0,
-                        'release_url' => $release['html_url']
-                    ];
-                }
-                
-                return ['available' => false, 'current_version' => $currentVersion, 'latest_version' => $release['tag_name']];
+                return [
+                    'available' => $updateAvailable,
+                    'current_version' => $currentVersion,
+                    'latest_version' => $latestVersion,
+                    'version' => $latestVersion,
+                    'body' => $releaseNotes,
+                    'download_url' => $downloadUrl
+                ];
             } catch (Exception $e) {
                 return ['available' => false, 'error' => $e->getMessage()];
             }
+        }
+
+        /**
+         * Fetch raw file content from GitHub
+         */
+        private function fetchRawFile($url) {
+            $ch = curl_init($url);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+            curl_setopt($ch, CURLOPT_USERAGENT, 'Laragon-Dashboard/1.0');
+            curl_setopt($ch, CURLOPT_TIMEOUT, 10);
+            
+            $response = curl_exec($ch);
+            $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+            curl_close($ch);
+            
+            if ($httpCode === 200) {
+                return trim($response);
+            }
+            return false;
         }
         
         /**

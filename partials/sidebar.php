@@ -178,6 +178,13 @@ function getSidebarTranslation($key, $fallback = '') {
                     <span><?php echo getSidebarTranslation('server_configurations', 'Server Configurations'); ?></span>
                 </a>
             </li>
+
+            <li>
+                <a href="index.php?page=config_editor" class="<?php echo $currentPage === 'config_editor' ? 'active' : ''; ?>">
+                    <iconify-icon icon="solar:pen-new-square-bold" class="menu-icon"></iconify-icon>
+                    <span>Config Editor</span>
+                </a>
+            </li>
             
             <!-- Settings -->
             <li>

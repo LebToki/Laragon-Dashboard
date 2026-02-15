@@ -9,8 +9,24 @@ header('Content-Type: application/json');
 
 // Load configuration
 require_once __DIR__ . '/../config.php';
+require_once __DIR__ . '/../includes/helpers.php';
+
+// Enforce authentication
+if (function_exists('check_auth')) {
+    check_auth();
+}
 
 $action = $_POST['action'] ?? $_GET['action'] ?? '';
+
+// CSRF check for destructive actions
+if ($action === 'ignore' || $action === 'unignore') {
+    $token = $_POST['csrf_token'] ?? ($_GET['csrf_token'] ?? '');
+    if (!verifyCSRFToken($token)) {
+        http_response_code(403);
+        echo json_encode(['success' => false, 'error' => 'CSRF token validation failed']);
+        exit;
+    }
+}
 
 /**
  * Get ignored projects list

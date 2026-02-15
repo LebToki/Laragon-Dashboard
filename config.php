@@ -1,7 +1,7 @@
 <?php
 /**
  * Laragon Dashboard Configuration
- * Version: 3.1.6
+ * Version: 4.0.0
  * Author: Tarek Tarabichi
  * Company: 2TInteractive (2tinteractive.com)
  * Project Start: Early 2024
@@ -13,7 +13,7 @@ if (!defined('APP_NAME')) {
     define('APP_NAME', 'Laragon Dashboard');
 }
 if (!defined('APP_VERSION')) {
-    define('APP_VERSION', '3.1.6');
+    define('APP_VERSION', '4.0.0');
 }
 if (!defined('APP_AUTHOR')) {
     define('APP_AUTHOR', 'Tarek Tarabichi');
@@ -33,11 +33,54 @@ if (!defined('APP_START_YEAR')) {
 
 // Application Settings (only define if not already defined)
 if (!defined('APP_DEBUG')) {
-    // Default to true for debugging
-    define('APP_DEBUG', true);
+    // Default to false for production
+    define('APP_DEBUG', false);
 }
 if (!defined('APP_ENV')) {
     define('APP_ENV', 'production'); // development, staging, production
+}
+
+// Enable error reporting if debug mode is on
+if (APP_DEBUG) {
+    error_reporting(E_ALL);
+    @ini_set('display_errors', 1);
+    @ini_set('display_startup_errors', 1);
+} else {
+    error_reporting(0);
+    @ini_set('display_errors', 0);
+    @ini_set('display_startup_errors', 0);
+}
+
+// Security settings
+if (!defined('SECURITY_HEADERS_ENABLED')) {
+    define('SECURITY_HEADERS_ENABLED', true);
+}
+
+// Rate limiting settings
+if (!defined('RATE_LIMIT_REQUESTS_PER_MINUTE')) {
+    define('RATE_LIMIT_REQUESTS_PER_MINUTE', 60);
+}
+
+// Session settings
+if (!defined('SESSION_LIFETIME')) {
+    define('SESSION_LIFETIME', 3600); // 1 hour
+}
+
+// Authentication settings
+if (!defined('AUTH_ENABLED')) {
+    define('AUTH_ENABLED', false);
+}
+if (!defined('ADMIN_PASSWORD')) {
+    define('ADMIN_PASSWORD', 'admin'); // It is recommended to change this in production
+}
+
+// Fix session path issue (common on some Laragon/PHP configurations)
+$sessionPath = 'd:/laragon/tmp';
+if (!is_dir($sessionPath)) {
+    $sessionPath = sys_get_temp_dir();
+}
+if (is_dir($sessionPath) && is_writable($sessionPath)) {
+    @session_save_path($sessionPath);
 }
 
 // Suppress errors for API endpoints (they handle their own error reporting)
@@ -259,61 +302,73 @@ function scanForLaragonInstallations() {
  * Get Dashboard preferences (stored in JSON file)
  * Allows overriding Laragon detection
  */
-function getDashboardPreferences() {
-    $dataDir = APP_ROOT . '/data';
-    if (!is_dir($dataDir)) {
-        @mkdir($dataDir, 0755, true);
-    }
-    
-    $prefsFile = $dataDir . '/preferences.json';
-    $defaults = [
-        'laragon_root' => null, // null means auto-detect
-        'mysql_host' => null,
-        'mysql_user' => null,
-        'mysql_password' => null,
-        'document_root' => null,
-        'domain_suffix' => null,
-        'auto_update_check' => true, // Enable automatic update checking
-        'auto_update_install' => false, // Auto-install updates (requires manual confirmation)
-        'last_update_check' => null, // Timestamp of last update check
-        'debug_banner' => false, // Show debug banner (only available in non-production environments)
-        'time_format' => null, // null means auto-detect from system, '12' or '24'
-        'date_format' => null, // null means auto-detect, or custom format like 'Y-m-d', 'm/d/Y', etc.
-    ];
-    
-    if (file_exists($prefsFile)) {
-        $content = @file_get_contents($prefsFile);
-        if ($content) {
-            $prefs = @json_decode($content, true);
-            if (is_array($prefs)) {
-                return array_merge($defaults, $prefs);
+if (!function_exists('getDashboardPreferences')) {
+    function getDashboardPreferences() {
+        $dataDir = APP_ROOT . '/data';
+        if (!is_dir($dataDir)) {
+            @mkdir($dataDir, 0755, true);
+        }
+        
+        $prefsFile = $dataDir . '/preferences.json';
+        $defaults = [
+            'laragon_root' => null, // null means auto-detect
+            'mysql_host' => null,
+            'mysql_user' => null,
+            'mysql_password' => null,
+            'document_root' => null,
+            'domain_suffix' => null,
+            'auto_update_check' => true,
+            'auto_update_install' => false,
+            'last_update_check' => null,
+            'debug_banner' => false,
+            'time_format' => null,
+            'date_format' => null,
+        ];
+        
+        if (file_exists($prefsFile)) {
+            $content = @file_get_contents($prefsFile);
+            if ($content) {
+                $prefs = @json_decode($content, true);
+                if (is_array($prefs)) {
+                    return array_merge($defaults, $prefs);
+                }
             }
         }
+        
+        return $defaults;
     }
-    
-    return $defaults;
 }
 
 /**
  * Save Dashboard preferences
  */
-function saveDashboardPreferences(array $preferences) {
-    $dataDir = APP_ROOT . '/data';
-    if (!is_dir($dataDir)) {
-        @mkdir($dataDir, 0755, true);
+if (!function_exists('saveDashboardPreferences')) {
+    function saveDashboardPreferences(array $preferences) {
+        $dataDir = APP_ROOT . '/data';
+        if (!is_dir($dataDir)) {
+            @mkdir($dataDir, 0755, true);
+        }
+        
+        $prefsFile = $dataDir . '/preferences.json';
+        $existing = getDashboardPreferences();
+        
+        // Normalize paths before saving
+        if (isset($preferences['laragon_root'])) {
+            $preferences['laragon_root'] = rtrim(str_replace('\\', '/', $preferences['laragon_root']), '/');
+        }
+        if (isset($preferences['document_root'])) {
+            $preferences['document_root'] = rtrim(str_replace('\\', '/', $preferences['document_root']), '/');
+        }
+        
+        $merged = array_merge($existing, $preferences);
+        
+        // Remove null and empty string values to allow auto-detection
+        $merged = array_filter($merged, function($value) {
+            return $value !== null && $value !== '';
+        });
+        
+        return @file_put_contents($prefsFile, json_encode($merged, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES)) !== false;
     }
-    
-    $prefsFile = $dataDir . '/preferences.json';
-    $existing = getDashboardPreferences();
-    $merged = array_merge($existing, $preferences);
-    
-    // Remove null and empty string values to allow auto-detection
-    // But keep false values for checkboxes so they can be explicitly unset
-    $merged = array_filter($merged, function($value) {
-        return $value !== null && $value !== '';
-    });
-    
-    return @file_put_contents($prefsFile, json_encode($merged, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES)) !== false;
 }
 
 /**
@@ -321,26 +376,41 @@ function saveDashboardPreferences(array $preferences) {
  * Priority: Dashboard Preferences > Environment Variable > Dynamic Detection > Document Root > Default
  */
 function getLaragonRoot() {
+    static $laragonRoot = null;
+    if ($laragonRoot !== null) {
+        return $laragonRoot;
+    }
+
+    // 0. Check if constant already defined (rare in this function's logic flow but safe)
+    if (defined('LARAGON_ROOT')) {
+        return $laragonRoot = LARAGON_ROOT;
+    }
+
     // 1. Check Dashboard Preferences override first
     $prefs = getDashboardPreferences();
-    if (!empty($prefs['laragon_root']) && is_dir($prefs['laragon_root']) && file_exists($prefs['laragon_root'] . '/laragon.exe')) {
-        return rtrim(str_replace('\\', '/', $prefs['laragon_root']), '/');
+    if (!empty($prefs['laragon_root'])) {
+        $prefPath = rtrim(str_replace('\\', '/', $prefs['laragon_root']), '/');
+        if (is_dir($prefPath)) {
+            // Check for laragon.exe but don't strictly require it if directory exists
+            // This allows for more flexibility if the user points to a valid but slightly different path
+            return $laragonRoot = $prefPath;
+        }
     }
     
     // 2. Check environment variable
     $envPath = getenv('LARAGON_ROOT');
     if (!empty($envPath) && is_dir($envPath) && file_exists($envPath . '/laragon.exe')) {
-        return rtrim(str_replace('\\', '/', $envPath), '/');
+        return $laragonRoot = rtrim(str_replace('\\', '/', $envPath), '/');
     }
     
     // 3. Dynamic drive scanning (C: through Z:)
-    $drives = [];
+    $drivesToCheck = [];
     // Check common drives first
     $commonDrives = ['C', 'D', 'E', 'F'];
     foreach ($commonDrives as $drive) {
-        $drives[] = $drive . ':/laragon';
+        $drivesToCheck[] = $drive . ':/laragon';
         // Also check uppercase Laragon (case-insensitive handling)
-        $drives[] = $drive . ':/Laragon';
+        $drivesToCheck[] = $drive . ':/Laragon';
     }
     
     // 4. Check specific known paths (for users with custom setups)
@@ -349,11 +419,10 @@ function getLaragonRoot() {
         'D:/laragon',
         'C:/Laragon',
         'C:/laragon',
-        'D:/Dev_Sites/../Laragon', // If dashboard is in D:/Dev_Sites/Laragon-Dashboard
     ];
     foreach ($specificPaths as $path) {
-        if (!in_array($path, $drives)) {
-            $drives[] = $path;
+        if (!in_array($path, $drivesToCheck)) {
+            $drivesToCheck[] = $path;
         }
     }
     
@@ -366,8 +435,8 @@ function getLaragonRoot() {
             if (!empty($matches[1])) {
                 foreach ($matches[1] as $drive) {
                     $path = $drive . ':/laragon';
-                    if (!in_array($path, $drives)) {
-                        $drives[] = $path;
+                    if (!in_array($path, $drivesToCheck)) {
+                        $drivesToCheck[] = $path;
                     }
                 }
             }
@@ -375,7 +444,7 @@ function getLaragonRoot() {
     }
     
     // Check each drive for Laragon installation (case-insensitive)
-    foreach ($drives as $path) {
+    foreach ($drivesToCheck as $path) {
         // Normalize path
         $normalizedPath = rtrim(str_replace('\\', '/', $path), '/');
         
@@ -396,7 +465,7 @@ function getLaragonRoot() {
                 $iniVariants = ['/usr/laragon.ini', '/usr/Laragon.ini', '/usr/LARAGON.INI'];
                 foreach ($iniVariants as $ini) {
                     if (file_exists($normalizedPath . $ini)) {
-                        return $normalizedPath;
+                        return $laragonRoot = $normalizedPath;
                     }
                 }
             }
@@ -413,99 +482,13 @@ function getLaragonRoot() {
         if (!empty($parts[0])) {
             $detectedPath = $parts[0] . 'laragon';
             if (is_dir($detectedPath) && file_exists($detectedPath . '/laragon.exe') && file_exists($detectedPath . '/usr/laragon.ini')) {
-                return str_replace('\\', '/', $detectedPath);
+                return $laragonRoot = str_replace('\\', '/', $detectedPath);
             }
         }
     }
     
-    // Check if script path contains 'laragon' (for custom locations)
-    if (strpos($scriptPath, 'laragon') !== false) {
-        $parts = explode('laragon', $scriptPath);
-        if (!empty($parts[0])) {
-            $detectedPath = $parts[0] . 'laragon';
-            if (is_dir($detectedPath) && file_exists($detectedPath . '/laragon.exe') && file_exists($detectedPath . '/usr/laragon.ini')) {
-                return str_replace('\\', '/', $detectedPath);
-            }
-        }
-    }
-    
-    // Try to find Laragon by going up from current script directory
-    $currentDir = dirname($scriptPath);
-    $maxDepth = 10; // Prevent infinite loops
-    $depth = 0;
-    while ($depth < $maxDepth && $currentDir !== dirname($currentDir)) {
-        // Check if we're in a Laragon subdirectory
-        if (strpos($currentDir, 'laragon') !== false) {
-            $parts = explode('laragon', $currentDir);
-            if (!empty($parts[0])) {
-                $detectedPath = $parts[0] . 'laragon';
-                if (is_dir($detectedPath) && file_exists($detectedPath . '/laragon.exe') && file_exists($detectedPath . '/usr/laragon.ini')) {
-                    return str_replace('\\', '/', $detectedPath);
-                }
-            }
-        }
-        $currentDir = dirname($currentDir);
-        $depth++;
-    }
-    
-    // 6. Try reading from laragon.ini in common locations (if ini file exists but exe doesn't)
-    foreach ($drives as $path) {
-        $iniFile = $path . '/usr/laragon.ini';
-        if (file_exists($iniFile)) {
-            // If ini exists, assume this is the Laragon root
-            return rtrim(str_replace('\\', '/', $path), '/');
-        }
-    }
-    
-    // 7. Try to detect from Dev_Sites or custom document roots
-    $docRoot = $_SERVER['DOCUMENT_ROOT'] ?? '';
-    if (!empty($docRoot)) {
-        $docRootLower = strtolower($docRoot);
-        
-        // If document root contains 'dev_sites', try to find Laragon
-        if (strpos($docRootLower, 'dev_sites') !== false) {
-            // Method 1: Replace Dev_Sites with Laragon in same path
-            $possibleLaragon = str_replace('Dev_Sites', 'Laragon', $docRoot);
-            $possibleLaragon = str_replace('dev_sites', 'Laragon', $possibleLaragon);
-            if (is_dir($possibleLaragon)) {
-                // Check for laragon.exe (case-insensitive)
-                $exeVariants = ['/laragon.exe', '/Laragon.exe', '/LARAGON.EXE'];
-                foreach ($exeVariants as $exe) {
-                    if (file_exists($possibleLaragon . $exe)) {
-                        return rtrim(str_replace('\\', '/', $possibleLaragon), '/');
-                    }
-                }
-            }
-            
-            // Method 2: Go up one level and check for Laragon
-            $parentDir = dirname($docRoot);
-            $possibleLaragon = $parentDir . '/Laragon';
-            if (is_dir($possibleLaragon)) {
-                $exeVariants = ['/laragon.exe', '/Laragon.exe', '/LARAGON.EXE'];
-                foreach ($exeVariants as $exe) {
-                    if (file_exists($possibleLaragon . $exe)) {
-                        return rtrim(str_replace('\\', '/', $possibleLaragon), '/');
-                    }
-                }
-            }
-            
-            // Method 3: Check D:\Laragon directly (common setup)
-            $directPaths = ['D:/Laragon', 'D:/laragon', 'd:/Laragon', 'd:/laragon'];
-            foreach ($directPaths as $directPath) {
-                if (is_dir($directPath)) {
-                    $exeVariants = ['/laragon.exe', '/Laragon.exe', '/LARAGON.EXE'];
-                    foreach ($exeVariants as $exe) {
-                        if (file_exists($directPath . $exe)) {
-                            return rtrim(str_replace('\\', '/', $directPath), '/');
-                        }
-                    }
-                }
-            }
-        }
-    }
-    
-    // 8. Default fallback
-    return 'C:/laragon';
+    // Default fallback
+    return $laragonRoot = 'C:/laragon';
 }
 
 /**
@@ -693,13 +676,18 @@ function getLaragonSendmailDir() {
  * Get application version from Git or VERSION file
  */
 function getAppVersion() {
+    static $appVersion = null;
+    if ($appVersion !== null) {
+        return $appVersion;
+    }
+
     $versionFile = __DIR__ . '/VERSION';
     
     // Check for VERSION file first
     if (file_exists($versionFile)) {
         $version = trim(@file_get_contents($versionFile));
         if (!empty($version)) {
-            return $version;
+            return $appVersion = $version;
         }
     }
     
@@ -713,19 +701,19 @@ function getAppVersion() {
             $version = trim($version);
             // Remove 'v' prefix if present
             $version = preg_replace('/^v/', '', $version);
-            return $version;
+            return $appVersion = $version;
         }
         
         // Fallback to short commit hash
         $command = 'cd ' . escapeshellarg(__DIR__) . ' && git rev-parse --short HEAD 2>nul';
         $hash = @shell_exec($command);
         if ($hash) {
-            return 'dev-' . trim($hash);
+            return $appVersion = 'dev-' . trim($hash);
         }
     }
     
     // Default fallback
-    return APP_VERSION;
+    return $appVersion = defined('APP_VERSION') ? APP_VERSION : '4.0.0';
 }
 
 // Get Laragon root path (only define if not already defined)
@@ -747,9 +735,10 @@ if (!defined('DOMAIN_SUFFIX')) {
 // Auto-enabled if SSL certificates are detected (via setup-ssl.ps1)
 if (!defined('FORCE_HTTPS')) {
     // Check if SSL certificates exist (indicates SSL is set up)
-    $sslCertExists = file_exists('C:/laragon/etc/ssl/localhost+2.pem');
-    $envForceHttps = getenv('FORCE_HTTPS') === 'true' || getenv('FORCE_HTTPS') === '1';
-    define('FORCE_HTTPS', $envForceHttps || $sslCertExists);
+    // $sslCertExists = file_exists('C:/laragon/etc/ssl/localhost+2.pem');
+    // $envForceHttps = getenv('FORCE_HTTPS') === 'true' || getenv('FORCE_HTTPS') === '1';
+    // define('FORCE_HTTPS', $envForceHttps || $sslCertExists);
+    define('FORCE_HTTPS', false); // Manually disabled to fix connection issues
 }
 if (!defined('APP_VERSION_DETECTED')) {
     define('APP_VERSION_DETECTED', getenv('APP_VERSION') ?: getAppVersion());
@@ -794,105 +783,41 @@ if (!defined('MYSQL_PASSWORD')) {
 
 // Security settings (only define if not already defined)
 if (!defined('SESSION_TIMEOUT')) {
-    define('SESSION_TIMEOUT', 3600); // 1 hour
+    define('SESSION_TIMEOUT', SESSION_LIFETIME); // Use the defined session lifetime
 }
 if (!defined('MAX_LOGIN_ATTEMPTS')) {
     define('MAX_LOGIN_ATTEMPTS', 5);
 }
-if (!defined('CSRF_TOKEN_NAME')) {
-    define('CSRF_TOKEN_NAME', 'csrf_token');
-}
 
-// File upload settings (only define if not already defined)
-if (!defined('MAX_UPLOAD_SIZE')) {
-    define('MAX_UPLOAD_SIZE', 10 * 1024 * 1024); // 10MB
-}
-if (!defined('ALLOWED_EXTENSIONS')) {
-    define('ALLOWED_EXTENSIONS', ['jpg', 'jpeg', 'png', 'gif', 'pdf', 'txt', 'doc', 'docx']);
-}
-
-// Error reporting
-// For API endpoints, always suppress display errors to prevent JSON corruption
-$isApiEndpoint = in_array(basename($_SERVER['PHP_SELF'] ?? ''), [
-    'files.php', 'logs.php', 'vitals.php', 'services.php', 
-    'preferences.php', 'mailpit.php', 'create_project.php'
-]);
-
-if ($isApiEndpoint) {
-    // API endpoints: suppress all error display
-    error_reporting(0);
-    ini_set('display_errors', 0);
-    ini_set('display_startup_errors', 0);
-} elseif (APP_DEBUG) {
-    error_reporting(E_ALL);
-    ini_set('display_errors', 1);
-    ini_set('display_startup_errors', 1);
-} else {
-    error_reporting(0);
-    ini_set('display_errors', 0);
-}
-
-// Timezone - try to detect from system or use UTC
-$timezone = getenv('TZ') ?: date_default_timezone_get();
-if (empty($timezone) || $timezone === 'UTC') {
-    // Try to detect Windows timezone
-    if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
-        $output = @shell_exec('tzutil /g 2>nul');
-        if ($output) {
-            // Map Windows timezone to PHP timezone
-            $windowsTz = trim($output);
-            $tzMap = [
-                'Eastern Standard Time' => 'America/New_York',
-                'Central Standard Time' => 'America/Chicago',
-                'Mountain Standard Time' => 'America/Denver',
-                'Pacific Standard Time' => 'America/Los_Angeles',
-                'GMT Standard Time' => 'Europe/London',
-                'Central European Standard Time' => 'Europe/Paris',
-            ];
-            if (isset($tzMap[$windowsTz])) {
-                $timezone = $tzMap[$windowsTz];
-            }
-        }
+// Additional security headers
+if (SECURITY_HEADERS_ENABLED) {
+    // Prevent iframe embedding (clickjacking protection)
+    header('X-Frame-Options: DENY');
+    
+    // Prevent MIME type sniffing
+    header('X-Content-Type-Options: nosniff');
+    
+    // Enable XSS protection
+    header('X-XSS-Protection: 1; mode=block');
+    
+    // Strict transport security (disabled to fix connection issues)
+    /*
+    if (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') {
+        header('Strict-Transport-Security: max-age=31536000; includeSubDomains; preload');
     }
+    */
+    
+    // Prevent caching of security headers
+    header('Cache-Control: no-store, no-cache, must-revalidate, max-age=0');
+    header('Pragma: no-cache');
+    
+    // Content security policy - Force refresh and explicit elem directive
+    header_remove('Content-Security-Policy');
+    header("Content-Security-Policy: default-src 'self' blob:; script-src 'self' 'unsafe-inline' 'unsafe-eval' blob: https://code.iconify.design; script-src-elem 'self' 'unsafe-inline' blob: https://code.iconify.design; worker-src 'self' blob:; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: https://*; font-src 'self' https://fonts.gstatic.com; connect-src 'self' https://api.iconify.design https://api.unisvg.com; frame-src 'self'; object-src 'none'; report-uri /csp-report");
+    
+    // Referrer policy
+    header('Referrer-Policy: strict-origin-when-cross-origin');
+    
+    // Feature policy
+    header("Feature-Policy: geolocation 'none'; microphone 'none'; camera 'none'");
 }
-date_default_timezone_set($timezone);
-
-// Time and Date Format Configuration (can be overridden in config.php)
-if (!defined('TIME_FORMAT')) {
-    $prefs = getDashboardPreferences();
-    $timeFormat = $prefs['time_format'] ?? getenv('TIME_FORMAT');
-    if (empty($timeFormat)) {
-        // Auto-detect: check system locale
-        $locale = setlocale(LC_TIME, 0);
-        if (strpos(strtolower($locale), 'us') !== false || strpos(strtolower($locale), 'en_us') !== false) {
-            $timeFormat = '12'; // US typically uses 12-hour
-        } else {
-            $timeFormat = '24'; // Most other locales use 24-hour
-        }
-    }
-    define('TIME_FORMAT', $timeFormat);
-}
-
-if (!defined('DATE_FORMAT')) {
-    $prefs = getDashboardPreferences();
-    $dateFormat = $prefs['date_format'] ?? getenv('DATE_FORMAT');
-    if (empty($dateFormat)) {
-        // Auto-detect: check system locale
-        $locale = setlocale(LC_TIME, 0);
-        if (strpos(strtolower($locale), 'us') !== false || strpos(strtolower($locale), 'en_us') !== false) {
-            $dateFormat = 'm/d/Y'; // US format
-        } else {
-            $dateFormat = 'Y-m-d'; // ISO format
-        }
-    }
-    define('DATE_FORMAT', $dateFormat);
-}
-
-// Ensure required directories exist
-$requiredDirs = [LOGS_ROOT, CACHE_ROOT];
-foreach ($requiredDirs as $dir) {
-    if (!is_dir($dir)) {
-        @mkdir($dir, 0755, true);
-    }
-}
-

@@ -25,12 +25,19 @@ $headPath = defined('PARTIALS_ROOT') ? PARTIALS_ROOT . '/head.php' : __DIR__ . '
 include $headPath;
 ?>
 
+<script>
+    // Global CSRF token for AJAX requests
+    window.csrfToken = "<?php echo getCSRFToken(); ?>";
+</script>
+
 <body>
 
     <?php 
-    // Use absolute path to ensure it works regardless of where it's included from
-    $sidebarPath = defined('PARTIALS_ROOT') ? PARTIALS_ROOT . '/sidebar.php' : __DIR__ . '/../sidebar.php';
-    include $sidebarPath;
+    if (!isset($GLOBALS['is_login_page']) || !$GLOBALS['is_login_page']) {
+        // Use absolute path to ensure it works regardless of where it's included from
+        $sidebarPath = defined('PARTIALS_ROOT') ? PARTIALS_ROOT . '/sidebar.php' : __DIR__ . '/../sidebar.php';
+        include $sidebarPath;
+    }
     ?>
 
     <?php 
@@ -51,9 +58,11 @@ include $headPath;
     }
     ?>
     
-    <main class="dashboard-main">
+    <main class="dashboard-main <?php echo (isset($GLOBALS['is_login_page']) && $GLOBALS['is_login_page']) ? 'ms-0 w-100' : ''; ?>">
         <?php 
-        // Use absolute path to ensure it works regardless of where it's included from
-        $navbarPath = defined('PARTIALS_ROOT') ? PARTIALS_ROOT . '/navbar.php' : __DIR__ . '/../navbar.php';
-        include $navbarPath;
+        if (!isset($GLOBALS['is_login_page']) || !$GLOBALS['is_login_page']) {
+            // Use absolute path to ensure it works regardless of where it's included from
+            $navbarPath = defined('PARTIALS_ROOT') ? PARTIALS_ROOT . '/navbar.php' : __DIR__ . '/../navbar.php';
+            include $navbarPath;
+        }
         ?>

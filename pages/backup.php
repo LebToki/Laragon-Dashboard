@@ -62,7 +62,7 @@ include __DIR__ . '/../partials/layouts/layoutTop.php';
         </div>
 
         <!-- Create Backup Section -->
-        <div class="card shadow-none border radius-12 mb-24">
+        <div class="card p-0 radius-12 mb-24">
             <div class="card-body p-24">
                 <div class="d-flex align-items-center justify-content-between mb-16">
                     <strong><p class="fw-semibold mb-0"><?php echo t_backup('create_backup', 'Create Backup'); ?></p></strong>
@@ -103,7 +103,7 @@ include __DIR__ . '/../partials/layouts/layoutTop.php';
         </div>
 
         <!-- Backups List -->
-        <div class="card shadow-none border radius-12">
+        <div class="card p-0 radius-12">
             <div class="card-body p-24">
                 <div class="d-flex align-items-center justify-content-between mb-16">
                     <strong><p class="fw-semibold mb-0"><?php echo t_backup('backup_history', 'Backup History'); ?></p></strong>
@@ -187,6 +187,7 @@ document.getElementById('createBackupForm').addEventListener('submit', function(
     if (database) {
         formData.append('database', database);
     }
+    formData.append('csrf_token', window.csrfToken);
     
     const submitBtn = this.querySelector('button[type="submit"]');
     const originalText = submitBtn.innerHTML;
@@ -280,6 +281,7 @@ function deleteBackup(project, timestamp) {
     formData.append('action', 'delete');
     formData.append('project', project);
     formData.append('timestamp', timestamp);
+    formData.append('csrf_token', window.csrfToken);
     
     fetch('api/backup.php', {
         method: 'POST',
@@ -313,6 +315,7 @@ function refreshBackup(project, timestamp, database) {
     if (database) {
         formData.append('database', database);
     }
+    formData.append('csrf_token', window.csrfToken);
     
     fetch('api/backup.php', {
         method: 'POST',

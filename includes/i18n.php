@@ -6,6 +6,12 @@
  * Version: 3.0.0
  */
 
+// Prevent multiple inclusions - guard against the function being declared elsewhere
+if (function_exists('t')) {
+    // Function already exists, don't redefine - just return early
+    return;
+}
+
 if (!defined('APP_ROOT')) {
     define('APP_ROOT', dirname(__DIR__));
 }

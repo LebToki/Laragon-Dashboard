@@ -1,5 +1,12 @@
 <?php
 // Load configuration and helpers first
+// Note: helpers.php now includes i18n.php internally
+// Load autoloader first to ensure classes are available
+if (file_exists(__DIR__ . '/includes/autoload.php')) {
+    require_once __DIR__ . '/includes/autoload.php';
+}
+
+// Load configuration and helpers
 if (file_exists(__DIR__ . '/config.php')) {
     require_once __DIR__ . '/config.php';
 }
@@ -8,9 +15,42 @@ if (file_exists(__DIR__ . '/includes/helpers.php')) {
     require_once __DIR__ . '/includes/helpers.php';
 }
 
-// Load i18n helper for language and RTL support
-if (file_exists(__DIR__ . '/includes/i18n.php')) {
-    require_once __DIR__ . '/includes/i18n.php';
+// Enforce authentication
+if (function_exists('check_auth')) {
+    check_auth();
+}
+
+// i18n is now included via helpers.php - no need to include separately
+// This prevents double-inclusion issues
+
+// Rate limiting check
+if (defined('RATE_LIMIT_REQUESTS_PER_MINUTE') && RATE_LIMIT_REQUESTS_PER_MINUTE > 0) {
+    $ip = $_SERVER['REMOTE_ADDR'] ?? 'unknown';
+    $cacheDir = __DIR__ . '/cache/rate_limit';
+    if (!is_dir($cacheDir)) {
+        mkdir($cacheDir, 0755, true);
+    }
+    $cacheFile = $cacheDir . '/' . md5($ip) . '.json';
+    
+    $currentTime = time();
+    $windowSize = 60; // 1 minute window
+    
+    if (file_exists($cacheFile)) {
+        $data = json_decode(file_get_contents($cacheFile), true);
+        if ($data && isset($data['time']) && $data['time'] > $currentTime - $windowSize) {
+            if (isset($data['count']) && $data['count'] >= RATE_LIMIT_REQUESTS_PER_MINUTE) {
+                http_response_code(429);
+                die('Too many requests. Please try again later.');
+            }
+            $data['count']++;
+        } else {
+            $data = ['time' => $currentTime, 'count' => 1];
+        }
+    } else {
+        $data = ['time' => $currentTime, 'count' => 1];
+    }
+    
+    file_put_contents($cacheFile, json_encode($data));
 }
 
 // Simple page routing
@@ -25,7 +65,8 @@ if (!empty($page)) {
     // List of valid pages
     $validPages = [
         'dashboard', 'projects', 'databases', 'services', 'vitals',
-        'mailbox', 'logs', 'tools', 'backup', 'sites', 'httpd', 'preferences'
+        'mailbox', 'logs', 'tools', 'backup', 'sites', 'httpd', 'preferences',
+        'config_editor'
     ];
     
     // Validate page exists
@@ -43,9 +84,10 @@ if (!empty($page)) {
             try {
                 include $pageFile;
                 exit;
-            } catch (Throwable $e) {
+            } catch (Exception $e) {
                 // If there's an error, show it in debug mode, otherwise show 404
                 if (defined('APP_DEBUG') && APP_DEBUG) {
+                    \LaragonDashboard\Core\Logger::error("Page load error ($page): " . $e->getMessage());
                     http_response_code(500);
                     echo '<h1>Error Loading Page</h1>';
                     echo '<p>' . htmlspecialchars($e->getMessage()) . '</p>';
@@ -239,19 +281,20 @@ include './partials/layouts/layoutTop.php' ?>
             </div>
         </div>
 
-         <!-- Laragon -->
+        <!-- Disk Usage -->
         <div class="col-lg-3 col-sm-6">
-            <div class="card shadow-none border radius-12 bg-gradient-start-8 h-100">
+            <div class="card shadow-none border radius-12 bg-gradient-start-7 h-100">
                 <div class="card-body p-16">
-                    <!-- Top row: Label and Icon -->
                     <div class="d-flex align-items-center justify-content-between gap-8 mb-8">
-                        <p class="fw-medium text-secondary-light mb-0 text-sm">Laragon</p>
-                        <div class="w-50-px h-50-px bg-info-main rounded-circle d-flex justify-content-center align-items-center flex-shrink-0">
-                            <iconify-icon icon="mdi:elephant" class="text-base text-2xl" style="font-size: 24px;"></iconify-icon>
+                        <p class="fw-medium text-secondary-light mb-0 text-sm">Disk Usage (Laragon)</p>
+                        <div class="w-50-px h-50-px bg-neutral-600 rounded-circle d-flex justify-content-center align-items-center flex-shrink-0">
+                            <iconify-icon icon="solar:diskette-bold" class="text-base text-2xl" id="disk-icon"></iconify-icon>
                         </div>
                     </div>
-                    <!-- Value on full row -->
-                    <h6 class="mb-0 text-truncate" style="font-size: 18px;"><?php echo htmlspecialchars(getLaragonVersion()); ?></h6>
+                    <h6 class="mb-4 text-truncate" style="font-size: 16px;" id="disk-text">Loading...</h6>
+                    <div class="progress h-4-px" style="background: rgba(var(--white-rgb), 0.2);">
+                        <div id="disk-progress" class="progress-bar bg-base" role="progressbar" style="width: 0%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -304,12 +347,12 @@ include './partials/layouts/layoutTop.php' ?>
                     <div class="col-lg-3 col-md-4 col-sm-6 project-card" 
                          data-project-name="<?php echo htmlspecialchars($project['name']); ?>" 
                          data-platform="<?php echo htmlspecialchars(strtolower($project['platform'])); ?>"
-                         oncontextmenu="if(typeof showProjectContextMenu === 'function') { showProjectContextMenu(event, '<?php echo htmlspecialchars($project['name']); ?>'); return false; }">
-                        <div class="card shadow-none border radius-12 bg-gradient-start-<?php echo $gradientVariant; ?> h-100 position-relative">
+                         oncontextmenu="if(typeof showProjectContextMenu === 'function') { showProjectContextMenu(event, '<?php echo addslashes(htmlspecialchars($project['name'], ENT_QUOTES)); ?>'); return false; }">
+                        <div class="card shadow-none border radius-12 bg-gradient-start-<?php echo $gradientVariant; ?> h-100 position-relative glass-card">
                             <div class="card-body p-16">
                                 <!-- 3-Dot Dropdown Menu (Top Left) -->
                                 <div class="dropdown position-absolute top-0 start-0 ms-16 mt-16">
-                                    <button type="button" data-bs-toggle="dropdown" aria-expanded="false" class="bg-white bg-opacity-20 w-32-px h-32-px radius-8 border border-white border-opacity-30 d-flex justify-content-center align-items-center text-base hover-opacity-80" style="backdrop-filter: blur(4px);">
+                                    <button type="button" data-bs-toggle="dropdown" aria-expanded="false" class="bg-base bg-opacity-20 w-32-px h-32-px radius-8 border border-white border-opacity-30 d-flex justify-content-center align-items-center text-base hover-opacity-80" style="backdrop-filter: blur(4px);">
                                         <iconify-icon icon="entypo:dots-three-vertical" class="icon text-lg"></iconify-icon>
                                     </button>
                                     <ul class="dropdown-menu p-12 border bg-base shadow">
@@ -317,6 +360,12 @@ include './partials/layouts/layoutTop.php' ?>
                                             <button type="button" class="ignore-project-btn dropdown-item px-16 py-8 rounded text-secondary-light bg-hover-neutral-200 text-hover-neutral-900 d-flex align-items-center gap-10" data-project-name="<?php echo htmlspecialchars($project['name']); ?>">
                                                 <iconify-icon icon="solar:eye-closed-bold" class="icon"></iconify-icon>
                                                 Ignore Project
+                                            </button>
+                                        </li>
+                                        <li>
+                                            <button type="button" class="env-editor-btn dropdown-item px-16 py-8 rounded text-secondary-light bg-hover-neutral-200 text-hover-neutral-900 d-flex align-items-center gap-10" data-project-name="<?php echo htmlspecialchars($project['name']); ?>" data-bs-toggle="modal" data-bs-target="#envEditorModal">
+                                                <iconify-icon icon="solar:pen-new-square-bold" class="icon"></iconify-icon>
+                                                .env Editor
                                             </button>
                                         </li>
                                     </ul>
@@ -380,6 +429,55 @@ include './partials/layouts/layoutTop.php' ?>
             <?php endif; ?>
         </div>
     </div> <!--/ container-fluid -->
+
+    <!-- Dynamic Changelog Accordion -->
+    <div class="container-fluid mt-24">
+        <div class="card shadow-none border radius-12 glass">
+            <div class="card-body p-24">
+                <div class="d-flex align-items-center justify-content-between mb-16">
+                    <strong><p class="fw-semibold mb-0">Version History & Changelog</p></strong>
+                    <span class="badge bg-primary-600">v<?php echo getAppVersion(); ?></span>
+                </div>
+                
+                <div class="accordion accordion-flush" id="changelogAccordion">
+                    <?php 
+                    $changelog = getChangelog();
+                    $first = true;
+                    foreach ($changelog as $version => $data): 
+                        $collapseId = 'collapse' . str_replace('.', '', $version);
+                    ?>
+                    <div class="accordion-item bg-transparent border-bottom border-white border-opacity-10">
+                        <h2 class="accordion-header" id="heading<?php echo $collapseId; ?>">
+                            <button class="accordion-button <?php echo $first ? '' : 'collapsed'; ?> bg-transparent text-primary-light fw-medium py-12 px-0 shadow-none" type="button" data-bs-toggle="collapse" data-bs-target="#<?php echo $collapseId; ?>" aria-expanded="<?php echo $first ? 'true' : 'false'; ?>" aria-controls="<?php echo $collapseId; ?>">
+                                Version <?php echo htmlspecialchars($version); ?> 
+                                <span class="text-secondary-light ms-8 text-sm fw-normal"><?php echo htmlspecialchars($data['date']); ?></span>
+                            </button>
+                        </h2>
+                        <div id="<?php echo $collapseId; ?>" class="accordion-collapse collapse <?php echo $first ? 'show' : ''; ?>" aria-labelledby="heading<?php echo $collapseId; ?>" data-bs-parent="#changelogAccordion">
+                            <div class="accordion-body px-0 py-12">
+                                <ul class="list-unstyled mb-0 d-flex flex-column gap-2">
+                                    <?php foreach ($data['changes'] as $change): ?>
+                                    <li class="d-flex align-items-start gap-2 text-secondary-light text-sm">
+                                        <iconify-icon icon="solar:check-circle-bold" class="text-success-main mt-1 flex-shrink-0"></iconify-icon>
+                                        <span><?php echo htmlspecialchars($change); ?></span>
+                                    </li>
+                                    <?php endforeach; ?>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <?php 
+                        $first = false;
+                        if (count($changelog) > 5 && !$first) break; // Limit to last 5 for dashboard
+                    endforeach; 
+                    ?>
+                </div>
+                <div class="text-center mt-16">
+                    <a href="CHANGELOG.md" target="_blank" class="text-primary-600 fw-medium text-sm">View Full Changelog</a>
+                </div>
+            </div>
+        </div>
+    </div>
 </div> <!--/ dashboard-main-body -->
 
 <!-- Project Creation Wizard Modal -->
@@ -611,9 +709,10 @@ document.addEventListener('DOMContentLoaded', function() {
         const formData = new FormData(wizardForm);
         formData.append('action', 'create');
         
-        // Disable buttons
-        wizardCreate.disabled = true;
-        wizardCreate.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Creating...';
+        toggleLoading(wizardCreate, true, 'Creating...');
+        
+        // Add CSRF token
+        formData.append('csrf_token', window.csrfToken);
         
         fetch(CREATE_PROJECT_API, {
             method: 'POST',
@@ -621,8 +720,9 @@ document.addEventListener('DOMContentLoaded', function() {
         })
         .then(response => response.json())
         .then(data => {
+            toggleLoading(wizardCreate, false);
             if (data.success) {
-                showMessage('Project created successfully!', 'success');
+                showNotification('Project created successfully!', 'success', 'Success');
                 
                 // Close modal and reload page
                 setTimeout(() => {
@@ -631,16 +731,13 @@ document.addEventListener('DOMContentLoaded', function() {
                     window.location.reload();
                 }, 1500);
             } else {
-                showMessage(data.error || 'Failed to create project', 'danger');
-                wizardCreate.disabled = false;
-                wizardCreate.innerHTML = 'Create Project';
+                showNotification(data.error || 'Failed to create project', 'error', 'Error');
             }
         })
         .catch(error => {
+            toggleLoading(wizardCreate, false);
             console.error('Error creating project:', error);
-            showMessage('Error: ' + error.message, 'danger');
-            wizardCreate.disabled = false;
-            wizardCreate.innerHTML = 'Create Project';
+            showNotification('Error: ' + error.message, 'error', 'System Error');
         });
     }
 });
@@ -667,9 +764,12 @@ document.addEventListener('DOMContentLoaded', function() {
                 return;
             }
             
+            toggleLoading(this, true);
+            
             const formData = new FormData();
             formData.append('action', 'ignore');
             formData.append('project', projectName);
+            formData.append('csrf_token', window.csrfToken); // Add CSRF token
             
             fetch(PROJECTS_API, {
                 method: 'POST',
@@ -677,30 +777,134 @@ document.addEventListener('DOMContentLoaded', function() {
             })
                 .then(response => response.json())
                 .then(data => {
+                    toggleLoading(this, false);
                     if (data.success) {
                         // Remove the project card
-                        const projectCard = document.querySelector(`[data-project-name="${projectName}"]`);
+                        const projectCard = document.querySelector(`.project-card-container[data-project-name="${projectName}"]`);
                         if (projectCard) {
-                            projectCard.style.transition = 'opacity 0.3s';
-                            projectCard.style.opacity = '0';
+                            projectCard.classList.add('animate__animated', 'animate__fadeOut');
                             setTimeout(() => {
                                 projectCard.remove();
-                            }, 300);
+                                // Refresh projects count if needed
+                                if (document.querySelectorAll('.project-card-container').length === 0) {
+                                    window.location.reload();
+                                }
+                            }, 500);
                         }
                         
-                        // Show success message
-                        alert('Project "' + projectName + '" has been ignored and will not appear in the list.');
+                        showNotification('Project "' + projectName + '" has been ignored.', 'success');
                     } else {
-                        alert('Error: ' + (data.error || 'Failed to ignore project'));
+                        showNotification(data.error || 'Failed to ignore project', 'error');
                     }
                 })
                 .catch(error => {
+                    toggleLoading(this, false);
                     console.error('Error ignoring project:', error);
-                    alert('Error: ' + error.message);
+                    showNotification('Error: ' + error.message, 'error');
                 });
         });
     });
 });
+
+// Real-time Service Status & Resource Monitoring
+document.addEventListener('DOMContentLoaded', function() {
+    const SERVICES_API = 'api/services.php';
+    
+    function refreshStatus() {
+        fetch(SERVICES_API + '?action=status')
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    updateDiskUI(data.data.disk);
+                    updateServiceResourceUI(data.data.services);
+                }
+            })
+            .catch(error => console.error('Status refresh error:', error));
+    }
+
+    function updateDiskUI(disk) {
+        const text = document.getElementById('disk-text');
+        const progress = document.getElementById('disk-progress');
+        if (text && progress) {
+            text.textContent = `${disk.used}GB / ${disk.total}GB (${disk.percent}%)`;
+            progress.style.width = disk.percent + '%';
+            progress.setAttribute('aria-valuenow', disk.percent);
+            
+            if (disk.percent > 90) {
+                progress.classList.replace('bg-base', 'bg-danger');
+            } else if (disk.percent > 75) {
+                progress.classList.replace('bg-base', 'bg-warning');
+            } else {
+                progress.className = 'progress-bar bg-base';
+            }
+        }
+    }
+
+    function updateServiceResourceUI(services) {
+        // We can add logic here to update specific badges if we add IDs to the main cards
+        // For now, let's just update the console or prepare for future modular cards
+        Object.entries(services).forEach(([name, info]) => {
+            const cardTitle = Array.from(document.querySelectorAll('.card-body p')).find(p => p.textContent.trim() === name);
+            if (cardTitle && info.status === 'running') {
+                let statsCont = cardTitle.parentElement.querySelector('.service-stats');
+                if (!statsCont) {
+                    statsCont = document.createElement('div');
+                    statsCont.className = 'service-stats text-xs mt-2 d-flex gap-2 opacity-75';
+                    cardTitle.after(statsCont);
+                }
+                statsCont.innerHTML = `
+                    <span class="d-flex align-items-center gap-1">
+                        <iconify-icon icon="solar:cpu-bold"></iconify-icon> ${info.usage.cpu}%
+                    </span>
+                    <span class="d-flex align-items-center gap-1">
+                        <iconify-icon icon="solar:ram-bold"></iconify-icon> ${info.usage.ram}MB
+                    </span>
+                `;
+            } else if (cardTitle) {
+                const statsCont = cardTitle.parentElement.querySelector('.service-stats');
+                if (statsCont) statsCont.remove();
+            }
+        });
+    }
+
+    // Refresh every 30 seconds
+    setInterval(refreshStatus, 30000);
+    // Initial refresh
+    refreshStatus();
+});
 </script>
+
+<!-- .env Editor Modal -->
+<div class="modal fade" id="envEditorModal" tabindex="-1" aria-labelledby="envEditorModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-xl">
+        <div class="modal-content glass border-0 text-white">
+            <div class="modal-header border-bottom">
+                <h5 class="modal-title fw-semibold text-white" id="envEditorModalLabel">.env Editor: <span id="envProjectName" class="text-primary-600"></span></h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-0">
+                <div id="env-editor-loader" class="p-40 text-center">
+                    <div class="spinner-border text-primary" role="status"></div>
+                    <p class="mt-16 text-secondary-light">Loading .env file...</p>
+                </div>
+                <div id="env-editor-container" style="display: none;">
+                    <textarea id="env-editor-textarea" class="form-control border-0 radius-0 bg-dark text-white p-16" style="min-height: 500px; font-family: 'Fira Code', 'Courier New', monospace; font-size: 14px; line-height: 1.5;"></textarea>
+                </div>
+                <div id="env-editor-empty" class="p-40 text-center" style="display: none;">
+                    <iconify-icon icon="solar:file-corrupted-bold" class="text-secondary-light text-5xl mb-16"></iconify-icon>
+                    <p class="text-secondary-light">This project does not have a .env file yet.</p>
+                    <button type="button" class="btn btn-primary-600 mt-16" id="create-env-btn">Create .env File</button>
+                </div>
+            </div>
+            <div class="modal-footer border-top">
+                <div class="flex-grow-1">
+                    <small class="text-secondary-light">Backups are created automatically before saving.</small>
+                </div>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary-600" id="save-env-btn">Save Changes</button>
+            </div>
+        </div>
+    </div>
+</div>
 
 <?php include './partials/layouts/layoutBottom.php' ?>

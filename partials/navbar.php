@@ -132,11 +132,11 @@ $GLOBALS['navbarAssetsImageUrl'] = $assetsImageUrl;
 
                 <!-- Notifications Dropdown -->
                 <div class="dropdown">
-                    <button class="has-indicator w-40-px h-40-px bg-neutral-200 rounded-circle d-flex justify-content-center align-items-center" type="button" data-bs-toggle="dropdown" id="notifications-btn">
+                    <button class="has-indicator w-40-px h-40-px bg-neutral-200 rounded-circle d-flex justify-content-center align-items-center" type="button" data-bs-toggle="dropdown" id="notifications-btn" aria-label="Notifications" title="View Notifications">
                         <iconify-icon icon="iconoir:bell" class="text-primary-light text-xl"></iconify-icon>
                         <span class="indicator bg-danger-main" id="update-indicator" style="display: none;"></span>
                     </button>
-                    <div class="dropdown-menu to-top dropdown-menu-lg p-0">
+                    <div class="dropdown-menu to-top dropdown-menu-lg p-0" aria-labelledby="notifications-btn">
                         <div class="m-16 py-12 px-16 radius-8 bg-primary-50 mb-16 d-flex align-items-center justify-content-between gap-2">
                             <div>
                                 <p class="text-lg text-primary-light fw-semibold mb-0">Notifications</p>

@@ -1,10 +1,10 @@
 {
-    "laragon_root": "C:/laragon",
+    "laragon_root": "D:/laragon",
     "mysql_host": "localhost",
     "mysql_user": "root",
     "auto_update_check": true,
     "auto_update_install": true,
-    "last_update_check": 1764369793,
+    "last_update_check": 1771056847,
     "debug_banner": false,
     "time_format": "12",
     "date_format": "d/m/Y",

@@ -42,6 +42,9 @@ if (substr($assetsUrl, 0, 1) !== '/') {
     <!-- main js -->
     <script src="<?php echo $assetsUrl; ?>/js/app.js"></script>
 
+    <!-- AI Agent js -->
+    <script src="<?php echo $assetsUrl; ?>/js/ai-agent.js"></script>
+
     <!-- Time Greeting and Clock Script -->
     <script>
     (function() {
@@ -661,10 +664,51 @@ if (substr($assetsUrl, 0, 1) !== '/') {
                     data[key] = value;
                 });
                 
-                // Show loading state
+                // Add CSRF token
+                data['csrf_token'] = window.csrfToken;
+                
+                // Show loading state and progress container
                 wizardCreate.disabled = true;
                 wizardCreate.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Creating...';
                 
+                // Add a progress console to the wizard if it doesn't exist
+                let progressCont = document.getElementById('wizard-progress-console');
+                if (!progressCont) {
+                    progressCont = document.createElement('div');
+                    progressCont.id = 'wizard-progress-console';
+                    progressCont.className = 'mt-16 p-12 bg-dark text-success rounded font-monospace text-xs';
+                    progressCont.style.maxHeight = '200px';
+                    progressCont.style.overflowY = 'auto';
+                    wizardMessage.after(progressCont);
+                }
+                progressCont.style.display = 'block';
+                progressCont.innerHTML = 'Initializing...<br>';
+
+                let pollInterval;
+                
+                function pollProgress(logFile) {
+                    fetch('api/project_progress.php?log=' + logFile)
+                        .then(res => res.json())
+                        .then(pollData => {
+                            if (pollData.success) {
+                                progressCont.innerHTML = pollData.content.replace(/\n/g, '<br>');
+                                progressCont.scrollTop = progressCont.scrollHeight;
+                                
+                                if (pollData.completed) {
+                                    clearInterval(pollInterval);
+                                    if (pollData.content.includes('ERROR:')) {
+                                        showMessage('Project creation failed. Check console for details.', 'danger');
+                                        wizardCreate.disabled = false;
+                                        wizardCreate.innerHTML = 'Retry';
+                                    } else {
+                                        showMessage('Project created successfully!', 'success');
+                                        setTimeout(() => location.reload(), 1500);
+                                    }
+                                }
+                            }
+                        });
+                }
+
                 // Send request
                 fetch('api/create_project.php', {
                     method: 'POST',
@@ -675,21 +719,21 @@ if (substr($assetsUrl, 0, 1) !== '/') {
                 })
                 .then(response => response.json())
                 .then(result => {
-                    if (result.success) {
-                        showMessage('Project created successfully!', 'success');
-                        setTimeout(() => {
-                            location.reload();
-                        }, 1500);
+                    if (result.success && result.log_file) {
+                        // Start polling
+                        pollInterval = setInterval(() => pollProgress(result.log_file), 1000);
                     } else {
-                        showMessage(result.message || 'Failed to create project', 'danger');
+                        showMessage(result.message || 'Failed to start creation', 'danger');
                         wizardCreate.disabled = false;
                         wizardCreate.innerHTML = 'Create Project';
+                        progressCont.style.display = 'none';
                     }
                 })
                 .catch(error => {
                     showMessage('Error: ' + error.message, 'danger');
                     wizardCreate.disabled = false;
                     wizardCreate.innerHTML = 'Create Project';
+                    progressCont.style.display = 'none';
                 });
             });
         }
@@ -874,24 +918,82 @@ if (substr($assetsUrl, 0, 1) !== '/') {
             const html = email.HTML || '';
             const text = email.Text || '';
             
+            // Determine if content looks like a log
+            const isLog = subject.toLowerCase().includes('log') || 
+                          text.includes('[ERROR]') || text.includes('[INFO]') || text.includes('[WARN]') ||
+                          text.substring(0, 100).includes('202') || // Date-like start
+                          text.split('\n').length > 5;
+            
+            let bodyContent = html;
+            if (!html || isLog) {
+                if (isLog) {
+                    bodyContent = formatLogToHtml(text);
+                } else {
+                    bodyContent = '<pre style="white-space: pre-wrap;">' + escapeHtml(text) + '</pre>';
+                }
+            }
+            
             container.innerHTML = `
+                <div class="card-header border-bottom bg-base py-16 px-24 d-flex align-items-center justify-content-between">
+                    <div class="d-flex align-items-center gap-2">
+                        <button type="button" class="btn btn-sm btn-primary-100 text-primary-600 d-flex align-items-center gap-1" onclick="window.location.href='index.php?page=mailbox&folder=${currentFolder}'">
+                            <iconify-icon icon="solar:arrow-left-bold" class="text-lg"></iconify-icon>
+                            Back
+                        </button>
+                    </div>
+                </div>
                 <div class="p-24">
                     <div class="mb-16">
                         <h4 class="mb-12">${escapeHtml(subject)}</h4>
                         <div class="d-flex align-items-center gap-2 mb-8">
-                            <strong>${escapeHtml(from)}</strong>
-                            <span class="text-secondary-light">&lt;${escapeHtml(fromEmail)}&gt;</span>
-                        </div>
-                        <div class="text-secondary-light text-sm mb-16">
-                            <div>To: ${escapeHtml(to)}</div>
-                            <div>${escapeHtml(dateStr)}</div>
+                            <div class="w-40-px h-40-px bg-primary-50 rounded-circle d-flex justify-content-center align-items-center flex-shrink-0">
+                                <iconify-icon icon="solar:user-bold" class="text-primary-600 text-xl"></iconify-icon>
+                            </div>
+                            <div>
+                                <div class="fw-semibold">${escapeHtml(from)} <span class="text-secondary-light fw-normal">&lt;${escapeHtml(fromEmail)}&gt;</span></div>
+                                <div class="text-secondary-light text-xs">To: ${escapeHtml(to)} | ${escapeHtml(dateStr)}</div>
+                            </div>
                         </div>
                     </div>
-                    <div class="border-top pt-16">
-                        ${html ? html : '<pre style="white-space: pre-wrap;">' + escapeHtml(text) + '</pre>'}
+                    <div class="border-top pt-16 mt-24">
+                        ${bodyContent}
                     </div>
                 </div>
             `;
+        }
+
+        // Format log text to HTML
+        function formatLogToHtml(text) {
+            if (!text) return '';
+            const lines = text.split('\n');
+            let html = '<div class="table-responsive"><table class="table table-sm table-hover text-xs mb-0"><tbody>';
+            
+            lines.forEach(line => {
+                const trimmed = line.trim();
+                if (!trimmed) return;
+                
+                let bgClass = '';
+                let textClass = '';
+                
+                const lower = trimmed.toLowerCase();
+                if (lower.includes('error') || lower.includes('fatal') || lower.includes('critical') || lower.includes('failed')) {
+                    bgClass = 'bg-danger-50';
+                    textClass = 'text-danger-main';
+                } else if (lower.includes('warn')) {
+                    bgClass = 'bg-warning-50';
+                    textClass = 'text-warning-main';
+                } else if (lower.includes('info') || lower.includes('success')) {
+                    bgClass = 'bg-info-50';
+                    textClass = 'text-info-main';
+                }
+                
+                html += `<tr class="${bgClass}">
+                    <td class="font-monospace ${textClass}">${escapeHtml(line)}</td>
+                </tr>`;
+            });
+            
+            html += '</tbody></table></div>';
+            return html;
         }
         
         // Update counts
@@ -3087,4 +3189,173 @@ if (substr($assetsUrl, 0, 1) !== '/') {
     })();
     </script>
 
+    <!-- Toast Notification System -->
+    <div class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index: 9999;">
+        <div id="liveToast" class="toast glass" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="toast-header border-bottom border-white border-opacity-10 bg-transparent">
+                <iconify-icon icon="solar:info-circle-bold" class="text-primary-600 me-2 text-xl" id="toast-icon"></iconify-icon>
+                <strong class="me-auto text-primary-light" id="toast-title">Notification</strong>
+                <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+            <div class="toast-body text-secondary-light" id="toast-body">
+                Hello, world! This is a toast message.
+            </div>
+        </div>
+    </div>
+
+    <script>
+    (function() {
+        'use strict';
+        
+        // Unified Notification Helper
+        window.showNotification = function(message, type = 'info', title = null) {
+            const toastEl = document.getElementById('liveToast');
+            const toastIcon = document.getElementById('toast-icon');
+            const toastTitle = document.getElementById('toast-title');
+            const toastBody = document.getElementById('toast-body');
+            
+            if (!toastEl) return;
+            
+            // Set colors and icons based on type
+            const types = {
+                success: { icon: 'solar:check-circle-bold', color: 'text-success-main', title: 'Success' },
+                error: { icon: 'solar:danger-triangle-bold', color: 'text-danger-main', title: 'Error' },
+                warning: { icon: 'solar:info-circle-bold', color: 'text-warning-main', title: 'Warning' },
+                info: { icon: 'solar:info-circle-bold', color: 'text-primary-600', title: 'Notice' }
+            };
+            
+            const config = types[type] || types.info;
+            
+            toastIcon.setAttribute('icon', config.icon);
+            toastIcon.className = config.color + ' me-2 text-xl';
+            toastTitle.textContent = title || config.title;
+            toastTitle.className = 'me-auto ' + config.color;
+            toastBody.textContent = message;
+            
+            const toast = new bootstrap.Toast(toastEl, { delay: 5000 });
+            toast.show();
+        };
+
+        // Loading State Helper
+        window.toggleLoading = function(element, isLoading, originalHtml = null) {
+            if (!element) return;
+            
+            if (isLoading) {
+                const height = element.offsetHeight;
+                element.dataset.originalHtml = element.innerHTML;
+                element.style.minHeight = height + 'px';
+                element.disabled = true;
+                element.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>';
+            } else {
+                element.innerHTML = originalHtml || element.dataset.originalHtml || 'Submit';
+                element.disabled = false;
+                element.style.minHeight = '';
+            }
+        };
+    })();
+    </script>
+
+        <!-- .env Editor Logic -->
+    <script>
+    (function() {
+        'use strict';
+        
+        const ENV_API = 'api/env_editor.php';
+        let currentEnvProject = null;
+        
+        const modal = document.getElementById('envEditorModal');
+        const loader = document.getElementById('env-editor-loader');
+        const container = document.getElementById('env-editor-container');
+        const emptyState = document.getElementById('env-editor-empty');
+        const textarea = document.getElementById('env-editor-textarea');
+        const projectNameEl = document.getElementById('envProjectName');
+        const saveBtn = document.getElementById('save-env-btn');
+        const createBtn = document.getElementById('create-env-btn');
+        
+        if (!modal) return;
+        
+        // Handle dropdown button clicks
+        document.addEventListener('click', function(e) {
+            const btn = e.target.closest('.env-editor-btn');
+            if (btn) {
+                const projectName = btn.getAttribute('data-project-name');
+                openEnvEditor(projectName);
+            }
+        });
+        
+        function openEnvEditor(projectName) {
+            currentEnvProject = projectName;
+            if (projectNameEl) projectNameEl.textContent = projectName;
+            
+            // Reset state
+            if (loader) loader.style.display = 'block';
+            if (container) container.style.display = 'none';
+            if (emptyState) emptyState.style.display = 'none';
+            if (textarea) textarea.value = '';
+            
+            fetch(`${ENV_API}?action=read&project=${encodeURIComponent(projectName)}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (loader) loader.style.display = 'none';
+                    if (data.success) {
+                        if (textarea) textarea.value = data.content;
+                        if (container) container.style.display = 'block';
+                    } else if (data.error === 'File not found') {
+                        if (emptyState) emptyState.style.display = 'block';
+                    } else {
+                        showNotification(data.error || 'Failed to load .env file', 'error');
+                    }
+                })
+                .catch(error => {
+                    if (loader) loader.style.display = 'none';
+                    showNotification('Error: ' + error.message, 'error');
+                });
+        }
+        
+        if (saveBtn) {
+            saveBtn.addEventListener('click', function() {
+                if (!currentEnvProject) return;
+                
+                toggleLoading(saveBtn, true, 'Saving...');
+                
+                const formData = new FormData();
+                formData.append('action', 'save');
+                formData.append('project', currentEnvProject);
+                formData.append('content', textarea.value);
+                formData.append('csrf_token', window.csrfToken);
+                
+                fetch(ENV_API, {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    toggleLoading(saveBtn, false);
+                    if (data.success) {
+                        showNotification('Changes saved successfully!', 'success');
+                        // Close modal after delay
+                        setTimeout(() => {
+                            const bModal = bootstrap.Modal.getInstance(modal);
+                            if (bModal) bModal.hide();
+                        }, 1000);
+                    } else {
+                        showNotification(data.error || 'Failed to save changes', 'error');
+                    }
+                })
+                .catch(error => {
+                    toggleLoading(saveBtn, false);
+                    showNotification('Error: ' + error.message, 'error');
+                });
+            });
+        }
+        
+        if (createBtn) {
+            createBtn.addEventListener('click', function() {
+                if (textarea) textarea.value = "# Created by Laragon Dashboard\nAPP_NAME=" + currentEnvProject + "\nAPP_ENV=local\nAPP_KEY=\nAPP_DEBUG=true\nAPP_URL=http://" + currentEnvProject + ".local\n\nDB_CONNECTION=mysql\nDB_HOST=127.0.0.1\nDB_PORT=3306\nDB_DATABASE=" + currentEnvProject.replace(/[^a-zA-Z0-9_]/g, '_') + "\nDB_USERNAME=root\nDB_PASSWORD=";
+                if (emptyState) emptyState.style.display = 'none';
+                if (container) container.style.display = 'block';
+            });
+        }
+    })();
+    </script>
     <?php echo (isset($script) ? $script   : '')?>

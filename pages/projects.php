@@ -118,11 +118,11 @@ include __DIR__ . '/../partials/layouts/layoutTop.php';
                      data-project-name="<?php echo htmlspecialchars($project['name']); ?>" 
                      data-platform="<?php echo htmlspecialchars(strtolower($project['platform'])); ?>"
                      oncontextmenu="showProjectContextMenu(event, '<?php echo htmlspecialchars($project['name']); ?>'); return false;">
-                    <div class="card shadow-none border radius-12 bg-gradient-start-<?php echo $gradientVariant; ?> h-100 position-relative">
+                    <div class="card shadow-none border radius-12 bg-gradient-start-<?php echo $gradientVariant; ?> h-100 position-relative glass-card">
                         <div class="card-body p-16">
                             <!-- 3-Dot Dropdown Menu (Top Left) -->
                             <div class="dropdown position-absolute top-0 start-0 ms-16 mt-16">
-                                <button type="button" data-bs-toggle="dropdown" aria-expanded="false" class="bg-white bg-opacity-20 w-32-px h-32-px radius-8 border border-white border-opacity-30 d-flex justify-content-center align-items-center text-base hover-opacity-80" style="backdrop-filter: blur(4px);">
+                                <button type="button" data-bs-toggle="dropdown" aria-expanded="false" class="bg-base bg-opacity-20 w-32-px h-32-px radius-8 border border-white border-opacity-30 d-flex justify-content-center align-items-center text-base hover-opacity-80" style="backdrop-filter: blur(4px);">
                                     <iconify-icon icon="entypo:dots-three-vertical" class="icon text-lg"></iconify-icon>
                                 </button>
                                 <ul class="dropdown-menu p-12 border bg-base shadow">
@@ -130,6 +130,12 @@ include __DIR__ . '/../partials/layouts/layoutTop.php';
                                         <button type="button" class="ignore-project-btn dropdown-item px-16 py-8 rounded text-secondary-light bg-hover-neutral-200 text-hover-neutral-900 d-flex align-items-center gap-10" data-project-name="<?php echo htmlspecialchars($project['name']); ?>">
                                             <iconify-icon icon="solar:eye-closed-bold" class="icon"></iconify-icon>
                                             <?php echo t_projects('ignore_project', 'Ignore Project'); ?>
+                                        </button>
+                                    </li>
+                                    <li>
+                                        <button type="button" class="env-editor-btn dropdown-item px-16 py-8 rounded text-secondary-light bg-hover-neutral-200 text-hover-neutral-900 d-flex align-items-center gap-10" data-project-name="<?php echo htmlspecialchars($project['name']); ?>" data-bs-toggle="modal" data-bs-target="#envEditorModal">
+                                            <iconify-icon icon="solar:pen-new-square-bold" class="icon"></iconify-icon>
+                                            .env Editor
                                         </button>
                                     </li>
                                 </ul>
@@ -433,9 +439,13 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Function to ignore a project
     function ignoreProject(projectName) {
+        const btn = document.querySelector(`.ignore-project-btn[data-project-name="${projectName}"]`);
+        if (btn) toggleLoading(btn, true);
+        
         const formData = new FormData();
         formData.append('action', 'ignore');
         formData.append('project', projectName);
+        formData.append('csrf_token', window.csrfToken);
         
         fetch(PROJECTS_API, {
             method: 'POST',
@@ -443,26 +453,29 @@ document.addEventListener('DOMContentLoaded', function() {
         })
             .then(response => response.json())
             .then(data => {
+                if (btn) toggleLoading(btn, false);
                 if (data.success) {
                     // Remove the project card
-                    const projectCard = document.querySelector(`[data-project-name="${projectName}"]`);
+                    const projectCard = document.querySelector(`.project-card[data-project-name="${projectName}"]`);
                     if (projectCard) {
-                        projectCard.style.transition = 'opacity 0.3s';
-                        projectCard.style.opacity = '0';
+                        projectCard.classList.add('animate__animated', 'animate__fadeOut');
                         setTimeout(() => {
                             projectCard.remove();
-                        }, 300);
+                            if (document.querySelectorAll('.project-card').length === 0) {
+                                window.location.reload();
+                            }
+                        }, 500);
                     }
                     
-                    // Show success message
-                    alert('Project "' + projectName + '" has been ignored and will not appear in the list.');
+                    showNotification('Project "' + projectName + '" has been ignored.', 'success');
                 } else {
-                    alert('Error: ' + (data.error || 'Failed to ignore project'));
+                    showNotification(data.error || 'Failed to ignore project', 'error');
                 }
             })
             .catch(error => {
+                if (btn) toggleLoading(btn, false);
                 console.error('Error ignoring project:', error);
-                alert('Error: ' + error.message);
+                showNotification('Error: ' + error.message, 'error');
             });
     }
     
@@ -569,39 +582,37 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
         
+        const btn = event.target.closest('.start-tunnel-btn');
+        toggleLoading(btn, true, 'Starting...');
+        
         const formData = new FormData();
         formData.append('tunnel_type', tunnelType);
         
-        const btn = event.target.closest('.start-tunnel-btn');
-        const originalText = btn.innerHTML;
-        btn.disabled = true;
-        btn.innerHTML = '<iconify-icon icon="solar:loading-bold" class="icon spin"></iconify-icon> Starting...';
-        
         fetch(TUNNEL_API + '?action=start&project=' + encodeURIComponent(currentProjectName), {
             method: 'POST',
-            body: formData
+            body: formData,
+            headers: {
+                'X-CSRF-Token': window.csrfToken
+            }
         })
             .then(response => response.json())
             .then(data => {
+                toggleLoading(btn, false);
                 if (data.success) {
                     currentTunnelUrl = data.url;
                     document.getElementById('tunnel-status').style.display = 'block';
                     document.getElementById('tunnel-public-url').href = data.url;
                     document.getElementById('tunnel-url-text').textContent = data.url;
                     
-                    // Show success message
-                    alert('Tunnel started! Public URL: ' + data.url + '\n\nNote: You may need to run the tunnel command manually in a terminal to get the actual URL.');
+                    showNotification('Tunnel started! Public URL: ' + data.url, 'success', 'Success');
                 } else {
-                    alert('Error: ' + (data.error || 'Failed to start tunnel'));
-                    btn.disabled = false;
-                    btn.innerHTML = originalText;
+                    showNotification(data.error || 'Failed to start tunnel', 'error');
                 }
             })
             .catch(error => {
+                toggleLoading(btn, false);
                 console.error('Error starting tunnel:', error);
-                alert('Error: ' + error.message);
-                btn.disabled = false;
-                btn.innerHTML = originalText;
+                showNotification('Error: ' + error.message, 'error');
             });
     }
     
@@ -615,21 +626,29 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
         
+        toggleLoading(this, true);
+        
         fetch(TUNNEL_API + '?action=stop&project=' + encodeURIComponent(currentProjectName), {
-            method: 'POST'
+            method: 'POST',
+            headers: {
+                'X-CSRF-Token': window.csrfToken
+            }
         })
             .then(response => response.json())
             .then(data => {
+                toggleLoading(this, false);
                 if (data.success) {
                     document.getElementById('tunnel-status').style.display = 'none';
                     currentTunnelUrl = null;
+                    showNotification('Tunnel stopped successfully.', 'info');
                 } else {
-                    alert('Error: ' + (data.error || 'Failed to stop tunnel'));
+                    showNotification(data.error || 'Failed to stop tunnel', 'error');
                 }
             })
             .catch(error => {
+                toggleLoading(this, false);
                 console.error('Error stopping tunnel:', error);
-                alert('Error: ' + error.message);
+                showNotification('Error: ' + error.message, 'error');
             });
     });
     
@@ -649,6 +668,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const formData = new FormData();
         formData.append('action', 'check_database');
         formData.append('project', projectName);
+        formData.append('csrf_token', window.csrfToken);
         
         fetch('api/delete_project.php', {
             method: 'POST',
@@ -684,15 +704,14 @@ document.addEventListener('DOMContentLoaded', function() {
         const createBackup = document.getElementById('createBackupBeforeDelete').checked;
         const deleteDatabase = document.getElementById('deleteAssociatedDatabase').checked;
         
-        // Disable button
-        this.disabled = true;
-        this.innerHTML = '<iconify-icon icon="solar:loading-bold" class="icon spin"></iconify-icon> <?php echo t_projects('deleting', 'Deleting...'); ?>';
+        toggleLoading(this, true, 'Deleting...');
         
         const formData = new FormData();
         formData.append('action', 'delete');
         formData.append('project', currentProjectName);
         formData.append('backup', createBackup ? '1' : '0');
         formData.append('delete_database', deleteDatabase ? '1' : '0');
+        formData.append('csrf_token', window.csrfToken);
         
         fetch('api/delete_project.php', {
             method: 'POST',
@@ -700,11 +719,8 @@ document.addEventListener('DOMContentLoaded', function() {
         })
         .then(response => response.json())
         .then(data => {
+            toggleLoading(this, false);
             if (data.success) {
-                // Show success message
-                const infoDiv = document.getElementById('deleteProjectInfo');
-                infoDiv.className = 'alert alert-success mb-0';
-                infoDiv.style.display = 'block';
                 let message = '<?php echo t_projects('delete_success', 'Project deleted successfully'); ?>';
                 if (data.results.backup_created) {
                     message += ' <?php echo t_projects('backup_created', 'Backup created'); ?>.';
@@ -712,38 +728,22 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (data.results.database_deleted) {
                     message += ' <?php echo t_projects('database_deleted', 'Database deleted'); ?>.';
                 }
-                document.getElementById('deleteProjectInfoText').textContent = message;
+                showNotification(message, 'success', 'Project Deleted');
                 
                 // Close modal after 1.5 seconds and reload page
                 setTimeout(() => {
                     const modal = bootstrap.Modal.getInstance(document.getElementById('deleteProjectModal'));
-                    modal.hide();
+                    if (modal) modal.hide();
                     window.location.reload();
                 }, 1500);
             } else {
-                // Show error
-                const infoDiv = document.getElementById('deleteProjectInfo');
-                infoDiv.className = 'alert alert-danger mb-0';
-                infoDiv.style.display = 'block';
-                document.getElementById('deleteProjectInfoText').textContent = 
-                    '<?php echo t_projects('delete_error', 'Error'); ?>: ' + (data.error || '<?php echo t_projects('unknown_error', 'Unknown error'); ?>');
-                
-                // Re-enable button
-                this.disabled = false;
-                this.innerHTML = '<iconify-icon icon="solar:trash-bin-trash-bold" class="icon"></iconify-icon> <?php echo t_projects('delete_confirm', 'Delete Project'); ?>';
+                showNotification(data.error || 'Failed to delete project', 'error', 'Delete Failed');
             }
         })
         .catch(error => {
+            toggleLoading(this, false);
             console.error('Error deleting project:', error);
-            const infoDiv = document.getElementById('deleteProjectInfo');
-            infoDiv.className = 'alert alert-danger mb-0';
-            infoDiv.style.display = 'block';
-            document.getElementById('deleteProjectInfoText').textContent = 
-                '<?php echo t_projects('delete_error', 'Error'); ?>: ' + error.message;
-            
-            // Re-enable button
-            this.disabled = false;
-            this.innerHTML = '<iconify-icon icon="solar:trash-bin-trash-bold" class="icon"></iconify-icon> <?php echo t_projects('delete_confirm', 'Delete Project'); ?>';
+            showNotification('Error: ' + error.message, 'error', 'System Error');
         });
     });
     
@@ -770,4 +770,37 @@ document.addEventListener('DOMContentLoaded', function() {
     to { transform: rotate(360deg); }
 }
 </style>
+
+<!-- .env Editor Modal -->
+<div class="modal fade" id="envEditorModal" tabindex="-1" aria-labelledby="envEditorModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-xl">
+        <div class="modal-content glass border-0 text-white">
+            <div class="modal-header border-bottom">
+                <h5 class="modal-title fw-semibold text-white" id="envEditorModalLabel">.env Editor: <span id="envProjectName" class="text-primary-600"></span></h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-0">
+                <div id="env-editor-loader" class="p-40 text-center">
+                    <div class="spinner-border text-primary" role="status"></div>
+                    <p class="mt-16 text-secondary-light">Loading .env file...</p>
+                </div>
+                <div id="env-editor-container" style="display: none;">
+                    <textarea id="env-editor-textarea" class="form-control border-0 radius-0 bg-dark text-white p-16" style="min-height: 500px; font-family: 'Fira Code', 'Courier New', monospace; font-size: 14px; line-height: 1.5;"></textarea>
+                </div>
+                <div id="env-editor-empty" class="p-40 text-center" style="display: none;">
+                    <iconify-icon icon="solar:file-corrupted-bold" class="text-secondary-light text-5xl mb-16"></iconify-icon>
+                    <p class="text-secondary-light">This project does not have a .env file yet.</p>
+                    <button type="button" class="btn btn-primary-600 mt-16" id="create-env-btn">Create .env File</button>
+                </div>
+            </div>
+            <div class="modal-footer border-top">
+                <div class="flex-grow-1">
+                    <small class="text-secondary-light">Backups are created automatically before saving.</small>
+                </div>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary-600" id="save-env-btn">Save Changes</button>
+            </div>
+        </div>
+    </div>
+</div>
 

@@ -80,7 +80,7 @@ include __DIR__ . '/../partials/layouts/layoutTop.php';
         </div>
 
         <?php if (!$mailpitRunning): ?>
-            <div class="card shadow-none border radius-12">
+            <div class="card p-0 radius-12">
                 <div class="card-body p-24 text-center">
                     <iconify-icon icon="solar:letter-bold" class="text-secondary-light text-5xl mb-16"></iconify-icon>
                     <h6 class="mb-8"><?php echo t_mailbox('mailpit_not_running', 'Mailpit is not running'); ?></h6>
@@ -100,7 +100,7 @@ include __DIR__ . '/../partials/layouts/layoutTop.php';
             <div class="row g-3">
                 <!-- Sidebar -->
                 <div class="col-lg-3">
-                    <div class="card shadow-none border radius-12">
+                    <div class="card p-0 radius-12">
                         <div class="card-body p-0">
                             <!-- Compose Button -->
                             <div class="p-16 border-bottom">
@@ -164,14 +164,6 @@ include __DIR__ . '/../partials/layouts/layoutTop.php';
                                 </ul>
                             </div>
 
-                            <!-- Tags -->
-                            <div class="p-16 border-top">
-                                <h6 class="fw-semibold mb-12 text-sm"><?php echo t_mailbox('tags', 'TAGS'); ?></h6>
-                                <ul class="list-unstyled mb-0">
-                                    <li><a href="#" class="d-flex align-items-center gap-2 p-4 radius-4 hover-bg-neutral-100 text-sm" data-tag="personal"><?php echo t_mailbox('personal', 'Personal'); ?></a></li>
-                                    <li><a href="#" class="d-flex align-items-center gap-2 p-4 radius-4 hover-bg-neutral-100 text-sm" data-tag="social"><?php echo t_mailbox('social', 'Social'); ?></a></li>
-                                    <li><a href="#" class="d-flex align-items-center gap-2 p-4 radius-4 hover-bg-neutral-100 text-sm" data-tag="promotions"><?php echo t_mailbox('promotions', 'Promotions'); ?></a></li>
-                                    <li><a href="#" class="d-flex align-items-center gap-2 p-4 radius-4 hover-bg-neutral-100 text-sm" data-tag="business"><?php echo t_mailbox('business', 'Business'); ?></a></li>
                                 </ul>
                             </div>
                         </div>
@@ -182,7 +174,7 @@ include __DIR__ . '/../partials/layouts/layoutTop.php';
                 <div class="col-lg-9">
                     <?php if ($view === 'detail' && $emailId): ?>
                         <!-- Email Detail View -->
-                        <div class="card shadow-none border radius-12">
+                        <div class="card p-0 radius-12">
                             <div class="card-body p-0">
                                 <div id="email-detail-view">
                                     <!-- Will be loaded via JavaScript -->
@@ -196,7 +188,7 @@ include __DIR__ . '/../partials/layouts/layoutTop.php';
                         </div>
                     <?php else: ?>
                         <!-- Email List View -->
-                        <div class="card shadow-none border radius-12">
+                        <div class="card p-0 radius-12">
                             <div class="card-body p-0">
                                 <!-- Filters -->
                                 <div class="p-16 border-bottom d-flex flex-wrap align-items-center justify-content-between gap-3">
@@ -214,7 +206,7 @@ include __DIR__ . '/../partials/layouts/layoutTop.php';
                                         </button>
                                     </div>
                                     <div class="text-secondary-light text-sm">
-                                        <span id="email-range">1-12</span> <?php echo t_mailbox('of', 'of'); ?> <span id="total-emails">0</span>
+                                        <span id="email-range">0-0</span> <?php echo t_mailbox('of', 'of'); ?> <span id="total-emails">0</span>
                                     </div>
                                 </div>
 

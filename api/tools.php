@@ -15,6 +15,12 @@ ini_set('log_errors', 1);
 
 // Load configuration
 require_once __DIR__ . '/../config.php';
+require_once __DIR__ . '/../includes/helpers.php';
+
+// Enforce authentication
+if (function_exists('check_auth')) {
+    check_auth();
+}
 
 // Clear any output that may have been generated
 ob_clean();

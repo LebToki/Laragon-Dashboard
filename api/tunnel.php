@@ -9,9 +9,31 @@ header('Content-Type: application/json');
 
 // Load configuration
 require_once __DIR__ . '/../config.php';
+require_once __DIR__ . '/../includes/helpers.php';
+
+// Enforce authentication
+if (function_exists('check_auth')) {
+    check_auth();
+}
 
 $action = $_GET['action'] ?? 'status';
 $projectName = $_GET['project'] ?? '';
+
+// Sanitize project name
+if (!empty($projectName)) {
+    $projectName = preg_replace('/[^a-zA-Z0-9_-]/', '', $projectName);
+}
+
+// CSRF check for destructive/sensitive actions
+$destructiveActions = ['start', 'stop'];
+if (in_array($action, $destructiveActions)) {
+    $token = $_POST['csrf_token'] ?? ($_GET['csrf_token'] ?? '');
+    if (!verifyCSRFToken($token)) {
+        http_response_code(403);
+        echo json_encode(['success' => false, 'error' => 'CSRF token validation failed']);
+        exit;
+    }
+}
 
 /**
  * Get available tunneling services

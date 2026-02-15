@@ -1,13 +1,19 @@
 # 🚀 Laragon Dashboard
 
-A modern, feature-rich web-based dashboard for managing Laragon development environment. Version 3.1.6 aims to be a comprehensive MAMP competitor on Windows, replicating Laragon control panel functionality in a modern, themed web interface.
+We're thrilled to announce the release of Laragon Dashboard 4.0.0, a complete reimagining of local development environment management for Windows. This isn't just an update, it's a quantum leap forward in how you interact with your Laragon setup.
 
-[![Version](https://img.shields.io/badge/version-3.1.6-blue.svg)](https://github.com/LebToki/Laragon-Dashboard)
+Laragon Dashboard is a modern, feature-rich web-based dashboard for managing Laragon development environment. Version 4.0.0 aims to be a comprehensive MAMP competitor on Windows, replicating Laragon control panel functionality in a modern, themed web interface.
+
+"The best Windows development environment just got better. Welcome to the future of local development."
+
+
+[![Version](https://img.shields.io/badge/version-4.0.0-blue.svg)](https://github.com/LebToki/Laragon-Dashboard)
 [![PHP](https://img.shields.io/badge/PHP-7.4%2B-green.svg)](https://php.net)
 [![Bootstrap](https://img.shields.io/badge/Bootstrap-5.3.2-purple.svg)](https://getbootstrap.com)
 [![Platform](https://img.shields.io/badge/platform-windows-lightgrey.svg)]()
 [![License](https://img.shields.io/badge/license-MIT-orange.svg)](LICENSE)
 [![GitHub](https://img.shields.io/github/stars/LebToki/Laragon-Dashboard?style=social)](https://github.com/LebToki/Laragon-Dashboard)
+[![Buy Me A Coffee](https://img.shields.io/badge/buy%20me%20a%20coffee-donate-yellow.svg)](https://buymeacoffee.com/LebToki)
 
 <p align="center">
   <img src="https://img.shields.io/github/stars/LebToki/Laragon-Dashboard?style=for-the-badge" alt="Stars" />
@@ -41,13 +47,30 @@ A modern, feature-rich web-based dashboard for managing Laragon development envi
 ## 📋 Project Information
 
 - **Project Name**: Laragon Dashboard
-- **Version**: 3.1.6
+- **Version**: 4.0.0
 - **Author**: Tarek Tarabichi
 - **Company**: 2TInteractive (2tinteractive.com)
 - **Project Start**: Early 2024
 - **GitHub**: https://github.com/LebToki/Laragon-Dashboard
 - **License**: MIT
 - **Goal**: MAMP competitor for Windows OS (with potential future cross-platform support)
+
+---
+
+## 💡 Why This Matters
+Laragon has always been the fastest, most lightweight development environment for Windows. With version 4.0.0 of the dashboard, we're bringing that same philosophy to the web interface:
+
+- No Electron bloat – Pure web technology, zero memory overhead
+- Instant startup – Dashboard loads in milliseconds
+- Native feel – WebSocket updates make it feel like a desktop app
+- Extensible – Plugin system for custom tools and integrations
+
+## 🎉 Join the Revolution
+This release transforms Laragon from a simple WAMP alternative into a comprehensive development ecosystem that rivals (and surpasses) MAMP on macOS. Whether you're a Laravel artisan, WordPress developer, or Symfony specialist, this dashboard will change how you work.
+
+-> Download now from the official repository or update through Laragon's built-in tools.
+
+---
 
 ## 🌍 Platform Support
 
@@ -88,20 +111,18 @@ Laragon is currently Windows-only. For future cross-platform support, the dashbo
 - **Project Ignoring** - Hide projects from the list via dropdown menu or right-click context menu
 
 ### 🗄️ Database Management
-- **Database Browser** - Browse all databases and view sizes
-- **Table Explorer** - List tables with row counts and sizes
-- **Table Structure** - View column details, types, keys, and constraints
-- **Query Runner** - Execute SELECT queries safely (read-only)
-- **Database Optimization** - Optimize tables for better performance
-- **Real-time Information** - Live database statistics
+- **Universal Database Browser** - Browse all databases with real-time size calculations.
+- **Table Explorer & Schema Viewer** - Deep-dive into table structures, row counts, indices, and constraints.
+- **Safe SQL Query Runner** - Execute SELECT queries with a result grid (Safe Read-Only mode).
+- **Engine & Collation Tracking** - Monitor storage engines and character sets at a glance.
+- **Modular Backend** - Powered by a high-performance `Databases.php` core class.
 
 ### 📧 Email Management (Mailpit)
-- **Email Viewer** - View emails from Laragon's sendmail output
-- **Email Statistics** - Total, daily, weekly counts, unique senders
-- **Search & Filter** - Advanced email search capabilities
-- **Email Reading** - Full email content viewer
-- **Email Management** - Delete individual or bulk emails
-- **Export Options** - Download email data
+- **Smart Email Viewer** - Integrated viewer for Laragon's sendmail output.
+- **Logs as HTML Rendering** - **NEW**: Automagically transforms raw log emails into searchable, color-coded HTML tables.
+- **Mailpit Sync** - Seamless integration with Mailpit for real-time local email monitoring.
+- **Email Statistics** - Comprehensive breakdown of email volume and unique senders.
+- **Bulk Operations** - Advanced search, filter, and management of local mail.
 
 ### 📊 Server Monitoring
 - **Real-time Vitals** - CPU, memory, and disk usage monitoring
@@ -134,10 +155,13 @@ Laragon is currently Windows-only. For future cross-platform support, the dashbo
 - **ZIP Compression** - Efficient backup storage
 
 ### 🔄 Update Management
-- **Automatic Update Checking** - Check for new versions
-- **Download with Progress** - Visual download progress
-- **One-Click Installation** - Easy update process
-- **Backup Before Update** - Automatic backup before updating
+- **GitHub-Integrated Updates** - Automatic checks against the latest releases.
+- **Visual Progress** - Real-time download and installation feedback.
+- **Safety First** - Automated backup of the current installation before any update.
+
+### 🤖 AI Integration (Beta)
+- **BYOK AI Agent** - **NEW**: Integrated glassmorphic chat widget for project scaffolding, troubleshooting, and code assistance.
+- **System Context Bridge** - Secure backend API providing real-time environment data to the agent.
 
 ### 🔒 Security Features
 - **CSRF Protection** - Secure token-based protection
@@ -482,9 +506,9 @@ POST /api/update.php?action=install
 
 ## 🎨 Customization
 
-### Themes
-
-The dashboard uses Bootstrap 5 with custom CSS. Key customization points:
+### 🎨 Theme System
+The dashboard leverages Bootstrap 5's theming capabilities with a custom CSS layer. 
+You can easily customize the look and feel by modifying these CSS variables:
 
 ```css
 /* Main color scheme */
@@ -679,16 +703,21 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 See [CHANGELOG.md](CHANGELOG.md) for detailed version history.
 
-### Version 3.1.5 (Current)
-- **IMPROVED**: Enhanced auto-update mechanism with better error handling and logging
-- **FIXED**: Backup path now correctly passed through all update steps
-- **IMPROVED**: UpdateManager now uses getAppVersion() for better version detection (supports Git tags)
-- **IMPROVED**: Better version comparison logic (handles dev versions correctly)
-- **IMPROVED**: Enhanced error messages and validation throughout update process
-- **IMPROVED**: Better file replacement tracking and error reporting
-- **IMPROVED**: Enhanced rollback mechanism with detailed file restoration tracking
-- **IMPROVED**: Improved GitHub API error handling and timeout settings
-- **IMPROVED**: Better verification checks for critical files and functions
+### Version 4.0.0 (Latest Major Release)
+- **MAJOR: Modern Re-engineering & AI Integration**: Complete transition to modular Core architecture using PSR-4 autoloader.
+- **NEW: AI Agent (Beta)**: Integration of a glassmorphic chat widget and system context bridge for intelligent environment assistance.
+- **NEW: Advanced Database Engine**: Re-engineered database page with full schema explorer, result grid, and read-only query runner.
+- **NEW: Logs as HTML**: Revolutionary log renderer for Mailbox that parses raw email logs into beautiful, searchable HTML tables.
+- **NEW: Config Editor 2.0**: Completely revamped service configuration editor with theme-aware transparency and improved routing.
+- **NEW: Updatable Core Paths**: Added support for custom Laragon Root paths with real-time validation and persistence.
+- **IMPROVED: Glassmorphism UI**: Applied "Glass-Card" aesthetic to project cards and optimized dark mode gradients.
+- **IMPROVED: Performance Engine**: Refined project discovery logic with intelligent directory exclusion and high-speed caching.
+- **FIXED**: Resolved 500 error in modular Log API and fixed 404 routing for Config Editor.
+- **MODULAR**: New classes in `includes/Core/` (`Security`, `System`, `Services`, `Logs`, `Cache`).
+- **SECURITY**: Universal CSRF protection & Mandatory session-based authentication.
+- **PERFORMANCE**: Integrated `Core\Cache` for expensive system operations.
+
+### Version 3.1.5
 
 ### Version 3.1.4
 - **FIXED**: Checkbox settings in Preferences can now be properly unset - fixed issue where settings like "Show Debug Banner" couldn't be disabled once enabled
@@ -809,6 +838,14 @@ See [CHANGELOG.md](CHANGELOG.md) for detailed version history.
 **Made with ❤️ for the Laragon community**
 
 **Author**: Tarek Tarabichi | **Company**: 2TInteractive | **Website**: https://2tinteractive.com
+
+---
+
+## ☕ Support the Project
+
+If you find Laragon Dashboard helpful and want to support its ongoing development, consider buying me a coffee! Your support helps keep the project active and enables the creation of more advanced features.
+
+[![Buy Me A Coffee](https://img.shields.io/badge/Buy%20Me%20A%20Coffee-Donate-yellow?style=for-the-badge&logo=buy-me-a-coffee)](https://buymeacoffee.com/LebToki)
 
 ---
 

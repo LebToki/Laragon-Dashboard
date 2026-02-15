@@ -225,23 +225,28 @@ try {
     ob_clean();
     echo json_encode([
         'success' => true,
-        'data' => $vitals
+        'data' => $vitals,
+        'error' => null
     ]);
     ob_end_flush();
 } catch (Exception $e) {
+    \LaragonDashboard\Core\Logger::error("API vitals.php error: " . $e->getMessage());
     ob_clean();
     http_response_code(500);
     echo json_encode([
         'success' => false,
+        'data' => null,
         'error' => $e->getMessage()
     ]);
     ob_end_flush();
 } catch (Error $e) {
+    \LaragonDashboard\Core\Logger::error("API vitals.php fatal error: " . $e->getMessage());
     ob_clean();
     http_response_code(500);
     echo json_encode([
         'success' => false,
-        'error' => $e->getMessage()
+        'data' => null,
+        'error' => 'A fatal error occurred: ' . $e->getMessage()
     ]);
     ob_end_flush();
 }

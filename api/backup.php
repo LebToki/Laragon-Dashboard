@@ -15,6 +15,12 @@ ini_set('log_errors', 1);
 
 // Load configuration
 require_once __DIR__ . '/../config.php';
+require_once __DIR__ . '/../includes/helpers.php';
+
+// Enforce authentication
+if (function_exists('check_auth')) {
+    check_auth();
+}
 
 // Clear any output that may have been generated
 ob_clean();
@@ -25,6 +31,17 @@ if (!isset($GLOBALS['_backup_include_mode'])) {
 }
 
 $action = $_GET['action'] ?? 'list';
+
+// CSRF check for destructive/sensitive actions
+$destructiveActions = ['backup_project', 'backup_database', 'delete_backup'];
+if (in_array($action, $destructiveActions)) {
+    $token = $_POST['csrf_token'] ?? ($_GET['csrf_token'] ?? '');
+    if (!verifyCSRFToken($token)) {
+        http_response_code(403);
+        echo json_encode(['success' => false, 'error' => 'CSRF token validation failed']);
+        exit;
+    }
+}
 
 if (!defined('LARAGON_ROOT')) {
     ob_clean();

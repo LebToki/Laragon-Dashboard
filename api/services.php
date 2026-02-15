@@ -15,6 +15,12 @@ ini_set('log_errors', 1);
 
 // Load configuration
 require_once __DIR__ . '/../config.php';
+require_once __DIR__ . '/../includes/helpers.php';
+
+// Enforce authentication
+if (function_exists('check_auth')) {
+    check_auth();
+}
 
 // Clear any output that may have been generated
 ob_clean();
@@ -24,6 +30,19 @@ header('Content-Type: application/json');
 
 $action = $_GET['action'] ?? 'status';
 $serviceName = $_GET['service'] ?? '';
+
+// CSRF check for destructive actions
+$destructiveActions = ['start', 'stop', 'restart', 'reload'];
+if (in_array($action, $destructiveActions)) {
+    $token = $_POST['csrf_token'] ?? ($_GET['csrf_token'] ?? '');
+    if (!verifyCSRFToken($token)) {
+        ob_clean();
+        http_response_code(403);
+        echo json_encode(['success' => false, 'error' => 'CSRF token validation failed']);
+        ob_end_flush();
+        exit;
+    }
+}
 
 if (!defined('LARAGON_ROOT')) {
     ob_clean();
@@ -45,32 +64,21 @@ $serviceMap = [
     'Mailpit' => 'Mailpit'
 ];
 
+// Validate serviceName against whitelist
+if (!empty($serviceName) && !isset($serviceMap[$serviceName]) && !in_array($serviceName, $serviceMap)) {
+    ob_clean();
+    http_response_code(400);
+    echo json_encode(['success' => false, 'error' => 'Invalid service name']);
+    ob_end_flush();
+    exit;
+}
+
 // Process-based services (not Windows services)
 $processServices = ['Nginx', 'Memcached', 'Mailpit'];
 
 // Check Windows service status
 function checkServiceStatus($serviceName) {
-    $output = @shell_exec('sc query "' . $serviceName . '" 2>&1');
-    if ($output) {
-        // Check for RUNNING state (case-insensitive)
-        if (stripos($output, 'RUNNING') !== false) {
-            return 'running';
-        }
-        // Check for STOPPED state (case-insensitive)
-        if (stripos($output, 'STOPPED') !== false) {
-            return 'stopped';
-        }
-        // Check STATE line for RUNNING
-        if (preg_match('/STATE\s*:\s*\d+\s+(\w+)/i', $output, $matches)) {
-            if (stripos($matches[1], 'RUNNING') !== false) {
-                return 'running';
-            }
-            if (stripos($matches[1], 'STOPPED') !== false) {
-                return 'stopped';
-            }
-        }
-    }
-    return 'unknown';
+    return \LaragonDashboard\Core\Services::isRunning($serviceName) ? 'running' : 'stopped';
 }
 
 // Check process status
@@ -82,20 +90,12 @@ function checkProcessRunning($processName) {
 // Get running ports for a service
 function getRunningPorts($serviceName, $configPort, $configSSLPort = null) {
     $ports = [];
-    
-    // Check if port is listening
-    $netstatOutput = @shell_exec('netstat -an | findstr ":' . $configPort . '"');
-    if (strpos($netstatOutput, 'LISTENING') !== false) {
+    if (\LaragonDashboard\Core\Services::isPortInUse($configPort)) {
         $ports[] = $configPort;
     }
-    
-    if ($configSSLPort) {
-        $netstatOutputSSL = @shell_exec('netstat -an | findstr ":' . $configSSLPort . '"');
-        if (strpos($netstatOutputSSL, 'LISTENING') !== false) {
-            $ports[] = $configSSLPort;
-        }
+    if ($configSSLPort && \LaragonDashboard\Core\Services::isPortInUse($configSSLPort)) {
+        $ports[] = $configSSLPort;
     }
-    
     return $ports;
 }
 
@@ -215,43 +215,61 @@ try {
             $config = readLaragonIni();
             $services = [];
             
-            foreach ($serviceMap as $key => $mappedName) {
-                $isProcess = in_array($key, $processServices);
-                
-                if ($isProcess) {
-                    $processName = strtolower($mappedName) . '.exe';
-                    $status = checkProcessRunning($processName) ? 'running' : 'stopped';
-                } else {
-                    $status = checkServiceStatus($mappedName);
+            $services = \LaragonDashboard\Core\Cache::get('service_status');
+            if (!$services) {
+                foreach ($serviceMap as $key => $mappedName) {
+                    $isProcess = in_array($key, $processServices);
+                    
+                    if ($isProcess) {
+                        $processName = strtolower($mappedName) . '.exe';
+                        $status = checkProcessRunning($processName) ? 'running' : 'stopped';
+                        $usage = ['cpu' => 0, 'ram' => 0, 'pid' => 0];
+                    } else {
+                        $status = checkServiceStatus($mappedName);
+                        $usage = ($status === 'running') ? \LaragonDashboard\Core\Services::getResourceUsage($key) : ['cpu' => 0, 'ram' => 0, 'pid' => 0];
+                    }
+                    
+                    $port = $config[$key . 'Port'] ?? '';
+                    if ($key === 'Mailpit') {
+                        $sslPort = $config[$key . 'HTTPPort'] ?? null;
+                    } else {
+                        $sslPort = $config[$key . 'SSLPort'] ?? null;
+                    }
+                    $enabled = isset($config[$key . 'Enabled']) ? ($config[$key . 'Enabled'] == '1') : false;
+                    
+                    $runningPorts = [];
+                    if ($status === 'running') {
+                        $runningPorts = getRunningPorts($key, $port, $sslPort);
+                    }
+                    
+                    $services[$key] = [
+                        'status' => $status,
+                        'port' => $port,
+                        'ssl_port' => $sslPort,
+                        'enabled' => $enabled,
+                        'running_ports' => $runningPorts,
+                        'usage' => $usage
+                    ];
                 }
-                
-                $port = $config[$key . 'Port'] ?? '';
-                // Mailpit uses HTTPPort, others use SSLPort
-                if ($key === 'Mailpit') {
-                    $sslPort = $config[$key . 'HTTPPort'] ?? null;
-                } else {
-                    $sslPort = $config[$key . 'SSLPort'] ?? null;
-                }
-                $enabled = isset($config[$key . 'Enabled']) ? ($config[$key . 'Enabled'] == '1') : false;
-                
-                $runningPorts = [];
-                if ($status === 'running') {
-                    $runningPorts = getRunningPorts($key, $port, $sslPort);
-                }
-                
-                $services[$key] = [
-                    'status' => $status,
-                    'port' => $port,
-                    'ssl_port' => $sslPort,
-                    'enabled' => $enabled,
-                    'running_ports' => $runningPorts
-                ];
+                \LaragonDashboard\Core\Cache::set('service_status', $services, 30);
             }
+
+            // Get disk usage for Laragon Root
+            $disk = [
+                'total' => round(disk_total_space(LARAGON_ROOT) / 1024 / 1024 / 1024, 2),
+                'free' => round(disk_free_space(LARAGON_ROOT) / 1024 / 1024 / 1024, 2),
+                'used' => round((disk_total_space(LARAGON_ROOT) - disk_free_space(LARAGON_ROOT)) / 1024 / 1024 / 1024, 2),
+                'percent' => round(((disk_total_space(LARAGON_ROOT) - disk_free_space(LARAGON_ROOT)) / disk_total_space(LARAGON_ROOT)) * 100, 1)
+            ];
             
             ob_clean();
             echo json_encode([
                 'success' => true,
-                'services' => $services
+                'data' => [
+                    'services' => $services,
+                    'disk' => $disk
+                ],
+                'error' => null
             ]);
             ob_end_flush();
             break;
@@ -261,11 +279,15 @@ try {
                 throw new Exception('Service name required');
             }
             
-            $result = startService($serviceName);
+            $result = \LaragonDashboard\Core\Services::start($serviceName);
+            if ($result) {
+                \LaragonDashboard\Core\Cache::delete('service_status');
+            }
             ob_clean();
             echo json_encode([
                 'success' => $result,
-                'message' => $result ? 'Service started successfully' : 'Failed to start service'
+                'data' => null,
+                'error' => $result ? null : 'Failed to start service'
             ]);
             ob_end_flush();
             break;
@@ -275,11 +297,15 @@ try {
                 throw new Exception('Service name required');
             }
             
-            $result = stopService($serviceName);
+            $result = \LaragonDashboard\Core\Services::stop($serviceName);
+            if ($result) {
+                \LaragonDashboard\Core\Cache::delete('service_status');
+            }
             ob_clean();
             echo json_encode([
                 'success' => $result,
-                'message' => $result ? 'Service stopped successfully' : 'Failed to stop service'
+                'data' => null,
+                'error' => $result ? null : 'Failed to stop service'
             ]);
             ob_end_flush();
             break;
@@ -384,19 +410,23 @@ try {
             throw new Exception('Invalid action');
     }
 } catch (Exception $e) {
+    \LaragonDashboard\Core\Logger::error("API services.php error: " . $e->getMessage());
     ob_clean();
     http_response_code(500);
     echo json_encode([
         'success' => false,
+        'data' => null,
         'error' => $e->getMessage()
     ]);
     ob_end_flush();
 } catch (Error $e) {
+    \LaragonDashboard\Core\Logger::error("API services.php fatal error: " . $e->getMessage());
     ob_clean();
     http_response_code(500);
     echo json_encode([
         'success' => false,
-        'error' => $e->getMessage()
+        'data' => null,
+        'error' => 'A fatal error occurred: ' . $e->getMessage()
     ]);
     ob_end_flush();
 }
