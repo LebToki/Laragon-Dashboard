@@ -1,7 +1,7 @@
 <?php
 /**
  * Laragon Dashboard - Backup Page
- * Version: 3.0.0
+ * Version: 4.0.0
  * Description: Backup management with project + database dumps
  */
 
@@ -62,7 +62,7 @@ include __DIR__ . '/../partials/layouts/layoutTop.php';
         </div>
 
         <!-- Create Backup Section -->
-        <div class="card p-0 radius-12 mb-24">
+        <div class="card radius-12 mb-24 glass-card shadow-none border">
             <div class="card-body p-24">
                 <div class="d-flex align-items-center justify-content-between mb-16">
                     <strong><p class="fw-semibold mb-0"><?php echo t_backup('create_backup', 'Create Backup'); ?></p></strong>
@@ -103,7 +103,7 @@ include __DIR__ . '/../partials/layouts/layoutTop.php';
         </div>
 
         <!-- Backups List -->
-        <div class="card p-0 radius-12">
+        <div class="card radius-12 glass-card shadow-none border">
             <div class="card-body p-24">
                 <div class="d-flex align-items-center justify-content-between mb-16">
                     <strong><p class="fw-semibold mb-0"><?php echo t_backup('backup_history', 'Backup History'); ?></p></strong>
@@ -236,7 +236,7 @@ function loadBackups() {
                     return;
                 }
                 
-                let html = '<div class="table-responsive"><table class="table table-hover mb-0"><thead><tr><th><?php echo htmlspecialchars(t_backup('project', 'Project'), ENT_QUOTES); ?></th><th><?php echo htmlspecialchars(t_backup('database', 'Database'), ENT_QUOTES); ?></th><th><?php echo htmlspecialchars(t_backup('created', 'Created'), ENT_QUOTES); ?></th><th><?php echo htmlspecialchars(t_backup('project_size', 'Project Size'), ENT_QUOTES); ?></th><th><?php echo htmlspecialchars(t_backup('database_size', 'DB Size'), ENT_QUOTES); ?></th><th class="text-end"><?php echo htmlspecialchars(t_backup('actions', 'Actions'), ENT_QUOTES); ?></th></tr></thead><tbody>';
+                let html = '<div class="table-responsive"><table class="table table-hover table-borderless align-middle mb-0"><thead><tr><th><?php echo htmlspecialchars(t_backup('project', 'Project'), ENT_QUOTES); ?></th><th><?php echo htmlspecialchars(t_backup('database', 'Database'), ENT_QUOTES); ?></th><th><?php echo htmlspecialchars(t_backup('created', 'Created'), ENT_QUOTES); ?></th><th><?php echo htmlspecialchars(t_backup('project_size', 'Project Size'), ENT_QUOTES); ?></th><th><?php echo htmlspecialchars(t_backup('database_size', 'DB Size'), ENT_QUOTES); ?></th><th class="text-end"><?php echo htmlspecialchars(t_backup('actions', 'Actions'), ENT_QUOTES); ?></th></tr></thead><tbody>';
                 
                 backups.forEach(backup => {
                     html += '<tr>';
@@ -252,7 +252,7 @@ function loadBackups() {
                         html += '<a href="api/backup.php?action=download_database&project=' + encodeURIComponent(backup.project) + '&timestamp=' + encodeURIComponent(backup.timestamp) + '" class="btn btn-sm btn-outline-info-600" title="<?php echo htmlspecialchars(t_backup('download_database', 'Download Database'), ENT_QUOTES); ?>"><iconify-icon icon="solar:database-bold"></iconify-icon></a>';
                     }
                     html += '<button type="button" class="btn btn-sm btn-outline-warning-600" onclick="refreshBackup(\'' + escapeHtml(backup.project) + '\', \'' + escapeHtml(backup.timestamp) + '\', ' + (backup.database_zip ? '\'' + escapeHtml(backup.database || '') + '\'' : 'null') + ')" title="<?php echo htmlspecialchars(t_backup('refresh_backup', 'Refresh Backup'), ENT_QUOTES); ?>"><iconify-icon icon="solar:refresh-bold"></iconify-icon></button>';
-                    html += '<button type="button" class="btn btn-sm btn-outline-danger-600" onclick="deleteBackup(\'' + escapeHtml(backup.project) + '\', \'' + escapeHtml(backup.timestamp) + '\')" title="<?php echo htmlspecialchars(t_backup('delete_backup', 'Delete Backup'), ENT_QUOTES); ?>"><iconify-icon icon="solar:trash-bin-bold"></iconify-icon></button>';
+                    html += '<button type="button" class="btn btn-sm btn-outline-danger-600" onclick="deleteBackup(\'' + escapeHtml(backup.project) + '\', \'' + escapeHtml(backup.timestamp) + '\')" title="<?php echo htmlspecialchars(t_backup('delete_backup', 'Delete Backup'), ENT_QUOTES); ?>"><iconify-icon icon="solar:trash-bin-trash-bold"></iconify-icon></button>';
                     html += '</div>';
                     html += '</td>';
                     html += '</tr>';
