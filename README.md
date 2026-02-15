@@ -2,7 +2,8 @@
 
 We're thrilled to announce the release of Laragon Dashboard 4.0.0, a complete reimagining of local development environment management for Windows. This isn't just an update, it's a quantum leap forward in how you interact with your Laragon setup.
 
-Laragon Dashboard is a modern, feature-rich web-based dashboard for managing Laragon development environment. Version 4.0.0 aims to be a comprehensive MAMP competitor on Windows, replicating Laragon control panel functionality in a modern, themed web interface.
+Laragon Dashboard is a modern, feature-rich web-based dashboard for managing Laragon development environment. 
+Version 4.0.0 aims to be a comprehensive MAMP competitor on Windows, replicating Laragon control panel functionality in a modern, themed web interface.
 
 "The best Windows development environment just got better. Welcome to the future of local development."
 
