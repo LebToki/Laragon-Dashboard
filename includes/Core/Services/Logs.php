@@ -18,6 +18,11 @@ class Logs {
         
         // Apache
         $apacheDirs = glob($laragonRoot . '/bin/apache/httpd-*/logs/error.log');
+        if (empty($apacheDirs)) {
+            // Try explicit version if common pattern fails
+            $apacheDirs = glob($laragonRoot . '/bin/apache/httpd-2.4.*/logs/error.log');
+        }
+        
         $apacheErrorLog = !empty($apacheDirs) ? $apacheDirs[0] : null;
         if ($apacheErrorLog) {
             $logFiles['apache_error'] = [
@@ -39,6 +44,11 @@ class Logs {
         
         // PHP
         $phpErrorLog = $laragonRoot . '/tmp/php_errors.log';
+        if (!file_exists($phpErrorLog)) {
+            // Check in logs folder too
+            $phpErrorLog = $laragonRoot . '/logs/php_errors.log';
+        }
+        
         if (file_exists($phpErrorLog)) {
             $logFiles['php'] = [
                 'name' => 'PHP Error Log',
@@ -46,11 +56,39 @@ class Logs {
                 'icon' => 'file-icons:php',
                 'color' => 'purple'
             ];
+        } else {
+            // Try to find any php_errors.log in tmp or logs
+            $tmpLogs = glob($laragonRoot . '/tmp/*.log');
+            foreach ($tmpLogs as $log) {
+                if (stripos(basename($log), 'php') !== false && stripos(basename($log), 'error') !== false) {
+                    $logFiles['php'] = [
+                        'name' => 'PHP Error Log',
+                        'path' => $log,
+                        'icon' => 'file-icons:php',
+                        'color' => 'purple'
+                    ];
+                    break;
+                }
+            }
         }
         
         // MySQL
-        $mysqlDirs = glob($laragonRoot . '/data/mysql-*/mysqld.log');
-        $mysqlLog = !empty($mysqlDirs) ? $mysqlDirs[0] : null;
+        $mysqlPatterns = [
+            $laragonRoot . '/data/mysql-*/mysqld.log',
+            $laragonRoot . '/data/mysql-*/mysql.log',
+            $laragonRoot . '/bin/mysql/mysql-*/data/mysqld.log',
+            $laragonRoot . '/data/mysqld.log'
+        ];
+        
+        $mysqlLog = null;
+        foreach ($mysqlPatterns as $pattern) {
+            $matched = glob($pattern);
+            if (!empty($matched)) {
+                $mysqlLog = $matched[0];
+                break;
+            }
+        }
+        
         if ($mysqlLog) {
             $logFiles['mysql'] = [
                 'name' => 'MySQL Log',

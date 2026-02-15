@@ -20,9 +20,16 @@ class System {
         $possiblePaths = ['C:/laragon', 'D:/laragon', 'E:/laragon'];
         
         if (isset($_SERVER['DOCUMENT_ROOT'])) {
-            $docRoot = $_SERVER['DOCUMENT_ROOT'];
+            $docRoot = str_replace('\\', '/', $_SERVER['DOCUMENT_ROOT']);
+            if (stripos($docRoot, '/laragon/www') !== false) {
+                $parts = explode('/www', $docRoot);
+                return $parts[0];
+            }
             if (stripos($docRoot, 'laragon') !== false) {
-                return $docRoot;
+                // If it contains laragon but not /www, it might be the root or a subdir
+                // Backtrack to the main laragon folder
+                $parts = explode('laragon', $docRoot);
+                return rtrim($parts[0], '/') . '/laragon';
             }
         }
         
