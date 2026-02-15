@@ -691,3 +691,12 @@ body {
         border: 1px solid var(--border-color);
     }
 }
+
+/* Laragon Dashboard - Specific Overrides */
+.list-group {
+    --bs-list-group-bg: transparent !important;
+}
+
+[data-theme="dark"] .basic-table tbody td {
+    background-color: transparent !important;
+}
