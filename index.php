@@ -39,9 +39,15 @@ foreach ($requiredDirs as $dir) {
 // Rate limiting check
 if (defined('RATE_LIMIT_REQUESTS_PER_MINUTE') && RATE_LIMIT_REQUESTS_PER_MINUTE > 0) {
     $ip = $_SERVER['REMOTE_ADDR'] ?? 'unknown';
+    // Add basic IP validation
+    if (!filter_var($ip, FILTER_VALIDATE_IP)) {
+        http_response_code(400);
+        die('Invalid IP address');
+    }
+    
     $cacheDir = __DIR__ . '/cache/rate_limit';
     if (!is_dir($cacheDir)) {
-        mkdir($cacheDir, 0755, true);
+        @mkdir($cacheDir, 0755, true);
     }
     $cacheFile = $cacheDir . '/' . md5($ip) . '.json';
     
@@ -49,32 +55,43 @@ if (defined('RATE_LIMIT_REQUESTS_PER_MINUTE') && RATE_LIMIT_REQUESTS_PER_MINUTE 
     $windowSize = 60; // 1 minute window
     
     // Use file locking to prevent race conditions
-    $fp = fopen($cacheFile, 'c+');
+    $fp = @fopen($cacheFile, 'c+');
     if ($fp) {
         if (flock($fp, LOCK_EX)) {
+            $data = ['time' => $currentTime, 'count' => 1];
+            
             if (file_exists($cacheFile)) {
-                $data = json_decode(file_get_contents($cacheFile), true);
-                if ($data && isset($data['time']) && $data['time'] > $currentTime - $windowSize) {
-                    if (isset($data['count']) && $data['count'] >= RATE_LIMIT_REQUESTS_PER_MINUTE) {
-                        flock($fp, LOCK_UN);
-                        fclose($fp);
-                        http_response_code(429);
-                        die('Too many requests. Please try again later.');
+                $content = @file_get_contents($cacheFile);
+                if ($content !== false) {
+                    $decodedData = @json_decode($content, true);
+                    if ($decodedData && is_array($decodedData)) {
+                        $data = $decodedData;
                     }
-                    $data['count']++;
-                } else {
-                    $data = ['time' => $currentTime, 'count' => 1];
                 }
+            }
+            
+            // Check if we're still in the same window
+            if (isset($data['time']) && $data['time'] > $currentTime - $windowSize) {
+                if (isset($data['count']) && $data['count'] >= RATE_LIMIT_REQUESTS_PER_MINUTE) {
+                    flock($fp, LOCK_UN);
+                    fclose($fp);
+                    http_response_code(429);
+                    die('Too many requests. Please try again later.');
+                }
+                $data['count']++;
             } else {
+                // Reset counter for new window
                 $data = ['time' => $currentTime, 'count' => 1];
             }
             
-            file_put_contents($cacheFile, json_encode($data));
-            flock($fp, LOCK_UN);
-        }
-        fclose($fp);
+            ftruncate($fp, 0);
+            rewind($fp);
+            fwrite($fp, json_encode($data));
+            fflush($fp);
     }
 }
+        
+
 
 // Simple page routing
 $page = $_GET['page'] ?? '';
@@ -93,7 +110,7 @@ if (!empty($page)) {
     ];
     
     // Validate page exists
-    if (in_array(strtolower($page), $validPages)) {
+    if (in_array(strtolower($page), $validPages, true)) {
         $pageFile = __DIR__ . '/pages/' . strtolower($page) . '.php';
         
         // Verify file exists

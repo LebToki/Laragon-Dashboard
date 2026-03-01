@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
+## [4.0.2] - 2026-03-01
+
+- **FIXED**: Authentication settings for localhost/127.0.0.1 access
+- **FIXED**: Session handling for development environment  
+- **IMPROVED**: Auto-login when accessing via localhost in development mode
+- **IMPROVED**: Consistent URL handling for both localhost and 127.0.0.1 access
+- **UPDATED**: Version number to 4.0.2
+
 ## [4.0.0] - 2026-02-15 (Major Release)
 
 - **MAJOR: Modern Re-engineering & AI Integration**: Complete transition to modular Core architecture using PSR-4 autoloader.

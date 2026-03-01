@@ -1,18 +1,22 @@
 {
-    "laragon_root": "D:/laragon",
+    "laragon_root": "D:\/laragon",
     "mysql_host": "localhost",
     "mysql_user": "root",
+    "mysql_password": null,
+    "document_root": null,
+    "domain_suffix": null,
     "auto_update_check": true,
     "auto_update_install": true,
-    "last_update_check": 1771056847,
+    "last_update_check": 1772332312,
     "debug_banner": false,
     "time_format": "12",
-    "date_format": "d/m/Y",
+    "date_format": "d\/m\/Y",
     "ignored_projects": [
         "cache",
         "modules",
         "public",
         "tests",
-        "includes"
+        "includes",
+        "assets"
     ]
 }

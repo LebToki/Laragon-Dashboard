@@ -324,64 +324,77 @@ if (!function_exists('getLaragonVersion')) {
  */
 if (!function_exists('getAllProjects')) {
     function getAllProjects() {
-    $laragonRoot = getLaragonRoot();
-    $wwwPath = $laragonRoot . '/www';
-    
-    if (!is_dir($wwwPath)) {
-        return [];
-    }
-    
-    $projects = [];
-    $ignoredProjects = getIgnoredProjects();
-    
-    // Create cache directory if it doesn't exist
-    $cacheDir = dirname(__DIR__) . '/cache';
-    if (!is_dir($cacheDir)) {
-        @mkdir($cacheDir, 0755, true);
-    }
-    $cacheFile = $cacheDir . '/projects_cache.json';
-    
-    $cache = [];
-    if (file_exists($cacheFile)) {
-        $cache = json_decode(file_get_contents($cacheFile), true) ?: [];
-    }
-    
-    $dirs = glob($wwwPath . '/*', GLOB_ONLYDIR);
-    $cacheUpdated = false;
-    
-    foreach ($dirs as $dir) {
-        $name = basename($dir);
+        $laragonRoot = getLaragonRoot();
+        $wwwPath = $laragonRoot . '/www';
         
-        if ($name[0] === '.' || in_array($name, ['laragon', 'dashboard', 'phpmyadmin', 'adminer', 'phppgadmin'])) {
-            continue;
+        if (!is_dir($wwwPath)) {
+            return [];
         }
         
-        if (in_array($name, $ignoredProjects)) {
-            continue;
-        }
+        $projects = [];
+        $ignoredProjects = getIgnoredProjects();
         
-        $mtime = filemtime($dir);
-        if (isset($cache[$name]) && $cache[$name]['mtime'] === $mtime) {
-            $projects[] = $cache[$name]['data'];
-        } else {
-            $projectData = analyzeProject($dir, $name);
-            if ($projectData) {
-                $projects[] = $projectData;
-                $cache[$name] = [
-                    'mtime' => $mtime,
-                    'data' => $projectData
-                ];
-                $cacheUpdated = true;
+        // Create cache directory if it doesn't exist
+        $cacheDir = dirname(__DIR__) . '/cache';
+        if (!is_dir($cacheDir)) {
+            @mkdir($cacheDir, 0755, true);
+        }
+        $cacheFile = $cacheDir . '/projects_cache.json';
+        
+        $cache = [];
+        if (file_exists($cacheFile)) {
+            $content = @file_get_contents($cacheFile);
+            if ($content !== false) {
+                $decoded = @json_decode($content, true);
+                if ($decoded !== null && is_array($decoded)) {
+                    $cache = $decoded;
+                }
             }
         }
+        
+        $dirs = @glob($wwwPath . '/*', GLOB_ONLYDIR);
+        $cacheUpdated = false;
+        
+        if ($dirs !== false) {
+            foreach ($dirs as $dir) {
+                $name = basename($dir);
+                
+                // Validate directory name to prevent any potential injection
+                if (empty($name) || $name[0] === '.' || in_array($name, ['laragon', 'dashboard', 'phpmyadmin', 'adminer', 'phppgadmin'], true)) {
+                    continue;
+                }
+                
+                if (in_array($name, $ignoredProjects, true)) {
+                    continue;
+                }
+                
+                $mtime = @filemtime($dir);
+                if ($mtime === false) {
+                    continue; // Skip if we can't get the modification time
+                }
+                
+                if (isset($cache[$name]) && $cache[$name]['mtime'] === $mtime) {
+                    $projects[] = $cache[$name]['data'];
+                } else {
+                    $projectData = analyzeProject($dir, $name);
+                    if ($projectData) {
+                        $projects[] = $projectData;
+                        $cache[$name] = [
+                            'mtime' => $mtime,
+                            'data' => $projectData
+                        ];
+                        $cacheUpdated = true;
+                    }
+                }
+            }
+        }
+        
+        if ($cacheUpdated) {
+            @file_put_contents($cacheFile, json_encode($cache, JSON_PRETTY_PRINT));
+        }
+        
+        return $projects;
     }
-    
-    if ($cacheUpdated) {
-        @file_put_contents($cacheFile, json_encode($cache));
-    }
-    
-    return $projects;
-}
 }
 
 /**
@@ -1275,5 +1288,102 @@ if (!function_exists('getChangelog')) {
         }
         
         return $changelog;
+    }
+}
+
+/**
+ * Sanitize output for preventing XSS
+ */
+if (!function_exists('esc')) {
+    function esc($string, $encoding = 'utf-8') {
+        if (is_array($string)) {
+            foreach ($string as $key => $value) {
+                $string[$key] = esc($value, $encoding);
+            }
+            return $string;
+        }
+        
+        if (is_object($string) && method_exists($string, '__toString')) {
+            return htmlspecialchars((string)$string, ENT_QUOTES | ENT_HTML5, $encoding);
+        } elseif (is_scalar($string)) {
+            return htmlspecialchars((string)$string, ENT_QUOTES | ENT_HTML5, $encoding);
+        }
+        
+        return '';
+    }
+}
+
+/**
+ * Validate CSRF token from request
+ */
+if (!function_exists('validate_request')) {
+    function validate_request() {
+        $method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
+        
+        // For POST, PUT, DELETE requests, validate CSRF token
+        if (in_array($method, ['POST', 'PUT', 'DELETE', 'PATCH'])) {
+            $token = $_POST[CSRF_TOKEN_NAME] ?? $_SERVER['HTTP_X_CSRF_TOKEN'] ?? null;
+            
+            if (!$token || !validate_csrf_token($token)) {
+                http_response_code(403);
+                die('Invalid CSRF token');
+            }
+        }
+        
+        return true;
+    }
+}
+
+/**
+ * Generate a secure random string
+ */
+if (!function_exists('secure_random_string')) {
+    function secure_random_string($length = 32) {
+        return bin2hex(random_bytes($length));
+    }
+}
+
+/**
+ * Check if a request is AJAX
+ */
+if (!function_exists('is_ajax_request')) {
+    function is_ajax_request() {
+        return !empty($_SERVER['HTTP_X_REQUESTED_WITH']) && 
+               strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest';
+    }
+}
+
+/**
+ * Get client IP with proxy support
+ */
+if (!function_exists('get_client_ip')) {
+    function get_client_ip() {
+        $ipKeys = [
+            'HTTP_CF_CONNECTING_IP',      // Cloudflare
+            'HTTP_CLIENT_IP',             // Proxy
+            'HTTP_X_FORWARDED_FOR',       // Multiple proxies
+            'HTTP_X_FORWARDED',           // Squid proxy
+            'HTTP_X_CLUSTER_CLIENT_IP',   // Cluster
+            'HTTP_FORWARDED_FOR',         // RFC 7239
+            'HTTP_FORWARDED',             // RFC 7239
+            'REMOTE_ADDR'                 // Standard
+        ];
+        
+        foreach ($ipKeys as $key) {
+            if (!empty($_SERVER[$key])) {
+                $ip = $_SERVER[$key];
+                // Handle multiple IPs in X-Forwarded-For
+                if (strpos($ip, ',') !== false) {
+                    $ips = array_map('trim', explode(',', $ip));
+                    $ip = $ips[0]; // Use the first IP
+                }
+                
+                if (filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE)) {
+                    return $ip;
+                }
+            }
+        }
+        
+        return $_SERVER['REMOTE_ADDR'] ?? '0.0.0.0';
     }
 }

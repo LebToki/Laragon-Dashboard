@@ -34,8 +34,8 @@ if (!$data) {
 }
 
 // CSRF check
-$csrfToken = $data['csrf_token'] ?? '';
-if (!verifyCSRFToken($csrfToken)) {
+$csrfToken = $data['csrf_token'] ?? $_POST['csrf_token'] ?? $_SERVER['HTTP_X_CSRF_TOKEN'] ?? '';
+if (!validate_csrf_token($csrfToken)) {
     http_response_code(403);
     echo json_encode(['success' => false, 'message' => 'CSRF token validation failed']);
     exit;
@@ -43,24 +43,90 @@ if (!verifyCSRFToken($csrfToken)) {
 
 $projectName = $data['name'] ?? '';
 $framework = $data['framework'] ?? 'custom';
-$createDatabase = isset($data['create_database']) && $data['create_database'] === 'true';
+$createDatabase = isset($data['create_database']) && ($data['create_database'] === 'true' || $data['create_database'] === true);
 $databaseName = $data['database_name'] ?? '';
-$initGit = isset($data['init_git']) && $data['init_git'] === 'true';
+$initGit = isset($data['init_git']) && ($data['init_git'] === 'true' || $data['init_git'] === true);
 $createVhost = isset($data['create_vhost']) && ($data['create_vhost'] === 'true' || $data['create_vhost'] === true);
 
 // Validate project name
-if (empty($projectName) || !preg_match('/^[a-zA-Z0-9_-]+$/', $projectName)) {
+if (empty($projectName)) {
+    http_response_code(400);
+    echo json_encode(['success' => false, 'message' => 'Project name is required']);
+    exit;
+}
+
+// Additional validation to prevent directory traversal
+if (!preg_match('/^[a-zA-Z0-9_-]+$/', $projectName) || 
+    strpos($projectName, '..') !== false || 
+    strpos($projectName, '/') !== false || 
+    strpos($projectName, '\\') !== false) {
+    http_response_code(400);
     echo json_encode(['success' => false, 'message' => 'Invalid project name. Only letters, numbers, underscores, and hyphens allowed.']);
     exit;
+}
+
+// Block potentially dangerous project names
+$blockedNames = [
+    'con', 'prn', 'aux', 'nul', // Windows reserved names
+    'CON', 'PRN', 'AUX', 'NUL',
+    'com1', 'com2', 'com3', 'com4', 'com5', 'com6', 'com7', 'com8', 'com9',
+    'COM1', 'COM2', 'COM3', 'COM4', 'COM5', 'COM6', 'COM7', 'COM8', 'COM9',
+    'lpt1', 'lpt2', 'lpt3', 'lpt4', 'lpt5', 'lpt6', 'lpt7', 'lpt8', 'lpt9',
+    'LPT1', 'LPT2', 'LPT3', 'LPT4', 'LPT5', 'LPT6', 'LPT7', 'LPT8', 'LPT9',
+    '.', '..', 'dashboard', 'api', 'includes', 'config', 'laragon', 'www'
+];
+
+if (in_array(strtolower($projectName), $blockedNames, true)) {
+    http_response_code(400);
+    echo json_encode(['success' => false, 'message' => 'Invalid project name. This name is reserved or blocked.']);
+    exit;
+}
+
+// Validate framework
+$supportedFrameworks = [
+    'custom', 'wordpress', 'laravel', 'symfony', 'drupal', 
+    'joomla', 'cakephp', 'nextjs', 'vuejs', 'react', 'angular'
+];
+
+if (!in_array($framework, $supportedFrameworks, true)) {
+    http_response_code(400);
+    echo json_encode(['success' => false, 'message' => 'Unsupported framework']);
+    exit;
+}
+
+// Validate database name if provided
+if ($createDatabase && !empty($databaseName)) {
+    if (!preg_match('/^[a-zA-Z0-9_-]+$/', $databaseName)) {
+        http_response_code(400);
+        echo json_encode(['success' => false, 'message' => 'Invalid database name. Only letters, numbers, underscores, and hyphens allowed.']);
+        exit;
+    }
 }
 
 // Get document root
 $laraconfig = getLaragonConfig();
 $documentRoot = $laraconfig['DocumentRoot'] ?? (defined('LARAGON_ROOT') ? LARAGON_ROOT . '/www' : '');
-$projectPath = rtrim($documentRoot, '/\\') . '/' . $projectName;
+
+// Ensure document root is a valid Laragon path
+if (empty($documentRoot) || !is_dir($documentRoot)) {
+    http_response_code(500);
+    echo json_encode(['success' => false, 'message' => 'Document root not found']);
+    exit;
+}
+
+// Normalize and validate the project path
+$projectPath = realpath(rtrim($documentRoot, '/\\')) . DIRECTORY_SEPARATOR . $projectName;
+
+// Additional check to ensure the path is under the document root (prevent directory traversal)
+if (strpos($projectPath, realpath($documentRoot)) !== 0) {
+    http_response_code(400);
+    echo json_encode(['success' => false, 'message' => 'Invalid project path']);
+    exit;
+}
 
 // Check if project already exists
 if (is_dir($projectPath)) {
+    http_response_code(409);
     echo json_encode(['success' => false, 'message' => 'Project directory already exists']);
     exit;
 }
