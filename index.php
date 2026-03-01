@@ -312,7 +312,7 @@ include './partials/layouts/layoutTop.php' ?>
                     </div>
                     <!-- Value on full row -->
                     <h6 class="mb-0 text-truncate" style="font-size: 18px;">
-                        <a href="http://localhost/phpmyadmin" target="_blank" class="text-base text-decoration-none hover-opacity-80 d-inline-flex align-items-center gap-1">
+                        <a href="http://localhost/phpmyadmin" target="_blank" class="text-primary-600 text-decoration-none hover-opacity-80 d-inline-flex align-items-center gap-1">
                             Manage MySQL
                             <iconify-icon icon="solar:link-bold" class="text-sm"></iconify-icon>
                         </a>

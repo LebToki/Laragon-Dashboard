@@ -2,13 +2,17 @@
 
 All notable changes to this project will be documented in this file.
 
-## [4.0.2] - 2026-03-01
+## [4.0.3] - 2026-03-01
 
-- **FIXED**: Authentication settings for localhost/127.0.0.1 access
-- **FIXED**: Session handling for development environment  
-- **IMPROVED**: Auto-login when accessing via localhost in development mode
-- **IMPROVED**: Consistent URL handling for both localhost and 127.0.0.1 access
-- **UPDATED**: Version number to 4.0.2
+- **FIXED**: Critical `Fatal error: Cannot redeclare getLogFiles()` in log viewer.
+- **IMPROVED**: Robust log discovery patterns for Apache, PHP, and MySQL.
+- **IMPROVED**: Memory-efficient tailing for large log files (prevents "Empty log file" state).
+- **IMPROVED**: Standardized log icons using the `solar:` set for consistent theme rendering.
+- **IMPROVED**: Server Vitals performance with 5-second intelligent caching.
+- **FIXED**: JSON response flattening for Logs API to ensure reliable UI probing.
+- **UPDATED**: Version number to 4.0.3.
+
+## [4.0.2] - 2026-03-01
 
 ## [4.0.0] - 2026-02-15 (Major Release)
 

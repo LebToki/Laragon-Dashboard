@@ -1,14 +1,14 @@
 # 🚀 Laragon Dashboard
 
-We're thrilled to announce the release of Laragon Dashboard 4.0.2, a complete reimagining of local development environment management for Windows. This isn't just an update, it's a quantum leap forward in how you interact with your Laragon setup.
+We're thrilled to announce the release of Laragon Dashboard 4.0.3, a complete reimagining of local development environment management for Windows. This isn't just an update, it's a quantum leap forward in how you interact with your Laragon setup.
 
 Laragon Dashboard is a modern, feature-rich web-based dashboard for managing Laragon development environment. 
-Version 4.0.2 aims to be a comprehensive MAMP competitor on Windows, replicating Laragon control panel functionality in a modern, themed web interface.
+Version 4.0.3 aims to be a comprehensive MAMP competitor on Windows, replicating Laragon control panel functionality in a modern, themed web interface.
 
 "The best Windows development environment just got better. Welcome to the future of local development."
 
 
-[![Version](https://img.shields.io/badge/version-4.0.2-blue.svg)](https://github.com/LebToki/Laragon-Dashboard)
+[![Version](https://img.shields.io/badge/version-4.0.3-blue.svg)](https://github.com/LebToki/Laragon-Dashboard)
 [![PHP](https://img.shields.io/badge/PHP-7.4%2B-green.svg)](https://php.net)
 [![Bootstrap](https://img.shields.io/badge/Bootstrap-5.3.2-purple.svg)](https://getbootstrap.com)
 [![Platform](https://img.shields.io/badge/platform-windows-lightgrey.svg)]()
@@ -51,7 +51,7 @@ Version 4.0.2 aims to be a comprehensive MAMP competitor on Windows, replicating
 ## 📋 Project Information
 
 - **Project Name**: Laragon Dashboard
-- **Version**: 4.0.2
+- **Version**: 4.0.3
 - **Author**: Tarek Tarabichi
 - **Company**: 2TInteractive (2tinteractive.com)
 - **Project Start**: Early 2024
@@ -62,7 +62,7 @@ Version 4.0.2 aims to be a comprehensive MAMP competitor on Windows, replicating
 ---
 
 ## 💡 Why This Matters
-Laragon has always been the fastest, most lightweight development environment for Windows. With version 4.0.2 of the dashboard, we're bringing that same philosophy to the web interface:
+Laragon has always been the fastest, most lightweight development environment for Windows. With version 4.0.3 of the dashboard, we're bringing that same philosophy to the web interface:
 
 - No Electron bloat – Pure web technology, zero memory overhead
 - Instant startup – Dashboard loads in milliseconds
@@ -565,10 +565,10 @@ git checkout production
 
 ### Environment Variables
 
-| Variable | Description | Default |
-|----------|-------------|--------|
-| `LARAGON_DASHBOARD_PASSWORD` | Admin password | (none - must be set) |
-| `LARAGON_ROOT` | Laragon installation path | Auto-detected |
+| Variable                     | Description               | Default              |
+|------------------------------|---------------------------|----------------------|
+| `LARAGON_DASHBOARD_PASSWORD` | Admin password            | (none - must be set) |
+| `LARAGON_ROOT`               | Laragon installation path | Auto-detected        |
 
 ## 🛡️ Security
 
@@ -788,7 +788,15 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 See [CHANGELOG.md](CHANGELOG.md) for detailed version history.
 
-### Version 4.0.2 (Latest Major Release)
+### Version 4.0.3 (Latest Stability Release)
+- **FIXED**: Critical `Fatal error: Cannot redeclare getLogFiles()` in log viewer.
+- **IMPROVED**: Robust log discovery patterns for Apache, PHP, and MySQL across all Laragon versions.
+- **IMPROVED**: Memory-efficient tailing for reading large log files without performance overhead.
+- **IMPROVED**: Standardized log icons using the `solar:` set for consistent rendering.
+- **IMPROVED**: Server Vitals performance with 5-second intelligent caching for expensive system probes.
+- **FIXED**: JSON response structure for Logs API to ensure reliable UI "probing" and status updates.
+
+### Version 4.0.2
 - **MAJOR: Modern Re-engineering & AI Integration**: Complete transition to modular Core architecture using PSR-4 autoloader.
 - **NEW: AI Agent (Beta)**: Integration of a glassmorphic chat widget and system context bridge for intelligent environment assistance.
 - **NEW: Advanced Database Engine**: Re-engineered database page with full schema explorer, result grid, and read-only query runner.

@@ -40,77 +40,11 @@ function t_logs($key, $fallback = '') {
 $laragonRoot = defined('LARAGON_ROOT') ? LARAGON_ROOT : '';
 $selectedLog = $_GET['log'] ?? '';
 
-// Scan for log files dynamically
-function scanLogFiles() {
-    $laragonRoot = defined('LARAGON_ROOT') ? LARAGON_ROOT : '';
-    $logFiles = [];
-    
-    if (empty($laragonRoot) || !is_dir($laragonRoot)) {
-        return $logFiles;
-    }
-    
-    // Find Apache installation directory (dynamic version)
-    $apacheDirs = glob($laragonRoot . '/bin/apache/httpd-*/logs/error.log');
-    $apacheErrorLog = !empty($apacheDirs) ? $apacheDirs[0] : null;
-    $apacheAccessLog = null;
-    if ($apacheErrorLog) {
-        $apacheAccessLog = dirname($apacheErrorLog) . '/access.log';
-        if (!file_exists($apacheAccessLog)) {
-            $apacheAccessLog = null;
-        }
-    }
-    
-    // Find MySQL installation directory (dynamic version)
-    $mysqlDirs = glob($laragonRoot . '/data/mysql-*/mysqld.log');
-    $mysqlLog = !empty($mysqlDirs) ? $mysqlDirs[0] : null;
-    
-    // PHP error log
-    $phpErrorLog = $laragonRoot . '/tmp/php_errors.log';
-    
-    // Define log files with actual paths
-    $logPatterns = [
-        'apache_error' => [
-            'name' => t_logs('apache_error_log', 'Apache Error Log'),
-            'path' => $apacheErrorLog,
-            'icon' => 'devicon-plain:apache',
-            'color' => 'danger'
-        ],
-        'apache_access' => [
-            'name' => t_logs('apache_access_log', 'Apache Access Log'),
-            'path' => $apacheAccessLog,
-            'icon' => 'devicon-plain:apache',
-            'color' => 'primary'
-        ],
-        'php' => [
-            'name' => t_logs('php_logs', 'PHP Error Log'),
-            'path' => file_exists($phpErrorLog) ? $phpErrorLog : null,
-            'icon' => 'file-icons:php',
-            'color' => 'purple'
-        ],
-        'mysql' => [
-            'name' => t_logs('mysql_logs', 'MySQL Log'),
-            'path' => $mysqlLog,
-            'icon' => 'tabler:brand-mysql',
-            'color' => 'info'
-        ]
-    ];
-    
-    // Only add log files that exist
-    foreach ($logPatterns as $key => $pattern) {
-        if (!empty($pattern['path']) && file_exists($pattern['path']) && is_readable($pattern['path'])) {
-            $logFiles[$key] = [
-                'name' => $pattern['name'],
-                'path' => $pattern['path'],
-                'icon' => $pattern['icon'] ?? 'solar:file-text-bold',
-                'color' => $pattern['color'] ?? 'secondary'
-            ];
-        }
-    }
-    
-    return $logFiles;
+// Scan for log files dynamically using the centralized service
+$logFiles = [];
+if (class_exists('\\LaragonDashboard\\Core\\Services\\Logs')) {
+    $logFiles = \LaragonDashboard\Core\Services\Logs::scan();
 }
-
-$logFiles = scanLogFiles();
 
 include __DIR__ . '/../partials/layouts/layoutTop.php';
 ?>

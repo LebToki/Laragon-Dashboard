@@ -1,7 +1,7 @@
 <?php
 /**
  * Laragon Dashboard - Helper Functions
- * Version: 4.0.0
+ * Version: 4.0.3
  * Provides utility functions for the dashboard
  */
 

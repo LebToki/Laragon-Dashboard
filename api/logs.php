@@ -35,6 +35,7 @@ header('Content-Type: application/json');
 
 $action = $_GET['action'] ?? 'read';
 $logType = $_GET['type'] ?? '';
+$lines = $_GET['lines'] ?? 1000;
 
 if (!defined('LARAGON_ROOT')) {
     ob_clean();
@@ -88,11 +89,7 @@ try {
             
             $result = readLogFile($logs[$logType]['path'], $lines);
             ob_clean();
-            echo json_encode([
-                'success' => $result['success'],
-                'data' => $result['success'] ? $result : null,
-                'error' => $result['success'] ? null : ($result['error'] ?? 'Unknown error')
-            ]);
+            echo json_encode($result);
             break;
             
         case 'clear':

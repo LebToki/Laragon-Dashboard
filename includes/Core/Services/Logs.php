@@ -4,7 +4,7 @@ namespace LaragonDashboard\Core\Services;
 
 /**
  * Logs Class
- * Version: 1.0.0
+ * Version: 4.0.3
  * Handles log file discovery and reading
  */
 class Logs {
@@ -17,18 +17,26 @@ class Logs {
         $logFiles = [];
         
         // Apache
-        $apacheDirs = glob($laragonRoot . '/bin/apache/httpd-*/logs/error.log');
-        if (empty($apacheDirs)) {
-            // Try explicit version if common pattern fails
-            $apacheDirs = glob($laragonRoot . '/bin/apache/httpd-2.4.*/logs/error.log');
-        }
+        $apachePatterns = [
+            $laragonRoot . '/bin/apache/httpd-*/logs/error.log',
+            $laragonRoot . '/bin/apache/apache-*/logs/error.log',
+            $laragonRoot . '/logs/apache_error.log'
+        ];
         
-        $apacheErrorLog = !empty($apacheDirs) ? $apacheDirs[0] : null;
+        $apacheErrorLog = null;
+        foreach ($apachePatterns as $pattern) {
+            $matched = glob($pattern);
+            if (!empty($matched)) {
+                $apacheErrorLog = $matched[0];
+                break;
+            }
+        }
+
         if ($apacheErrorLog) {
             $logFiles['apache_error'] = [
                 'name' => 'Apache Error Log',
                 'path' => $apacheErrorLog,
-                'icon' => 'devicon-plain:apache',
+                'icon' => 'solar:server-bold',
                 'color' => 'danger'
             ];
             $apacheAccessLog = dirname($apacheErrorLog) . '/access.log';
@@ -36,46 +44,44 @@ class Logs {
                 $logFiles['apache_access'] = [
                     'name' => 'Apache Access Log',
                     'path' => $apacheAccessLog,
-                    'icon' => 'devicon-plain:apache',
+                    'icon' => 'solar:server-path-bold',
                     'color' => 'primary'
                 ];
             }
         }
         
         // PHP
-        $phpErrorLog = $laragonRoot . '/tmp/php_errors.log';
-        if (!file_exists($phpErrorLog)) {
-            // Check in logs folder too
-            $phpErrorLog = $laragonRoot . '/logs/php_errors.log';
-        }
-        
-        if (file_exists($phpErrorLog)) {
-            $logFiles['php'] = [
-                'name' => 'PHP Error Log',
-                'path' => $phpErrorLog,
-                'icon' => 'file-icons:php',
-                'color' => 'purple'
-            ];
-        } else {
-            // Try to find any php_errors.log in tmp or logs
-            $tmpLogs = glob($laragonRoot . '/tmp/*.log');
-            foreach ($tmpLogs as $log) {
-                if (stripos(basename($log), 'php') !== false && stripos(basename($log), 'error') !== false) {
-                    $logFiles['php'] = [
-                        'name' => 'PHP Error Log',
-                        'path' => $log,
-                        'icon' => 'file-icons:php',
-                        'color' => 'purple'
-                    ];
-                    break;
-                }
+        $phpPatterns = [
+            $laragonRoot . '/tmp/php_errors.log',
+            $laragonRoot . '/logs/php_errors.log',
+            $laragonRoot . '/bin/php/php-*/php_errors.log',
+            dirname(php_ini_loaded_file()) . '/php_errors.log'
+        ];
+
+        $phpErrorLog = null;
+        foreach ($phpPatterns as $pattern) {
+            $matched = glob($pattern);
+            if (!empty($matched)) {
+                $phpErrorLog = $matched[0];
+                break;
             }
         }
         
+        if ($phpErrorLog && file_exists($phpErrorLog)) {
+            $logFiles['php'] = [
+                'name' => 'PHP Error Log',
+                'path' => $phpErrorLog,
+                'icon' => 'solar:code-bold',
+                'color' => 'purple'
+            ];
+        }
+
         // MySQL
         $mysqlPatterns = [
             $laragonRoot . '/data/mysql-*/mysqld.log',
             $laragonRoot . '/data/mysql-*/mysql.log',
+            $laragonRoot . '/data/mysql-*/error.log',
+            $laragonRoot . '/data/mariadb-*/mysqld.log',
             $laragonRoot . '/bin/mysql/mysql-*/data/mysqld.log',
             $laragonRoot . '/data/mysqld.log'
         ];
@@ -93,8 +99,19 @@ class Logs {
             $logFiles['mysql'] = [
                 'name' => 'MySQL Log',
                 'path' => $mysqlLog,
-                'icon' => 'tabler:brand-mysql',
+                'icon' => 'solar:database-bold',
                 'color' => 'info'
+            ];
+        }
+
+        // Project Logs (Dashboard itself)
+        $dashboardLog = $laragonRoot . '/www/Laragon-Dashboard/logs/app.log';
+        if (file_exists($dashboardLog)) {
+            $logFiles['dashboard'] = [
+                'name' => 'Dashboard Log',
+                'path' => $dashboardLog,
+                'icon' => 'solar:scanner-bold',
+                'color' => 'success'
             ];
         }
         
@@ -110,26 +127,54 @@ class Logs {
         }
 
         try {
-            $file = new \SplFileObject($path);
-            $file->seek(PHP_INT_MAX);
-            $totalLines = $file->key() + 1;
+            $handle = @fopen($path, 'r');
+            if (!$handle) {
+                return false;
+            }
+
+            $fileSize = filesize($path);
+            $lines_array = [];
             
-            $startLine = max(0, $totalLines - $lines);
-            $file->seek($startLine);
-            
-            $content = [];
-            while (!$file->eof()) {
-                $line = $file->current();
-                if ($line !== false) {
-                    $content[] = rtrim($line, "\r\n");
+            // If file is small, just read everything
+            if ($fileSize < 1024 * 512) { // 512KB
+                $content_raw = file_get_contents($path);
+                $lines_raw = explode("\n", $content_raw);
+                $lines_array = array_slice($lines_raw, -$lines);
+                $totalLines = count($lines_raw);
+            } else {
+                // Efficient tail for large files
+                $buffer = 4096;
+                fseek($handle, 0, SEEK_END);
+                $pos = ftell($handle);
+                $count = 0;
+                $output = '';
+
+                while ($pos > 0 && $count < $lines + 1) {
+                    $readSize = min($pos, $buffer);
+                    $pos -= $readSize;
+                    fseek($handle, $pos);
+                    $chunk = fread($handle, $readSize);
+                    $output = $chunk . $output;
+                    $count = substr_count($output, "\n");
                 }
-                $file->next();
+
+                $lines_raw = explode("\n", $output);
+                $lines_array = array_slice($lines_raw, -$lines);
+                // Approximate total lines based on average line length (fine for UI)
+                $totalLines = (int)($fileSize / 100); 
             }
             
+            fclose($handle);
+            
+            // Clean up lines
+            $final_content = implode("\n", array_map(function($l) {
+                return rtrim($l, "\r\n");
+            }, $lines_array));
+
             return [
-                'content' => implode("\n", $content),
+                'content' => $final_content ?: '(Empty log file)',
                 'total_lines' => $totalLines,
-                'displayed_lines' => count($content),
+                'displayed_lines' => count($lines_array),
                 'path' => $path
             ];
         } catch (\Exception $e) {
