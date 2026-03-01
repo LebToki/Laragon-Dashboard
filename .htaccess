@@ -1,10 +1,10 @@
 # Laragon Dashboard .htaccess
-# Enable rewrite engine
+# Production-ready configuration
 <IfModule mod_rewrite.c>
     RewriteEngine On
     RewriteBase /Laragon-Dashboard/
     
-    # Force HTTPS redirect (if not already HTTPS)
+    # Force HTTPS redirect (uncomment for production with HTTPS)
     # RewriteCond %{HTTPS} off
     # RewriteCond %{HTTP:X-Forwarded-Proto} !https
     # RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [R=301,L]
@@ -24,7 +24,7 @@
     RewriteRule ^(.*)$ index.php?page=$1 [QSA,L]
 </IfModule>
 
-# Security headers
+# Security headers - Production ready
 <IfModule mod_headers.c>
     # Prevent clickjacking
     Header set X-Frame-Options "SAMEORIGIN"
@@ -32,9 +32,25 @@
     Header set X-XSS-Protection "1; mode=block"
     # Prevent MIME type sniffing
     Header set X-Content-Type-Options "nosniff"
+    # Referrer Policy for privacy
+    Header set Referrer-Policy "strict-origin-when-cross-origin"
+    # Content Security Policy - restrict resources
+    Header set Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data:;"
+    # Permissions Policy
+    Header set Permissions-Policy "geolocation=(), microphone=(), camera=()"
 </IfModule>
 
-# Enable error reporting (remove in production)
-# php_flag display_errors On
-# php_value error_reporting E_ALL
+# Disable directory listing
+Options -Indexes
+
+# Block access to sensitive files
+<FilesMatch "^\.">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
+
+<FilesMatch "\.(env|log|json|md|yml|yaml|ini|conf)$">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
 
