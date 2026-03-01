@@ -11,8 +11,8 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-// Redirect if already authenticated OR if authentication is disabled
-if ((isset($_SESSION['authenticated']) && $_SESSION['authenticated'] === true) || (defined('AUTH_ENABLED') && !AUTH_ENABLED)) {
+// Redirect if already authenticated (including local auto-auth)
+if (is_authenticated()) {
     header('Location: index.php');
     exit;
 }

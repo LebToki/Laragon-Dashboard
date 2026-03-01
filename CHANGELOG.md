@@ -9,6 +9,7 @@ All notable changes to this project will be documented in this file.
 - **IMPROVED**: Memory-efficient tailing for large log files (prevents "Empty log file" state).
 - **IMPROVED**: Standardized log icons using the `solar:` set for consistent theme rendering.
 - **IMPROVED**: Server Vitals performance with 5-second intelligent caching.
+- **NEW**: Local Auto-Authorization – Dashboard now pre-authorizes requests from `localhost`, `127.0.0.1`, or `::1` for a seamless Developer Experience.
 - **FIXED**: JSON response flattening for Logs API to ensure reliable UI probing.
 - **UPDATED**: Version number to 4.0.3.
 

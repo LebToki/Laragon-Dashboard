@@ -65,7 +65,9 @@ Version 4.0.3 aims to be a comprehensive MAMP competitor on Windows, replicating
 Laragon has always been the fastest, most lightweight development environment for Windows. With version 4.0.3 of the dashboard, we're bringing that same philosophy to the web interface:
 
 - No Electron bloat – Pure web technology, zero memory overhead
-- Instant startup – Dashboard loads in milliseconds
+- **Instant Startup** – Access your dashboard immediately via localhost.
+- **Seamless Auth** – Local Auto-Authorization pre-authorizes sessions from `127.0.0.1`.
+- **Integrated Environment** – Direct bridge between web UI and Laragon services.
 - Native feel – WebSocket updates make it feel like a desktop app
 - Extensible – Plugin system for custom tools and integrations
 
@@ -794,6 +796,7 @@ See [CHANGELOG.md](CHANGELOG.md) for detailed version history.
 - **IMPROVED**: Memory-efficient tailing for reading large log files without performance overhead.
 - **IMPROVED**: Standardized log icons using the `solar:` set for consistent rendering.
 - **IMPROVED**: Server Vitals performance with 5-second intelligent caching for expensive system probes.
+- **NEW**: Local Auto-Authorization for a seamless developer experience when accessing via localhost.
 - **FIXED**: JSON response structure for Logs API to ensure reliable UI "probing" and status updates.
 
 ### Version 4.0.2
