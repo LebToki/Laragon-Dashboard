@@ -87,7 +87,9 @@ if (defined('RATE_LIMIT_REQUESTS_PER_MINUTE') && RATE_LIMIT_REQUESTS_PER_MINUTE 
             ftruncate($fp, 0);
             rewind($fp);
             fwrite($fp, json_encode($data));
-            fflush($fp);
+            flock($fp, LOCK_UN);
+        }
+        fclose($fp);
     }
 }
         
