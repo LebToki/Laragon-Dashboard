@@ -33,7 +33,10 @@ if ($requestMethod === 'POST') {
     $adminPassword = defined('ADMIN_PASSWORD') ? ADMIN_PASSWORD : 'admin'; // Default fallback
     
     if ($password === $adminPassword) {
+        // Regenerate session ID to prevent session fixation attacks
+        session_regenerate_id(true);
         $_SESSION['authenticated'] = true;
+        $_SESSION['login_time'] = time();
         header('Location: index.php');
         exit;
     } else {

@@ -790,7 +790,7 @@ if (!defined('MAX_LOGIN_ATTEMPTS')) {
 }
 
 // Additional security headers
-if (SECURITY_HEADERS_ENABLED) {
+if (defined('SECURITY_HEADERS_ENABLED') && SECURITY_HEADERS_ENABLED) {
     // Prevent iframe embedding (clickjacking protection)
     header('X-Frame-Options: DENY');
     
@@ -812,7 +812,10 @@ if (SECURITY_HEADERS_ENABLED) {
     header('Pragma: no-cache');
     
     // Content security policy - Force refresh and explicit elem directive
-    header_remove('Content-Security-Policy');
+    // Only remove if CSP header exists to avoid warnings
+    if (headers_sent() === false) {
+        @header_remove('Content-Security-Policy');
+    }
     header("Content-Security-Policy: default-src 'self' blob:; script-src 'self' 'unsafe-inline' 'unsafe-eval' blob: https://code.iconify.design; script-src-elem 'self' 'unsafe-inline' blob: https://code.iconify.design; worker-src 'self' blob:; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: https://*; font-src 'self' https://fonts.gstatic.com; connect-src 'self' https://api.iconify.design https://api.unisvg.com; frame-src 'self'; object-src 'none'; report-uri /csp-report");
     
     // Referrer policy

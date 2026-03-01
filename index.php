@@ -23,6 +23,19 @@ if (function_exists('check_auth')) {
 // i18n is now included via helpers.php - no need to include separately
 // This prevents double-inclusion issues
 
+// Ensure required directories exist
+$requiredDirs = [
+    __DIR__ . '/cache',
+    __DIR__ . '/cache/rate_limit',
+    __DIR__ . '/data',
+    __DIR__ . '/logs'
+];
+foreach ($requiredDirs as $dir) {
+    if (!is_dir($dir)) {
+        @mkdir($dir, 0755, true);
+    }
+}
+
 // Rate limiting check
 if (defined('RATE_LIMIT_REQUESTS_PER_MINUTE') && RATE_LIMIT_REQUESTS_PER_MINUTE > 0) {
     $ip = $_SERVER['REMOTE_ADDR'] ?? 'unknown';
@@ -35,22 +48,32 @@ if (defined('RATE_LIMIT_REQUESTS_PER_MINUTE') && RATE_LIMIT_REQUESTS_PER_MINUTE 
     $currentTime = time();
     $windowSize = 60; // 1 minute window
     
-    if (file_exists($cacheFile)) {
-        $data = json_decode(file_get_contents($cacheFile), true);
-        if ($data && isset($data['time']) && $data['time'] > $currentTime - $windowSize) {
-            if (isset($data['count']) && $data['count'] >= RATE_LIMIT_REQUESTS_PER_MINUTE) {
-                http_response_code(429);
-                die('Too many requests. Please try again later.');
+    // Use file locking to prevent race conditions
+    $fp = fopen($cacheFile, 'c+');
+    if ($fp) {
+        if (flock($fp, LOCK_EX)) {
+            if (file_exists($cacheFile)) {
+                $data = json_decode(file_get_contents($cacheFile), true);
+                if ($data && isset($data['time']) && $data['time'] > $currentTime - $windowSize) {
+                    if (isset($data['count']) && $data['count'] >= RATE_LIMIT_REQUESTS_PER_MINUTE) {
+                        flock($fp, LOCK_UN);
+                        fclose($fp);
+                        http_response_code(429);
+                        die('Too many requests. Please try again later.');
+                    }
+                    $data['count']++;
+                } else {
+                    $data = ['time' => $currentTime, 'count' => 1];
+                }
+            } else {
+                $data = ['time' => $currentTime, 'count' => 1];
             }
-            $data['count']++;
-        } else {
-            $data = ['time' => $currentTime, 'count' => 1];
+            
+            file_put_contents($cacheFile, json_encode($data));
+            flock($fp, LOCK_UN);
         }
-    } else {
-        $data = ['time' => $currentTime, 'count' => 1];
+        fclose($fp);
     }
-    
-    file_put_contents($cacheFile, json_encode($data));
 }
 
 // Simple page routing
