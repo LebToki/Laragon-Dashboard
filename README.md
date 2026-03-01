@@ -15,9 +15,8 @@ Version 4.0.3 aims to be a comprehensive MAMP competitor on Windows, replicating
 [![License](https://img.shields.io/badge/license-MIT-orange.svg)](LICENSE)
 [![GitHub](https://img.shields.io/github/stars/LebToki/Laragon-Dashboard?style=social)](https://github.com/LebToki/Laragon-Dashboard)
 
-[![Buy Me A Coffee](https://img.shields.io/badge/buy%20me%20a%20coffee-donate-yellow.svg)](https://buymeacoffee.com/LebToki)
-
-[![Donate via Paypal](https://img.shields.io/badge/paypal-donate-blue.svg)](https://www.paypal.com/donate/?hosted_button_id=TEEJNYQJA9B6U)
+[![Buy Me A Coffee](https://img.shields.io/badge/Buy%20Me%20A%20Coffee-Donate-yellow?style=for-the-badge&logo=buy-me-a-coffee)](https://buymeacoffee.com/LebToki)
+[![Donate via Paypal](https://img.shields.io/badge/Donate%20with%20Paypal-Donate-blue?style=for-the-badge&logo=paypal)](https://www.paypal.com/donate/?hosted_button_id=TEEJNYQJA9B6U)
 
 <p align="center">
   <img src="https://img.shields.io/github/stars/LebToki/Laragon-Dashboard?style=for-the-badge" alt="Stars" />
