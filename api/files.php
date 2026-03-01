@@ -26,17 +26,33 @@ $action = $_GET['action'] ?? 'read';
 $filePath = $_GET['path'] ?? '';
 
 if (!defined('LARAGON_ROOT')) {
+    // Try to get Laragon root from config
+    if (function_exists('getLaragonRoot')) {
+        define('LARAGON_ROOT', getLaragonRoot());
+    } else {
+        ob_clean();
+        http_response_code(500);
+        echo json_encode(['success' => false, 'error' => 'Laragon root not configured']);
+        ob_end_flush();
+        exit;
+    }
+}
+
+if (empty(LARAGON_ROOT)) {
     ob_clean();
     http_response_code(500);
-    echo json_encode(['success' => false, 'error' => 'Laragon root not defined']);
+    echo json_encode(['success' => false, 'error' => 'Laragon root is empty']);
     ob_end_flush();
     exit;
 }
 
 // Security: Only allow files within Laragon directory
 function validatePath($path) {
-    global $laragonRoot;
     $laragonRoot = defined('LARAGON_ROOT') ? LARAGON_ROOT : '';
+    
+    if (empty($laragonRoot)) {
+        return false;
+    }
     
     $realPath = realpath($path);
     $realLaragonRoot = realpath($laragonRoot);
