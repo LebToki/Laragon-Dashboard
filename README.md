@@ -486,6 +486,88 @@ POST /api/update.php?action=download
 POST /api/update.php?action=install
 ```
 
+## 🚀 Production Deployment
+
+### Prerequisites
+- PHP 7.4 or higher
+- Laravel (or any PHP web server like Apache/Nginx)
+- HTTPS enabled (recommended for production)
+
+### Security Configuration
+
+Before deploying to production, please configure the following security settings in `config.php`:
+
+#### 1. Enable Authentication
+
+The dashboard now requires authentication by default. Make sure to set a strong password:
+
+```php
+// In config.php
+define('AUTH_ENABLED', true);
+
+// Set a strong password (recommended: use environment variable)
+define('ADMIN_PASSWORD', getenv('LARAGON_DASHBOARD_PASSWORD') ?: 'YourStrongPassword123!');
+```
+
+**Best Practice:** Use environment variables instead of hardcoding passwords:
+```bash
+# Set environment variable
+set LARAGON_DASHBOARD_PASSWORD=YourStrongPassword123!
+```
+
+#### 2. Configure HTTPS (Recommended)
+
+Uncomment the HTTPS redirect in `.htaccess`:
+```apache
+# .htaccess
+RewriteCond %{HTTPS} off
+RewriteCond %{HTTP:X-Forwarded-Proto} !https
+RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [R=301,L]
+```
+
+#### 3. Production Settings
+
+The following settings are recommended for production:
+
+```php
+// config.php
+define('APP_DEBUG', false);        // Disable debug mode
+define('APP_ENV', 'production');   // Set environment
+define('SECURITY_HEADERS_ENABLED', true);  // Enable security headers
+```
+
+### Quick Production Setup
+
+1. **Clone the repository:**
+```bash
+git clone https://github.com/LebToki/Laragon-Dashboard.git
+cd Laragon-Dashboard
+```
+
+2. **Checkout production branch:**
+```bash
+git checkout production
+```
+
+3. **Configure security:**
+   - Edit `config.php` and set a strong admin password
+   - Or set `LARAGON_DASHBOARD_PASSWORD` environment variable
+
+4. **Configure HTTPS:**
+   - Uncomment HTTPS redirect in `.htaccess`
+   - Or configure SSL in your web server
+
+5. **Access the dashboard:**
+   - Navigate to your deployed URL
+   - Login with your configured password
+
+### Environment Variables
+
+| Variable | Description | Default |
+|----------|-------------|--------|
+| `LARAGON_DASHBOARD_PASSWORD` | Admin password | (none - must be set) |
+| `LARAGON_ROOT` | Laragon installation path | Auto-detected |
+
 ## 🛡️ Security
 
 ### Security Features
