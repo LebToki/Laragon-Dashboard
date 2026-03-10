@@ -35,7 +35,7 @@
     # Referrer Policy for privacy
     Header set Referrer-Policy "strict-origin-when-cross-origin"
     # Content Security Policy - restrict resources
-    Header set Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data:;"
+    Header set Content-Security-Policy "default-src 'self' blob:; script-src 'self' 'unsafe-inline' 'unsafe-eval' blob: https://code.iconify.design; script-src-elem 'self' 'unsafe-inline' blob: https://code.iconify.design; worker-src 'self' blob:; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: https://*; font-src 'self' https://fonts.gstatic.com; connect-src 'self' https://api.iconify.design https://api.unisvg.com https://api.simplesvg.com; frame-src 'self'; object-src 'none';"
     # Permissions Policy
     Header set Permissions-Policy "geolocation=(), microphone=(), camera=()"
 </IfModule>

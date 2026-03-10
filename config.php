@@ -1,7 +1,7 @@
 <?php
 /**
  * Laragon Dashboard Configuration
- * Version: 4.0.3
+ * Version: 4.0.4
  * Author: Tarek Tarabichi
  * Company: 2TInteractive (2tinteractive.com)
  * Project Start: Early 2024
@@ -819,7 +819,7 @@ if (defined('SECURITY_HEADERS_ENABLED') && SECURITY_HEADERS_ENABLED) {
     if (headers_sent() === false) {
         @header_remove('Content-Security-Policy');
     }
-    header("Content-Security-Policy: default-src 'self' blob:; script-src 'self' 'unsafe-inline' 'unsafe-eval' blob: https://code.iconify.design; script-src-elem 'self' 'unsafe-inline' blob: https://code.iconify.design; worker-src 'self' blob:; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: https://*; font-src 'self' https://fonts.gstatic.com; connect-src 'self' https://api.iconify.design https://api.unisvg.com; frame-src 'self'; object-src 'none'; report-uri /csp-report");
+    header("Content-Security-Policy: default-src 'self' blob:; script-src 'self' 'unsafe-inline' 'unsafe-eval' blob: https://code.iconify.design; script-src-elem 'self' 'unsafe-inline' blob: https://code.iconify.design; worker-src 'self' blob:; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: https://*; font-src 'self' https://fonts.gstatic.com; connect-src 'self' https://api.iconify.design https://api.unisvg.com https://api.simplesvg.com; frame-src 'self'; object-src 'none'; report-uri /csp-report");
     
     // Referrer policy
     header('Referrer-Policy: strict-origin-when-cross-origin');

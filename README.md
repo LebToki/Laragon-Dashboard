@@ -1,23 +1,22 @@
 # 🚀 Laragon Dashboard
 
-We're thrilled to announce the release of Laragon Dashboard 4.0.3, a complete reimagining of local development environment management for Windows. This isn't just an update, it's a quantum leap forward in how you interact with your Laragon setup.
+We're thrilled to announce the release of Laragon Dashboard 4.0.4, a complete reimagining of local development environment management for Windows. This isn't just an update, it's a quantum leap forward in how you interact with your Laragon setup.
 
 Laragon Dashboard is a modern, feature-rich web-based dashboard for managing Laragon development environment. 
-Version 4.0.3 aims to be a comprehensive MAMP competitor on Windows, replicating Laragon control panel functionality in a modern, themed web interface.
+Version 4.0.4 aims to be a comprehensive MAMP competitor on Windows, replicating Laragon control panel functionality in a modern, themed web interface.
 
 "The best Windows development environment just got better. Welcome to the future of local development."
 
 
-[![Version](https://img.shields.io/badge/version-4.0.3-blue.svg)](https://github.com/LebToki/Laragon-Dashboard)
+[![Version](https://img.shields.io/badge/version-4.0.4-blue.svg)](https://github.com/LebToki/Laragon-Dashboard)
 [![PHP](https://img.shields.io/badge/PHP-7.4%2B-green.svg)](https://php.net)
 [![Bootstrap](https://img.shields.io/badge/Bootstrap-5.3.2-purple.svg)](https://getbootstrap.com)
 [![Platform](https://img.shields.io/badge/platform-windows-lightgrey.svg)]()
 [![License](https://img.shields.io/badge/license-MIT-orange.svg)](LICENSE)
 [![GitHub](https://img.shields.io/github/stars/LebToki/Laragon-Dashboard?style=social)](https://github.com/LebToki/Laragon-Dashboard)
 
-[![Buy Me A Coffee](https://img.shields.io/badge/buy%20me%20a%20coffee-donate-yellow.svg)](https://buymeacoffee.com/LebToki)
-
-[![Donate via Paypal](https://img.shields.io/badge/paypal-donate-blue.svg)](https://www.paypal.com/donate/?hosted_button_id=TEEJNYQJA9B6U)
+[![Buy Me A Coffee](https://img.shields.io/badge/Buy%20Me%20A%20Coffee-Donate-yellow?style=for-the-badge&logo=buy-me-a-coffee)](https://buymeacoffee.com/LebToki)
+[![Donate via Paypal](https://img.shields.io/badge/Donate%20with%20Paypal-Donate-blue?style=for-the-badge&logo=paypal)](https://www.paypal.com/donate/?hosted_button_id=TEEJNYQJA9B6U)
 
 <p align="center">
   <img src="https://img.shields.io/github/stars/LebToki/Laragon-Dashboard?style=for-the-badge" alt="Stars" />
@@ -51,7 +50,7 @@ Version 4.0.3 aims to be a comprehensive MAMP competitor on Windows, replicating
 ## 📋 Project Information
 
 - **Project Name**: Laragon Dashboard
-- **Version**: 4.0.3
+- **Version**: 4.0.4
 - **Author**: Tarek Tarabichi
 - **Company**: 2TInteractive (2tinteractive.com)
 - **Project Start**: Early 2024
@@ -62,7 +61,7 @@ Version 4.0.3 aims to be a comprehensive MAMP competitor on Windows, replicating
 ---
 
 ## 💡 Why This Matters
-Laragon has always been the fastest, most lightweight development environment for Windows. With version 4.0.3 of the dashboard, we're bringing that same philosophy to the web interface:
+Laragon has always been the fastest, most lightweight development environment for Windows. With version 4.0.4 of the dashboard, we're bringing that same philosophy to the web interface:
 
 - No Electron bloat – Pure web technology, zero memory overhead
 - **Instant Startup** – Access your dashboard immediately via localhost.
@@ -168,6 +167,62 @@ Laragon is currently Windows-only. For future cross-platform support, the dashbo
 ### 🤖 AI Integration (Beta)
 - **BYOK AI Agent** - **NEW**: Integrated glassmorphic chat widget for project scaffolding, troubleshooting, and code assistance.
 - **System Context Bridge** - Secure backend API providing real-time environment data to the agent.
+
+## 🔌 Plugin System (New in 4.0.4+)
+
+Laragon Dashboard now features a powerful plugin system that allows you to extend functionality with third-party tools and integrations.
+
+### 🎯 Available Plugins
+
+#### 🤖 **CodePilot** - AI-Powered Code Editor
+- **Multi-provider AI support**: Ollama, DeepSeek, Gemini, HuggingFace, OpenAI, Anthropic, Qwen, MiniMax
+- **Project manager** with 7 starter templates
+- **AI Studio** for image generation
+- **Monaco Editor** (VS Code engine)
+- **Full file browser** and editor
+- **One-click installation** from GitHub
+
+### 🚀 Installing Plugins
+
+1. Click the **puzzle icon** in the navbar
+2. Click **"Open Plugin Hub"**
+3. Browse available plugins
+4. Click **"Install"** on any plugin
+
+### 🔧 Plugin Management
+
+- **Auto-updates**: Plugins check for updates automatically
+- **One-click updates**: Update plugins with a single click
+- **Easy uninstallation**: Remove plugins completely
+- **Enable/disable**: Toggle plugins without uninstalling
+
+### 🛠️ For Developers: Creating Plugins
+
+Plugins are distributed as GitHub releases with `.zip` archives. To create a plugin:
+
+1. Create a GitHub repository with your plugin
+2. Add a `plugin.json` manifest file
+3. Create releases with `.zip` archives
+4. Add your plugin to the available plugins list
+
+### 📁 Plugin Structure
+```
+plugins/
+├── codepilot/          # Plugin directory
+│   ├── public/         # Web-accessible files
+│   ├── src/            # Source code
+│   └── plugin.json     # Plugin manifest
+└── ...
+
+data/plugins/
+└── registry.json      # Installed plugins registry
+```
+
+### 🔄 Automatic Updates
+
+Plugins automatically check for updates from GitHub and notify you when new versions are available.
+
+---
 
 ### 🔒 Security Features
 - **CSRF Protection** - Secure token-based protection
@@ -362,6 +417,8 @@ Laragon-Dashboard/
 ├── index.php             # Entry point and router
 └── README.md             # This file
 ```
+
+---
 
 ## 🎯 Usage
 
@@ -790,144 +847,40 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 See [CHANGELOG.md](CHANGELOG.md) for detailed version history.
 
-### Version 4.0.3 (Latest Stability Release)
-- **FIXED**: Critical `Fatal error: Cannot redeclare getLogFiles()` in log viewer.
-- **IMPROVED**: Robust log discovery patterns for Apache, PHP, and MySQL across all Laragon versions.
-- **IMPROVED**: Memory-efficient tailing for reading large log files without performance overhead.
-- **IMPROVED**: Standardized log icons using the `solar:` set for consistent rendering.
-- **IMPROVED**: Server Vitals performance with 5-second intelligent caching for expensive system probes.
-- **NEW**: Local Auto-Authorization for a seamless developer experience when accessing via localhost.
-- **FIXED**: JSON response structure for Logs API to ensure reliable UI "probing" and status updates.
+## [4.0.4] - 2026-03-01
 
-### Version 4.0.2
-- **MAJOR: Modern Re-engineering & AI Integration**: Complete transition to modular Core architecture using PSR-4 autoloader.
-- **NEW: AI Agent (Beta)**: Integration of a glassmorphic chat widget and system context bridge for intelligent environment assistance.
-- **NEW: Advanced Database Engine**: Re-engineered database page with full schema explorer, result grid, and read-only query runner.
-- **NEW: Logs as HTML**: Revolutionary log renderer for Mailbox that parses raw email logs into beautiful, searchable HTML tables.
-- **NEW: Config Editor 2.0**: Completely revamped service configuration editor with theme-aware transparency and improved routing.
-- **NEW: Updatable Core Paths**: Added support for custom Laragon Root paths with real-time validation and persistence.
-- **IMPROVED: Glassmorphism UI**: Applied "Glass-Card" aesthetic to project cards and optimized dark mode gradients.
-- **IMPROVED: Performance Engine**: Refined project discovery logic with intelligent directory exclusion and high-speed caching.
-- **FIXED**: Resolved 500 error in modular Log API and fixed 404 routing for Config Editor.
-- **MODULAR**: New classes in `includes/Core/` (`Security`, `System`, `Services`, `Logs`, `Cache`).
-- **SECURITY**: Universal CSRF protection & Mandatory session-based authentication.
-- **PERFORMANCE**: Integrated `Core\Cache` for expensive system operations.
+### 🚀 NEW: Plugin System
+- **COMPLETE PLUGIN ARCHITECTURE**: Full plugin management system with GitHub integration
+- **PLUGIN MANAGER CLASS**: `LaragonDashboard\Core\PluginManager` for plugin lifecycle management
+- **REST API**: `/api/plugins.php` for plugin operations (install, uninstall, update, list)
+- **PLUGIN HUB UI**: New page at `/index.php?page=plugins` for plugin management
+- **NAVBAR INTEGRATION**: Puzzle icon replaces notifications for plugin hub access
+- **AUTO-UPDATES**: Plugins automatically check for updates from GitHub releases
+- **CODE PILOT PLUGIN**: First-party AI code editor plugin available for installation
 
-### Version 3.1.5
+### 🔌 Plugin Features
+- **One-click installation** from GitHub repositories
+- **Automatic update detection** and notifications
+- **Plugin registry** in `data/plugins/registry.json`
+- **Enable/disable** plugins without uninstallation
+- **Clean uninstallation** with complete file removal
+- **Multi-provider AI support** in CodePilot (Ollama, DeepSeek, Gemini, OpenAI, Anthropic, Qwen, MiniMax)
 
-### Version 3.1.4
-- **FIXED**: Checkbox settings in Preferences can now be properly unset - fixed issue where settings like "Show Debug Banner" couldn't be disabled once enabled
-- **FIXED**: All checkbox preferences (debug_banner, auto_update_check, auto_update_install) now correctly save their unchecked state
-- **IMPROVED**: Enhanced preferences API to handle checkbox unsetting by explicitly processing false/0 values
-- **IMPROVED**: JavaScript form submission now includes all checkbox fields even when unchecked
-- **IMPROVED**: Added data/preferences.json to .gitignore to protect sensitive user data
+### 🛠️ Technical Improvements
+- **Extensible architecture** for future plugins
+- **Secure authentication** required for all plugin operations
+- **CSRF protection** on all plugin API endpoints
+- **Automatic directory creation** for plugin storage
+- **GitHub API integration** for release downloads
 
-### Version 3.1.3
-- **FIXED**: HTTP/HTTPS protocol detection - projects now correctly use HTTPS when Laragon is configured for SSL
-- **FIXED**: Enhanced protocol detection with multiple fallback methods (request protocol, Laragon config, port detection)
-- **NEW**: `FORCE_HTTPS` configuration option to force HTTPS for all project URLs
-- **IMPROVED**: Root directory cleanup - organized test files, diagnostic tools, and release notes into `_ignored/` directory
-- **IMPROVED**: Better file organization with dedicated directories for releases, responses, and tests
-
-### Version 3.1.2
-- **FIXED**: Server status card icons now fully visible with solid colored backgrounds
-- **FIXED**: Project card icons now fully visible in dashboard and projects page
-- **FIXED**: Debug banner completely disabled by default (will not show unless explicitly enabled)
-- **IMPROVED**: Platform detection now correctly identifies PHP, Python, and HTML5 projects instead of "Other"
-- **IMPROVED**: Icon styling consistency across all views with explicit font-size
-- **IMPROVED**: Debug banner control logic for better preference handling
-
-### Version 3.1.1
-- **NEW**: Time-based greeting and clock display in navbar (Good morning/afternoon/evening)
-- **NEW**: Local time and date display with customizable formats
-- **NEW**: Time format preferences (12-hour/24-hour) with auto-detection
-- **NEW**: Date format preferences (ISO, US, EU formats) with auto-detection
-- **NEW**: 3-dot dropdown menu on project cards for quick actions
-- **NEW**: "Ignore Project" feature via dropdown menu or right-click context menu
-- **IMPROVED**: WP Admin button now only shows for WordPress projects (hides automatically for others)
-- **IMPROVED**: PHPMyAdmin card - direct link in "Manage MySQL" text, removed separate button
-- **IMPROVED**: Navbar layout - greeting and time display positioned in center
-- **IMPROVED**: Project card layout - 3-dot menu in top-left, icon/favicon in top-right
-- **IMPROVED**: Button styling consistency across all project cards (WowDash pattern)
-- **IMPROVED**: Share and Delete buttons added to dashboard project cards
-- **NOTE**: Debug banner is disabled by default in `config.php` (line 38). Only enable if you're troubleshooting issues.
-
-### Version 3.1.0
-- **NEW**: Auto-update system with GitHub integration
-- **NEW**: User preferences system with JSON storage
-- **NEW**: Debug banner for troubleshooting (can be enabled in Preferences)
-- **NEW**: Project deletion with database cleanup and backup options
-- **NEW**: SMTP configuration fix tool for Mailpit integration
-- **NEW**: Tunneling services integration (ngrok, LocalTunnel, Cloudflare Tunnel, Expose.dev)
-- **IMPROVED**: Mailpit API integration with better error handling
-- **IMPROVED**: Laragon path detection for custom installations
-- **IMPROVED**: CSS compilation from SCSS source files
-- **FIXED**: CSS loading issues for custom document root setups
-- **FIXED**: Mailpit email count display issues
-
-### Version 3.0.9
-- **COMPLETE CODEBASE UPDATE**: Full repository sync with latest working installation
-- All files updated to match production-ready codebase
-- Comprehensive testing and validation
-- Improved stability and reliability
-
-### Version 3.0.8
-- **CRITICAL FIX**: Complete CSS loading fix - all assets now use absolute paths
-- **CRITICAL FIX**: Fixed Laragon detection for D:\Laragon and D:\Dev_Sites setups
-- **NEW**: Added diagnostic tool (`diagnostic.php`) for troubleshooting path and configuration issues
-- **NEW**: Added `.htaccess` file for improved URL rewriting and routing
-- Added specific path checks for D:\Laragon, D:\Dev_Sites configurations
-- Case-insensitive Laragon detection (handles both Laragon and laragon)
-- Improved BASE_URL detection for custom domains (laragon-dashboard.local)
-- Enhanced document root detection for custom setups
-- Fixed language selector continuous running issue
-- All CSS/JS assets now load correctly via localhost and custom domains
-
-### Version 3.0.6
-- Added automatic self-update functionality
-- Update notifications in navbar
-- User preferences for auto-update settings
-- One-click update installation with progress tracking
-- Automatic backup before updates
-- Update checking on page load and periodic checks
-
-### Version 3.0.5
-- Fixed CSS loading issue - removed conflicting base tag
-- All asset paths now use absolute paths from web root
-- Improved BASE_URL calculation for better routing support
-- CSS and JS files now load correctly in all scenarios
-
-### Version 3.0.4
-- Fixed CSS loading issue - improved BASE_URL and ASSETS_URL calculation
-- Enhanced asset path resolution for routing scenarios
-- CSS files now load correctly regardless of access method
-
-### Version 3.0.3
-- Final security cleanup - removed all exposed secrets
-- Removed backup directories from repository
-- Added comprehensive .gitignore file
-- Repository verified clean and secure
-
-### Version 3.0.2
-- Removed backup directories from repository
-- Added comprehensive .gitignore file
-- Cleaned up repository structure
-
-### Version 3.0.1
-- Fixed asset path resolution issues
-- Improved BASE_URL calculation for routing
-- Organized development files into `/devfiles` directory
-- Removed `/template` directory (no longer needed)
-- Enhanced asset loading with proper base tag support
-
-### Version 3.0.0
-- Major version release
-- Complete UI overhaul with modern dashboard design
-- Enhanced service management
-- Improved project detection
-- Better database management tools
-- Advanced email client integration
-- Comprehensive logging system
+- **FIXED**: Restored missing `diagnostic.php` file (Issue #45)
+- **FIXED**: Content Security Policy for Iconify icons (BOT icon now loads)
+- **FIXED**: Ignore project cache invalidation (projects now properly hide when ignored)
+- **UPDATED**: `.htaccess` CSP to allow external resources (fonts, icons)
+- **IMPROVED**: Diagnostic tool now loads files in correct order for version 4.0.3+
+- **SPECIAL THANKS**: To @jyllstuart for reporting and spotting the missing diagnostic.php file
+- **UPDATED**: Version number to 4.0.4
+```
 
 ---
 

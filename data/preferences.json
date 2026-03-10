@@ -17,6 +17,7 @@
         "public",
         "tests",
         "includes",
-        "assets"
+        "assets",
+        "logs"
     ]
 }
