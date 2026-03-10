@@ -2,7 +2,7 @@
 <div id="ai-agent-widget" class="ai-agent-widget">
     <!-- Chat Toggle Button -->
     <button id="ai-agent-toggle" class="ai-agent-toggle glass-card shadow-lg" title="AI Assistant">
-        <iconify-icon icon="solar:magic-stick-3-bold-duotone" width="28" height="28"></iconify-icon>
+        <iconify-icon icon="hugeicons:bot" width="28" height="28"></iconify-icon>
         <span class="ai-agent-badge d-none"></span>
     </button>
 
@@ -11,7 +11,7 @@
         <div class="ai-agent-header d-flex align-items-center justify-content-between p-3 border-bottom border-white-10">
             <div class="d-flex align-items-center gap-2">
                 <div class="ai-agent-avatar glass-card p-2 bg-primary-600">
-                    <iconify-icon icon="solar:magic-stick-3-bold-duotone" width="20" height="20" class="text-white"></iconify-icon>
+                    <iconify-icon icon="hugeicons:bot" width="20" height="20" class="text-white"></iconify-icon>
                 </div>
                 <div>
                     <h6 class="mb-0 text-white">Laragon AI Agent</h6>

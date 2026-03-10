@@ -51,7 +51,15 @@
     }
   });
 
-/**
+
+// Plugin Hub Router
+window.openPluginHub = function() {
+    console.log('openPluginHub called');
+    console.log('Current URL:', window.location.href);
+    window.location.href = '/index.php?page=plugins';
+};
+
+  /**
 * Utility function to calculate the current theme setting based on localStorage.
 */
 function calculateSettingAsThemeString({ localStorageTheme }) {

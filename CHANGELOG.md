@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file.
 
+## [4.0.4] - 2026-03-01
+
+- **FIXED**: Restored missing `diagnostic.php` file (Issue #45)
+- **FIXED**: Content Security Policy for Iconify icons (BOT icon now loads)
+- **FIXED**: Ignore project cache invalidation (projects now properly hide when ignored)
+- **UPDATED**: `.htaccess` CSP to allow external resources (fonts, icons)
+- **IMPROVED**: Diagnostic tool now loads files in correct order for version 4.0.3+
+- **SPECIAL THANKS**: To @jyllstuart for reporting and spotting the missing diagnostic.php file
+- **UPDATED**: Version number to 4.0.4
+
 ## [4.0.3] - 2026-03-01
 
 - **FIXED**: Critical `Fatal error: Cannot redeclare getLogFiles()` in log viewer.

@@ -130,29 +130,33 @@ $GLOBALS['navbarAssetsImageUrl'] = $assetsImageUrl;
                     </div>
                 </div><!-- Language dropdown end -->
 
-                <!-- Notifications Dropdown -->
-                <div class="dropdown">
-                    <button class="has-indicator w-40-px h-40-px bg-neutral-200 rounded-circle d-flex justify-content-center align-items-center" type="button" data-bs-toggle="dropdown" id="notifications-btn" aria-label="Notifications" title="View Notifications">
-                        <iconify-icon icon="iconoir:bell" class="text-primary-light text-xl"></iconify-icon>
-                        <span class="indicator bg-danger-main" id="update-indicator" style="display: none;"></span>
-                    </button>
-                    <div class="dropdown-menu to-top dropdown-menu-lg p-0" aria-labelledby="notifications-btn">
-                        <div class="m-16 py-12 px-16 radius-8 bg-primary-50 mb-16 d-flex align-items-center justify-content-between gap-2">
-                            <div>
-                                <p class="text-lg text-primary-light fw-semibold mb-0">Notifications</p>
-                            </div>
-                            <span class="text-primary-600 fw-semibold text-lg w-40-px h-40-px rounded-circle bg-base d-flex justify-content-center align-items-center" id="notification-count">0</span>
-                        </div>
-                        <div class="max-h-400-px overflow-y-auto scroll-sm pe-4" id="notifications-list">
-                            <div class="px-24 py-12 text-center">
-                                <p class="text-secondary-light mb-0">No new notifications</p>
-                            </div>
-                        </div>
-                        <div class="text-center py-12 px-16">
-                            <a href="javascript:void(0)" class="text-primary-600 fw-semibold text-md">See All Notifications</a>
-                        </div>
-                    </div>
-                </div><!-- Notifications dropdown end -->
+<!-- Plugins Hub Dropdown -->
+<div class="dropdown">
+    <button class="has-indicator w-40-px h-40-px bg-neutral-200 rounded-circle d-flex justify-content-center align-items-center" type="button" data-bs-toggle="dropdown" id="plugins-btn" aria-label="Plugins" title="Plugins Hub">
+        <iconify-icon icon="iconoir:puzzle" class="text-primary-light text-xl"></iconify-icon>
+        <span class="indicator bg-danger-main" id="plugin-update-indicator" style="display: none;"></span>
+    </button>
+    <div class="dropdown-menu to-top dropdown-menu-lg p-0" aria-labelledby="plugins-btn">
+        <div class="m-16 py-12 px-16 radius-8 bg-primary-50 mb-16 d-flex align-items-center justify-content-between gap-2">
+            <div>
+                <p class="text-lg text-primary-light fw-semibold mb-0">Plugins Hub</p>
+            </div>
+            <span class="text-primary-600 fw-semibold text-lg w-40-px h-40-px rounded-circle bg-base d-flex justify-content-center align-items-center" id="plugin-count">0</span>
+        </div>
+        <div class="max-h-400-px overflow-y-auto scroll-sm pe-4" id="plugins-list">
+            <div class="px-24 py-12 text-center">
+                <p class="text-secondary-light mb-0">Loading plugins...</p>
+            </div>
+        </div>
+        <div class="text-center py-12 px-16">
+           <a href="javascript:void(0)" onclick="window.openPluginHub()" class="text-primary-600 fw-semibold text-md">Open Plugin Hub</a>
+        </div>
+    </div>
+</div><!-- Plugins dropdown end -->
+
+
+
+
 
                 <!-- User Profile Dropdown -->
                 <div class="dropdown">
