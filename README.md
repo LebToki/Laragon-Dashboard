@@ -880,7 +880,7 @@ See [CHANGELOG.md](CHANGELOG.md) for detailed version history.
 - **IMPROVED**: Diagnostic tool now loads files in correct order for version 4.0.3+
 - **SPECIAL THANKS**: To @jyllstuart for reporting and spotting the missing diagnostic.php file
 - **UPDATED**: Version number to 4.0.4
-```
+
 
 **Made with ❤️ for the Laragon community**
 
