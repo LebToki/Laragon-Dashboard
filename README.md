@@ -882,8 +882,6 @@ See [CHANGELOG.md](CHANGELOG.md) for detailed version history.
 - **UPDATED**: Version number to 4.0.4
 ```
 
----
-
 **Made with ❤️ for the Laragon community**
 
 **Author**: Tarek Tarabichi | **Company**: 2TInteractive | **Website**: https://2tinteractive.com
