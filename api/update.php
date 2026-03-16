@@ -18,6 +18,10 @@ ini_set('log_errors', 1);
 require_once __DIR__ . '/../config.php';
 require_once __DIR__ . '/../includes/UpdateManager.php';
 require_once __DIR__ . '/../includes/ConfigMigrator.php';
+require_once __DIR__ . '/../includes/helpers.php';
+
+// Enforce authentication
+check_auth();
 
 // Clear any output
 ob_clean();
