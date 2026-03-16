@@ -1612,9 +1612,12 @@ function parseDate(s, ignoreTimezone) { // ignoreTimezone defaults to true
 		if (ignoreTimezone === undefined) {
 			ignoreTimezone = true;
 		}
-		return parseISO8601(s, ignoreTimezone) || (s ? new Date(s) : null);
+		var d = parseISO8601(s, ignoreTimezone) || (s ? new Date(s) : null);
+		if (d === null || isNaN(d.valueOf())) {
+			return null;
+		}
+		return d;
 	}
-	// TODO: never return invalid dates (like from new Date(<string>)), return null instead
 	return null;
 }
 
