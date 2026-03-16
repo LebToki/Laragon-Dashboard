@@ -77,4 +77,5 @@ class System {
         
         return defined('APP_VERSION') ? APP_VERSION : '3.0.0';
     }
+
 }
