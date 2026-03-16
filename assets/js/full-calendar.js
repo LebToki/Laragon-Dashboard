@@ -3215,7 +3215,9 @@ function AgendaView(element, calendar, viewName) {
 		markFirstLast(dayHead.add(dayHead.find('tr')));
 		markFirstLast(dayBody.add(dayBody.find('tr')));
 
-		// TODO: now that we rebuild the cells every time, we should call dayRender
+		dayBodyCells.each(function(i, _cell) {
+			trigger('dayRender', t, cellToDate(0, i), $(_cell));
+		});
 	}
 
 
