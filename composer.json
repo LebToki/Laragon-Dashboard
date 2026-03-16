@@ -1,11 +1,4 @@
 {
-    "name": "jules/app",
-    "authors": [
-        {
-            "name": "Jane Doe",
-            "email": "jane@example.com"
-        }
-    ],
     "require-dev": {
         "phpunit/phpunit": "^12.5"
     }

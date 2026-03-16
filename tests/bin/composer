@@ -1,0 +1,5 @@
+#!/bin/bash
+echo "Mock composer executed with: $@"
+if [[ "$1" == "create-project" && "$2" == "laravel/laravel" ]]; then
+    mkdir -p "$3"
+fi
