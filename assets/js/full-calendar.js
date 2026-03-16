@@ -1429,7 +1429,10 @@ function EventManager(options, _sources) {
 		}else{
 			event.className = [];
 		}
-		// TODO: if there is no start date, return false to indicate an invalid event
+
+		if (!event.start) {
+			return false;
+		}
 	}
 	
 	
