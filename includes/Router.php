@@ -253,9 +253,7 @@ if (!class_exists('Router')) {
          * Check if user is authenticated
          */
         private function isAuthenticated() {
-            // TODO: Implement authentication check
-            // For now, always return true
-            return true;
+            return \LaragonDashboard\Core\Security::isAuthenticated();
         }
         
         /**
