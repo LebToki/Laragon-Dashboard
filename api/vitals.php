@@ -24,150 +24,63 @@ header('Content-Type: application/json');
 
 // Get server vitals data
 // Get server vitals data with caching to prevent slow wmic calls from blocking
-function getServerVitals() {
-    $cacheFile = CACHE_ROOT . '/vitals_current.json';
-    $cacheTTL = 5; // 5 seconds cache
-    
-    if (file_exists($cacheFile) && (time() - filemtime($cacheFile)) < $cacheTTL) {
-        $cachedData = json_decode(file_get_contents($cacheFile), true);
-        if ($cachedData) {
-            return $cachedData;
-        }
-    }
 
-    $vitals = [
-        'cpu' => [
-            'current' => 0,
-            'history' => []
-        ],
-        'memory' => [
-            'current' => 0,
-            'total' => 0,
-            'used' => 0,
-            'free' => 0,
-            'history' => []
-        ],
-        'disk' => [
-            'current' => 0,
-            'total' => 0,
-            'used' => 0,
-            'free' => 0,
-            'drives' => []
-        ],
-        'network' => [
-            'speed' => 0,
-            'upload' => 0,
-            'download' => 0,
-            'history' => []
-        ],
-        'services' => [
-            'running' => 0,
-            'stopped' => 0,
-            'total' => 0
-        ]
-    ];
-    
-    // Get CPU usage (Windows)
-    if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
-        // Use a single powershell command for multiple vitals for speed
-        // This is often faster than multiple wmic calls
-        $psCommand = 'powershell -Command "Get-CimInstance Win32_Processor | Select-Object -ExpandProperty LoadPercentage; ' .
-                     'Get-CimInstance Win32_OperatingSystem | Select-Object TotalVisibleMemorySize, FreePhysicalMemory; ' .
-                     'Get-Service -Name Apache2.4, MySQL | Select-Object Status"';
-        
-        // Fallback to individual calls if powershell fails or is slow
-        // But for now, let's optimize the existing wmic calls by combining or streamlining
-        
-        // Get CPU and Memory usage using WMI (consolidated)
-        $output = @shell_exec('wmic cpu get loadpercentage /value & wmic OS get TotalVisibleMemorySize,FreePhysicalMemory /value 2>&1');
+function getDiskUsage(&$vitals) {
+    // Get disk usage (only C: drive by default for speed, or cached discovery)
+    $drives = ['C:']; // Restricted to C: for latency reduction, others can be backgrounded
+    foreach ($drives as $drive) {
+        $output = @shell_exec('wmic logicaldisk where "DeviceID=\'' . $drive . '\'" get Size,FreeSpace /value 2>&1');
         if ($output) {
-            if (preg_match('/LoadPercentage=(\d+)/', $output, $matches)) {
-                $vitals['cpu']['current'] = (int)$matches[1];
-            } else {
-                $vitals['cpu']['current'] = rand(5, 15);
-            }
-
-            preg_match('/TotalVisibleMemorySize=(\d+)/', $output, $totalMatches);
-            preg_match('/FreePhysicalMemory=(\d+)/', $output, $freeMatches);
-            if (!empty($totalMatches[1]) && !empty($freeMatches[1])) {
-                $totalKB = (int)$totalMatches[1];
-                $freeKB = (int)$freeMatches[1];
-                $usedKB = $totalKB - $freeKB;
+            preg_match('/Size=(\d+)/', $output, $sizeMatches);
+            preg_match('/FreeSpace=(\d+)/', $output, $freeMatches);
+            if (!empty($sizeMatches[1]) && !empty($freeMatches[1])) {
+                $total = (int)$sizeMatches[1];
+                $free = (int)$freeMatches[1];
+                $used = $total - $free;
+                $percent = round(($used / $total) * 100, 2);
                 
-                $vitals['memory']['total'] = round($totalKB / 1024 / 1024, 2); // GB
-                $vitals['memory']['free'] = round($freeKB / 1024 / 1024, 2); // GB
-                $vitals['memory']['used'] = round($usedKB / 1024 / 1024, 2); // GB
-                $vitals['memory']['current'] = round(($usedKB / $totalKB) * 100, 2);
-            }
-        }
-        
-        // Get disk usage (only C: drive by default for speed, or cached discovery)
-        $drives = ['C:']; // Restricted to C: for latency reduction, others can be backgrounded
-        if (!empty($drives)) {
-            $query = implode("' OR DeviceID='", $drives);
-            $output = @shell_exec('wmic logicaldisk where "DeviceID=\'' . $query . '\'" get DeviceID,FreeSpace,Size /value 2>&1');
-            if ($output) {
-                // Split WMI output by DeviceID to prevent regex matching across drive boundaries
-                // if a drive (like CD-ROM) returns empty FreeSpace or Size
-                $blocks = explode('DeviceID=', $output);
-                array_shift($blocks); // remove first empty element before first DeviceID
+                $vitals['disk']['drives'][] = [
+                    'drive' => $drive,
+                    'total' => round($total / 1024 / 1024 / 1024, 2), // GB
+                    'used' => round($used / 1024 / 1024 / 1024, 2), // GB
+                    'free' => round($free / 1024 / 1024 / 1024, 2), // GB
+                    'percent' => $percent
+                ];
 
-                foreach ($blocks as $block) {
-                    if (preg_match('/^([A-Z]:)/i', trim($block), $driveMatch)) {
-                        $drive = $driveMatch[1];
-
-                        preg_match('/FreeSpace=(\d+)/i', $block, $freeMatches);
-                        preg_match('/Size=(\d+)/i', $block, $sizeMatches);
-
-                        if (!empty($sizeMatches[1]) && !empty($freeMatches[1])) {
-                            $free = (int)$freeMatches[1];
-                            $total = (int)$sizeMatches[1];
-                            $used = $total - $free;
-                            $percent = $total > 0 ? round(($used / $total) * 100, 2) : 0;
-                        } else {
-                            continue; // Skip if we don't have valid size data
-                        }
-
-                        $vitals['disk']['drives'][] = [
-                            'drive' => $drive,
-                            'total' => round($total / 1024 / 1024 / 1024, 2), // GB
-                            'used' => round($used / 1024 / 1024 / 1024, 2), // GB
-                            'free' => round($free / 1024 / 1024 / 1024, 2), // GB
-                            'percent' => $percent
-                        ];
-
-                        if ($drive === 'C:') {
-                            $vitals['disk']['current'] = $percent;
-                            $vitals['disk']['total'] = round($total / 1024 / 1024 / 1024, 2);
-                            $vitals['disk']['used'] = round($used / 1024 / 1024 / 1024, 2);
-                            $vitals['disk']['free'] = round($free / 1024 / 1024 / 1024, 2);
-                        }
-                    }
+                if ($drive === 'C:') {
+                    $vitals['disk']['current'] = $percent;
+                    $vitals['disk']['total'] = round($total / 1024 / 1024 / 1024, 2);
+                    $vitals['disk']['used'] = round($used / 1024 / 1024 / 1024, 2);
+                    $vitals['disk']['free'] = round($free / 1024 / 1024 / 1024, 2);
                 }
             }
         }
-        
-        // Get service status (Try sc query - consolidated)
-        $services = ['Apache2.4', 'MySQL'];
-        $running = 0;
-        $commands = [];
-        foreach ($services as $service) {
-            $commands[] = 'sc query "' . $service . '"';
-        }
-        $output = @shell_exec(implode(' & ', $commands));
-        if ($output) {
-            foreach ($services as $service) {
-                // Find the section for this service in the combined output
-                if (preg_match('/SERVICE_NAME:\s*' . preg_quote($service, '/') . '\s+(?:(?!SERVICE_NAME:).)*?STATE\s+:\s+\d+\s+RUNNING/is', $output)) {
-                    $running++;
-                }
-            }
-        }
-        $vitals['services']['running'] = $running;
-        $vitals['services']['stopped'] = count($services) - $running;
-        $vitals['services']['total'] = count($services);
     }
-    
+}
+
+function getServiceStatus(&$vitals) {
+    // Get service status (Try sc query - consolidated)
+    $services = ['Apache2.4', 'MySQL'];
+    $running = 0;
+    $commands = [];
+    foreach ($services as $service) {
+        $commands[] = 'sc query "' . $service . '"';
+    }
+    $output = @shell_exec(implode(' & ', $commands));
+    if ($output) {
+        foreach ($services as $service) {
+            // Find the section for this service in the combined output
+            if (preg_match('/SERVICE_NAME: ' . preg_quote($service, '/') . '.*?(?:STATE\s+:\s+\d+\s+RUNNING)/s', $output)) {
+                $running++;
+            }
+        }
+    }
+    $vitals['services']['running'] = $running;
+    $vitals['services']['stopped'] = count($services) - $running;
+    $vitals['services']['total'] = count($services);
+}
+
+function updateHistoryData(&$vitals) {
     // Generate history data (last 24 hours, hourly intervals)
     $now = time();
     $historyFile = CACHE_ROOT . '/vitals_history.json';
@@ -210,6 +123,84 @@ function getServerVitals() {
             'download' => $data['network_download']
         ];
     }
+}
+
+function getCpuAndMemoryUsage(&$vitals) {
+    // Get CPU and Memory usage using WMI (consolidated)
+    $output = @shell_exec('wmic cpu get loadpercentage /value & wmic OS get TotalVisibleMemorySize,FreePhysicalMemory /value 2>&1');
+    if ($output) {
+        if (preg_match('/LoadPercentage=(\d+)/', $output, $matches)) {
+            $vitals['cpu']['current'] = (int)$matches[1];
+        } else {
+            $vitals['cpu']['current'] = rand(5, 15);
+        }
+
+        preg_match('/TotalVisibleMemorySize=(\d+)/', $output, $totalMatches);
+        preg_match('/FreePhysicalMemory=(\d+)/', $output, $freeMatches);
+        if (!empty($totalMatches[1]) && !empty($freeMatches[1])) {
+            $totalKB = (int)$totalMatches[1];
+            $freeKB = (int)$freeMatches[1];
+            $usedKB = $totalKB - $freeKB;
+
+            $vitals['memory']['total'] = round($totalKB / 1024 / 1024, 2); // GB
+            $vitals['memory']['free'] = round($freeKB / 1024 / 1024, 2); // GB
+            $vitals['memory']['used'] = round($usedKB / 1024 / 1024, 2); // GB
+            $vitals['memory']['current'] = round(($usedKB / $totalKB) * 100, 2);
+        }
+    }
+}
+
+function getServerVitals() {
+    $cacheFile = CACHE_ROOT . '/vitals_current.json';
+    $cacheTTL = 5; // 5 seconds cache
+
+    if (file_exists($cacheFile) && (time() - filemtime($cacheFile)) < $cacheTTL) {
+        $cachedData = json_decode(file_get_contents($cacheFile), true);
+        if ($cachedData) {
+            return $cachedData;
+        }
+    }
+
+    $vitals = [
+        'cpu' => [
+            'current' => 0,
+            'history' => []
+        ],
+        'memory' => [
+            'current' => 0,
+            'total' => 0,
+            'used' => 0,
+            'free' => 0,
+            'history' => []
+        ],
+        'disk' => [
+            'current' => 0,
+            'total' => 0,
+            'used' => 0,
+            'free' => 0,
+            'drives' => []
+        ],
+        'network' => [
+            'speed' => 0,
+            'upload' => 0,
+            'download' => 0,
+            'history' => []
+        ],
+        'services' => [
+            'running' => 0,
+            'stopped' => 0,
+            'total' => 0
+        ]
+    ];
+
+    // Get CPU usage (Windows)
+    if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
+        getCpuAndMemoryUsage($vitals);
+        getDiskUsage($vitals);
+        getServiceStatus($vitals);
+    }
+
+    updateHistoryData($vitals);
     
     // Set random-ish values for network if not available (to show something)
     if ($vitals['network']['speed'] == 0) {
