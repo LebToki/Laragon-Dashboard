@@ -1241,17 +1241,7 @@ if (!function_exists('is_authenticated')) {
  */
 if (!function_exists('check_auth')) {
     function check_auth() {
-        if (!is_authenticated()) {
-            if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest') {
-                header('Content-Type: application/json');
-                http_response_code(401);
-                echo json_encode(['success' => false, 'error' => 'Authentication required']);
-                exit;
-            } else {
-                header('Location: login.php');
-                exit;
-            }
-        }
+        \LaragonDashboard\Core\Security::checkAuth();
     }
 }
 
