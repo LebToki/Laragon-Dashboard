@@ -254,54 +254,6 @@ if (!defined('TEMPLATE_URL')) {
 }
 
 /**
- * Scan all drives for Laragon installations
- * Returns array of detected Laragon paths
- */
-function scanForLaragonInstallations() {
-    $installations = [];
-    $drives = [];
-    
-    // Check common drives first
-    $commonDrives = ['C', 'D', 'E', 'F'];
-    foreach ($commonDrives as $drive) {
-        $drives[] = $drive;
-    }
-    
-    // Scan all available drives dynamically on Windows
-    if (function_exists('shell_exec') && strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
-        $output = @shell_exec('wmic logicaldisk get name 2>nul');
-        if ($output) {
-            preg_match_all('/([A-Z]):/', $output, $matches);
-            if (!empty($matches[1])) {
-                foreach ($matches[1] as $drive) {
-                    if (!in_array($drive, $drives)) {
-                        $drives[] = $drive;
-                    }
-                }
-            }
-        }
-    }
-    
-    // Check each drive for Laragon installation
-    foreach ($drives as $drive) {
-        $path = $drive . ':/laragon';
-        if (is_dir($path) && file_exists($path . '/laragon.exe')) {
-            // Verify it's a valid Laragon installation
-            if (file_exists($path . '/usr/laragon.ini')) {
-                $installations[] = [
-                    'path' => rtrim(str_replace('\\', '/', $path), '/'),
-                    'drive' => $drive,
-                    'valid' => true,
-                    'has_ini' => file_exists($path . '/usr/laragon.ini')
-                ];
-            }
-        }
-    }
-    
-    return $installations;
-}
-
-/**
  * Get Dashboard preferences (stored in JSON file)
  * Allows overriding Laragon detection
  */

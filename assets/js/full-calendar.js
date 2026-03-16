@@ -647,7 +647,7 @@ function Calendar(element, options, eventSources) {
 	
 	/* Event Fetching/Rendering
 	-----------------------------------------------------------------------------*/
-	// TODO: going forward, most of this stuff should be directly handled by the view
+
 
 
 	function refetchEvents() { // can be called as an API method
@@ -1621,7 +1621,7 @@ function parseDate(s, ignoreTimezone) { // ignoreTimezone defaults to true
 
 function parseISO8601(s, ignoreTimezone) { // ignoreTimezone defaults to false
 	// derived from http://delete.me.uk/2005/03/iso8601.html
-	// TODO: for a know glitch/feature, read tests/issue_206_parseDate_dst.html
+	// For a know glitch/feature, read tests/issue_206_parseDate_dst.html
 	var m = s.match(/^([0-9]{4})(-([0-9]{2})(-([0-9]{2})([T ]([0-9]{2}):([0-9]{2})(:([0-9]{2})(\.([0-9]+))?)?(Z|(([-+])([0-9]{2})(:?([0-9]{2}))?))?)?)?)?$/);
 	if (!m) {
 		return null;
@@ -3215,7 +3215,9 @@ function AgendaView(element, calendar, viewName) {
 		markFirstLast(dayHead.add(dayHead.find('tr')));
 		markFirstLast(dayBody.add(dayBody.find('tr')));
 
-		// TODO: now that we rebuild the cells every time, we should call dayRender
+		dayBodyCells.each(function(i, _cell) {
+			trigger('dayRender', t, cellToDate(0, i), $(_cell));
+		});
 	}
 
 
