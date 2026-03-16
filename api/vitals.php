@@ -103,30 +103,45 @@ function getServerVitals() {
         
         // Get disk usage (only C: drive by default for speed, or cached discovery)
         $drives = ['C:']; // Restricted to C: for latency reduction, others can be backgrounded
-        foreach ($drives as $drive) {
-            $output = @shell_exec('wmic logicaldisk where "DeviceID=\'' . $drive . '\'" get Size,FreeSpace /value 2>&1');
+        if (!empty($drives)) {
+            $query = implode("' OR DeviceID='", $drives);
+            $output = @shell_exec('wmic logicaldisk where "DeviceID=\'' . $query . '\'" get DeviceID,FreeSpace,Size /value 2>&1');
             if ($output) {
-                preg_match('/Size=(\d+)/', $output, $sizeMatches);
-                preg_match('/FreeSpace=(\d+)/', $output, $freeMatches);
-                if (!empty($sizeMatches[1]) && !empty($freeMatches[1])) {
-                    $total = (int)$sizeMatches[1];
-                    $free = (int)$freeMatches[1];
-                    $used = $total - $free;
-                    $percent = round(($used / $total) * 100, 2);
-                    
-                    $vitals['disk']['drives'][] = [
-                        'drive' => $drive,
-                        'total' => round($total / 1024 / 1024 / 1024, 2), // GB
-                        'used' => round($used / 1024 / 1024 / 1024, 2), // GB
-                        'free' => round($free / 1024 / 1024 / 1024, 2), // GB
-                        'percent' => $percent
-                    ];
-                    
-                    if ($drive === 'C:') {
-                        $vitals['disk']['current'] = $percent;
-                        $vitals['disk']['total'] = round($total / 1024 / 1024 / 1024, 2);
-                        $vitals['disk']['used'] = round($used / 1024 / 1024 / 1024, 2);
-                        $vitals['disk']['free'] = round($free / 1024 / 1024 / 1024, 2);
+                // Split WMI output by DeviceID to prevent regex matching across drive boundaries
+                // if a drive (like CD-ROM) returns empty FreeSpace or Size
+                $blocks = explode('DeviceID=', $output);
+                array_shift($blocks); // remove first empty element before first DeviceID
+
+                foreach ($blocks as $block) {
+                    if (preg_match('/^([A-Z]:)/i', trim($block), $driveMatch)) {
+                        $drive = $driveMatch[1];
+
+                        preg_match('/FreeSpace=(\d+)/i', $block, $freeMatches);
+                        preg_match('/Size=(\d+)/i', $block, $sizeMatches);
+
+                        if (!empty($sizeMatches[1]) && !empty($freeMatches[1])) {
+                            $free = (int)$freeMatches[1];
+                            $total = (int)$sizeMatches[1];
+                            $used = $total - $free;
+                            $percent = $total > 0 ? round(($used / $total) * 100, 2) : 0;
+                        } else {
+                            continue; // Skip if we don't have valid size data
+                        }
+
+                        $vitals['disk']['drives'][] = [
+                            'drive' => $drive,
+                            'total' => round($total / 1024 / 1024 / 1024, 2), // GB
+                            'used' => round($used / 1024 / 1024 / 1024, 2), // GB
+                            'free' => round($free / 1024 / 1024 / 1024, 2), // GB
+                            'percent' => $percent
+                        ];
+
+                        if ($drive === 'C:') {
+                            $vitals['disk']['current'] = $percent;
+                            $vitals['disk']['total'] = round($total / 1024 / 1024 / 1024, 2);
+                            $vitals['disk']['used'] = round($used / 1024 / 1024 / 1024, 2);
+                            $vitals['disk']['free'] = round($free / 1024 / 1024 / 1024, 2);
+                        }
                     }
                 }
             }
@@ -143,7 +158,7 @@ function getServerVitals() {
         if ($output) {
             foreach ($services as $service) {
                 // Find the section for this service in the combined output
-                if (preg_match('/SERVICE_NAME: ' . preg_quote($service, '/') . '.*?(?:STATE\s+:\s+\d+\s+RUNNING)/s', $output)) {
+                if (preg_match('/SERVICE_NAME:\s*' . preg_quote($service, '/') . '\s+(?:(?!SERVICE_NAME:).)*?STATE\s+:\s+\d+\s+RUNNING/is', $output)) {
                     $running++;
                 }
             }
