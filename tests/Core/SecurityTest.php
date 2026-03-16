@@ -52,4 +52,25 @@ class SecurityTest extends TestCase
         $_SESSION['csrf_token'] = 'matching_token';
         $this->assertTrue(Security::verifyCSRFToken('matching_token'));
     }
+
+    public function testVerifyCSRFTokenThrowsTypeErrorWhenSessionTokenIsArray()
+    {
+        $this->expectException(\TypeError::class);
+        $_SESSION['csrf_token'] = ['invalid_type'];
+        Security::verifyCSRFToken('valid_string');
+    }
+
+    public function testVerifyCSRFTokenThrowsTypeErrorWhenInputTokenIsArray()
+    {
+        $this->expectException(\TypeError::class);
+        $_SESSION['csrf_token'] = 'valid_string';
+        Security::verifyCSRFToken(['invalid_type']);
+    }
+
+    public function testVerifyCSRFTokenThrowsTypeErrorWhenInputTokenIsObject()
+    {
+        $this->expectException(\TypeError::class);
+        $_SESSION['csrf_token'] = 'valid_string';
+        Security::verifyCSRFToken(new \stdClass());
+    }
 }
