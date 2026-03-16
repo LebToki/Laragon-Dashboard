@@ -100,7 +100,7 @@ if (!class_exists('UpdateManager')) {
         /**
          * Fetch raw file content from GitHub
          */
-        private function fetchRawFile($url) {
+        protected function fetchRawFile($url) {
             $ch = curl_init($url);
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
             curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
@@ -502,7 +502,7 @@ if (!class_exists('UpdateManager')) {
         /**
          * Fetch data from GitHub API
          */
-        private function fetchFromGitHub($url) {
+        protected function fetchFromGitHub($url) {
             if (empty($url)) {
                 error_log("UpdateManager: Empty URL provided to fetchFromGitHub");
                 return false;
