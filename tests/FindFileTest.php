@@ -1,10 +1,12 @@
 <?php
 require_once "includes/helpers.php";
 
+use PHPUnit\Framework\TestCase;
+
 class FindFileTest extends TestCase {
     private $tempDir;
 
-    public function setUp() {
+    protected function setUp(): void {
         $this->tempDir = sys_get_temp_dir() . '/test_findfile_' . uniqid();
         mkdir($this->tempDir);
         mkdir($this->tempDir . '/level1');
@@ -13,7 +15,7 @@ class FindFileTest extends TestCase {
         mkdir($this->tempDir . '/level1/level2/level3/level4');
     }
 
-    public function tearDown() {
+    protected function tearDown(): void {
         $this->rmrf($this->tempDir);
     }
 
