@@ -2,6 +2,8 @@
 
 use PHPUnit\Framework\TestCase;
 
+require_once __DIR__ . "/bootstrap.php";
+
 class HelpersTest extends TestCase
 {
     private $laragonRoot;

@@ -1,27 +1,77 @@
 <?php
+require_once "includes/autoload.php";
+require_once "vendor/autoload.php";
+use PHPUnit\Framework\TestCase;
 
-// A simple test runner for Router::resolve()
+class RouterTest extends TestCase {
+    private $testFile;
 
-$testFile = __FILE__;
+    protected function setUp(): void {
+        $this->testFile = __FILE__;
+    }
 
-// Helper to run a test in a separate process to catch exits (like handle404/handle401)
-function runTestProcess($getParams, $mockAuth = true) {
-    global $testFile;
+    private function runTestProcess($getParams, $mockAuth = true) {
+        $getStr = http_build_query($getParams);
+        $authFlag = $mockAuth ? '1' : '0';
 
-    $getStr = http_build_query($getParams);
-    $authFlag = $mockAuth ? '1' : '0';
+        $cmd = "php " . escapeshellarg($this->testFile) . " process_test " . escapeshellarg($getStr) . " " . $authFlag . " 2>&1";
 
-    // We execute the same script but with a special flag
-    $cmd = "php " . escapeshellarg($testFile) . " process_test " . escapeshellarg($getStr) . " " . $authFlag . " 2>&1";
+        $output = [];
+        $returnVar = 0;
+        exec($cmd, $output, $returnVar);
 
-    $output = [];
-    $returnVar = 0;
-    exec($cmd, $output, $returnVar);
+        return [
+            'output' => implode("\n", $output),
+            'exitCode' => $returnVar
+        ];
+    }
 
-    return [
-        'output' => implode("\n", $output),
-        'exitCode' => $returnVar
-    ];
+    public function testEmptyPageDefaultsToDashboard() {
+        $result = $this->runTestProcess([]);
+        $data = json_decode($result['output'], true);
+        $this->assertNotNull($data);
+        $this->assertNull($data['result']);
+        $this->assertEquals('dashboard', $data['currentPage']);
+    }
+
+    public function testInvalidPageCharacters() {
+        $result = $this->runTestProcess(['page' => 'invalid page!']);
+        $this->assertStringContainsString('Page Not Found', $result['output'], "Expected 404 output");
+    }
+
+    public function testExistingRouteNoAuth() {
+        $result = $this->runTestProcess(['page' => 'projects']);
+        $data = json_decode($result['output'], true);
+        $expectedPath = str_replace('\\', '/', realpath(__DIR__ . '/../pages/projects.php'));
+        $actualPath = isset($data['result']) ? str_replace('\\', '/', realpath($data['result'])) : '';
+        $this->assertEquals($expectedPath, $actualPath);
+        $this->assertEquals('projects', $data['currentPage']);
+    }
+
+    public function testExistingRouteWithParams() {
+        $result = $this->runTestProcess(['page' => 'mailbox', 'view' => 'read', 'id' => '123']);
+        $data = json_decode($result['output'], true);
+        $this->assertNotNull($data);
+        $this->assertEquals('read', $data['currentParams']['view']);
+        $this->assertEquals('123', $data['currentParams']['id']);
+    }
+
+    public function testRouteRequiresAuthUnauthenticated() {
+        $result = $this->runTestProcess(['page' => 'secure_page'], false);
+        $this->assertStringContainsString('Unauthorized', $result['output']);
+    }
+
+    public function testRouteRequiresAuthAuthenticated() {
+        $result = $this->runTestProcess(['page' => 'secure_page'], true);
+        $data = json_decode($result['output'], true);
+        $this->assertNotNull($data);
+        $this->assertEquals('secure_page', $data['currentPage']);
+    }
+
+    public function testNonExistentPage() {
+        $result = $this->runTestProcess(['page' => 'does_not_exist']);
+        $this->assertStringContainsString('Page Not Found', $result['output']);
+    }
 }
 
 // -----------------------------------------------------------------------------
@@ -31,12 +81,10 @@ if (isset($argv[1]) && $argv[1] === 'process_test') {
     parse_str($argv[2], $_GET);
     $mockAuth = $argv[3] === '1';
 
-    // We need to fake defining APP_ROOT so Router can resolve pagesDir
     if (!defined('APP_ROOT')) {
         define('APP_ROOT', __DIR__ . '/..');
     }
 
-    // We mock missing functions called by layouts
     if (!function_exists('getCSRFToken')) {
         function getCSRFToken() { return 'mock_token'; }
     }
@@ -56,7 +104,6 @@ if (isset($argv[1]) && $argv[1] === 'process_test') {
         function is_plugin_active() { return false; }
     }
 
-    // Create the mock Security class in the right namespace
     $mockClass = '
     namespace LaragonDashboard\Core {
         class Security {
@@ -75,21 +122,17 @@ if (isset($argv[1]) && $argv[1] === 'process_test') {
 
     $router = new Router();
 
-    // Mock testing a route with requires_auth
     $reflection = new ReflectionClass($router);
     $routesProp = $reflection->getProperty('routes');
     $routesProp->setAccessible(true);
     $routes = $routesProp->getValue($router);
     $routes['secure_page'] = [
-        'file' => 'dashboard.php', // Assuming this exists or tests fail because it doesn't? No, dashboard is file=>null. Let's use projects.php
+        'file' => 'projects.php',
         'title' => 'Secure Page',
         'requires_auth' => true,
     ];
-    // Create a dummy file or use an existing one to avoid 404 in Route that requires auth
-    $routes['secure_page']['file'] = 'projects.php';
     $routesProp->setValue($router, $routes);
 
-    // Start output buffering to catch any output from handle404/handle401
     ob_start();
     try {
         $result = $router->resolve();
@@ -104,81 +147,7 @@ if (isset($argv[1]) && $argv[1] === 'process_test') {
         exit(0);
     } catch (Throwable $e) {
         $output = ob_get_clean();
-        // Since handle404 calls exit;, it won't be caught by Throwable.
-        // We will just let it exit and capture output.
+        echo "Throwable: " . $e->getMessage() . "\n" . $output;
+        exit(1);
     }
 }
-
-// -----------------------------------------------------------------------------
-// The main test runner
-// -----------------------------------------------------------------------------
-$testsPassed = 0;
-$testsFailed = 0;
-
-function assertTest($name, $condition, $message = '') {
-    global $testsPassed, $testsFailed;
-    if ($condition) {
-        echo "✅ PASS: $name\n";
-        $testsPassed++;
-    } else {
-        echo "❌ FAIL: $name\n";
-        if ($message) {
-            echo "   Reason: $message\n";
-        }
-        $testsFailed++;
-    }
-}
-
-echo "Testing Router::resolve()...\n\n";
-
-// Test 1: Empty page defaults to dashboard
-$result = runTestProcess([]);
-$data = json_decode($result['output'], true);
-$passed = ($data !== null && $data['result'] === null && $data['currentPage'] === 'dashboard');
-assertTest("Empty page defaults to dashboard", $passed, "Expected result=null, currentPage='dashboard'");
-
-// Test 2: Invalid page characters (triggers 404 because sanitizePageName returns '')
-$result = runTestProcess(['page' => 'invalid page!']);
-// json_decode fails because handle404 outputs HTML
-$data = json_decode($result['output'], true);
-$passed = ($data === null && stripos($result['output'], 'Page Not Found') !== false);
-assertTest("Invalid characters trigger 404", $passed, "Expected 404 output");
-
-// Test 3: Existing route that requires no auth
-$result = runTestProcess(['page' => 'projects']);
-$data = json_decode($result['output'], true);
-$expectedPath = str_replace('\\', '/', realpath(__DIR__ . '/../pages/projects.php'));
-$actualPath = isset($data['result']) ? str_replace('\\', '/', realpath($data['result'])) : '';
-$passed = ($data !== null && $actualPath === $expectedPath && $data['currentPage'] === 'projects');
-assertTest("Valid route resolves file", $passed, "Expected projects.php path");
-
-// Test 4: Existing route, params are extracted
-$result = runTestProcess(['page' => 'mailbox', 'view' => 'read', 'id' => '123']);
-$data = json_decode($result['output'], true);
-$passed = ($data !== null && isset($data['currentParams']['view']) && $data['currentParams']['view'] === 'read' && isset($data['currentParams']['id']) && $data['currentParams']['id'] === '123');
-assertTest("Valid route extracts parameters", $passed, "Expected currentParams view=read, id=123");
-
-// Test 5: Route that requires auth, but unauthenticated
-$result = runTestProcess(['page' => 'secure_page'], false);
-// handle401 outputs JSON
-$passed = (strpos($result['output'], 'Unauthorized') !== false);
-assertTest("Route requires auth, blocks unauthenticated", $passed, "Expected Unauthorized JSON response");
-
-// Test 6: Route that requires auth, and authenticated
-$result = runTestProcess(['page' => 'secure_page'], true);
-$data = json_decode($result['output'], true);
-$passed = ($data !== null && isset($data['currentPage']) && $data['currentPage'] === 'secure_page');
-assertTest("Route requires auth, allows authenticated", $passed, "Expected route to resolve properly");
-
-// Test 7: Non-existent page (404)
-$result = runTestProcess(['page' => 'does_not_exist']);
-$data = json_decode($result['output'], true);
-$passed = ($data === null && stripos($result['output'], 'Page Not Found') !== false);
-assertTest("Non-existent page triggers 404", $passed, "Expected 404 output");
-
-echo "\nTests Completed: $testsPassed Passed, $testsFailed Failed\n";
-
-if ($testsFailed > 0) {
-    exit(1);
-}
-exit(0);
