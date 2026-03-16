@@ -664,7 +664,7 @@ function Calendar(element, options, eventSources) {
 
 	function renderEvents(modifiedEventID) { // TODO: remove modifiedEventID hack
 		if (elementVisible()) {
-			currentView.setEventData(events); // for View.js, TODO: unify with renderEvents
+			currentView.setEventData(events); // for View.js
 			currentView.renderEvents(events, modifiedEventID); // actually render the DOM elements
 			currentView.trigger('eventAfterAllRender');
 		}
@@ -674,7 +674,7 @@ function Calendar(element, options, eventSources) {
 	function clearEvents() {
 		currentView.triggerEventDestroy(); // trigger 'eventDestroy' for each event
 		currentView.clearEvents(); // actually remove the DOM elements
-		currentView.clearEventData(); // for View.js, TODO: unify with clearEvents
+		currentView.clearEventData(); // for View.js
 	}
 	
 
@@ -4745,7 +4745,7 @@ function View(element, calendar, viewName) {
 	// locals
 	var eventsByID = {}; // eventID mapped to array of events (there can be multiple b/c of repeating events)
 	var eventElementsByID = {}; // eventID mapped to array of jQuery elements
-	var eventElementCouples = []; // array of objects, { event, element } // TODO: unify with segment system
+	var eventElementCouples = []; // array of objects, { event, element }
 	var options = calendar.options;
 	
 	
