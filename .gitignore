@@ -44,3 +44,8 @@ logs/
 # User preferences (contains sensitive data like passwords)
 data/preferences.json
 
+
+vendor/
+.phpunit.cache/
+
+phpunit.phar
