@@ -1,0 +1,10 @@
+{
+    "autoload": {
+        "psr-4": {
+            "LaragonDashboard\\": "includes/"
+        }
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^12.5"
+    }
+}
