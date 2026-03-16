@@ -139,4 +139,71 @@ $('#selectAll').on('change', function () {
     }
   });
   // Remove Table Tr when click on remove btn end
+
+  // Custom FullCalendar override to add .fc-today to <th>
+  // This executes after full-calendar is initialized if it exists on the page
+  $(window).on('load', function() {
+    if ($.fn.fullCalendar && $('#calendar').length) {
+      function updateCalendarHeaders() {
+        // Find the td that represents today
+        var $todayTd = $('#calendar').find('td.fc-today');
+
+        // Remove .fc-today and .fc-state-highlight from all th elements first
+        $('#calendar').find('th.fc-day-header, th.fc-col').removeClass('fc-today fc-state-highlight');
+
+        if ($todayTd.length) {
+          $todayTd.each(function() {
+            var $td = $(this);
+            var date = $td.data('date');
+
+            if (date) {
+               // Find th with matching class based on day (e.g. fc-mon, fc-tue)
+               var classList = $td.attr('class').split(/\s+/);
+               var dayClass = classList.find(c => c.match(/^fc-[a-z]{3}$/) && c !== 'fc-day');
+
+               if (dayClass) {
+                   var $headerRow = $td.closest('table').find('thead');
+                   if ($headerRow.length) {
+                       $headerRow.find('th.' + dayClass).addClass('fc-today fc-state-highlight');
+                   } else {
+                       // Try agenda view
+                       var colClass = classList.find(c => c.match(/^fc-col\d+$/));
+                       if (colClass) {
+                           $('#calendar').find('th.' + colClass).addClass('fc-today fc-state-highlight');
+                       }
+                   }
+               }
+            } else {
+               // Fallback: map by index if data-date is not present
+               var index = $td.index();
+               // in basic view, header row has same number of columns
+               var $headerRow = $td.closest('table').find('thead tr');
+               $headerRow.children('th').eq(index).addClass('fc-today fc-state-highlight');
+
+               // agenda day/week view
+               if ($td.hasClass('fc-col0') || $td.is('[class*="fc-col"]')) {
+                   var colClassMatch = $td.attr('class').match(/fc-col(\d+)/);
+                   if (colClassMatch) {
+                       $('#calendar').find('th.fc-col' + colClassMatch[1]).addClass('fc-today fc-state-highlight');
+                   }
+               }
+            }
+          });
+        }
+      }
+
+      // Initial update
+      setTimeout(updateCalendarHeaders, 100);
+
+      // Setup a MutationObserver to re-apply the class when the calendar changes views or dates
+      var calendarNode = document.getElementById('calendar');
+      if (calendarNode) {
+        var observer = new MutationObserver(function(mutations) {
+          updateCalendarHeaders();
+        });
+        observer.observe(calendarNode, { childList: true, subtree: true });
+      }
+    }
+  });
+
 })(jQuery);

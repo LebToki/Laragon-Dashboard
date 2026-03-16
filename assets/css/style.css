@@ -12774,6 +12774,12 @@ select option {
 /* === image upload css end === */
 /* === calendar css start === */
 /* Full Calendar Customize Css Start */
+.fc .ui-draggable-dragging .fc-event-bg,
+.fc-select-helper .fc-event-bg,
+.fc-event-bg {
+  display: block !important;
+  opacity: 0 !important;
+}
 .fc-border-separate tr.fc-last th {
   background: var(--neutral-50);
   padding: 12px;
@@ -12783,11 +12789,11 @@ select option {
   transition: 0s;
 }
 
-.fc-day.fc-tue.fc-widget-content.fc-today.fc-state-highlight {
+.fc-day.fc-widget-content.fc-today.fc-state-highlight, th.fc-today.fc-state-highlight {
   position: relative;
   background: linear-gradient(180deg, rgba(72, 127, 255, 0.13) 0%, rgba(72, 127, 255, 0.12) 0.01%, rgba(72, 127, 255, 0.05) 100%);
 }
-.fc-day.fc-tue.fc-widget-content.fc-today.fc-state-highlight::before {
+.fc-day.fc-widget-content.fc-today.fc-state-highlight::before, th.fc-today.fc-state-highlight::before {
   position: absolute;
   content: "";
   width: 100%;

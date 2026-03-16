@@ -100,7 +100,7 @@ if (!class_exists('UpdateManager')) {
         /**
          * Fetch raw file content from GitHub
          */
-        private function fetchRawFile($url) {
+        protected function fetchRawFile($url) {
             $ch = curl_init($url);
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
             curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
@@ -247,82 +247,123 @@ if (!class_exists('UpdateManager')) {
          * @return bool Success status
          */
         public function installUpdate($zipPath, $backupPath) {
-            if (empty($zipPath) || !file_exists($zipPath)) {
-                throw new Exception('Update package not found');
-            }
-            
             if (empty($backupPath) || !is_dir($backupPath)) {
                 throw new Exception('Backup directory not found. Cannot proceed without backup.');
             }
             
             error_log("UpdateManager: Starting installation. ZIP: {$zipPath}, Backup: {$backupPath}");
             
-            $extractPath = $this->tempDir . '/extracted';
+            // Check if it's a git repository and git is available
+            $isGitRepo = is_dir($this->appRoot . '/.git') || is_file($this->appRoot . '/.git');
+            $gitPullSuccess = false;
             
-            // Clean extract directory
-            if (is_dir($extractPath)) {
-                $this->deleteDirectory($extractPath);
-            }
-            if (!@mkdir($extractPath, 0755, true)) {
-                throw new Exception('Failed to create extraction directory');
+            if ($isGitRepo && function_exists('exec')) {
+                error_log("UpdateManager: Git repository detected. Attempting to update via git pull...");
+                $oldCwd = getcwd();
+                chdir($this->appRoot);
+
+                // Try to execute git pull
+                $output = [];
+                $returnVar = 0;
+                exec('git pull 2>&1', $output, $returnVar);
+
+                if ($returnVar === 0 && !empty($output)) {
+                    error_log("UpdateManager: Git pull successful. Output: " . implode("\n", $output));
+                    $gitPullSuccess = true;
+                    // Note: Git pull handles file replacements.
+                } else {
+                    error_log("UpdateManager: Git pull failed (code {$returnVar}). Output: " . implode("\n", $output) . ". Aborting merge and falling back to ZIP extraction.");
+                    // Abort the merge to prevent repository corruption and leave it in a clean state
+                    exec('git merge --abort 2>&1');
+                }
+                chdir($oldCwd);
             }
             
-            // Extract ZIP
-            error_log("UpdateManager: Extracting ZIP file...");
-            $zip = new ZipArchive();
-            $zipResult = $zip->open($zipPath);
-            if ($zipResult !== true) {
-                $errorMsg = "Failed to open ZIP file (code: {$zipResult})";
-                error_log("UpdateManager: {$errorMsg}");
-                throw new Exception($errorMsg);
-            }
-            
-            if (!$zip->extractTo($extractPath)) {
+            if (!$gitPullSuccess) {
+                if (empty($zipPath) || !file_exists($zipPath)) {
+                    throw new Exception('Update package not found and git pull failed or unavailable');
+                }
+
+                $extractPath = $this->tempDir . '/extracted';
+
+                // Clean extract directory
+                if (is_dir($extractPath)) {
+                    $this->deleteDirectory($extractPath);
+                }
+                if (!@mkdir($extractPath, 0755, true)) {
+                    throw new Exception('Failed to create extraction directory');
+                }
+
+                // Extract ZIP
+                error_log("UpdateManager: Extracting ZIP file...");
+                $zip = new ZipArchive();
+                $zipResult = $zip->open($zipPath);
+                if ($zipResult !== true) {
+                    $errorMsg = "Failed to open ZIP file (code: {$zipResult})";
+                    error_log("UpdateManager: {$errorMsg}");
+                    throw new Exception($errorMsg);
+                }
+
+                if (!$zip->extractTo($extractPath)) {
+                    $zip->close();
+                    throw new Exception('Failed to extract update package');
+                }
                 $zip->close();
-                throw new Exception('Failed to extract update package');
-            }
-            $zip->close();
-            error_log("UpdateManager: ZIP extracted successfully");
-            
-            // Find the actual dashboard directory in extracted files
-            $dashboardPath = $this->findDashboardDirectory($extractPath);
-            
-            if (!$dashboardPath || !file_exists($dashboardPath . '/config.php')) {
+                error_log("UpdateManager: ZIP extracted successfully");
+
+                // Find the actual dashboard directory in extracted files
+                $dashboardPath = $this->findDashboardDirectory($extractPath);
+
+                if (!$dashboardPath || !file_exists($dashboardPath . '/config.php')) {
+                    $this->deleteDirectory($extractPath);
+                    throw new Exception('Could not find dashboard directory in update package');
+                }
+
+                error_log("UpdateManager: Dashboard directory found: {$dashboardPath}");
+
+                // Migrate configuration before replacing files
+                try {
+                    error_log("UpdateManager: Migrating configuration...");
+                    $configMigrator = new ConfigMigrator();
+                    $configMigrator->migrateConfiguration($backupPath, $dashboardPath);
+                    error_log("UpdateManager: Configuration migrated successfully");
+                } catch (Exception $e) {
+                    error_log("UpdateManager: Configuration migration failed: " . $e->getMessage());
+                    // Don't fail the update if migration fails, but log it
+                }
+
+                // Files/directories to preserve (user data)
+                $preservePaths = [
+                    'data/preferences.json',
+                    'data/license.json',
+                    'data/backups/',
+                    'backups/',
+                    'logs/',
+                    'temp/',
+                ];
+
+                // Replace files while preserving user data
+                error_log("UpdateManager: Replacing files...");
+                $this->replaceFiles($dashboardPath, $preservePaths);
+                error_log("UpdateManager: Files replaced successfully");
+
+                // Clean up
                 $this->deleteDirectory($extractPath);
-                throw new Exception('Could not find dashboard directory in update package');
+                @unlink($zipPath);
+            } else {
+                // If git pull was successful, we still need to run the ConfigMigrator
+                // to ensure new config keys from the update are applied correctly.
+                try {
+                    error_log("UpdateManager: Migrating configuration post-git pull...");
+                    $configMigrator = new ConfigMigrator();
+                    // appRoot is both the new version path (since git pull updated it inline) and the target
+                    $configMigrator->migrateConfiguration($backupPath, $this->appRoot);
+                    error_log("UpdateManager: Configuration migrated successfully");
+                } catch (Exception $e) {
+                    error_log("UpdateManager: Configuration migration failed post-git pull: " . $e->getMessage());
+                    // Don't fail the update if migration fails
+                }
             }
-            
-            error_log("UpdateManager: Dashboard directory found: {$dashboardPath}");
-            
-            // Migrate configuration before replacing files
-            try {
-                error_log("UpdateManager: Migrating configuration...");
-                $configMigrator = new ConfigMigrator();
-                $configMigrator->migrateConfiguration($backupPath, $dashboardPath);
-                error_log("UpdateManager: Configuration migrated successfully");
-            } catch (Exception $e) {
-                error_log("UpdateManager: Configuration migration failed: " . $e->getMessage());
-                // Don't fail the update if migration fails, but log it
-            }
-            
-            // Files/directories to preserve (user data)
-            $preservePaths = [
-                'data/preferences.json',
-                'data/license.json',
-                'data/backups/',
-                'backups/',
-                'logs/',
-                'temp/',
-            ];
-            
-            // Replace files while preserving user data
-            error_log("UpdateManager: Replacing files...");
-            $this->replaceFiles($dashboardPath, $preservePaths);
-            error_log("UpdateManager: Files replaced successfully");
-            
-            // Clean up
-            $this->deleteDirectory($extractPath);
-            @unlink($zipPath);
             
             error_log("UpdateManager: Installation completed successfully");
             return true;
@@ -502,7 +543,7 @@ if (!class_exists('UpdateManager')) {
         /**
          * Fetch data from GitHub API
          */
-        private function fetchFromGitHub($url) {
+        protected function fetchFromGitHub($url) {
             if (empty($url)) {
                 error_log("UpdateManager: Empty URL provided to fetchFromGitHub");
                 return false;
