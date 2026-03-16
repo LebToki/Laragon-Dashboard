@@ -656,16 +656,16 @@ function Calendar(element, options, eventSources) {
 	}
 
 
-	function rerenderEvents(modifiedEventID) { // can be called as an API method
+	function rerenderEvents() { // can be called as an API method
 		clearEvents();
-		renderEvents(modifiedEventID);
+		renderEvents();
 	}
 
 
-	function renderEvents(modifiedEventID) { // TODO: remove modifiedEventID hack
+	function renderEvents() {
 		if (elementVisible()) {
 			currentView.setEventData(events); // for View.js
-			currentView.renderEvents(events, modifiedEventID); // actually render the DOM elements
+			currentView.renderEvents(events); // actually render the DOM elements
 			currentView.trigger('eventAfterAllRender');
 		}
 	}
@@ -702,8 +702,8 @@ function Calendar(element, options, eventSources) {
 
 
 	// called when a single event's data has been changed
-	function reportEventChange(eventID) {
-		rerenderEvents(eventID);
+	function reportEventChange() {
+		rerenderEvents();
 	}
 
 
@@ -1402,6 +1402,16 @@ function EventManager(options, _sources) {
 	-----------------------------------------------------------------------------*/
 	
 	
+	function normalizeClassName(e) {
+		if (e.className) {
+			if (typeof e.className == 'string') {
+				e.className = e.className.split(/\s+/);
+			}
+		}else{
+			e.className = [];
+		}
+	}
+
 	function normalizeEvent(event) {
 		var source = event.source || {};
 		var ignoreTimezone = firstDefined(source.ignoreTimezone, options.ignoreTimezone);
@@ -1421,13 +1431,7 @@ function EventManager(options, _sources) {
 		if (event.allDay === undefined) {
 			event.allDay = firstDefined(source.allDayDefault, options.allDayDefault);
 		}
-		if (event.className) {
-			if (typeof event.className == 'string') {
-				event.className = event.className.split(/\s+/);
-			}
-		}else{
-			event.className = [];
-		}
+		normalizeClassName(event);
 
 		if (!event.start) {
 			return false;
@@ -1441,14 +1445,7 @@ function EventManager(options, _sources) {
 	
 	
 	function normalizeSource(source) {
-		if (source.className) {
-			// TODO: repeat code, same code for event classNames
-			if (typeof source.className == 'string') {
-				source.className = source.className.split(/\s+/);
-			}
-		}else{
-			source.className = [];
-		}
+		normalizeClassName(source);
 		var normalizers = fc.sourceNormalizers;
 		for (var i=0; i<normalizers.length; i++) {
 			normalizers[i](source);
@@ -2814,8 +2811,8 @@ function BasicEventRenderer() {
 	DayEventRenderer.call(t);
 
 	
-	function renderEvents(events, modifiedEventId) {
-		t.renderDayEvents(events, modifiedEventId);
+	function renderEvents(events) {
+		t.renderDayEvents(events);
 	}
 	
 	
@@ -2823,9 +2820,6 @@ function BasicEventRenderer() {
 		t.getDaySegmentContainer().empty();
 		t.clearEventData();
 	}
-
-
-	// TODO: have this class (and AgendaEventRenderer) be responsible for creating the event container div
 
 }
 
@@ -3881,7 +3875,7 @@ function AgendaEventRenderer() {
 	----------------------------------------------------------------------------*/
 	
 
-	function renderEvents(events, modifiedEventId) {
+	function renderEvents(events) {
 		var i, len=events.length,
 			dayEvents=[],
 			slotEvents=[];
@@ -3894,11 +3888,11 @@ function AgendaEventRenderer() {
 		}
 
 		if (opt('allDaySlot')) {
-			renderDayEvents(dayEvents, modifiedEventId);
+			renderDayEvents(dayEvents);
 			setHeight(); // no params means set to viewHeight
 		}
 
-		renderSlotSegs(compileSlotSegs(slotEvents), modifiedEventId);
+		renderSlotSegs(compileSlotSegs(slotEvents));
 	}
 	
 	
@@ -3996,7 +3990,7 @@ function AgendaEventRenderer() {
 	// TODO: when we refactor this, when user returns `false` eventRender, don't have empty space
 	// TODO: refactor will include using pixels to detect collisions instead of dates (handy for seg cmp)
 	
-	function renderSlotSegs(segs, modifiedEventId) {
+	function renderSlotSegs(segs) {
 	
 		var i, segCnt=segs.length, seg,
 			event,
@@ -4088,11 +4082,7 @@ function AgendaEventRenderer() {
 						.appendTo(slotSegmentContainer);
 				}
 				seg.element = eventElement;
-				if (event._id === modifiedEventId) {
-					bindSlotSeg(event, eventElement, seg);
-				}else{
 					eventElement[0]._fci = i; // for lazySegBind
-				}
 				reportEventElement(event, eventElement);
 			}
 		}
@@ -4926,12 +4916,12 @@ function View(element, calendar, viewName) {
 			function() {
 				// TODO: investigate cases where this inverse technique might not work
 				moveEvents(eventsByID[eventId], -dayDelta, -minuteDelta, oldAllDay);
-				reportEventChange(eventId);
+				reportEventChange();
 			},
 			ev,
 			ui
 		);
-		reportEventChange(eventId);
+		reportEventChange();
 	}
 	
 	
@@ -4947,12 +4937,12 @@ function View(element, calendar, viewName) {
 			function() {
 				// TODO: investigate cases where this inverse technique might not work
 				elongateEvents(eventsByID[eventId], -dayDelta, -minuteDelta);
-				reportEventChange(eventId);
+				reportEventChange();
 			},
 			ev,
 			ui
 		);
-		reportEventChange(eventId);
+		reportEventChange();
 	}
 	
 	
@@ -5303,9 +5293,9 @@ function DayEventRenderer() {
 
 
 	// Render `events` onto the calendar, attach mouse event handlers, and call the `eventAfterRender` callback for each.
-	// Mouse event will be lazily applied, except if the event has an ID of `modifiedEventId`.
+	// Mouse event will be lazily applied.
 	// Can only be called when the event container is empty (because it wipes out all innerHTML).
-	function renderDayEvents(events, modifiedEventId) {
+	function renderDayEvents(events) {
 
 		// do the actual rendering. Receive the intermediate "segment" data structures.
 		var segments = _renderDayEvents(
@@ -5320,7 +5310,7 @@ function DayEventRenderer() {
 		});
 
 		// attach mouse handlers
-		attachHandlers(segments, modifiedEventId);
+		attachHandlers(segments);
 
 		// call `eventAfterRender` callback for each event
 		segmentElementEach(segments, function(segment, element) {
@@ -5789,16 +5779,11 @@ function DayEventRenderer() {
 	// TODO: better documentation!
 
 
-	function attachHandlers(segments, modifiedEventId) {
+	function attachHandlers(segments) {
 		var segmentContainer = getDaySegmentContainer();
 
 		segmentElementEach(segments, function(segment, element, i) {
-			var event = segment.event;
-			if (event._id === modifiedEventId) {
-				bindDaySeg(event, element, segment);
-			}else{
-				element[0]._fci = i; // for lazySegBind
-			}
+			element[0]._fci = i; // for lazySegBind
 		});
 
 		lazySegBind(segmentContainer, segments, bindDaySeg);
