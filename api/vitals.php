@@ -143,7 +143,7 @@ function getServerVitals() {
         if ($output) {
             foreach ($services as $service) {
                 // Find the section for this service in the combined output
-                if (preg_match('/SERVICE_NAME: ' . preg_quote($service, '/') . '.*?(?:STATE\s+:\s+\d+\s+RUNNING)/s', $output)) {
+                if (preg_match('/SERVICE_NAME:\s*' . preg_quote($service, '/') . '\s+(?:(?!SERVICE_NAME:).)*?STATE\s+:\s+\d+\s+RUNNING/is', $output)) {
                     $running++;
                 }
             }

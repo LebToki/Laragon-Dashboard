@@ -638,7 +638,7 @@ if (!function_exists('getServicesStatus')) {
             
             // Service check from consolidated output
             $status[$key]['windows_service'] = false;
-            if ($scOutput && preg_match('/SERVICE_NAME: ' . preg_quote($service['name'], '/') . '.*?(?:STATE\s+:\s+\d+\s+RUNNING)/s', $scOutput)) {
+            if ($scOutput && preg_match('/SERVICE_NAME:\s*' . preg_quote($service['name'], '/') . '\s+(?:(?!SERVICE_NAME:).)*?STATE\s+:\s+\d+\s+RUNNING/is', $scOutput)) {
                 $status[$key]['windows_service'] = true;
             }
         }
