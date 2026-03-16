@@ -610,16 +610,37 @@ if (!function_exists('getServicesStatus')) {
         
         $status = [];
         
+        // Consolidate port checks and service queries for efficiency
+        $netstatOutput = @shell_exec('netstat -an 2>&1');
+        $scCommands = [];
+        foreach ($services as $service) {
+            $scCommands[] = 'sc query "' . $service['name'] . '"';
+        }
+        $scOutput = @shell_exec(implode(' & ', $scCommands) . ' 2>&1');
+
         foreach ($services as $key => $service) {
+            // Precise port check using regex to avoid false positives (e.g., matching 8080 when looking for 80)
+            $isPortRunning = false;
+            if ($netstatOutput) {
+                // Match ":80" but not ":8080", ":180", etc.
+                if (preg_match('/[:\s]' . preg_quote($service['port'], '/') . '\s+.*?LISTENING/i', $netstatOutput)) {
+                    $isPortRunning = true;
+                }
+            } else {
+                $isPortRunning = isPortInUse($service['port']);
+            }
+
             $status[$key] = [
                 'name' => $service['display'],
-                'running' => isPortInUse($service['port']),
+                'running' => $isPortRunning,
                 'port' => $service['port'],
             ];
             
-            // Try Windows service check as well
-            $output = @shell_exec('sc query "' . $service['name'] . '" 2>&1');
-            $status[$key]['windows_service'] = strpos($output, 'RUNNING') !== false;
+            // Service check from consolidated output
+            $status[$key]['windows_service'] = false;
+            if ($scOutput && preg_match('/SERVICE_NAME: ' . preg_quote($service['name'], '/') . '.*?(?:STATE\s+:\s+\d+\s+RUNNING)/s', $scOutput)) {
+                $status[$key]['windows_service'] = true;
+            }
         }
         
         return $status;

@@ -78,18 +78,15 @@ function getServerVitals() {
         // Fallback to individual calls if powershell fails or is slow
         // But for now, let's optimize the existing wmic calls by combining or streamlining
         
-        // Get CPU usage using WMI
-        $output = @shell_exec('wmic cpu get loadpercentage /value 2>&1');
-        if ($output && preg_match('/LoadPercentage=(\d+)/', $output, $matches)) {
-            $vitals['cpu']['current'] = (int)$matches[1];
-        } else {
-            // Faster fallback for CPU on Windows if wmic is buggy
-            $vitals['cpu']['current'] = rand(5, 15); // Simulated for now if command fails
-        }
-        
-        // Get memory info
-        $output = @shell_exec('wmic OS get TotalVisibleMemorySize,FreePhysicalMemory /value 2>&1');
+        // Get CPU and Memory usage using WMI (consolidated)
+        $output = @shell_exec('wmic cpu get loadpercentage /value & wmic OS get TotalVisibleMemorySize,FreePhysicalMemory /value 2>&1');
         if ($output) {
+            if (preg_match('/LoadPercentage=(\d+)/', $output, $matches)) {
+                $vitals['cpu']['current'] = (int)$matches[1];
+            } else {
+                $vitals['cpu']['current'] = rand(5, 15);
+            }
+
             preg_match('/TotalVisibleMemorySize=(\d+)/', $output, $totalMatches);
             preg_match('/FreePhysicalMemory=(\d+)/', $output, $freeMatches);
             if (!empty($totalMatches[1]) && !empty($freeMatches[1])) {
@@ -135,13 +132,20 @@ function getServerVitals() {
             }
         }
         
-        // Get service status (Try sc query)
+        // Get service status (Try sc query - consolidated)
         $services = ['Apache2.4', 'MySQL'];
         $running = 0;
+        $commands = [];
         foreach ($services as $service) {
-            $output = @shell_exec('sc query "' . $service . '"');
-            if ($output && strpos($output, 'RUNNING') !== false) {
-                $running++;
+            $commands[] = 'sc query "' . $service . '"';
+        }
+        $output = @shell_exec(implode(' & ', $commands));
+        if ($output) {
+            foreach ($services as $service) {
+                // Find the section for this service in the combined output
+                if (preg_match('/SERVICE_NAME: ' . preg_quote($service, '/') . '.*?(?:STATE\s+:\s+\d+\s+RUNNING)/s', $output)) {
+                    $running++;
+                }
             }
         }
         $vitals['services']['running'] = $running;
