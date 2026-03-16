@@ -78,40 +78,4 @@ class System {
         return defined('APP_VERSION') ? APP_VERSION : '3.0.0';
     }
 
-    /**
-     * Get storage/disk information
-     */
-    public static function getDiskInfo($path = null) {
-        if (!$path) {
-            $path = self::getLaragonRoot();
-        }
-        
-        $total = disk_total_space($path);
-        $free = disk_free_space($path);
-        $used = $total - $free;
-        $percent = $total > 0 ? ($used / $total) * 100 : 0;
-        
-        return [
-            'total' => $total,
-            'free' => $free,
-            'used' => $used,
-            'percent' => round($percent, 2),
-            'formatted_total' => self::formatBytes($total),
-            'formatted_free' => self::formatBytes($free),
-            'formatted_used' => self::formatBytes($used)
-        ];
-    }
-
-    /**
-     * Format bytes to human readable string
-     */
-    public static function formatBytes($bytes, $precision = 2) {
-        $units = ['B', 'KB', 'MB', 'GB', 'TB'];
-        $bytes = max($bytes, 0);
-        $pow = floor(($bytes ? log($bytes) : 0) / log(1024));
-        $pow = min($pow, count($units) - 1);
-        $bytes /= (1 << (10 * $pow));
-        
-        return round($bytes, $precision) . ' ' . $units[$pow];
-    }
 }
