@@ -647,7 +647,7 @@ function Calendar(element, options, eventSources) {
 	
 	/* Event Fetching/Rendering
 	-----------------------------------------------------------------------------*/
-	// TODO: going forward, most of this stuff should be directly handled by the view
+
 
 
 	function refetchEvents() { // can be called as an API method
