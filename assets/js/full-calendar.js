@@ -2824,9 +2824,6 @@ function BasicEventRenderer() {
 		t.getDaySegmentContainer().empty();
 	}
 
-
-	// TODO: have this class (and AgendaEventRenderer) be responsible for creating the event container div
-
 }
 
 ;;
