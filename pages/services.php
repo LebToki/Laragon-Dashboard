@@ -218,37 +218,35 @@ include __DIR__ . '/../partials/layouts/layoutTop.php';
                                         </tr>
                                     </thead>
                                     <tbody id="services-list">
-                                        <?php foreach ($installedServices as $key => $service): 
+                                        <?php
+                                        // Consolidate Windows service queries for efficiency
+                                        $scCommands = [];
+                                        foreach ($installedServices as $service) {
+                                            if ($service['type'] === 'windows_service') {
+                                                $scCommands[] = 'sc query "' . $service['service_name'] . '"';
+                                            }
+                                        }
+                                        $scOutput = '';
+                                        if (!empty($scCommands)) {
+                                            $scOutput = @shell_exec(implode(' & ', $scCommands) . ' 2>&1');
+                                        }
+
+                                        foreach ($installedServices as $key => $service):
                                             // Check service status directly
                                             $status = 'unknown';
                                             $runningPorts = [];
                                             
                                             if ($service['type'] === 'windows_service') {
-                                                $output = @shell_exec('sc query "' . $service['service_name'] . '" 2>&1');
-                                                if ($output) {
-                                                    // Check for RUNNING state (case-insensitive)
-                                                    if (stripos($output, 'RUNNING') !== false) {
+                                                if ($scOutput) {
+                                                    // Match the specific service's output block and check its state without crossing service boundaries
+                                                    if (preg_match('/SERVICE_NAME:\s*' . preg_quote($service['service_name'], '/') . '\s+(?:(?!SERVICE_NAME:).)*?STATE\s+:\s+\d+\s+RUNNING/is', $scOutput)) {
                                                         $status = 'running';
                                                         $runningPorts[] = $service['port'];
                                                         if ($service['ssl_port']) {
                                                             $runningPorts[] = $service['ssl_port'];
                                                         }
-                                                    }
-                                                    // Check for STOPPED state (case-insensitive)
-                                                    elseif (stripos($output, 'STOPPED') !== false) {
+                                                    } elseif (preg_match('/SERVICE_NAME:\s*' . preg_quote($service['service_name'], '/') . '\s+(?:(?!SERVICE_NAME:).)*?STATE\s+:\s+\d+\s+STOPPED/is', $scOutput)) {
                                                         $status = 'stopped';
-                                                    }
-                                                    // Check STATE line for RUNNING
-                                                    elseif (preg_match('/STATE\s*:\s*\d+\s+(\w+)/i', $output, $matches)) {
-                                                        if (stripos($matches[1], 'RUNNING') !== false) {
-                                                            $status = 'running';
-                                                            $runningPorts[] = $service['port'];
-                                                            if ($service['ssl_port']) {
-                                                                $runningPorts[] = $service['ssl_port'];
-                                                            }
-                                                        } elseif (stripos($matches[1], 'STOPPED') !== false) {
-                                                            $status = 'stopped';
-                                                        }
                                                     }
                                                 }
                                             } else {
