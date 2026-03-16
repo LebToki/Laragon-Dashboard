@@ -1,16 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<phpunit bootstrap="vendor/autoload.php"
-         colors="true"
-         displayDetailsOnTestsThatTriggerDeprecations="true"
-         stopOnFailure="false">
+<phpunit bootstrap="includes/autoload.php" colors="true">
     <testsuites>
         <testsuite name="Laragon Dashboard Test Suite">
             <directory>tests</directory>
         </testsuite>
     </testsuites>
-    <source>
-        <include>
-            <directory suffix=".php">includes/Core</directory>
-        </include>
-    </source>
 </phpunit>
