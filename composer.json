@@ -1,0 +1,15 @@
+{
+    "name": "lebtoki/laragon-dashboard",
+    "description": "Laragon Dashboard",
+    "require": {
+        "php": ">=7.4"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^9.6"
+    },
+    "autoload": {
+        "psr-4": {
+            "LaragonDashboard\\Core\\": "includes/Core/"
+        }
+    }
+}
