@@ -413,7 +413,7 @@ if (!function_exists('analyzeProject')) {
         'is_wordpress' => false,
         'has_composer' => file_exists($path . '/composer.json'),
         'has_npm' => file_exists($path . '/package.json'),
-        'has_git' => is_dir($path . '/.git'),
+        'has_git' => is_dir($path . '/.git') || is_file($path . '/.git'),
         'git_branch' => null,
         'git_status' => null,
         'favicon' => null,
@@ -495,12 +495,30 @@ if (!function_exists('analyzeProject')) {
     
     // Check for Git branch and status (optimized: only branch for now if it's slow)
     if ($project['has_git']) {
-        $branch = @shell_exec('cd ' . escapeshellarg($path) . ' && git rev-parse --abbrev-ref HEAD 2>&1');
-        $project['git_branch'] = trim((string)$branch) ?: 'unknown';
+        // Try reading branch directly from .git/HEAD to avoid shell overhead
+        // If .git is a file (submodule/worktree) or parsing fails, fallback to shell
+        $branch = 'unknown';
+        $headFile = $path . '/.git/HEAD';
+        if (is_file($headFile)) {
+            $head = trim((string)@file_get_contents($headFile));
+            if (strpos($head, 'ref: refs/heads/') === 0) {
+                $branch = substr($head, 16);
+            } else {
+                $branch = $head; // Detached HEAD, usually a commit hash
+            }
+        } elseif (is_file($path . '/.git')) {
+            // It's a submodule or worktree where .git is a file, fallback to git CLI
+            $branch = trim((string)@shell_exec('cd ' . escapeshellarg($path) . ' && git rev-parse --abbrev-ref HEAD 2>&1'));
+        }
+
+        $project['git_branch'] = $branch ?: 'unknown';
         
-        // Skip detailed status check for large projects or make it optional?
-        // For now, keep it but ensure it's not recursive
-        $status = @shell_exec('cd ' . escapeshellarg($path) . ' && git status --porcelain 2>&1');
+        // Optimization: Use proc_open to run git status in the background if possible, but PHP doesn't easily
+        // return async results from a function without a Promise-like wrapper.
+        // For project caching, we still need the result.
+        // To reduce disk I/O, we can tell git status to only check the working tree and not recurse deep into untracked dirs
+        // '--untracked-files=no' makes it significantly faster for large repositories.
+        $status = @shell_exec('cd ' . escapeshellarg($path) . ' && git status --porcelain --untracked-files=no 2>&1');
         $project['git_status'] = !empty(trim((string)$status)) ? 'modified' : 'clean';
     }
     
@@ -638,7 +656,7 @@ if (!function_exists('getServicesStatus')) {
             
             // Service check from consolidated output
             $status[$key]['windows_service'] = false;
-            if ($scOutput && preg_match('/SERVICE_NAME: ' . preg_quote($service['name'], '/') . '.*?(?:STATE\s+:\s+\d+\s+RUNNING)/s', $scOutput)) {
+            if ($scOutput && preg_match('/SERVICE_NAME:\s*' . preg_quote($service['name'], '/') . '\s+(?:(?!SERVICE_NAME:).)*?STATE\s+:\s+\d+\s+RUNNING/is', $scOutput)) {
                 $status[$key]['windows_service'] = true;
             }
         }
@@ -1081,14 +1099,44 @@ if (!function_exists('runNpmCommand')) {
  */
 if (!function_exists('checkGitStatus')) {
     function checkGitStatus($projectPath) {
-        $branch = @shell_exec('cd ' . escapeshellarg($projectPath) . ' && git rev-parse --abbrev-ref HEAD 2>&1');
-        $status = @shell_exec('cd ' . escapeshellarg($projectPath) . ' && git status --porcelain 2>&1');
-        $remote = @shell_exec('cd ' . escapeshellarg($projectPath) . ' && git remote get-url origin 2>&1');
+        // 1. Get branch directly from .git/HEAD if possible
+        $branch = 'unknown';
+        $headFile = $projectPath . '/.git/HEAD';
+        if (is_file($headFile)) {
+            $head = trim((string)@file_get_contents($headFile));
+            if (strpos($head, 'ref: refs/heads/') === 0) {
+                $branch = substr($head, 16);
+            } else {
+                $branch = $head; // Detached HEAD, usually a commit hash
+            }
+        } elseif (is_file($projectPath . '/.git')) {
+            // It's a submodule or worktree where .git is a file
+            $branch = trim((string)@shell_exec('cd ' . escapeshellarg($projectPath) . ' && git rev-parse --abbrev-ref HEAD 2>&1'));
+        }
+
+        // 2. Get status via shell exec (too complex to parse manually reliably)
+        // Optimization: Use --untracked-files=no to speed up disk I/O on large repos
+        $status = @shell_exec('cd ' . escapeshellarg($projectPath) . ' && git status --porcelain --untracked-files=no 2>&1');
+
+        // 3. Get remote URL from .git/config
+        $remote = null;
+        $configFile = $projectPath . '/.git/config';
+        if (is_file($configFile)) {
+            $config = @file_get_contents($configFile);
+            if ($config && preg_match('/\[remote "origin"\][^\[]*url\s*=\s*([^\n]+)/s', $config, $matches)) {
+                $remote = trim($matches[1]);
+            }
+        }
+
+        // Fallback if config regex failed or it's a submodule/worktree where .git is a file
+        if (empty($remote) && (is_file($configFile) || is_file($projectPath . '/.git'))) {
+            $remote = trim((string)@shell_exec('cd ' . escapeshellarg($projectPath) . ' && git remote get-url origin 2>&1'));
+        }
         
         return [
-            'branch' => trim((string)$branch) ?: 'unknown',
+            'branch' => $branch ?: 'unknown',
             'status' => !empty(trim((string)$status)) ? 'modified' : 'clean',
-            'remote' => trim((string)$remote) ?: null,
+            'remote' => $remote ?: null,
         ];
     }
 }
