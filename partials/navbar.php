@@ -32,11 +32,11 @@ $GLOBALS['navbarAssetsImageUrl'] = $assetsImageUrl;
     <div class="row align-items-center justify-content-between">
         <div class="col-auto">
             <div class="d-flex flex-wrap align-items-center gap-4">
-                <button type="button" class="sidebar-toggle">
+                <button type="button" class="sidebar-toggle" aria-label="Toggle Sidebar">
                     <iconify-icon icon="heroicons:bars-3-solid" class="icon text-2xl non-active"></iconify-icon>
                     <iconify-icon icon="iconoir:arrow-right" class="icon text-2xl active"></iconify-icon>
                 </button>
-                <button type="button" class="sidebar-mobile-toggle">
+                <button type="button" class="sidebar-mobile-toggle" aria-label="Toggle Mobile Sidebar">
                     <iconify-icon icon="heroicons:bars-3-solid" class="icon"></iconify-icon>
                 </button>
                 <!-- Search Dropdown -->
@@ -78,19 +78,19 @@ $GLOBALS['navbarAssetsImageUrl'] = $assetsImageUrl;
         <div class="col-auto">
             <div class="d-flex flex-wrap align-items-center gap-3">
                 <!-- Theme Switcher: Light/Dark Toggle -->
-                <button type="button" data-theme-toggle="light-dark" class="w-40-px h-40-px bg-neutral-200 rounded-circle d-flex justify-content-center align-items-center" title="Toggle Light/Dark Theme">
+                <button type="button" data-theme-toggle="light-dark" class="w-40-px h-40-px bg-neutral-200 rounded-circle d-flex justify-content-center align-items-center" title="Toggle Light/Dark Theme" aria-label="Toggle Light/Dark Theme">
                     <iconify-icon icon="solar:sun-bold" class="icon text-lg theme-icon-light" style="display: none;"></iconify-icon>
                     <iconify-icon icon="solar:moon-bold" class="icon text-lg theme-icon-dark"></iconify-icon>
                 </button>
                 
                 <!-- Theme Switcher: Monochrome -->
-                <button type="button" data-theme-toggle="monochrome" class="w-40-px h-40-px bg-neutral-200 rounded-circle d-flex justify-content-center align-items-center" title="Toggle Monochrome Mode">
+                <button type="button" data-theme-toggle="monochrome" class="w-40-px h-40-px bg-neutral-200 rounded-circle d-flex justify-content-center align-items-center" title="Toggle Monochrome Mode" aria-label="Toggle Monochrome Mode">
                     <iconify-icon icon="tabler:palette" class="text-primary-light text-xl"></iconify-icon>
                 </button>
                 
                 <!-- Language Selector -->
                 <div class="dropdown d-none d-sm-inline-block">
-                    <button class="has-indicator w-40-px h-40-px bg-neutral-200 rounded-circle d-flex justify-content-center align-items-center" type="button" data-bs-toggle="dropdown" title="Select Language">
+                    <button class="has-indicator w-40-px h-40-px bg-neutral-200 rounded-circle d-flex justify-content-center align-items-center" type="button" data-bs-toggle="dropdown" title="Select Language" aria-label="Select Language">
                         <img 
                             src="<?php echo $assetsImageUrl; ?>/flags/<?php echo $currentLangData['flag']; ?>.png" 
                             alt="<?php echo htmlspecialchars($currentLangData['name']); ?>" 
@@ -160,7 +160,7 @@ $GLOBALS['navbarAssetsImageUrl'] = $assetsImageUrl;
 
                 <!-- User Profile Dropdown -->
                 <div class="dropdown">
-                    <button class="d-flex justify-content-center align-items-center rounded-circle" type="button" data-bs-toggle="dropdown">
+                    <button class="d-flex justify-content-center align-items-center rounded-circle" type="button" data-bs-toggle="dropdown" aria-label="User Profile Menu">
                         <img 
                             src="<?php echo $assetsImageUrl; ?>/logo-icon.png" 
                             alt="User" 
@@ -174,7 +174,7 @@ $GLOBALS['navbarAssetsImageUrl'] = $assetsImageUrl;
                                 <p class="text-lg text-primary-light fw-semibold mb-2">Laragon Dashboard</p>
                                 <span class="text-secondary-light fw-medium text-sm">System User</span>
                             </div>
-                            <button type="button" class="hover-text-danger">
+                            <button type="button" class="hover-text-danger" aria-label="Close Profile Menu">
                                 <iconify-icon icon="radix-icons:cross-1" class="icon text-xl"></iconify-icon>
                             </button>
                         </div>
