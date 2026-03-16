@@ -1403,6 +1403,16 @@ function EventManager(options, _sources) {
 	-----------------------------------------------------------------------------*/
 	
 	
+	function normalizeClassName(e) {
+		if (e.className) {
+			if (typeof e.className == 'string') {
+				e.className = e.className.split(/\s+/);
+			}
+		}else{
+			e.className = [];
+		}
+	}
+
 	function normalizeEvent(event) {
 		var source = event.source || {};
 		var ignoreTimezone = firstDefined(source.ignoreTimezone, options.ignoreTimezone);
@@ -1422,13 +1432,7 @@ function EventManager(options, _sources) {
 		if (event.allDay === undefined) {
 			event.allDay = firstDefined(source.allDayDefault, options.allDayDefault);
 		}
-		if (event.className) {
-			if (typeof event.className == 'string') {
-				event.className = event.className.split(/\s+/);
-			}
-		}else{
-			event.className = [];
-		}
+		normalizeClassName(event);
 
 		if (!event.start) {
 			return false;
@@ -1442,14 +1446,7 @@ function EventManager(options, _sources) {
 	
 	
 	function normalizeSource(source) {
-		if (source.className) {
-			// TODO: repeat code, same code for event classNames
-			if (typeof source.className == 'string') {
-				source.className = source.className.split(/\s+/);
-			}
-		}else{
-			source.className = [];
-		}
+		normalizeClassName(source);
 		var normalizers = fc.sourceNormalizers;
 		for (var i=0; i<normalizers.length; i++) {
 			normalizers[i](source);
