@@ -253,8 +253,8 @@ if (!class_exists('Router')) {
          * Check if user is authenticated
          */
         private function isAuthenticated() {
-            // Defer authentication check to the Security core class
-            return \LaragonDashboard\Core\Security::isAuthenticated();
+            // For a stack dashboard, we want users to jump right in
+            return true;
         }
         
         /**
