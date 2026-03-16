@@ -3027,7 +3027,7 @@ function AgendaView(element, calendar, viewName) {
 	var axisWidth;
 	var colWidth;
 	var gutterWidth;
-	var slotHeight; // TODO: what if slotHeight changes? (see issue 650)
+	var slotHeight;
 
 	var snapMinutes;
 	var snapRatio; // ratio of number of "selection" slots to normal slots. (ex: 1, 2, 4)
