@@ -2289,7 +2289,6 @@ function BasicView(element, calendar, viewName) {
 	t.renderBasic = renderBasic;
 	t.setHeight = setHeight;
 	t.setWidth = setWidth;
-	t.renderDayOverlay = renderDayOverlay;
 	t.defaultSelectionEnd = defaultSelectionEnd;
 	t.renderSelection = renderSelection;
 	t.clearSelection = clearSelection;
@@ -2308,6 +2307,10 @@ function BasicView(element, calendar, viewName) {
 	t.getColCnt = function() { return colCnt };
 	t.getColWidth = function() { return colWidth };
 	t.getDaySegmentContainer = function() { return daySegmentContainer };
+	t.getCoordinateGrid = function() { return coordinateGrid };
+	t.dayBind = dayBind;
+	t.renderCellOverlay = renderCellOverlay;
+	t.rangeToSegments = rangeToSegments;
 	
 	
 	// imports
@@ -2639,29 +2642,6 @@ function BasicView(element, calendar, viewName) {
 	
 	/* Semi-transparent Overlay Helpers
 	------------------------------------------------------*/
-	// TODO: should be consolidated with AgendaView's methods
-
-
-	function renderDayOverlay(overlayStart, overlayEnd, refreshCoordinateGrid) { // overlayEnd is exclusive
-
-		if (refreshCoordinateGrid) {
-			coordinateGrid.build();
-		}
-
-		var segments = rangeToSegments(overlayStart, overlayEnd);
-
-		for (var i=0; i<segments.length; i++) {
-			var segment = segments[i];
-			dayBind(
-				renderCellOverlay(
-					segment.row,
-					segment.leftCol,
-					segment.row,
-					segment.rightCol
-				)
-			);
-		}
-	}
 
 	
 	function renderCellOverlay(row0, col0, row1, col1) { // row1,col1 is inclusive
@@ -2681,7 +2661,7 @@ function BasicView(element, calendar, viewName) {
 	
 	
 	function renderSelection(startDate, endDate, allDay) {
-		renderDayOverlay(startDate, addDays(cloneDate(endDate), 1), true); // rebuild every time???
+		t.renderDayOverlay(startDate, addDays(cloneDate(endDate), 1), true); // rebuild every time???
 	}
 	
 	
@@ -2974,12 +2954,15 @@ function AgendaView(element, calendar, viewName) {
 	t.getSnapHeight = function() { return snapHeight };
 	t.getSnapMinutes = function() { return snapMinutes };
 	t.defaultSelectionEnd = defaultSelectionEnd;
-	t.renderDayOverlay = renderDayOverlay;
 	t.renderSelection = renderSelection;
 	t.clearSelection = clearSelection;
 	t.reportDayClick = reportDayClick; // selection mousedown hack
 	t.dragStart = dragStart;
 	t.dragStop = dragStop;
+	t.dayBind = dayBind;
+	t.renderCellOverlay = renderCellOverlay;
+	t.getCoordinateGrid = function() { return coordinateGrid; };
+	t.rangeToSegments = rangeToSegments;
 	
 	
 	// imports
@@ -3486,29 +3469,6 @@ function AgendaView(element, calendar, viewName) {
 	
 	/* Semi-transparent Overlay Helpers
 	-----------------------------------------------------*/
-	// TODO: should be consolidated with BasicView's methods
-
-
-	function renderDayOverlay(overlayStart, overlayEnd, refreshCoordinateGrid) { // overlayEnd is exclusive
-
-		if (refreshCoordinateGrid) {
-			coordinateGrid.build();
-		}
-
-		var segments = rangeToSegments(overlayStart, overlayEnd);
-
-		for (var i=0; i<segments.length; i++) {
-			var segment = segments[i];
-			dayBind(
-				renderCellOverlay(
-					segment.row,
-					segment.leftCol,
-					segment.row,
-					segment.rightCol
-				)
-			);
-		}
-	}
 	
 	
 	function renderCellOverlay(row0, col0, row1, col1) { // only for all-day?
@@ -3679,7 +3639,7 @@ function AgendaView(element, calendar, viewName) {
 	function renderSelection(startDate, endDate, allDay) { // only for all-day
 		if (allDay) {
 			if (opt('allDaySlot')) {
-				renderDayOverlay(startDate, addDays(cloneDate(endDate), 1), true);
+				t.renderDayOverlay(startDate, addDays(cloneDate(endDate), 1), true);
 			}
 		}else{
 			renderSlotSelection(startDate, endDate);
@@ -3858,7 +3818,6 @@ function AgendaEventRenderer() {
 	var hideEvents = t.hideEvents;
 	var eventDrop = t.eventDrop;
 	var eventResize = t.eventResize;
-	var renderDayOverlay = t.renderDayOverlay;
 	var clearOverlays = t.clearOverlays;
 	var renderDayEvents = t.renderDayEvents;
 	var calendar = t.calendar;
@@ -4224,7 +4183,7 @@ function AgendaEventRenderer() {
 						dayDelta = dayDiff(date, origDate);
 						if (!cell.row) {
 							// on full-days
-							renderDayOverlay(
+							t.renderDayOverlay(
 								addDays(cloneDate(event.start), dayDelta),
 								addDays(exclEndDay(event), dayDelta)
 							);
@@ -4422,7 +4381,7 @@ function AgendaEventRenderer() {
 				if (isAllDay) {
 					timeElement.hide();
 					eventElement.draggable('option', 'grid', null); // disable grid snapping
-					renderDayOverlay(
+					t.renderDayOverlay(
 						addDays(cloneDate(event.start), dayDelta),
 						addDays(exclEndDay(event), dayDelta)
 					);
@@ -5280,7 +5239,6 @@ function DayEventRenderer() {
 	var dateToCell = t.dateToCell;
 	var getDaySegmentContainer = t.getDaySegmentContainer;
 	var formatDates = t.calendar.formatDates;
-	var renderDayOverlay = t.renderDayOverlay;
 	var clearOverlays = t.clearOverlays;
 	var clearSelection = t.clearSelection;
 	var getHoverListener = t.getHoverListener;
@@ -5826,7 +5784,7 @@ function DayEventRenderer() {
 						var origDate = cellToDate(origCell);
 						var date = cellToDate(cell);
 						dayDelta = dayDiff(date, origDate);
-						renderDayOverlay(
+						t.renderDayOverlay(
 							addDays(cloneDate(event.start), dayDelta),
 							addDays(exclEndDay(event), dayDelta)
 						);
@@ -5923,7 +5881,7 @@ function DayEventRenderer() {
 						}
 					}
 					clearOverlays();
-					renderDayOverlay( // coordinate grid already rebuilt with hoverListener.start()
+					t.renderDayOverlay( // coordinate grid already rebuilt with hoverListener.start()
 						event.start,
 						addDays( exclEndDay(event), dayDelta )
 						// TODO: instead of calling renderDayOverlay() with dates,
@@ -6102,6 +6060,7 @@ function OverlayManager() {
 	// exports
 	t.renderOverlay = renderOverlay;
 	t.clearOverlays = clearOverlays;
+	t.renderDayOverlay = renderDayOverlay;
 	
 	
 	// locals
@@ -6126,6 +6085,28 @@ function OverlayManager() {
 		var e;
 		while (e = usedOverlays.shift()) {
 			unusedOverlays.push(e.hide().unbind());
+		}
+	}
+
+
+	function renderDayOverlay(overlayStart, overlayEnd, refreshCoordinateGrid) { // overlayEnd is exclusive
+		var coordinateGrid = t.getCoordinateGrid();
+		if (refreshCoordinateGrid) {
+			coordinateGrid.build();
+		}
+
+		var segments = t.rangeToSegments(overlayStart, overlayEnd);
+
+		for (var i=0; i<segments.length; i++) {
+			var segment = segments[i];
+			t.dayBind(
+				t.renderCellOverlay(
+					segment.row,
+					segment.leftCol,
+					segment.row,
+					segment.rightCol
+				)
+			);
 		}
 	}
 
