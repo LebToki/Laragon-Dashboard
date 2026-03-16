@@ -674,7 +674,6 @@ function Calendar(element, options, eventSources) {
 	function clearEvents() {
 		currentView.triggerEventDestroy(); // trigger 'eventDestroy' for each event
 		currentView.clearEvents(); // actually remove the DOM elements
-		currentView.clearEventData(); // for View.js
 	}
 	
 
@@ -2819,6 +2818,7 @@ function BasicEventRenderer() {
 	
 	function clearEvents() {
 		t.getDaySegmentContainer().empty();
+		t.clearEventData();
 	}
 
 }
@@ -3899,6 +3899,7 @@ function AgendaEventRenderer() {
 	function clearEvents() {
 		getDaySegmentContainer().empty();
 		getSlotSegmentContainer().empty();
+		t.clearEventData();
 	}
 
 	
