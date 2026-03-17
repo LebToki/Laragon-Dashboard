@@ -1,14 +1,14 @@
 # 🚀 Laragon Dashboard
 
-We're thrilled to announce the release of Laragon Dashboard 4.0.4, a complete reimagining of local development environment management for Windows. This isn't just an update, it's a quantum leap forward in how you interact with your Laragon setup.
+We're thrilled to announce the release of Laragon Dashboard 4.0.5, a complete reimagining of local development environment management for Windows. This isn't just an update, it's a quantum leap forward in how you interact with your Laragon setup.
 
 Laragon Dashboard is a modern, feature-rich web-based dashboard for managing Laragon development environment. 
-Version 4.0.4 aims to be a comprehensive MAMP competitor on Windows, replicating Laragon control panel functionality in a modern, themed web interface.
+Version 4.0.5 aims to be a comprehensive MAMP competitor on Windows, replicating Laragon control panel functionality in a modern, themed web interface.
 
 "The best Windows development environment just got better. Welcome to the future of local development."
 
 
-[![Version](https://img.shields.io/badge/version-4.0.4-blue.svg)](https://github.com/LebToki/Laragon-Dashboard)
+[![Version](https://img.shields.io/badge/version-4.0.5-blue.svg)](https://github.com/LebToki/Laragon-Dashboard)
 [![PHP](https://img.shields.io/badge/PHP-7.4%2B-green.svg)](https://php.net)
 [![Bootstrap](https://img.shields.io/badge/Bootstrap-5.3.2-purple.svg)](https://getbootstrap.com)
 [![Platform](https://img.shields.io/badge/platform-windows-lightgrey.svg)]()
@@ -50,7 +50,7 @@ Version 4.0.4 aims to be a comprehensive MAMP competitor on Windows, replicating
 ## 📋 Project Information
 
 - **Project Name**: Laragon Dashboard
-- **Version**: 4.0.4
+- **Version**: 4.0.5
 - **Author**: Tarek Tarabichi
 - **Company**: 2TInteractive (2tinteractive.com)
 - **Project Start**: Early 2024
@@ -61,7 +61,7 @@ Version 4.0.4 aims to be a comprehensive MAMP competitor on Windows, replicating
 ---
 
 ## 💡 Why This Matters
-Laragon has always been the fastest, most lightweight development environment for Windows. With version 4.0.4 of the dashboard, we're bringing that same philosophy to the web interface:
+Laragon has always been the fastest, most lightweight development environment for Windows. With version 4.0.5 of the dashboard, we're bringing that same philosophy to the web interface:
 
 - No Electron bloat – Pure web technology, zero memory overhead
 - **Instant Startup** – Access your dashboard immediately via localhost.
