@@ -103,6 +103,12 @@ include __DIR__ . '/../partials/layouts/layoutTop.php';
                             <?php echo t_projects('no_projects', 'No projects found. Create your first project to get started!'); ?>
                         <?php endif; ?>
                     </p>
+                    <?php if (empty($searchQuery)): ?>
+                    <button type="button" class="btn btn-primary-600 radius-8 px-20 py-11 mt-16 d-inline-flex align-items-center gap-2" data-bs-toggle="modal" data-bs-target="#projectWizardModal">
+                        <iconify-icon icon="solar:add-circle-bold" class="text-xl"></iconify-icon>
+                        <?php echo t_projects('create_new_project', 'Create New Project'); ?>
+                    </button>
+                    <?php endif; ?>
                 </div>
             </div>
         <?php else: ?>
@@ -122,7 +128,7 @@ include __DIR__ . '/../partials/layouts/layoutTop.php';
                         <div class="card-body p-16">
                             <!-- 3-Dot Dropdown Menu (Top Left) -->
                             <div class="dropdown position-absolute top-0 start-0 ms-16 mt-16">
-                                <button type="button" data-bs-toggle="dropdown" aria-expanded="false" class="bg-base bg-opacity-20 w-32-px h-32-px radius-8 border border-white border-opacity-30 d-flex justify-content-center align-items-center text-base hover-opacity-80" style="backdrop-filter: blur(4px);">
+                                <button type="button" data-bs-toggle="dropdown" aria-expanded="false" class="bg-base bg-opacity-20 w-32-px h-32-px radius-8 border border-white border-opacity-30 d-flex justify-content-center align-items-center text-base hover-opacity-80" style="backdrop-filter: blur(4px);" aria-label="<?php echo t_projects('project_actions', 'Project Actions'); ?>" title="<?php echo t_projects('project_actions', 'Project Actions'); ?>">
                                     <iconify-icon icon="entypo:dots-three-vertical" class="icon text-lg"></iconify-icon>
                                 </button>
                                 <ul class="dropdown-menu p-12 border bg-base shadow">
