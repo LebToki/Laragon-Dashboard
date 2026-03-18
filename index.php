@@ -394,7 +394,7 @@ include './partials/layouts/layoutTop.php' ?>
                             <div class="card-body p-16">
                                 <!-- 3-Dot Dropdown Menu (Top Left) -->
                                 <div class="dropdown position-absolute top-0 start-0 ms-16 mt-16">
-                                    <button type="button" data-bs-toggle="dropdown" aria-expanded="false" class="bg-base bg-opacity-20 w-32-px h-32-px radius-8 border border-white border-opacity-30 d-flex justify-content-center align-items-center text-base hover-opacity-80" style="backdrop-filter: blur(4px);">
+                                    <button type="button" data-bs-toggle="dropdown" aria-expanded="false" class="bg-base bg-opacity-20 w-32-px h-32-px radius-8 border border-white border-opacity-30 d-flex justify-content-center align-items-center text-base hover-opacity-80" style="backdrop-filter: blur(4px);" aria-label="Project Actions" title="Project Actions">
                                         <iconify-icon icon="entypo:dots-three-vertical" class="icon text-lg"></iconify-icon>
                                     </button>
                                     <ul class="dropdown-menu p-12 border bg-base shadow">
