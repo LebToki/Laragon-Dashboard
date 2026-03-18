@@ -98,6 +98,20 @@ class Databases {
         $db = self::getConnection();
         if (!$db) return false;
 
+        // Security: Validate database name to prevent syntax-breaking or unexpected behavior
+        if (empty($name) || !preg_match('/^[a-zA-Z0-9_-]+$/', $name)) {
+            return false;
+        }
+
+        // Security: Prevent deletion of system databases
+        $systemDatabases = ['information_schema', 'mysql', 'performance_schema', 'sys', 'phpmyadmin'];
+        if (in_array(strtolower($name), $systemDatabases)) {
+            if (class_exists('\\LaragonDashboard\\Core\\Logger')) {
+                \LaragonDashboard\Core\Logger::error("Security Warning: Attempted to drop system database '$name'");
+            }
+            return false;
+        }
+
         $name = $db->real_escape_string($name);
         return $db->query("DROP DATABASE `$name` ");
     }
@@ -140,7 +154,8 @@ class Databases {
             $dumpPath = 'mysqldump';
         }
 
-        $command = "\"$dumpPath\" --user=root --result-file=\"$filepath\" \"$name\"";
+        // Security: Escape shell arguments to prevent command injection
+        $command = escapeshellarg($dumpPath) . ' --user=root --result-file=' . escapeshellarg($filepath) . ' ' . escapeshellarg($name);
         
         exec($command, $output, $returnVar);
 
