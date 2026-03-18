@@ -42,40 +42,33 @@ class Databases {
         $db = self::getConnection();
         if (!$db) return [];
 
-        $result = $db->query("SHOW DATABASES");
+        // ⚡ Bolt: Replaced N+1 queries with a single query to get database names and sizes efficiently.
+        $query = "
+            SELECT
+                schema_name AS 'name',
+                COALESCE(SUM(t.data_length + t.index_length) / 1024 / 1024, 0) AS 'size'
+            FROM
+                information_schema.schemata s
+            LEFT JOIN
+                information_schema.tables t ON s.schema_name = t.table_schema
+            WHERE
+                s.schema_name NOT IN ('information_schema', 'mysql', 'performance_schema', 'sys')
+            GROUP BY
+                s.schema_name
+        ";
+
+        $result = $db->query($query);
         $databases = [];
         
         if ($result) {
-            while ($row = $result->fetch_row()) {
-                $dbName = $row[0];
-                // Exclude system databases
-                if (!in_array($dbName, ['information_schema', 'mysql', 'performance_schema', 'sys'])) {
-                    $databases[] = [
-                        'name' => $dbName,
-                        'size' => self::getDatabaseSize($dbName)
-                    ];
-                }
+            while ($row = $result->fetch_assoc()) {
+                $databases[] = [
+                    'name' => $row['name'],
+                    'size' => round(floatval($row['size']), 2)
+                ];
             }
         }
         return $databases;
-    }
-
-    /**
-     * Get database size in MB
-     */
-    private static function getDatabaseSize($dbName) {
-        $db = self::getConnection();
-        if (!$db) return 0;
-
-        $dbName = $db->real_escape_string($dbName);
-        $result = $db->query("SELECT SUM(data_length + index_length) / 1024 / 1024 AS 'size' 
-                             FROM information_schema.TABLES 
-                             WHERE table_schema = '$dbName'");
-        
-        if ($result && $row = $result->fetch_assoc()) {
-            return round(floatval($row['size']), 2);
-        }
-        return 0;
     }
 
     /**

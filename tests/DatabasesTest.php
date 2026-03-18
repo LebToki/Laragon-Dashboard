@@ -46,56 +46,26 @@ class DatabasesTest extends TestCase
         // Mock connection
         $mysqliMock = $this->createMock(\mysqli::class);
 
-        // Mock result for SHOW DATABASES
+        // Mock result for single query fetching DBs and sizes
         $databasesResultMock = $this->createMock(\mysqli_result::class);
 
-        // Return these databases: system databases + custom ones
-        $databasesResultMock->expects($this->exactly(7))
-            ->method('fetch_row')
+        // Return the databases with sizes directly
+        $databasesResultMock->expects($this->exactly(3))
+            ->method('fetch_assoc')
             ->willReturnOnConsecutiveCalls(
-                ['information_schema'],
-                ['mysql'],
-                ['performance_schema'],
-                ['sys'],
-                ['test_db1'],
-                ['test_db2'],
+                ['name' => 'test_db1', 'size' => '5.25'],
+                ['name' => 'test_db2', 'size' => '10.5'],
                 null // End of results
             );
 
-        // Mock result for SELECT SUM(data_length + index_length) ... for size
-        // Since we have 2 non-system DBs, getDatabaseSize should be called 2 times
-        $sizeResultMock1 = $this->createMock(\mysqli_result::class);
-        $sizeResultMock1->expects($this->once())
-            ->method('fetch_assoc')
-            ->willReturn(['size' => '5.25']);
-
-        $sizeResultMock2 = $this->createMock(\mysqli_result::class);
-        $sizeResultMock2->expects($this->once())
-            ->method('fetch_assoc')
-            ->willReturn(['size' => '10.5']);
-
-        $mysqliMock->expects($this->exactly(3))
+        $mysqliMock->expects($this->once())
             ->method('query')
-            ->willReturnCallback(function($query) use ($databasesResultMock, $sizeResultMock1, $sizeResultMock2) {
-                if ($query === "SHOW DATABASES") {
+            ->willReturnCallback(function($query) use ($databasesResultMock) {
+                if (strpos($query, "SELECT") !== false && strpos($query, "information_schema.schemata") !== false) {
                     return $databasesResultMock;
                 }
-
-                if (strpos($query, "FROM information_schema.TABLES") !== false) {
-                    if (strpos($query, "test_db1") !== false) {
-                        return $sizeResultMock1;
-                    }
-                    if (strpos($query, "test_db2") !== false) {
-                        return $sizeResultMock2;
-                    }
-                }
-
                 return false;
             });
-
-        $mysqliMock->expects($this->exactly(2))
-            ->method('real_escape_string')
-            ->willReturnArgument(0); // Just return the argument
 
         $this->setConnectionMock($mysqliMock);
 
@@ -141,7 +111,6 @@ class DatabasesTest extends TestCase
         // Mock query to return false
         $mysqliMock->expects($this->once())
             ->method('query')
-            ->with("SHOW DATABASES")
             ->willReturn(false);
 
         $this->setConnectionMock($mysqliMock);
