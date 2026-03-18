@@ -182,6 +182,9 @@ try {
     switch ($action) {
         case 'composer':
             $projectPath = $_POST['project'] ?? '';
+            if (!empty($projectPath)) {
+                $projectPath = preg_replace('/[^a-zA-Z0-9_-]/', '', basename($projectPath));
+            }
             $command = $_POST['command'] ?? 'install';
             
             if (empty($projectPath)) {
@@ -211,6 +214,9 @@ try {
             
         case 'npm':
             $projectPath = $_POST['project'] ?? '';
+            if (!empty($projectPath)) {
+                $projectPath = preg_replace('/[^a-zA-Z0-9_-]/', '', basename($projectPath));
+            }
             $command = $_POST['command'] ?? 'install';
             
             if (empty($projectPath)) {
@@ -238,6 +244,9 @@ try {
             
         case 'git':
             $projectPath = $_POST['project'] ?? '';
+            if (!empty($projectPath)) {
+                $projectPath = preg_replace('/[^a-zA-Z0-9_-]/', '', basename($projectPath));
+            }
             $command = $_POST['command'] ?? 'status';
             
             if (empty($projectPath)) {
@@ -269,6 +278,9 @@ try {
             
         case 'clear_cache':
             $projectPath = $_POST['project'] ?? '';
+            if (!empty($projectPath)) {
+                $projectPath = preg_replace('/[^a-zA-Z0-9_-]/', '', basename($projectPath));
+            }
             $cacheType = $_POST['type'] ?? 'all';
             
             if (empty($projectPath)) {
