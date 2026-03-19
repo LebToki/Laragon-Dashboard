@@ -59,24 +59,36 @@ class DatabasesTest extends TestCase {
         $this->assertFalse($result);
     }
 
-    public function testDropEscapesDatabaseName() {
+    public function testDropValidatesDatabaseName() {
         $mockDb = $this->createMock(mysqli::class);
 
-        // Simulating the behavior of real_escape_string
-        $mockDb->expects($this->once())
-               ->method('real_escape_string')
-               ->with('test`; DROP TABLE users; --')
-               ->willReturn('test\`; DROP TABLE users; --');
-
-        $mockDb->expects($this->once())
-               ->method('query')
-               ->with("DROP DATABASE `test\`; DROP TABLE users; --` ")
-               ->willReturn(true);
+        // Invalid characters should cause the drop to fail immediately without querying
+        $mockDb->expects($this->never())->method('real_escape_string');
+        $mockDb->expects($this->never())->method('query');
 
         $this->setMockConnection($mockDb);
 
         $result = Databases::drop('test`; DROP TABLE users; --');
-        $this->assertTrue($result);
+        $this->assertFalse($result);
+
+        $result = Databases::drop('');
+        $this->assertFalse($result);
+    }
+
+    public function testDropPreventsSystemDatabaseDeletion() {
+        $mockDb = $this->createMock(mysqli::class);
+
+        // real_escape_string and query should NOT be called if it's a system DB
+        $mockDb->expects($this->never())->method('real_escape_string');
+        $mockDb->expects($this->never())->method('query');
+
+        $this->setMockConnection($mockDb);
+
+        $result = Databases::drop('mysql');
+        $this->assertFalse($result);
+
+        $result = Databases::drop('INFORMATION_SCHEMA');
+        $this->assertFalse($result);
     }
 
     public function testDropReturnsFalseWhenConnectionFails() {

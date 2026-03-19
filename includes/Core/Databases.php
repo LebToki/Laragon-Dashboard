@@ -42,40 +42,29 @@ class Databases {
         $db = self::getConnection();
         if (!$db) return [];
 
-        $result = $db->query("SHOW DATABASES");
+        // ⚡ Bolt: Fixed N+1 query problem by getting DBs and their sizes in a single query
+        $query = "
+            SELECT
+                s.schema_name AS 'name',
+                COALESCE(SUM(t.data_length + t.index_length) / 1024 / 1024, 0) AS 'size'
+            FROM information_schema.schemata s
+            LEFT JOIN information_schema.tables t ON s.schema_name = t.table_schema
+            WHERE s.schema_name NOT IN ('information_schema', 'mysql', 'performance_schema', 'sys')
+            GROUP BY s.schema_name
+        ";
+
+        $result = $db->query($query);
         $databases = [];
         
         if ($result) {
-            while ($row = $result->fetch_row()) {
-                $dbName = $row[0];
-                // Exclude system databases
-                if (!in_array($dbName, ['information_schema', 'mysql', 'performance_schema', 'sys'])) {
-                    $databases[] = [
-                        'name' => $dbName,
-                        'size' => self::getDatabaseSize($dbName)
-                    ];
-                }
+            while ($row = $result->fetch_assoc()) {
+                $databases[] = [
+                    'name' => $row['name'],
+                    'size' => round(floatval($row['size']), 2)
+                ];
             }
         }
         return $databases;
-    }
-
-    /**
-     * Get database size in MB
-     */
-    private static function getDatabaseSize($dbName) {
-        $db = self::getConnection();
-        if (!$db) return 0;
-
-        $dbName = $db->real_escape_string($dbName);
-        $result = $db->query("SELECT SUM(data_length + index_length) / 1024 / 1024 AS 'size' 
-                             FROM information_schema.TABLES 
-                             WHERE table_schema = '$dbName'");
-        
-        if ($result && $row = $result->fetch_assoc()) {
-            return round(floatval($row['size']), 2);
-        }
-        return 0;
     }
 
     /**
@@ -97,6 +86,20 @@ class Databases {
     public static function drop($name) {
         $db = self::getConnection();
         if (!$db) return false;
+
+        // Security: Validate database name to prevent syntax-breaking or unexpected behavior
+        if (empty($name) || !preg_match('/^[a-zA-Z0-9_-]+$/', $name)) {
+            return false;
+        }
+
+        // Security: Prevent deletion of system databases
+        $systemDatabases = ['information_schema', 'mysql', 'performance_schema', 'sys', 'phpmyadmin'];
+        if (in_array(strtolower($name), $systemDatabases)) {
+            if (class_exists('\\LaragonDashboard\\Core\\Logger')) {
+                \LaragonDashboard\Core\Logger::error("Security Warning: Attempted to drop system database '$name'");
+            }
+            return false;
+        }
 
         $name = $db->real_escape_string($name);
         return $db->query("DROP DATABASE `$name` ");
@@ -140,7 +143,8 @@ class Databases {
             $dumpPath = 'mysqldump';
         }
 
-        $command = "\"$dumpPath\" --user=root --result-file=\"$filepath\" \"$name\"";
+        // Security: Escape shell arguments to prevent command injection
+        $command = escapeshellarg($dumpPath) . ' --user=root --result-file=' . escapeshellarg($filepath) . ' ' . escapeshellarg($name);
         
         exec($command, $output, $returnVar);
 
