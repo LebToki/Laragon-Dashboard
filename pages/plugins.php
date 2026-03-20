@@ -35,7 +35,14 @@ include dirname(__DIR__) . '/partials/header.php';
                 </div>
                 <div class="card-body">
                     <?php if (empty($installedPlugins)): ?>
-                    <p class="text-secondary-light">No plugins installed</p>
+                    <div class="text-center p-24">
+                        <iconify-icon icon="iconoir:puzzle" class="text-secondary-light text-5xl mb-16"></iconify-icon>
+                        <p class="text-secondary-light mb-16">No plugins installed yet. Enhance your dashboard by installing one!</p>
+                        <a href="#available-plugins" class="btn btn-primary-600 radius-8 px-20 py-11 d-inline-flex align-items-center gap-2">
+                            <iconify-icon icon="solar:download-square-bold" class="text-xl"></iconify-icon>
+                            Browse Available Plugins
+                        </a>
+                    </div>
                     <?php else: ?>
                     <div class="row">
                         <?php foreach ($installedPlugins as $pluginId => $plugin): ?>
@@ -57,7 +64,7 @@ include dirname(__DIR__) . '/partials/header.php';
             </div>
 
             <!-- Available Plugins -->
-            <div class="card glass">
+            <div class="card glass" id="available-plugins">
                 <div class="card-header">
                     <h2 class="card-title">Available Plugins</h2>
                 </div>
