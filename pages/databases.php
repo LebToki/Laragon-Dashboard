@@ -265,7 +265,15 @@ include __DIR__ . '/../partials/layouts/layoutTop.php';
     function renderDatabases(databases) {
         const body = document.getElementById('db-list-body');
         if (databases.length === 0) {
-            body.innerHTML = '<tr><td colspan="3" class="text-center py-24 text-secondary-light">No user databases found.</td></tr>';
+            body.innerHTML = `<tr><td colspan="3" class="text-center py-24 text-secondary-light">
+                <div class="mb-16">No user databases found.</div>
+                <div class="d-flex justify-content-center">
+                    <button type="button" class="btn btn-sm btn-primary-600 d-inline-flex align-items-center gap-2" data-bs-toggle="modal" data-bs-target="#createDbModal">
+                        <iconify-icon icon="solar:add-circle-bold" class="text-xl"></iconify-icon>
+                        <?php echo t_databases('create_new_db', 'Create New Database'); ?>
+                    </button>
+                </div>
+            </td></tr>`;
             return;
         }
 
