@@ -259,11 +259,16 @@ try {
             }
 
             // Get disk usage for Laragon Root
+            // ⚡ Bolt: Cache disk space calls to avoid redundant filesystem operations
+            $totalSpace = disk_total_space(LARAGON_ROOT);
+            $freeSpace = disk_free_space(LARAGON_ROOT);
+            $usedSpace = $totalSpace - $freeSpace;
+
             $disk = [
-                'total' => round(disk_total_space(LARAGON_ROOT) / 1024 / 1024 / 1024, 2),
-                'free' => round(disk_free_space(LARAGON_ROOT) / 1024 / 1024 / 1024, 2),
-                'used' => round((disk_total_space(LARAGON_ROOT) - disk_free_space(LARAGON_ROOT)) / 1024 / 1024 / 1024, 2),
-                'percent' => round(((disk_total_space(LARAGON_ROOT) - disk_free_space(LARAGON_ROOT)) / disk_total_space(LARAGON_ROOT)) * 100, 1)
+                'total' => round($totalSpace / 1024 / 1024 / 1024, 2),
+                'free' => round($freeSpace / 1024 / 1024 / 1024, 2),
+                'used' => round($usedSpace / 1024 / 1024 / 1024, 2),
+                'percent' => $totalSpace > 0 ? round(($usedSpace / $totalSpace) * 100, 1) : 0
             ];
             
             ob_clean();

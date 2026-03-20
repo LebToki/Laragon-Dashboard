@@ -88,6 +88,11 @@ if (!class_exists('Router')) {
                     'title' => 'Preferences',
                     'requires_auth' => false,
                 ],
+                'plugins' => [
+                    'file' => 'plugins.php',
+                    'title' => 'Plugin Hub',
+                    'requires_auth' => false,
+                ],
             ];
         }
         
