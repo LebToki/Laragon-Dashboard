@@ -257,7 +257,7 @@ if (!class_exists('Router')) {
         /**
          * Check if user is authenticated
          */
-        private function isAuthenticated() {
+        protected function isAuthenticated() {
             // For a stack dashboard, we want users to jump right in
             return true;
         }
@@ -315,7 +315,7 @@ if (!class_exists('Router')) {
         /**
          * Handle 401 Unauthorized
          */
-        private function handle401() {
+        protected function handle401() {
             http_response_code(401);
             echo json_encode(['error' => 'Unauthorized']);
             exit;

@@ -120,9 +120,25 @@ if (isset($argv[1]) && $argv[1] === 'process_test') {
 
     require_once __DIR__ . '/../includes/Router.php';
 
-    $router = new Router();
+    // Extend Router to mock isAuthenticated
+    class MockRouter extends Router {
+        public $mockAuthStatus = true;
+        protected function isAuthenticated() {
+            return $this->mockAuthStatus;
+        }
 
-    $reflection = new ReflectionClass($router);
+        // Ensure handle401 can be mocked as well
+        protected function handle401() {
+            echo "Unauthorized";
+            exit;
+        }
+    }
+
+    $router = new MockRouter();
+    $router->mockAuthStatus = $mockAuth;
+
+    // Use Router class reflection to access private property, but instance is MockRouter
+    $reflection = new ReflectionClass(Router::class);
     $routesProp = $reflection->getProperty('routes');
     $routesProp->setAccessible(true);
     $routes = $routesProp->getValue($router);
