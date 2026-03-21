@@ -308,17 +308,17 @@ include __DIR__ . '/../partials/layouts/layoutTop.php';
                                             <td>
                                                 <div class="d-flex align-items-center gap-2">
                                                     <?php if ($key === 'Apache'): ?>
-                                                        <button type="button" class="btn btn-sm btn-primary-100 text-primary-600" onclick="reloadApache()">
+                                                        <button type="button" class="btn btn-sm btn-primary-100 text-primary-600" onclick="reloadApache()" aria-label="<?php echo t_services('reload', 'Reload') . ' ' . htmlspecialchars($key); ?>">
                                                             <iconify-icon icon="solar:refresh-bold" class="icon"></iconify-icon>
                                                             <?php echo t_services('reload', 'Reload'); ?>
                                                         </button>
                                                     <?php endif; ?>
                                                     <?php if ($status === 'running'): ?>
-                                                        <button type="button" class="w-32-px h-32-px bg-danger-focus text-danger-main rounded-circle d-inline-flex align-items-center justify-content-center" onclick="stopService('<?php echo $key; ?>')" title="<?php echo t_services('stop', 'Stop'); ?>">
+                                                        <button type="button" class="w-32-px h-32-px bg-danger-focus text-danger-main rounded-circle d-inline-flex align-items-center justify-content-center" onclick="stopService('<?php echo $key; ?>')" title="<?php echo t_services('stop', 'Stop'); ?>" aria-label="<?php echo t_services('stop', 'Stop') . ' ' . htmlspecialchars($key); ?>">
                                                             <iconify-icon icon="solar:stop-bold"></iconify-icon>
                                                         </button>
                                                     <?php else: ?>
-                                                        <button type="button" class="w-32-px h-32-px bg-success-focus text-success-main rounded-circle d-inline-flex align-items-center justify-content-center" onclick="startService('<?php echo $key; ?>')" title="<?php echo t_services('start', 'Start'); ?>">
+                                                        <button type="button" class="w-32-px h-32-px bg-success-focus text-success-main rounded-circle d-inline-flex align-items-center justify-content-center" onclick="startService('<?php echo $key; ?>')" title="<?php echo t_services('start', 'Start'); ?>" aria-label="<?php echo t_services('start', 'Start') . ' ' . htmlspecialchars($key); ?>">
                                                             <iconify-icon icon="solar:play-bold"></iconify-icon>
                                                         </button>
                                                     <?php endif; ?>
