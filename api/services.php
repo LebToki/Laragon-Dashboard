@@ -221,15 +221,38 @@ try {
             
             $services = \LaragonDashboard\Core\Cache::get('service_status');
             if (!$services) {
+                // ⚡ Bolt: Cache process and service checking to avoid N+1 query problem
+                $tasklistOutput = @shell_exec('tasklist 2>&1');
+
+                $scCommands = [];
+                foreach ($serviceMap as $key => $mappedName) {
+                    if (!in_array($key, $processServices)) {
+                        $scCommands[] = 'sc query "' . $mappedName . '"';
+                    }
+                }
+                $scOutput = '';
+                if (!empty($scCommands)) {
+                    $scOutput = @shell_exec(implode(' & ', $scCommands) . ' 2>&1');
+                }
+
+                $netstatOutput = @shell_exec('netstat -an 2>&1');
+
                 foreach ($serviceMap as $key => $mappedName) {
                     $isProcess = in_array($key, $processServices);
                     
                     if ($isProcess) {
                         $processName = strtolower($mappedName) . '.exe';
-                        $status = checkProcessRunning($processName) ? 'running' : 'stopped';
+                        // ⚡ Bolt: Use cached tasklist output with precise match
+                        $status = ($tasklistOutput && preg_match('/^' . preg_quote($processName, '/') . '\b/im', $tasklistOutput)) ? 'running' : 'stopped';
                         $usage = ['cpu' => 0, 'ram' => 0, 'pid' => 0];
                     } else {
-                        $status = checkServiceStatus($mappedName);
+                        // ⚡ Bolt: Use cached sc query output using precise regex to prevent false matches
+                        $status = 'stopped';
+                        if ($scOutput) {
+                            if (preg_match('/SERVICE_NAME: ' . preg_quote($mappedName, '/') . '(?:(?!SERVICE_NAME:).)*?(?:STATE\s+:\s+\d+\s+RUNNING)/s', $scOutput)) {
+                                $status = 'running';
+                            }
+                        }
                         $usage = ($status === 'running') ? \LaragonDashboard\Core\Services::getResourceUsage($key) : ['cpu' => 0, 'ram' => 0, 'pid' => 0];
                     }
                     
@@ -243,7 +266,13 @@ try {
                     
                     $runningPorts = [];
                     if ($status === 'running') {
-                        $runningPorts = getRunningPorts($key, $port, $sslPort);
+                        // ⚡ Bolt: Check ports against cached netstat output
+                        if (!empty($port) && $netstatOutput && preg_match('/[:\s]' . preg_quote($port, '/') . '\s+.*?LISTENING/i', $netstatOutput)) {
+                            $runningPorts[] = $port;
+                        }
+                        if (!empty($sslPort) && $netstatOutput && preg_match('/[:\s]' . preg_quote($sslPort, '/') . '\s+.*?LISTENING/i', $netstatOutput)) {
+                            $runningPorts[] = $sslPort;
+                        }
                     }
                     
                     $services[$key] = [
