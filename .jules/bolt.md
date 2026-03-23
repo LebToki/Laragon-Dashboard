@@ -9,3 +9,6 @@
 ## 2026-03-21 - Service Status N+1 Shell Commands
 **Learning:** In Windows environment, querying service, process, and port status iteratively using `sc query`, `tasklist`, and `netstat` shell commands for each service (N+1 shell executions) creates significant, avoidable overhead.
 **Action:** Replace sequential shell executions with batched `tasklist` and `netstat -an` commands run outside the loop. Use batched commands like `sc query X & sc query Y` where needed and then use `strpos` or `preg_match` (with negative lookaheads) on the cached output to extract status information, dramatically reducing subprocess spawning time.
+## 2026-03-22 - PowerShell Subprocess Overhead for Log Reading
+**Learning:** Using `powershell -Command "Get-Content... | Select-Object -Last"` to read the end of log files creates massive subprocess spawning overhead on Windows environments, significantly blocking performance when reading logs in helpers.
+**Action:** Replaced `powershell` execution with native PHP `fseek` and `fread` implementation (via `Logs::read()`), executing in <3ms compared to ~200-500ms startup latency for PowerShell.

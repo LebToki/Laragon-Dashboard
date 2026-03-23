@@ -803,15 +803,19 @@ if (!function_exists('readLogFile')) {
             return ['error' => 'Log file not found'];
         }
         
-        // Use tail command on Windows
-        $path = str_replace('\\', '/', $path);
-        $output = @shell_exec("powershell -Command \"Get-Content '$path' | Select-Object -Last $lines\" 2>&1");
-        
-        if (empty($output)) {
-            // Fallback to reading entire file
-            $output = @file_get_contents($path);
+        // ⚡ Bolt: Use native PHP implementation to avoid slow powershell subprocess creation
+        if (class_exists('\\LaragonDashboard\\Core\\Services\\Logs')) {
+            $result = \LaragonDashboard\Core\Services\Logs::read($path, $lines);
+            if ($result) {
+                return [
+                    'content' => $result['content'],
+                    'lines' => $result['displayed_lines']
+                ];
+            }
         }
         
+        // Fallback to reading entire file if class not available
+        $output = @file_get_contents($path);
         return [
             'content' => $output,
             'lines' => substr_count($output, "\n") + 1,
