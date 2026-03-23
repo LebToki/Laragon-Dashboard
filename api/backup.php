@@ -96,10 +96,18 @@ function getDatabaseList() {
         $databases = [];
         $result = mysqli_query($link, "SHOW DATABASES");
         if ($result) {
+            // ⚡ Bolt: Replace O(n) in_array lookup inside loop with O(1) isset hash map lookup
+            $systemDatabases = [
+                'information_schema' => true,
+                'performance_schema' => true,
+                'mysql' => true,
+                'sys' => true
+            ];
+
             while ($row = mysqli_fetch_array($result)) {
                 $dbName = $row[0];
                 // Skip system databases
-                if (!in_array($dbName, ['information_schema', 'performance_schema', 'mysql', 'sys'])) {
+                if (!isset($systemDatabases[$dbName])) {
                     $databases[] = $dbName;
                 }
             }
