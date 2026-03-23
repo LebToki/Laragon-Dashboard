@@ -103,7 +103,12 @@ include __DIR__ . '/../partials/layouts/layoutTop.php';
                             <?php echo t_projects('no_projects', 'No projects found. Create your first project to get started!'); ?>
                         <?php endif; ?>
                     </p>
-                    <?php if (empty($searchQuery)): ?>
+                    <?php if (!empty($searchQuery)): ?>
+                    <a href="index.php?page=projects" class="btn btn-primary-600 radius-8 px-20 py-11 mt-16 d-inline-flex align-items-center gap-2">
+                        <iconify-icon icon="solar:close-circle-bold" class="text-xl"></iconify-icon>
+                        <?php echo t_projects('clear_search', 'Clear Search'); ?>
+                    </a>
+                    <?php else: ?>
                     <button type="button" class="btn btn-primary-600 radius-8 px-20 py-11 mt-16 d-inline-flex align-items-center gap-2" data-bs-toggle="modal" data-bs-target="#projectWizardModal">
                         <iconify-icon icon="solar:add-circle-bold" class="text-xl"></iconify-icon>
                         <?php echo t_projects('create_new_project', 'Create New Project'); ?>
