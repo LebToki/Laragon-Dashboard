@@ -56,7 +56,8 @@ function getDiskUsage(&$vitals) {
 }
 
 function getServiceStatus(&$vitals) {
-    // Get service status (Try sc query - consolidated)
+    // ⚡ Bolt: Consolidated shell executions outside the loop to reduce subprocess spawning overhead
+    // and using negative lookaheads in regex to prevent matching across boundaries.
     $services = ['Apache2.4', 'MySQL'];
     $running = 0;
     $commands = [];
@@ -67,7 +68,7 @@ function getServiceStatus(&$vitals) {
     if ($output) {
         foreach ($services as $service) {
             // Find the section for this service in the combined output
-            if (preg_match('/SERVICE_NAME: ' . preg_quote($service, '/') . '.*?(?:STATE\s+:\s+\d+\s+RUNNING)/s', $output)) {
+            if (preg_match('/SERVICE_NAME: ' . preg_quote($service, '/') . '(?:(?!SERVICE_NAME:).)*?(?:STATE\s+:\s+\d+\s+RUNNING)/s', $output)) {
                 $running++;
             }
         }
