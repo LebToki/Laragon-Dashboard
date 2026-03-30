@@ -292,6 +292,31 @@ if (!function_exists('getDocumentRoot')) {
 }
 
 /**
+ * Get phpMyAdmin URL dynamically based on Laragon config
+ */
+if (!function_exists('getPhpMyAdminUrl')) {
+    function getPhpMyAdminUrl() {
+        $laragonRoot = getLaragonRoot();
+        $pmaPath = $laragonRoot . '/apps/phpmyadmin';
+        
+        // Check if phpMyAdmin exists in Laragon apps
+        if (is_dir($pmaPath)) {
+            // Get Apache port from Laragon config
+            $config = getLaragonConfig();
+            $apachePort = $config['ApachePort'] ?? '80';
+            $domain = getLaragonDomainSuffix();
+            
+            // phpMyAdmin is typically accessible via vhost
+            $pmaUrl = 'http://localhost' . ($apachePort != '80' ? ':' . $apachePort : '') . '/phpmyadmin';
+            return $pmaUrl;
+        }
+        
+        // Fallback
+        return 'http://localhost/phpmyadmin';
+    }
+}
+
+/**
  * Get Laragon version
  */
 if (!function_exists('getLaragonVersion')) {

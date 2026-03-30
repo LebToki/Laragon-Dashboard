@@ -15,8 +15,9 @@ if (file_exists($langConfigFile)) {
 $currentLang = strtolower($_GET['lang'] ?? $_COOKIE['lang'] ?? 'en');
 $currentLangData = $langConfig[$currentLang] ?? $langConfig['en'] ?? ['flag' => 'US', 'name' => 'English'];
 
-// Set up asset paths - use root assets directory
-$assetsImageUrl = defined('ASSETS_URL') ? ASSETS_URL . '/images' : 'assets/images';
+// Set up asset paths - always use absolute paths from web root
+$baseUrl = defined('BASE_URL') ? BASE_URL : '';
+$assetsImageUrl = defined('ASSETS_URL') ? ASSETS_URL . '/images' : ($baseUrl !== '' ? $baseUrl . '/assets/images' : '/assets/images');
 
 // Load projects for search
 $allProjects = [];

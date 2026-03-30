@@ -69,23 +69,12 @@ function getServerVitals() {
     
     // Get CPU usage (Windows)
     if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
-        // Use a single powershell command for multiple vitals for speed
-        // This is often faster than multiple wmic calls
-        $psCommand = 'powershell -Command "Get-CimInstance Win32_Processor | Select-Object -ExpandProperty LoadPercentage; ' .
-                     'Get-CimInstance Win32_OperatingSystem | Select-Object TotalVisibleMemorySize, FreePhysicalMemory; ' .
-                     'Get-Service -Name Apache2.4, MySQL | Select-Object Status"';
-        
-        // Fallback to individual calls if powershell fails or is slow
-        // But for now, let's optimize the existing wmic calls by combining or streamlining
-        
         // Get CPU usage using WMI
         $output = @shell_exec('wmic cpu get loadpercentage /value 2>&1');
         if ($output && preg_match('/LoadPercentage=(\d+)/', $output, $matches)) {
             $vitals['cpu']['current'] = (int)$matches[1];
-        } else {
-            // Faster fallback for CPU on Windows if wmic is buggy
-            $vitals['cpu']['current'] = rand(5, 15); // Simulated for now if command fails
         }
+        // If wmic fails, leave cpu at 0 (unknown) rather than fabricating data
         
         // Get memory info
         $output = @shell_exec('wmic OS get TotalVisibleMemorySize,FreePhysicalMemory /value 2>&1');
@@ -192,12 +181,7 @@ function getServerVitals() {
         ];
     }
     
-    // Set random-ish values for network if not available (to show something)
-    if ($vitals['network']['speed'] == 0) {
-        $vitals['network']['speed'] = rand(100, 300);
-        $vitals['network']['upload'] = rand(5, 20);
-        $vitals['network']['download'] = rand(20, 100);
-    }
+    // Network vitals - leave at 0 if not available (no fabrication)
     
     // Save current vitals to cache
     @file_put_contents($cacheFile, json_encode($vitals));

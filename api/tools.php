@@ -198,9 +198,18 @@ try {
             
             $cmd = $composer . ' ' . $command;
             if ($command === 'require' && isset($_POST['package'])) {
-                $cmd .= ' ' . escapeshellarg($_POST['package']);
+                $package = $_POST['package'];
+                // Validate package name to prevent command injection
+                if (!preg_match('/^[a-zA-Z0-9_-]+(\/[a-zA-Z0-9_-]+)?(:[a-zA-Z0-9.*^~<>!=]+)?$/', $package)) {
+                    throw new Exception('Invalid package name format');
+                }
+                $cmd .= ' ' . escapeshellarg($package);
             } elseif ($command === 'remove' && isset($_POST['package'])) {
-                $cmd .= ' ' . escapeshellarg($_POST['package']);
+                $package = $_POST['package'];
+                if (!preg_match('/^[a-zA-Z0-9_-]+(\/[a-zA-Z0-9_-]+)?$/', $package)) {
+                    throw new Exception('Invalid package name format');
+                }
+                $cmd .= ' ' . escapeshellarg($package);
             }
             
             $result = executeCommand($cmd, $fullPath);

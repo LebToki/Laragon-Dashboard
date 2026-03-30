@@ -7,6 +7,12 @@
 
 // Load configuration
 require_once __DIR__ . '/../config.php';
+require_once __DIR__ . '/../includes/helpers.php';
+
+// Enforce authentication
+if (function_exists('check_auth')) {
+    check_auth();
+}
 
 header('Content-Type: application/json');
 
@@ -67,6 +73,13 @@ try {
             break;
             
         case 'delete':
+            // CSRF check for destructive action
+            $token = $_POST['csrf_token'] ?? ($_GET['csrf_token'] ?? '');
+            if (!verifyCSRFToken($token)) {
+                http_response_code(403);
+                echo json_encode(['success' => false, 'error' => 'CSRF token validation failed']);
+                exit;
+            }
             if (empty($messageId)) {
                 throw new Exception('Message ID required');
             }

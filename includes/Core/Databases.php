@@ -140,7 +140,12 @@ class Databases {
             $dumpPath = 'mysqldump';
         }
 
-        $command = "\"$dumpPath\" --user=root --result-file=\"$filepath\" \"$name\"";
+        $command = "\"$dumpPath\" --user=" . escapeshellarg($user);
+        if (!empty($pass)) {
+            // MySQL -p flag must NOT have space or quotes around password
+            $command .= ' -p' . $pass;
+        }
+        $command .= ' ' . escapeshellarg($name) . ' > ' . escapeshellarg($filepath) . ' 2>&1';
         
         exec($command, $output, $returnVar);
 
@@ -154,5 +159,111 @@ class Databases {
         }
 
         return false;
+    }
+
+    /**
+     * Get tables for a database
+     */
+    public static function getTables($database) {
+        $db = self::getConnection();
+        if (!$db) return [];
+
+        $database = $db->real_escape_string($database);
+        $result = $db->query("SHOW TABLES FROM `$database`");
+        $tables = [];
+        
+        if ($result) {
+            while ($row = $result->fetch_row()) {
+                $tableName = $row[0];
+                $tableInfo = $db->query("SELECT TABLE_ROWS, DATA_LENGTH, INDEX_LENGTH, ENGINE, TABLE_COLLATION 
+                    FROM information_schema.TABLES 
+                    WHERE table_schema = '$database' AND table_name = '$tableName'");
+                
+                $info = $tableInfo ? $tableInfo->fetch_assoc() : null;
+                $tables[] = [
+                    'name' => $tableName,
+                    'rows' => $info['TABLE_ROWS'] ?? 0,
+                    'data_size' => round(($info['DATA_LENGTH'] ?? 0) / 1024, 2),
+                    'index_size' => round(($info['INDEX_LENGTH'] ?? 0) / 1024, 2),
+                    'engine' => $info['ENGINE'] ?? 'Unknown',
+                    'collation' => $info['TABLE_COLLATION'] ?? 'Unknown'
+                ];
+            }
+        }
+        return $tables;
+    }
+
+    /**
+     * Get table structure
+     */
+    public static function getTableStructure($database, $table) {
+        $db = self::getConnection();
+        if (!$db) return null;
+
+        $database = $db->real_escape_string($database);
+        $table = $db->real_escape_string($table);
+        
+        // Get columns
+        $columns = [];
+        $result = $db->query("SHOW FULL COLUMNS FROM `$database`.`$table`");
+        if ($result) {
+            while ($row = $result->fetch_assoc()) {
+                $columns[] = $row;
+            }
+        }
+        
+        // Get indexes
+        $indexes = [];
+        $result = $db->query("SHOW INDEX FROM `$database`.`$table`");
+        if ($result) {
+            while ($row = $result->fetch_assoc()) {
+                $indexes[] = $row;
+            }
+        }
+        
+        // Get create table statement
+        $createTable = null;
+        $result = $db->query("SHOW CREATE TABLE `$database`.`$table`");
+        if ($result && $row = $result->fetch_assoc()) {
+            $createTable = $row['Create Table'] ?? null;
+        }
+        
+        return [
+            'columns' => $columns,
+            'indexes' => $indexes,
+            'create_statement' => $createTable
+        ];
+    }
+
+    /**
+     * Execute a read-only query
+     */
+    public static function executeQuery($database, $query) {
+        $db = self::getConnection();
+        if (!$db) return ['success' => false, 'error' => 'Database connection failed'];
+
+        // Switch to the specified database
+        $databaseEscaped = $db->real_escape_string($database);
+        if (!$db->query("USE `$databaseEscaped`")) {
+            return ['success' => false, 'error' => 'Failed to select database: ' . $db->error];
+        }
+
+        $result = $db->query($query);
+        if (!$result) {
+            return ['success' => false, 'error' => $db->error];
+        }
+        
+        $rows = [];
+        if ($result instanceof \mysqli_result) {
+            while ($row = $result->fetch_assoc()) {
+                $rows[] = $row;
+            }
+        }
+        
+        return [
+            'success' => true,
+            'data' => $rows,
+            'count' => count($rows)
+        ];
     }
 }

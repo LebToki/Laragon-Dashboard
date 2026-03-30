@@ -42,8 +42,9 @@ class Services {
      */
     public static function start($name) {
         $realName = self::getRealName($name);
-        $output = @shell_exec('net start "' . $realName . '" 2>&1');
-        return strpos($output, 'was started successfully') !== false || strpos($output, 'running') !== false;
+        $output = @shell_exec('sc start "' . $realName . '" 2>&1');
+        sleep(1);
+        return self::isRunning($name);
     }
 
     /**
@@ -51,8 +52,9 @@ class Services {
      */
     public static function stop($name) {
         $realName = self::getRealName($name);
-        $output = @shell_exec('net stop "' . $realName . '" 2>&1');
-        return strpos($output, 'was stopped successfully') !== false || strpos($output, 'stopped') !== false;
+        $output = @shell_exec('sc stop "' . $realName . '" 2>&1');
+        sleep(1);
+        return !self::isRunning($name);
     }
 
     /**
@@ -70,31 +72,42 @@ class Services {
     public static function getResourceUsage($name) {
         $realName = self::getRealName($name);
         
-        // Find PID
-        $output = @shell_exec('tasklist /FI "SERVICES eq ' . $realName . '" /FO CSV /NH 2>&1');
-        if (empty($output) || strpos($output, 'No tasks') !== false) {
+        // Find PID - parse tasklist output line by line
+        $output = @shell_exec('tasklist /FI "SERVICES eq ' . $realName . '" /FO CSV 2>&1');
+        if (empty($output) || stripos($output, 'No tasks') !== false || stripos($output, 'info: no tasks') !== false) {
             return ['cpu' => 0, 'ram' => 0, 'pid' => 0];
         }
 
-        // Parse CSV output
-        $data = str_getcsv($output);
-        if (count($data) < 5) return ['cpu' => 0, 'ram' => 0, 'pid' => 0];
+        // Parse each line of CSV output
+        $lines = explode("\n", trim($output));
+        foreach ($lines as $line) {
+            $data = str_getcsv($line);
+            if (count($data) < 5) continue;
+            
+            // Skip header row
+            if (stripos($data[0], 'image name') !== false) continue;
+            
+            // Match the service by name
+            if (stripos($data[0], $realName) === false) continue;
+            
+            $pid = intval($data[1]);
+            $ramRaw = $data[4]; // e.g. "12,345 K"
+            $ram = floatval(str_replace([',', ' ', 'K'], '', $ramRaw)) / 1024; // MB
 
-        $pid = intval($data[1]);
-        $ramRaw = $data[4]; // e.g. "12,345 K"
-        $ram = floatval(str_replace([',', ' ', 'K'], '', $ramRaw)) / 1024; // MB
+            // For CPU, we use wmic
+            $cpu = 0;
+            $cpuOutput = @shell_exec('wmic process where ProcessId=' . $pid . ' get PercentProcessorTime /value 2>&1');
+            if ($cpuOutput && preg_match('/PercentProcessorTime=(\d+)/i', $cpuOutput, $matches)) {
+                $cpu = intval($matches[1]);
+            }
 
-        // For CPU, we use wmic fallback or 0
-        $cpu = 0;
-        $cpuOutput = @shell_exec('wmic process where ProcessId=' . $pid . ' get PercentProcessorTime /value 2>&1');
-        if ($cpuOutput && preg_match('/PercentProcessorTime=(\d+)/i', $cpuOutput, $matches)) {
-            $cpu = intval($matches[1]);
+            return [
+                'cpu' => $cpu,
+                'ram' => round($ram, 2),
+                'pid' => $pid
+            ];
         }
-
-        return [
-            'cpu' => $cpu,
-            'ram' => round($ram, 2),
-            'pid' => $pid
-        ];
+        
+        return ['cpu' => 0, 'ram' => 0, 'pid' => 0];
     }
 }

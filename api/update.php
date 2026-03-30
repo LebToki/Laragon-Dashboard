@@ -61,6 +61,12 @@ try {
                 throw new Exception('Download URL required');
             }
             
+            // Only allow downloads from the official GitHub repository
+            if (!preg_match('#^https://github\.com/LebToki/Laragon-Dashboard/#', $downloadUrl)
+                && !preg_match('#^https://api\.github\.com/repos/LebToki/Laragon-Dashboard/#', $downloadUrl)) {
+                throw new Exception('Download URL must be from the official Laragon-Dashboard GitHub repository');
+            }
+            
             try {
                 $zipPath = $updateManager->downloadUpdate($downloadUrl);
                 ob_clean();

@@ -2,6 +2,38 @@
 
 All notable changes to this project will be documented in this file.
 
+## [4.1.0] - 2026-03-31
+
+### 🔒 Security Hardening
+- **CRITICAL**: Added authentication enforcement to Mailpit API — previously accessible without login
+- **CRITICAL**: Added CSRF token validation to Mailpit message deletion endpoint
+- **CRITICAL**: Update download URLs now restricted to official `LebToki/Laragon-Dashboard` GitHub repository only — prevents arbitrary file download attacks
+- **CRITICAL**: Composer package names in tools API now validated against strict regex — prevents command injection via malicious package names
+- **HIGH**: Unified service start/stop methods across `Services.php` and `api/services.php` — both now use `sc` with status polling for reliable results
+- **HIGH**: Fixed `mysqldump` command in `Databases::backup()` — password handled correctly without shell-quoting issues
+- **HIGH**: Backup ZIP now excludes `vendor/`, `node_modules/`, `.git/`, and other bloat directories — smaller backups, no secrets leaked
+
+### 🐛 Bug Fixes
+- **HIGH**: Fixed `ASSETS_URL` resolution for subdirectory access (`localhost/Laragon-Dashboard/`) — all CSS/JS/images now load correctly
+- **HIGH**: Fixed `.htaccess` favicon rewrite rule — uses relative path for subdirectory compatibility
+- **HIGH**: Fixed sidebar and navbar asset fallback paths — no more relative `assets/` paths that break on subdirectory access
+- **HIGH**: phpMyAdmin link now dynamically resolves from Laragon config instead of hardcoded `http://localhost/phpmyadmin`
+- **HIGH**: Project card Share/Delete buttons now functional — Share copies URL to clipboard, Delete calls `delete_project.php` API
+- **MEDIUM**: Fixed `getResourceUsage()` CSV parsing in `Services.php` — now correctly parses multi-line `tasklist` output
+- **MEDIUM**: Removed fabricated CPU data (`rand(5,15)`) and network data (`rand()`) from vitals API — no more fake metrics
+- **MEDIUM**: Removed dead PowerShell command in vitals API that was never executed
+
+### ✨ New Features
+- **NEW**: `execute_query` API endpoint for databases — read-only SELECT/SHOW/DESCRIBE/EXPLAIN queries with CSRF protection
+- **NEW**: `get_tables` and `get_table_structure` API endpoints for database schema browsing
+- **NEW**: `getPhpMyAdminUrl()` helper function — dynamically resolves phpMyAdmin URL from Laragon configuration
+- **NEW**: `shareProject()` and `confirmDeleteProject()` JavaScript functions on dashboard homepage
+
+### 🏗️ Architecture
+- **IMPROVED**: Service start/stop unified to `sc` + status polling pattern across `Services.php` core class
+- **IMPROVED**: Backup system now intelligently excludes heavy directories (vendor, node_modules, .git)
+- **IMPROVED**: All asset path fallbacks now derive from `BASE_URL` instead of hardcoded relative paths
+
 ## [4.0.4] - 2026-03-01
 
 - **FIXED**: Restored missing `diagnostic.php` file (Issue #45)

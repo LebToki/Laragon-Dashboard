@@ -314,7 +314,7 @@ include './partials/layouts/layoutTop.php' ?>
                     </div>
                     <!-- Value on full row -->
                     <h6 class="mb-0 text-truncate" style="font-size: 18px;">
-                        <a href="http://localhost/phpmyadmin" target="_blank" class="text-primary-600 text-decoration-none hover-opacity-80 d-inline-flex align-items-center gap-1">
+                        <a href="<?php echo htmlspecialchars(getPhpMyAdminUrl()); ?>" target="_blank" class="text-primary-600 text-decoration-none hover-opacity-80 d-inline-flex align-items-center gap-1">
                             Manage MySQL
                             <iconify-icon icon="solar:link-bold" class="text-sm"></iconify-icon>
                         </a>
@@ -450,13 +450,13 @@ include './partials/layouts/layoutTop.php' ?>
                                 <div class="mt-8 pt-8 border-top border-white border-opacity-20">
                                     <div class="row g-2">
                                         <div class="col-6">
-                                            <a href="index.php?page=projects" class="btn btn-sm btn-success w-100 radius-8 px-12 py-8 d-flex align-items-center gap-2">
+                                            <a href="javascript:void(0)" class="btn btn-sm btn-success w-100 radius-8 px-12 py-8 d-flex align-items-center gap-2" onclick="shareProject('<?php echo addslashes(htmlspecialchars($project['name'], ENT_QUOTES)); ?>'); return false;">
                                                 <iconify-icon icon="solar:share-bold" class="text-lg"></iconify-icon>
                                                 Share
                                             </a>
                                         </div>
                                         <div class="col-6">
-                                            <a href="index.php?page=projects" class="btn btn-sm btn-danger w-100 radius-8 px-12 py-8 d-flex align-items-center gap-2">
+                                            <a href="javascript:void(0)" class="btn btn-sm btn-danger w-100 radius-8 px-12 py-8 d-flex align-items-center gap-2" onclick="confirmDeleteProject('<?php echo addslashes(htmlspecialchars($project['name'], ENT_QUOTES)); ?>'); return false;">
                                                 <iconify-icon icon="solar:trash-bin-trash-bold" class="text-lg"></iconify-icon>
                                                 Delete
                                             </a>
@@ -914,6 +914,50 @@ document.addEventListener('DOMContentLoaded', function() {
     // Initial refresh
     refreshStatus();
 });
+
+// Share project - copy project URL to clipboard
+function shareProject(projectName) {
+    const projectUrl = window.location.origin + '/' + projectName;
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(projectUrl).then(() => {
+            showNotification('Project URL copied to clipboard!', 'success', 'Share');
+        }).catch(() => {
+            prompt('Copy project URL:', projectUrl);
+        });
+    } else {
+        prompt('Copy project URL:', projectUrl);
+    }
+}
+
+// Confirm and delete project
+function confirmDeleteProject(projectName) {
+    if (!confirm('Are you sure you want to delete "' + projectName + '"?\n\nThis will permanently remove the project files and database.\nThis action cannot be undone!')) {
+        return;
+    }
+    
+    const formData = new FormData();
+    formData.append('action', 'delete');
+    formData.append('project', projectName);
+    formData.append('csrf_token', window.csrfToken);
+    
+    fetch('api/delete_project.php', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            showNotification('Project "' + projectName + '" deleted successfully!', 'success', 'Success');
+            setTimeout(() => window.location.reload(), 1500);
+        } else {
+            showNotification(data.error || 'Failed to delete project', 'error', 'Error');
+        }
+    })
+    .catch(error => {
+        console.error('Error deleting project:', error);
+        showNotification('Error: ' + error.message, 'error', 'System Error');
+    });
+}
 </script>
 
 <!-- .env Editor Modal -->

@@ -155,10 +155,25 @@ function createBackup($projectName, $databaseName = null) {
         RecursiveIteratorIterator::LEAVES_ONLY
     );
     
+    // Directories and patterns to exclude from backup
+    $excludeDirs = ['vendor', 'node_modules', '.git', 'bower_components', '.svn'];
+    $excludePatterns = ['/.git/', '/vendor/', '/node_modules/', '/bower_components/', '/.svn/'];
+    
     foreach ($files as $file) {
         if (!$file->isDir()) {
             $filePath = $file->getRealPath();
             $relativePath = substr($filePath, strlen($projectPath) + 1);
+            
+            // Skip excluded directories
+            $skip = false;
+            foreach ($excludePatterns as $pattern) {
+                if (strpos('/' . $relativePath, $pattern) !== false) {
+                    $skip = true;
+                    break;
+                }
+            }
+            if ($skip) continue;
+            
             $zip->addFile($filePath, $relativePath);
         }
     }

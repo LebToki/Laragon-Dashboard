@@ -1,14 +1,14 @@
 # 🚀 Laragon Dashboard
 
-We're thrilled to announce the release of Laragon Dashboard 4.0.4, a complete reimagining of local development environment management for Windows. This isn't just an update, it's a quantum leap forward in how you interact with your Laragon setup.
+We're thrilled to announce the release of Laragon Dashboard 4.1.0, a complete reimagining of local development environment management for Windows. This isn't just an update, it's a quantum leap forward in how you interact with your Laragon setup.
 
 Laragon Dashboard is a modern, feature-rich web-based dashboard for managing Laragon development environment. 
-Version 4.0.4 aims to be a comprehensive MAMP competitor on Windows, replicating Laragon control panel functionality in a modern, themed web interface.
+Version 4.1.0 aims to be a comprehensive MAMP competitor on Windows, replicating Laragon control panel functionality in a modern, themed web interface.
 
 "The best Windows development environment just got better. Welcome to the future of local development."
 
 
-[![Version](https://img.shields.io/badge/version-4.0.4-blue.svg)](https://github.com/LebToki/Laragon-Dashboard)
+[![Version](https://img.shields.io/badge/version-4.1.0-blue.svg)](https://github.com/LebToki/Laragon-Dashboard)
 [![PHP](https://img.shields.io/badge/PHP-7.4%2B-green.svg)](https://php.net)
 [![Bootstrap](https://img.shields.io/badge/Bootstrap-5.3.2-purple.svg)](https://getbootstrap.com)
 [![Platform](https://img.shields.io/badge/platform-windows-lightgrey.svg)]()

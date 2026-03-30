@@ -44,9 +44,10 @@ if (file_exists($langConfigFile)) {
 // Get current language
 $currentLang = strtolower($_GET['lang'] ?? $_COOKIE['lang'] ?? 'en');
 
-// Set up asset paths
-$assetsImageUrl = defined('ASSETS_URL') ? ASSETS_URL . '/images' : 'assets/images';
-$assetsUrl = defined('ASSETS_URL') ? ASSETS_URL : 'assets';
+// Set up asset paths - always use absolute paths from web root
+$baseUrl = defined('BASE_URL') ? BASE_URL : '';
+$assetsImageUrl = defined('ASSETS_URL') ? ASSETS_URL . '/images' : ($baseUrl !== '' ? $baseUrl . '/assets/images' : '/assets/images');
+$assetsUrl = defined('ASSETS_URL') ? ASSETS_URL : ($baseUrl !== '' ? $baseUrl . '/assets' : '/assets');
 
 // Load i18n helper if available
 if (file_exists(__DIR__ . '/../includes/i18n.php')) {

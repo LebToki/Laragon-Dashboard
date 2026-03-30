@@ -74,6 +74,49 @@ try {
             }
             break;
 
+        case 'get_tables':
+            $database = $_GET['database'] ?? '';
+            if (empty($database)) throw new Exception('Database name is required');
+            
+            $tables = \LaragonDashboard\Core\Databases::getTables($database);
+            ob_clean();
+            echo json_encode(['success' => true, 'data' => $tables]);
+            break;
+
+        case 'get_table_structure':
+            $database = $_GET['database'] ?? '';
+            $table = $_GET['table'] ?? '';
+            if (empty($database)) throw new Exception('Database name is required');
+            if (empty($table)) throw new Exception('Table name is required');
+            
+            $structure = \LaragonDashboard\Core\Databases::getTableStructure($database, $table);
+            ob_clean();
+            echo json_encode(['success' => true, 'data' => $structure]);
+            break;
+
+        case 'execute_query':
+            // CSRF check for query execution
+            $token = $_POST['csrf_token'] ?? '';
+            if (!verifyCSRFToken($token)) {
+                throw new Exception('CSRF token validation failed');
+            }
+            
+            $database = $_POST['database'] ?? '';
+            $query = trim($_POST['query'] ?? '');
+            if (empty($database)) throw new Exception('Database name is required');
+            if (empty($query)) throw new Exception('Query is required');
+            
+            // Only allow SELECT queries (read-only safety)
+            $queryUpper = strtoupper(ltrim($query));
+            if (!preg_match('/^(SELECT|SHOW|DESCRIBE|EXPLAIN)\s/i', $queryUpper)) {
+                throw new Exception('Only SELECT, SHOW, DESCRIBE, and EXPLAIN queries are allowed (read-only mode)');
+            }
+            
+            $result = \LaragonDashboard\Core\Databases::executeQuery($database, $query);
+            ob_clean();
+            echo json_encode($result);
+            break;
+
         default:
             throw new Exception('Invalid action');
     }
