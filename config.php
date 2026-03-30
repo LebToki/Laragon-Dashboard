@@ -218,31 +218,13 @@ if (!defined('BASE_URL')) {
     define('BASE_URL', $basePath);
 }
 if (!defined('ASSETS_URL')) {
-    // Always use absolute path from web root for assets
-    // This ensures CSS/JS files load correctly regardless of routing or direct access
-
-    // Check if we're using PHP built-in server with dashboard as document root
-    $docRoot = $_SERVER['DOCUMENT_ROOT'] ?? '';
-    $appRootNormalized = str_replace('\\', '/', rtrim(APP_ROOT, '/\\'));
-    $docRootNormalized = str_replace('\\', '/', rtrim($docRoot, '/\\'));
-
-    if ($docRootNormalized === $appRootNormalized) {
-        // PHP built-in server or Laragon auto-vhost: dashboard IS the document root, so assets are at /assets
-        $assetsPath = '/assets';
+    // Use BASE_URL to ensure assets load correctly in subdirectory access
+    // e.g. /Laragon-Dashboard/assets when accessed via localhost/Laragon-Dashboard/
+    if (BASE_URL !== '' && BASE_URL !== '/') {
+        $assetsPath = BASE_URL . '/assets';
     } else {
-        // Check if assets directory exists at document root level
-        // This handles cases where Laragon auto-vhost points directly to Laragon-Dashboard
-        $assetsAtDocRoot = $docRootNormalized . '/assets';
-        if (is_dir($assetsAtDocRoot)) {
-            // Assets are directly under document root (auto-vhost scenario)
-            $assetsPath = '/assets';
-        } else if (BASE_URL === '') {
-            // Fallback: dashboard is in subdirectory but BASE_URL is empty
-            $assetsPath = '/assets';
-        } else {
-            // Normal Apache: dashboard is in subdirectory, use BASE_URL
-            $assetsPath = BASE_URL . '/assets';
-        }
+        // Dashboard at document root (vhost or PHP built-in server)
+        $assetsPath = '/assets';
     }
 
     // Ensure it starts with / (absolute path)
