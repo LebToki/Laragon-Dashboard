@@ -413,7 +413,7 @@ if (!function_exists('analyzeProject')) {
         'is_wordpress' => false,
         'has_composer' => file_exists($path . '/composer.json'),
         'has_npm' => file_exists($path . '/package.json'),
-        'has_git' => is_dir($path . '/.git'),
+        'has_git' => is_dir($path . '/.git') || is_file($path . '/.git'),
         'git_branch' => null,
         'git_status' => null,
         'favicon' => null,
@@ -425,14 +425,20 @@ if (!function_exists('analyzeProject')) {
         $project['icon'] = 'devicon-plain:wordpress';
         $project['color'] = 'primary';
         $project['is_wordpress'] = true;
-        
-        // Quick look for WordPress favicon
-        $commonPaths = ['/wp-content/uploads/favicon.ico', '/favicon.ico', '/favicon.png'];
-        foreach ($commonPaths as $relPath) {
-            if (file_exists($path . $relPath)) {
-                $project['favicon'] = $name . $relPath;
-                break;
+
+        // Quick look for WordPress favicon with fallback chain: .ico → .png → default
+        $commonPaths = [['/wp-content/uploads/favicon.ico', '/wp-content/uploads/favicon.png'], ['/favicon.ico', '/favicon.png'], ['/favicon.png']];
+        foreach ($commonPaths as $pathSet) {
+            foreach ($pathSet as $relPath) {
+                if (file_exists($path . $relPath)) {
+                    $project['favicon'] = $name . $relPath;
+                    break 2;
+                }
             }
+        }
+        // Fallback to default asset if no favicon found
+        if (empty($project['favicon'])) {
+            $project['favicon'] = 'assets/images/favicon/favicon-32x32.png';
         }
     }
     // Check for Laravel
@@ -440,7 +446,10 @@ if (!function_exists('analyzeProject')) {
         $project['platform'] = 'Laravel';
         $project['icon'] = 'devicon-plain:laravel';
         $project['color'] = 'danger';
+        // Try favicon.ico first, then favicon.png
         if (file_exists($path . '/public/favicon.ico')) $project['favicon'] = $name . '/public/favicon.ico';
+        elseif (file_exists($path . '/public/favicon.png')) $project['favicon'] = $name . '/public/favicon.png';
+        else $project['favicon'] = 'assets/images/favicon/favicon-32x32.png';
     }
     // Check for Drupal
     elseif (file_exists($path . '/core/lib/Drupal.php') || file_exists($path . '/autoload.php')) {
@@ -477,7 +486,10 @@ if (!function_exists('analyzeProject')) {
         $project['platform'] = 'Static HTML';
         $project['icon'] = 'devicon-plain:html5';
         $project['color'] = 'warning';
+        // Try favicon.ico first, then favicon.png, then default
         if (file_exists($path . '/favicon.ico')) $project['favicon'] = $name . '/favicon.ico';
+        elseif (file_exists($path . '/favicon.png')) $project['favicon'] = $name . '/favicon.png';
+        else $project['favicon'] = 'assets/images/favicon/favicon-32x32.png';
     }
     // Check for Node.js
     elseif (file_exists($path . '/package.json') && !file_exists($path . '/composer.json')) {
@@ -490,17 +502,38 @@ if (!function_exists('analyzeProject')) {
         $project['platform'] = 'PHP';
         $project['icon'] = 'devicon-plain:php';
         $project['color'] = 'primary';
+        // Try favicon.ico first, then favicon.png, then default
         if (file_exists($path . '/favicon.ico')) $project['favicon'] = $name . '/favicon.ico';
+        elseif (file_exists($path . '/favicon.png')) $project['favicon'] = $name . '/favicon.png';
+        else $project['favicon'] = 'assets/images/favicon/favicon-32x32.png';
     }
     
     // Check for Git branch and status (optimized: only branch for now if it's slow)
     if ($project['has_git']) {
-        $branch = @shell_exec('cd ' . escapeshellarg($path) . ' && git rev-parse --abbrev-ref HEAD 2>&1');
-        $project['git_branch'] = trim((string)$branch) ?: 'unknown';
+        // Try reading branch directly from .git/HEAD to avoid shell overhead
+        // If .git is a file (submodule/worktree) or parsing fails, fallback to shell
+        $branch = 'unknown';
+        $headFile = $path . '/.git/HEAD';
+        if (is_file($headFile)) {
+            $head = trim((string)@file_get_contents($headFile));
+            if (strpos($head, 'ref: refs/heads/') === 0) {
+                $branch = substr($head, 16);
+            } else {
+                $branch = $head; // Detached HEAD, usually a commit hash
+            }
+        } elseif (is_file($path . '/.git')) {
+            // It's a submodule or worktree where .git is a file, fallback to git CLI
+            $branch = trim((string)@shell_exec('cd ' . escapeshellarg($path) . ' && git rev-parse --abbrev-ref HEAD 2>&1'));
+        }
+
+        $project['git_branch'] = $branch ?: 'unknown';
         
-        // Skip detailed status check for large projects or make it optional?
-        // For now, keep it but ensure it's not recursive
-        $status = @shell_exec('cd ' . escapeshellarg($path) . ' && git status --porcelain 2>&1');
+        // Optimization: Use proc_open to run git status in the background if possible, but PHP doesn't easily
+        // return async results from a function without a Promise-like wrapper.
+        // For project caching, we still need the result.
+        // To reduce disk I/O, we can tell git status to only check the working tree and not recurse deep into untracked dirs
+        // '--untracked-files=no' makes it significantly faster for large repositories.
+        $status = @shell_exec('cd ' . escapeshellarg($path) . ' && git status --porcelain --untracked-files=no 2>&1');
         $project['git_status'] = !empty(trim((string)$status)) ? 'modified' : 'clean';
     }
     
@@ -610,16 +643,37 @@ if (!function_exists('getServicesStatus')) {
         
         $status = [];
         
+        // Consolidate port checks and service queries for efficiency
+        $netstatOutput = @shell_exec('netstat -an 2>&1');
+        $scCommands = [];
+        foreach ($services as $service) {
+            $scCommands[] = 'sc query "' . $service['name'] . '"';
+        }
+        $scOutput = @shell_exec(implode(' & ', $scCommands) . ' 2>&1');
+
         foreach ($services as $key => $service) {
+            // Precise port check using regex to avoid false positives (e.g., matching 8080 when looking for 80)
+            $isPortRunning = false;
+            if ($netstatOutput) {
+                // Match ":80" but not ":8080", ":180", etc.
+                if (preg_match('/[:\s]' . preg_quote($service['port'], '/') . '\s+.*?LISTENING/i', $netstatOutput)) {
+                    $isPortRunning = true;
+                }
+            } else {
+                $isPortRunning = isPortInUse($service['port']);
+            }
+
             $status[$key] = [
                 'name' => $service['display'],
-                'running' => isPortInUse($service['port']),
+                'running' => $isPortRunning,
                 'port' => $service['port'],
             ];
             
-            // Try Windows service check as well
-            $output = @shell_exec('sc query "' . $service['name'] . '" 2>&1');
-            $status[$key]['windows_service'] = strpos($output, 'RUNNING') !== false;
+            // Service check from consolidated output
+            $status[$key]['windows_service'] = false;
+            if ($scOutput && preg_match('/SERVICE_NAME:\s*' . preg_quote($service['name'], '/') . '\s+(?:(?!SERVICE_NAME:).)*?STATE\s+:\s+\d+\s+RUNNING/is', $scOutput)) {
+                $status[$key]['windows_service'] = true;
+            }
         }
         
         return $status;
@@ -1060,14 +1114,44 @@ if (!function_exists('runNpmCommand')) {
  */
 if (!function_exists('checkGitStatus')) {
     function checkGitStatus($projectPath) {
-        $branch = @shell_exec('cd ' . escapeshellarg($projectPath) . ' && git rev-parse --abbrev-ref HEAD 2>&1');
-        $status = @shell_exec('cd ' . escapeshellarg($projectPath) . ' && git status --porcelain 2>&1');
-        $remote = @shell_exec('cd ' . escapeshellarg($projectPath) . ' && git remote get-url origin 2>&1');
+        // 1. Get branch directly from .git/HEAD if possible
+        $branch = 'unknown';
+        $headFile = $projectPath . '/.git/HEAD';
+        if (is_file($headFile)) {
+            $head = trim((string)@file_get_contents($headFile));
+            if (strpos($head, 'ref: refs/heads/') === 0) {
+                $branch = substr($head, 16);
+            } else {
+                $branch = $head; // Detached HEAD, usually a commit hash
+            }
+        } elseif (is_file($projectPath . '/.git')) {
+            // It's a submodule or worktree where .git is a file
+            $branch = trim((string)@shell_exec('cd ' . escapeshellarg($projectPath) . ' && git rev-parse --abbrev-ref HEAD 2>&1'));
+        }
+
+        // 2. Get status via shell exec (too complex to parse manually reliably)
+        // Optimization: Use --untracked-files=no to speed up disk I/O on large repos
+        $status = @shell_exec('cd ' . escapeshellarg($projectPath) . ' && git status --porcelain --untracked-files=no 2>&1');
+
+        // 3. Get remote URL from .git/config
+        $remote = null;
+        $configFile = $projectPath . '/.git/config';
+        if (is_file($configFile)) {
+            $config = @file_get_contents($configFile);
+            if ($config && preg_match('/\[remote "origin"\][^\[]*url\s*=\s*([^\n]+)/s', $config, $matches)) {
+                $remote = trim($matches[1]);
+            }
+        }
+
+        // Fallback if config regex failed or it's a submodule/worktree where .git is a file
+        if (empty($remote) && (is_file($configFile) || is_file($projectPath . '/.git'))) {
+            $remote = trim((string)@shell_exec('cd ' . escapeshellarg($projectPath) . ' && git remote get-url origin 2>&1'));
+        }
         
         return [
-            'branch' => trim((string)$branch) ?: 'unknown',
+            'branch' => $branch ?: 'unknown',
             'status' => !empty(trim((string)$status)) ? 'modified' : 'clean',
-            'remote' => trim((string)$remote) ?: null,
+            'remote' => $remote ?: null,
         ];
     }
 }
@@ -1241,17 +1325,7 @@ if (!function_exists('is_authenticated')) {
  */
 if (!function_exists('check_auth')) {
     function check_auth() {
-        if (!is_authenticated()) {
-            if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest') {
-                header('Content-Type: application/json');
-                http_response_code(401);
-                echo json_encode(['success' => false, 'error' => 'Authentication required']);
-                exit;
-            } else {
-                header('Location: login.php');
-                exit;
-            }
-        }
+        \LaragonDashboard\Core\Security::checkAuth();
     }
 }
 
