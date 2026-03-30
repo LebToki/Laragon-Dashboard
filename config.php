@@ -66,15 +66,9 @@ if (!defined('SESSION_LIFETIME')) {
     define('SESSION_LIFETIME', 3600); // 1 hour
 }
 
-// Authentication settings - IMPORTANT: For production, enable authentication and use a strong password
+// Authentication settings - Simple session-based auth (no password for local dev)
 if (!defined('AUTH_ENABLED')) {
-    define('AUTH_ENABLED', true); // Set to true for production security
-}
-if (!defined('ADMIN_PASSWORD')) {
-    // For production, use environment variable or set a strong password
-    // Recommended: Set LARAGON_DASHBOARD_PASSWORD environment variable
-    // Or change this to a strong password (minimum 12 characters with mixed case, numbers, symbols)
-    define('ADMIN_PASSWORD', getenv('LARAGON_DASHBOARD_PASSWORD') ?: 'ChangeThisPassword123!');
+    define('AUTH_ENABLED', false); // Disabled by default for local development convenience
 }
 
 // Fix session path issue (common on some Laragon/PHP configurations)

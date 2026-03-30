@@ -47,27 +47,24 @@ class Security {
 
     /**
      * Check if the user is authenticated
+     * Simple session-based check - no password required for local development
      */
     public static function isAuthenticated() {
         if (session_status() === PHP_SESSION_NONE) {
             @session_start();
         }
-        
+
+        // If AUTH_ENABLED is false, always authenticate (convenience for local dev)
         if (defined('AUTH_ENABLED') && !AUTH_ENABLED) {
-            return true;
-        }
-        
-        // Auto-authorize localhost and 127.0.0.1 for local development convenience
-        $remoteAddr = $_SERVER['REMOTE_ADDR'] ?? '';
-        $httpHost = $_SERVER['HTTP_HOST'] ?? '';
-        if ($remoteAddr === '127.0.0.1' || $remoteAddr === '::1' || strpos($httpHost, 'localhost') !== false) {
             if (empty($_SESSION['authenticated'])) {
                 $_SESSION['authenticated'] = true;
-                $_SESSION['auth_source'] = 'local_auto';
+                $_SESSION['auth_source'] = 'auto';
+                $_SESSION['login_time'] = time();
             }
             return true;
         }
-        
+
+        // Otherwise check session
         return isset($_SESSION['authenticated']) && $_SESSION['authenticated'] === true;
     }
 
