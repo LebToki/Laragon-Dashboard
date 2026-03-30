@@ -128,24 +128,87 @@ function deleteProjectDirectory($projectPath) {
         if (!is_dir($projectPath)) {
             return ['success' => true, 'message' => 'Project directory does not exist'];
         }
-        
-        // Use recursive directory deletion
+
+        // Close any open file handles in this directory first
+        if (function_exists('gc_collect_cycles')) {
+            gc_collect_cycles();
+        }
+
+        // Use Windows rmdir command if on Windows (more reliable for locked files)
+        if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
+            // Try Windows command first - more aggressive
+            $command = 'rmdir /s /q "' . str_replace('/', '\\', $projectPath) . '" 2>&1';
+            exec($command, $output, $returnCode);
+            
+            // Wait a moment for filesystem to catch up
+            usleep(500000); // 0.5 seconds
+            
+            // Check if directory still exists
+            if (!is_dir($projectPath)) {
+                return ['success' => true, 'message' => 'Project directory deleted successfully'];
+            }
+            
+            // If still exists, fall back to PHP method
+        }
+
+        // Use recursive directory deletion with PHP
         $files = new RecursiveIteratorIterator(
             new RecursiveDirectoryIterator($projectPath, RecursiveDirectoryIterator::SKIP_DOTS),
             RecursiveIteratorIterator::CHILD_FIRST
         );
-        
+
+        $errorCount = 0;
+        $lastError = null;
+
         foreach ($files as $fileinfo) {
+            $path = $fileinfo->getRealPath();
+            if (!$path) continue;
+            
             $todo = ($fileinfo->isDir() ? 'rmdir' : 'unlink');
-            @$todo($fileinfo->getRealPath());
+            
+            // Try multiple times in case of file locks
+            $retries = 3;
+            while ($retries > 0) {
+                if (@$todo($path)) {
+                    break;
+                }
+                $retries--;
+                if ($retries > 0) {
+                    usleep(200000); // 0.2 seconds
+                }
+            }
+            
+            if ($retries === 0) {
+                $errorCount++;
+                $lastError = "Failed to $todo: $path";
+            }
         }
-        
-        @rmdir($projectPath);
-        
+
+        // Remove main directory
+        $retries = 3;
+        while ($retries > 0) {
+            if (@rmdir($projectPath)) {
+                break;
+            }
+            $retries--;
+            if ($retries > 0) {
+                usleep(200000);
+            }
+        }
+
+        // Final check
         if (is_dir($projectPath)) {
-            throw new Exception('Failed to delete project directory');
+            throw new Exception('Failed to delete project directory. Some files may be in use. ' . ($lastError ?? ''));
         }
-        
+
+        if ($errorCount > 0) {
+            return [
+                'success' => true,
+                'message' => 'Project directory deleted with warnings',
+                'warnings' => "$errorCount files could not be deleted"
+            ];
+        }
+
         return ['success' => true, 'message' => 'Project directory deleted successfully'];
     } catch (Exception $e) {
         return ['success' => false, 'error' => $e->getMessage()];
