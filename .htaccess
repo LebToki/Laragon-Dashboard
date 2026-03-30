@@ -5,7 +5,7 @@
     RewriteEngine On
 
     # Redirect /favicon.ico to actual location
-    RewriteRule ^favicon\.ico$ /assets/images/favicon/favicon.ico [L,R=301]
+    RewriteRule ^favicon\.ico$ assets/images/favicon/favicon.ico [L,R=301]
 
     # Redirect root to index.php
     RewriteRule ^$ index.php [L]
