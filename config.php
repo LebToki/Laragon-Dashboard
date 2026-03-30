@@ -226,23 +226,31 @@ if (!defined('BASE_URL')) {
 if (!defined('ASSETS_URL')) {
     // Always use absolute path from web root for assets
     // This ensures CSS/JS files load correctly regardless of routing or direct access
-    
+
     // Check if we're using PHP built-in server with dashboard as document root
     $docRoot = $_SERVER['DOCUMENT_ROOT'] ?? '';
     $appRootNormalized = str_replace('\\', '/', rtrim(APP_ROOT, '/\\'));
     $docRootNormalized = str_replace('\\', '/', rtrim($docRoot, '/\\'));
-    
+
     if ($docRootNormalized === $appRootNormalized) {
-        // PHP built-in server: dashboard IS the document root, so assets are at /assets
-        $assetsPath = '/assets';
-    } else if (BASE_URL === '') {
-        // Normal Apache: dashboard is in subdirectory but BASE_URL is empty (shouldn't happen, but handle it)
+        // PHP built-in server or Laragon auto-vhost: dashboard IS the document root, so assets are at /assets
         $assetsPath = '/assets';
     } else {
-        // Normal Apache: dashboard is in subdirectory, use BASE_URL
-        $assetsPath = BASE_URL . '/assets';
+        // Check if assets directory exists at document root level
+        // This handles cases where Laragon auto-vhost points directly to Laragon-Dashboard
+        $assetsAtDocRoot = $docRootNormalized . '/assets';
+        if (is_dir($assetsAtDocRoot)) {
+            // Assets are directly under document root (auto-vhost scenario)
+            $assetsPath = '/assets';
+        } else if (BASE_URL === '') {
+            // Fallback: dashboard is in subdirectory but BASE_URL is empty
+            $assetsPath = '/assets';
+        } else {
+            // Normal Apache: dashboard is in subdirectory, use BASE_URL
+            $assetsPath = BASE_URL . '/assets';
+        }
     }
-    
+
     // Ensure it starts with / (absolute path)
     if (substr($assetsPath, 0, 1) !== '/') {
         $assetsPath = '/' . $assetsPath;
@@ -251,54 +259,6 @@ if (!defined('ASSETS_URL')) {
 }
 if (!defined('TEMPLATE_URL')) {
     define('TEMPLATE_URL', BASE_URL . '/template');
-}
-
-/**
- * Scan all drives for Laragon installations
- * Returns array of detected Laragon paths
- */
-function scanForLaragonInstallations() {
-    $installations = [];
-    $drives = [];
-    
-    // Check common drives first
-    $commonDrives = ['C', 'D', 'E', 'F'];
-    foreach ($commonDrives as $drive) {
-        $drives[] = $drive;
-    }
-    
-    // Scan all available drives dynamically on Windows
-    if (function_exists('shell_exec') && strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
-        $output = @shell_exec('wmic logicaldisk get name 2>nul');
-        if ($output) {
-            preg_match_all('/([A-Z]):/', $output, $matches);
-            if (!empty($matches[1])) {
-                foreach ($matches[1] as $drive) {
-                    if (!in_array($drive, $drives)) {
-                        $drives[] = $drive;
-                    }
-                }
-            }
-        }
-    }
-    
-    // Check each drive for Laragon installation
-    foreach ($drives as $drive) {
-        $path = $drive . ':/laragon';
-        if (is_dir($path) && file_exists($path . '/laragon.exe')) {
-            // Verify it's a valid Laragon installation
-            if (file_exists($path . '/usr/laragon.ini')) {
-                $installations[] = [
-                    'path' => rtrim(str_replace('\\', '/', $path), '/'),
-                    'drive' => $drive,
-                    'valid' => true,
-                    'has_ini' => file_exists($path . '/usr/laragon.ini')
-                ];
-            }
-        }
-    }
-    
-    return $installations;
 }
 
 /**

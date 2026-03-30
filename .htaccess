@@ -1,56 +1,36 @@
 # Laragon Dashboard .htaccess
-# Production-ready configuration
+# Works with Laragon auto-vhost (DocumentRoot = Laragon-Dashboard folder)
+
 <IfModule mod_rewrite.c>
     RewriteEngine On
-    RewriteBase /Laragon-Dashboard/
-    
-    # Force HTTPS redirect (uncomment for production with HTTPS)
-    # RewriteCond %{HTTPS} off
-    # RewriteCond %{HTTP:X-Forwarded-Proto} !https
-    # RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [R=301,L]
-    
-    # If accessing root, redirect to index.php
-    RewriteCond %{REQUEST_FILENAME} !-f
-    RewriteCond %{REQUEST_FILENAME} !-d
+
+    # Redirect /favicon.ico to actual location
+    RewriteRule ^favicon\.ico$ /assets/images/favicon/favicon.ico [L,R=301]
+
+    # Redirect root to index.php
     RewriteRule ^$ index.php [L]
-    
-    # If file doesn't exist and is not a directory, try index.php routing
-    # BUT exclude assets, API, and common file types
-    RewriteCond %{REQUEST_FILENAME} !-f
-    RewriteCond %{REQUEST_FILENAME} !-d
-    RewriteCond %{REQUEST_URI} !^/Laragon-Dashboard/assets/
-    RewriteCond %{REQUEST_URI} !^/Laragon-Dashboard/api/
-    RewriteCond %{REQUEST_URI} !\.(css|js|png|jpg|jpeg|gif|ico|svg|woff|woff2|ttf|eot|map|json)$ [NC]
+
+    # Serve existing files and directories directly (CSS, JS, images, etc.)
+    RewriteCond %{REQUEST_FILENAME} -f [OR]
+    RewriteCond %{REQUEST_FILENAME} -d
+    RewriteRule ^ - [L]
+
+    # Everything else goes to index.php for routing
     RewriteRule ^(.*)$ index.php?page=$1 [QSA,L]
 </IfModule>
 
-# Security headers - Production ready
+# Security headers
 <IfModule mod_headers.c>
-    # Prevent clickjacking
     Header set X-Frame-Options "SAMEORIGIN"
-    # XSS Protection
     Header set X-XSS-Protection "1; mode=block"
-    # Prevent MIME type sniffing
     Header set X-Content-Type-Options "nosniff"
-    # Referrer Policy for privacy
     Header set Referrer-Policy "strict-origin-when-cross-origin"
-    # Content Security Policy - restrict resources
-    Header set Content-Security-Policy "default-src 'self' blob:; script-src 'self' 'unsafe-inline' 'unsafe-eval' blob: https://code.iconify.design; script-src-elem 'self' 'unsafe-inline' blob: https://code.iconify.design; worker-src 'self' blob:; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: https://*; font-src 'self' https://fonts.gstatic.com; connect-src 'self' https://api.iconify.design https://api.unisvg.com https://api.simplesvg.com; frame-src 'self'; object-src 'none';"
-    # Permissions Policy
-    Header set Permissions-Policy "geolocation=(), microphone=(), camera=()"
 </IfModule>
 
 # Disable directory listing
 Options -Indexes
 
 # Block access to sensitive files
-<FilesMatch "^\.">
-    Order allow,deny
-    Deny from all
+<FilesMatch "^\.(env|log|json|md|yml|yaml|ini|conf)$">
+    Require all denied
 </FilesMatch>
-
-<FilesMatch "\.(env|log|json|md|yml|yaml|ini|conf)$">
-    Order allow,deny
-    Deny from all
-</FilesMatch>
-

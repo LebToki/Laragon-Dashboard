@@ -1,0 +1,34 @@
+# Bypass all rewriting for assets directory
+# This ensures CSS, JS, images, and fonts are served directly
+
+<IfModule mod_rewrite.c>
+    RewriteEngine Off
+</IfModule>
+
+# Enable caching for static assets
+<IfModule mod_expires.c>
+    ExpiresActive On
+    ExpiresByType text/css "access plus 1 week"
+    ExpiresByType application/javascript "access plus 1 week"
+    ExpiresByType image/png "access plus 1 week"
+    ExpiresByType image/jpg "access plus 1 week"
+    ExpiresByType image/jpeg "access plus 1 week"
+    ExpiresByType image/gif "access plus 1 week"
+    ExpiresByType image/svg+xml "access plus 1 week"
+    ExpiresByType font/woff2 "access plus 1 week"
+    ExpiresByType font/woff "access plus 1 week"
+    ExpiresByType font/ttf "access plus 1 week"
+    ExpiresByType font/eot "access plus 1 week"
+</IfModule>
+
+# Set proper MIME types
+<IfModule mod_mime.c>
+    AddType text/css .css
+    AddType application/javascript .js
+    AddType application/manifest+json .webmanifest
+</IfModule>
+
+# Allow access to all files
+<IfModule mod_authz_core.c>
+    Require all granted
+</IfModule>
