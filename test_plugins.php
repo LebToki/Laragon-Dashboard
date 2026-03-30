@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 require_once "includes/autoload.php";
 use LaragonDashboard\Core\PluginManager;
 

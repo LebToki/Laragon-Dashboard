@@ -2,6 +2,68 @@
 
 All notable changes to this project will be documented in this file.
 
+## [4.0.5] - 2026-03-17 
+
+## What's Changed
+* refactor: utilize Security::checkAuth and update Router authentication by @LebToki in https://github.com/LebToki/Laragon-Dashboard/pull/47
+* performance: consolidate shell executions for service and system vitals by @LebToki in https://github.com/LebToki/Laragon-Dashboard/pull/48
+* 🧹 chore: remove unused getDiskInfo and formatBytes methods by @LebToki in https://github.com/LebToki/Laragon-Dashboard/pull/49
+* 🧹 [Code Health] Remove unused getDiskInfo and formatBytes methods from System class by @LebToki in https://github.com/LebToki/Laragon-Dashboard/pull/50
+* 🧹 Remove unused scanForLaragonInstallations from config.php by @LebToki in https://github.com/LebToki/Laragon-Dashboard/pull/54
+* 🧪 [Testing Improvement] Add tests for Services::stop() method by @LebToki in https://github.com/LebToki/Laragon-Dashboard/pull/55
+* Fix false-positive TODO in full-calendar.js by @LebToki in https://github.com/LebToki/Laragon-Dashboard/pull/56
+* 🧪 Test System::getDiskInfo() by @LebToki in https://github.com/LebToki/Laragon-Dashboard/pull/57
+* Remove architectural TODO from vendored full-calendar.js by @LebToki in https://github.com/LebToki/Laragon-Dashboard/pull/73
+* ⚡ Optimize disk space WMI query in vitals API by @LebToki in https://github.com/LebToki/Laragon-Dashboard/pull/76
+* 🧪 Add tests for UpdateManager::checkForUpdates by @LebToki in https://github.com/LebToki/Laragon-Dashboard/pull/75
+* 🧪 Add tests for findFile() depth constraint by @LebToki in https://github.com/LebToki/Laragon-Dashboard/pull/74
+* ⚡ Optimize git branch and status checks in project scanner by @LebToki in https://github.com/LebToki/Laragon-Dashboard/pull/77
+* Fix: trigger dayRender in AgendaView buildDayTable by @LebToki in https://github.com/LebToki/Laragon-Dashboard/pull/78
+* ⚡ Consolidate service status query execution and fix boundary matching by @LebToki in https://github.com/LebToki/Laragon-Dashboard/pull/80
+* 🧪 Add PHPUnit test suite for getServicesStatus by @LebToki in https://github.com/LebToki/Laragon-Dashboard/pull/79
+* 🧹 [Code Health] Refactor `getServerVitals` in `api/vitals.php` by @LebToki in https://github.com/LebToki/Laragon-Dashboard/pull/82
+* 🧪 Add test for Cache::set() by @LebToki in https://github.com/LebToki/Laragon-Dashboard/pull/83
+* Fix: Address TODO in full-calendar.css using opacity by @LebToki in https://github.com/LebToki/Laragon-Dashboard/pull/81
+* 🧪 Add tests for Security::verifyCSRFToken() error paths by @LebToki in https://github.com/LebToki/Laragon-Dashboard/pull/72
+* Remove TODOs from vendored full-calendar.js by @LebToki in https://github.com/LebToki/Laragon-Dashboard/pull/53
+* Remove TODO in full-calendar.js by @LebToki in https://github.com/LebToki/Laragon-Dashboard/pull/68
+* Clarify isAuthenticated method in Router by @LebToki in https://github.com/LebToki/Laragon-Dashboard/pull/71
+* chore: clear TODO in vendored full-calendar.js by @LebToki in https://github.com/LebToki/Laragon-Dashboard/pull/60
+* 🧪 Add tests for formatLogToHtml error handling by @LebToki in https://github.com/LebToki/Laragon-Dashboard/pull/84
+* 🧪 Add tests for AdminerModule::isInstalled() by @LebToki in https://github.com/LebToki/Laragon-Dashboard/pull/51
+* Fix missing start date handling in full-calendar.js by @LebToki in https://github.com/LebToki/Laragon-Dashboard/pull/69
+* 🧪 Test Databases::drop() method by @LebToki in https://github.com/LebToki/Laragon-Dashboard/pull/70
+* 🧪 [testing improvement] Add test coverage for Logs::read() method by @LebToki in https://github.com/LebToki/Laragon-Dashboard/pull/67
+* 🧪 Add unit tests for Databases::list() by @LebToki in https://github.com/LebToki/Laragon-Dashboard/pull/61
+* 🧪 Implement tests for getLaragonRoot() by @LebToki in https://github.com/LebToki/Laragon-Dashboard/pull/85
+* Fix: prevent parseDate from returning invalid Date objects in full-calendar.js by @LebToki in https://github.com/LebToki/Laragon-Dashboard/pull/63
+* 🧪 Add tests for createProject in helpers.php by @LebToki in https://github.com/LebToki/Laragon-Dashboard/pull/66
+* 🧪 Add unit tests for load_translations in i18n.php by @LebToki in https://github.com/LebToki/Laragon-Dashboard/pull/64
+* 🧪 [Testing] Add test suite for Router::resolve method by @LebToki in https://github.com/LebToki/Laragon-Dashboard/pull/58
+* chore: Remove memory leak TODO from vendored full-calendar.js by @LebToki in https://github.com/LebToki/Laragon-Dashboard/pull/52
+* 🧪 Add comprehensive tests for Services management and system commands by @LebToki in https://github.com/LebToki/Laragon-Dashboard/pull/59
+* 🧪 test: implement comprehensive tests for ConfigMigrator by @LebToki in https://github.com/LebToki/Laragon-Dashboard/pull/62
+* 🧪 Add tests for Security::generateCSRFToken() by @LebToki in https://github.com/LebToki/Laragon-Dashboard/pull/65
+* Fix: add .fc-today to <th> to highlight current day by @LebToki in https://github.com/LebToki/Laragon-Dashboard/pull/86
+* 🧹 [Code Health] Disable authentication check in Router for stack dashboard experience by @LebToki in https://github.com/LebToki/Laragon-Dashboard/pull/88
+* Refactor full-calendar.js to remove modifiedEventID early binding hack by @LebToki in https://github.com/LebToki/Laragon-Dashboard/pull/87
+* chore: remove invalid TODO comment from full-calendar.js by @LebToki in https://github.com/LebToki/Laragon-Dashboard/pull/89
+* Fix duplicated code for event classNames in full-calendar.js by @LebToki in https://github.com/LebToki/Laragon-Dashboard/pull/90
+* feat: support git pull in update manager by @LebToki in https://github.com/LebToki/Laragon-Dashboard/pull/91
+* Unify clearEvents in full-calendar.js by @LebToki in https://github.com/LebToki/Laragon-Dashboard/pull/93
+* Refactor: Consolidate renderDayOverlay in FullCalendar by @LebToki in https://github.com/LebToki/Laragon-Dashboard/pull/92
+* 🎨 Palette: Add ARIA labels to navigation buttons by @LebToki in https://github.com/LebToki/Laragon-Dashboard/pull/94
+* ⚡ Bolt: Optimize getDiskUsage using native PHP functions by @LebToki in https://github.com/LebToki/Laragon-Dashboard/pull/95
+* 🛡️ Sentinel: [CRITICAL] Fix Path Traversal in Backup API by @LebToki in https://github.com/LebToki/Laragon-Dashboard/pull/96
+* style: Override fc-event-bg with a better selector by @LebToki in https://github.com/LebToki/Laragon-Dashboard/pull/98
+* Fix order-dependent class replacement in full-calendar setDayID by @LebToki in https://github.com/LebToki/Laragon-Dashboard/pull/97
+* Fix missing authentication in Update API by @LebToki in https://github.com/LebToki/Laragon-Dashboard/pull/99
+* Fix file encodings and migrate custom tests to PHPUnit by @LebToki in https://github.com/LebToki/Laragon-Dashboard/pull/100
+* Fix "ignore project" and save ignored state to main configuration by @LebToki in https://github.com/LebToki/Laragon-Dashboard/pull/101
+* 🧪 Test Security::verifyCSRFToken() error path by @LebToki in https://github.com/LebToki/Laragon-Dashboard/pull/102
+* Support CodePilot installation and update tests by @LebToki in https://github.com/LebToki/Laragon-Dashboard/pull/103
+
+
 ## [4.0.4] - 2026-03-01
 
 - **FIXED**: Restored missing `diagnostic.php` file (Issue #45)

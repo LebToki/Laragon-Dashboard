@@ -96,10 +96,18 @@ function getDatabaseList() {
         $databases = [];
         $result = mysqli_query($link, "SHOW DATABASES");
         if ($result) {
+            // ⚡ Bolt: Replace O(n) in_array lookup inside loop with O(1) isset hash map lookup
+            $systemDatabases = [
+                'information_schema' => true,
+                'performance_schema' => true,
+                'mysql' => true,
+                'sys' => true
+            ];
+
             while ($row = mysqli_fetch_array($result)) {
                 $dbName = $row[0];
                 // Skip system databases
-                if (!in_array($dbName, ['information_schema', 'performance_schema', 'mysql', 'sys'])) {
+                if (!isset($systemDatabases[$dbName])) {
                     $databases[] = $dbName;
                 }
             }
@@ -296,7 +304,13 @@ try {
             
         case 'create':
             $projectName = $_POST['project'] ?? '';
+            if (!empty($projectName)) {
+                $projectName = preg_replace('/[^a-zA-Z0-9_-]/', '', basename($projectName));
+            }
             $databaseName = $_POST['database'] ?? null;
+            if (!empty($databaseName)) {
+                $databaseName = preg_replace('/[^a-zA-Z0-9_-]/', '', basename($databaseName));
+            }
             
             if (empty($projectName)) {
                 throw new Exception('Project name required');
@@ -310,7 +324,13 @@ try {
             
         case 'delete':
             $projectName = $_POST['project'] ?? '';
+            if (!empty($projectName)) {
+                $projectName = preg_replace('/[^a-zA-Z0-9_-]/', '', basename($projectName));
+            }
             $timestamp = $_POST['timestamp'] ?? '';
+            if (!empty($timestamp)) {
+                $timestamp = preg_replace('/[^a-zA-Z0-9_-]/', '', basename($timestamp));
+            }
             
             if (empty($projectName) || empty($timestamp)) {
                 throw new Exception('Project name and timestamp required');
@@ -335,8 +355,17 @@ try {
         case 'refresh':
             // Refresh/recreate backup
             $projectName = $_POST['project'] ?? '';
+            if (!empty($projectName)) {
+                $projectName = preg_replace('/[^a-zA-Z0-9_-]/', '', basename($projectName));
+            }
             $timestamp = $_POST['timestamp'] ?? '';
+            if (!empty($timestamp)) {
+                $timestamp = preg_replace('/[^a-zA-Z0-9_-]/', '', basename($timestamp));
+            }
             $databaseName = $_POST['database'] ?? null;
+            if (!empty($databaseName)) {
+                $databaseName = preg_replace('/[^a-zA-Z0-9_-]/', '', basename($databaseName));
+            }
             
             if (empty($projectName) || empty($timestamp)) {
                 throw new Exception('Project name and timestamp required');
@@ -354,7 +383,13 @@ try {
             
         case 'download_project':
             $projectName = $_GET['project'] ?? '';
+            if (!empty($projectName)) {
+                $projectName = preg_replace('/[^a-zA-Z0-9_-]/', '', basename($projectName));
+            }
             $timestamp = $_GET['timestamp'] ?? '';
+            if (!empty($timestamp)) {
+                $timestamp = preg_replace('/[^a-zA-Z0-9_-]/', '', basename($timestamp));
+            }
             
             if (empty($projectName) || empty($timestamp)) {
                 throw new Exception('Project name and timestamp required');
@@ -378,7 +413,13 @@ try {
             
         case 'download_database':
             $projectName = $_GET['project'] ?? '';
+            if (!empty($projectName)) {
+                $projectName = preg_replace('/[^a-zA-Z0-9_-]/', '', basename($projectName));
+            }
             $timestamp = $_GET['timestamp'] ?? '';
+            if (!empty($timestamp)) {
+                $timestamp = preg_replace('/[^a-zA-Z0-9_-]/', '', basename($timestamp));
+            }
             
             if (empty($projectName) || empty($timestamp)) {
                 throw new Exception('Project name and timestamp required');

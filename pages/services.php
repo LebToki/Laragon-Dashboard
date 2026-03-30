@@ -218,37 +218,35 @@ include __DIR__ . '/../partials/layouts/layoutTop.php';
                                         </tr>
                                     </thead>
                                     <tbody id="services-list">
-                                        <?php foreach ($installedServices as $key => $service): 
+                                        <?php
+                                        // Consolidate Windows service queries for efficiency
+                                        $scCommands = [];
+                                        foreach ($installedServices as $service) {
+                                            if ($service['type'] === 'windows_service') {
+                                                $scCommands[] = 'sc query "' . $service['service_name'] . '"';
+                                            }
+                                        }
+                                        $scOutput = '';
+                                        if (!empty($scCommands)) {
+                                            $scOutput = @shell_exec(implode(' & ', $scCommands) . ' 2>&1');
+                                        }
+
+                                        foreach ($installedServices as $key => $service):
                                             // Check service status directly
                                             $status = 'unknown';
                                             $runningPorts = [];
                                             
                                             if ($service['type'] === 'windows_service') {
-                                                $output = @shell_exec('sc query "' . $service['service_name'] . '" 2>&1');
-                                                if ($output) {
-                                                    // Check for RUNNING state (case-insensitive)
-                                                    if (stripos($output, 'RUNNING') !== false) {
+                                                if ($scOutput) {
+                                                    // Match the specific service's output block and check its state without crossing service boundaries
+                                                    if (preg_match('/SERVICE_NAME:\s*' . preg_quote($service['service_name'], '/') . '\s+(?:(?!SERVICE_NAME:).)*?STATE\s+:\s+\d+\s+RUNNING/is', $scOutput)) {
                                                         $status = 'running';
                                                         $runningPorts[] = $service['port'];
                                                         if ($service['ssl_port']) {
                                                             $runningPorts[] = $service['ssl_port'];
                                                         }
-                                                    }
-                                                    // Check for STOPPED state (case-insensitive)
-                                                    elseif (stripos($output, 'STOPPED') !== false) {
+                                                    } elseif (preg_match('/SERVICE_NAME:\s*' . preg_quote($service['service_name'], '/') . '\s+(?:(?!SERVICE_NAME:).)*?STATE\s+:\s+\d+\s+STOPPED/is', $scOutput)) {
                                                         $status = 'stopped';
-                                                    }
-                                                    // Check STATE line for RUNNING
-                                                    elseif (preg_match('/STATE\s*:\s*\d+\s+(\w+)/i', $output, $matches)) {
-                                                        if (stripos($matches[1], 'RUNNING') !== false) {
-                                                            $status = 'running';
-                                                            $runningPorts[] = $service['port'];
-                                                            if ($service['ssl_port']) {
-                                                                $runningPorts[] = $service['ssl_port'];
-                                                            }
-                                                        } elseif (stripos($matches[1], 'STOPPED') !== false) {
-                                                            $status = 'stopped';
-                                                        }
                                                     }
                                                 }
                                             } else {
@@ -310,17 +308,17 @@ include __DIR__ . '/../partials/layouts/layoutTop.php';
                                             <td>
                                                 <div class="d-flex align-items-center gap-2">
                                                     <?php if ($key === 'Apache'): ?>
-                                                        <button type="button" class="btn btn-sm btn-primary-100 text-primary-600" onclick="reloadApache()">
+                                                        <button type="button" class="btn btn-sm btn-primary-100 text-primary-600" onclick="reloadApache()" aria-label="<?php echo t_services('reload', 'Reload') . ' ' . htmlspecialchars($key); ?>">
                                                             <iconify-icon icon="solar:refresh-bold" class="icon"></iconify-icon>
                                                             <?php echo t_services('reload', 'Reload'); ?>
                                                         </button>
                                                     <?php endif; ?>
                                                     <?php if ($status === 'running'): ?>
-                                                        <button type="button" class="w-32-px h-32-px bg-danger-focus text-danger-main rounded-circle d-inline-flex align-items-center justify-content-center" onclick="stopService('<?php echo $key; ?>')" title="<?php echo t_services('stop', 'Stop'); ?>">
+                                                        <button type="button" class="w-32-px h-32-px bg-danger-focus text-danger-main rounded-circle d-inline-flex align-items-center justify-content-center" onclick="stopService('<?php echo $key; ?>')" title="<?php echo t_services('stop', 'Stop'); ?>" aria-label="<?php echo t_services('stop', 'Stop') . ' ' . htmlspecialchars($key); ?>">
                                                             <iconify-icon icon="solar:stop-bold"></iconify-icon>
                                                         </button>
                                                     <?php else: ?>
-                                                        <button type="button" class="w-32-px h-32-px bg-success-focus text-success-main rounded-circle d-inline-flex align-items-center justify-content-center" onclick="startService('<?php echo $key; ?>')" title="<?php echo t_services('start', 'Start'); ?>">
+                                                        <button type="button" class="w-32-px h-32-px bg-success-focus text-success-main rounded-circle d-inline-flex align-items-center justify-content-center" onclick="startService('<?php echo $key; ?>')" title="<?php echo t_services('start', 'Start'); ?>" aria-label="<?php echo t_services('start', 'Start') . ' ' . htmlspecialchars($key); ?>">
                                                             <iconify-icon icon="solar:play-bold"></iconify-icon>
                                                         </button>
                                                     <?php endif; ?>

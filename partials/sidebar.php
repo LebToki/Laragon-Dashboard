@@ -74,7 +74,7 @@ function getSidebarTranslation($key, $fallback = '') {
 }
 ?>
 <aside class="sidebar">
-    <button type="button" class="sidebar-close-btn">
+    <button type="button" class="sidebar-close-btn" aria-label="Close Sidebar">
         <iconify-icon icon="radix-icons:cross-2"></iconify-icon>
     </button>
     <div>

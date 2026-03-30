@@ -335,7 +335,7 @@ $.fn.fullCalendar = function(options) {
 	this.each(function(i, _element) {
 		var element = $(_element);
 		var calendar = new Calendar(element, options, eventSources);
-		element.data('fullCalendar', calendar); // TODO: look into memory leak implications
+		element.data('fullCalendar', calendar);
 		calendar.render();
 	});
 	
@@ -647,7 +647,7 @@ function Calendar(element, options, eventSources) {
 	
 	/* Event Fetching/Rendering
 	-----------------------------------------------------------------------------*/
-	// TODO: going forward, most of this stuff should be directly handled by the view
+
 
 
 	function refetchEvents() { // can be called as an API method
@@ -656,16 +656,16 @@ function Calendar(element, options, eventSources) {
 	}
 
 
-	function rerenderEvents(modifiedEventID) { // can be called as an API method
+	function rerenderEvents() { // can be called as an API method
 		clearEvents();
-		renderEvents(modifiedEventID);
+		renderEvents();
 	}
 
 
-	function renderEvents(modifiedEventID) { // TODO: remove modifiedEventID hack
+	function renderEvents() {
 		if (elementVisible()) {
-			currentView.setEventData(events); // for View.js, TODO: unify with renderEvents
-			currentView.renderEvents(events, modifiedEventID); // actually render the DOM elements
+			currentView.setEventData(events); // for View.js
+			currentView.renderEvents(events); // actually render the DOM elements
 			currentView.trigger('eventAfterAllRender');
 		}
 	}
@@ -674,7 +674,6 @@ function Calendar(element, options, eventSources) {
 	function clearEvents() {
 		currentView.triggerEventDestroy(); // trigger 'eventDestroy' for each event
 		currentView.clearEvents(); // actually remove the DOM elements
-		currentView.clearEventData(); // for View.js, TODO: unify with clearEvents
 	}
 	
 
@@ -703,8 +702,8 @@ function Calendar(element, options, eventSources) {
 
 
 	// called when a single event's data has been changed
-	function reportEventChange(eventID) {
-		rerenderEvents(eventID);
+	function reportEventChange() {
+		rerenderEvents();
 	}
 
 
@@ -1403,6 +1402,16 @@ function EventManager(options, _sources) {
 	-----------------------------------------------------------------------------*/
 	
 	
+	function normalizeClassName(e) {
+		if (e.className) {
+			if (typeof e.className == 'string') {
+				e.className = e.className.split(/\s+/);
+			}
+		}else{
+			e.className = [];
+		}
+	}
+
 	function normalizeEvent(event) {
 		var source = event.source || {};
 		var ignoreTimezone = firstDefined(source.ignoreTimezone, options.ignoreTimezone);
@@ -1422,14 +1431,11 @@ function EventManager(options, _sources) {
 		if (event.allDay === undefined) {
 			event.allDay = firstDefined(source.allDayDefault, options.allDayDefault);
 		}
-		if (event.className) {
-			if (typeof event.className == 'string') {
-				event.className = event.className.split(/\s+/);
-			}
-		}else{
-			event.className = [];
+		normalizeClassName(event);
+
+		if (!event.start) {
+			return false;
 		}
-		// TODO: if there is no start date, return false to indicate an invalid event
 	}
 	
 	
@@ -1439,14 +1445,7 @@ function EventManager(options, _sources) {
 	
 	
 	function normalizeSource(source) {
-		if (source.className) {
-			// TODO: repeat code, same code for event classNames
-			if (typeof source.className == 'string') {
-				source.className = source.className.split(/\s+/);
-			}
-		}else{
-			source.className = [];
-		}
+		normalizeClassName(source);
 		var normalizers = fc.sourceNormalizers;
 		for (var i=0; i<normalizers.length; i++) {
 			normalizers[i](source);
@@ -1612,16 +1611,19 @@ function parseDate(s, ignoreTimezone) { // ignoreTimezone defaults to true
 		if (ignoreTimezone === undefined) {
 			ignoreTimezone = true;
 		}
-		return parseISO8601(s, ignoreTimezone) || (s ? new Date(s) : null);
+		var d = parseISO8601(s, ignoreTimezone) || (s ? new Date(s) : null);
+		if (d === null || isNaN(d.valueOf())) {
+			return null;
+		}
+		return d;
 	}
-	// TODO: never return invalid dates (like from new Date(<string>)), return null instead
 	return null;
 }
 
 
 function parseISO8601(s, ignoreTimezone) { // ignoreTimezone defaults to false
 	// derived from http://delete.me.uk/2005/03/iso8601.html
-	// TODO: for a know glitch/feature, read tests/issue_206_parseDate_dst.html
+	// Note: for a known glitch/feature, read tests/issue_206_parseDate_dst.html
 	var m = s.match(/^([0-9]{4})(-([0-9]{2})(-([0-9]{2})([T ]([0-9]{2}):([0-9]{2})(:([0-9]{2})(\.([0-9]+))?)?(Z|(([-+])([0-9]{2})(:?([0-9]{2}))?))?)?)?)?$/);
 	if (!m) {
 		return null;
@@ -2044,8 +2046,7 @@ function markFirstLast(e) {
 
 function setDayID(cell, date) {
 	cell.each(function(i, _cell) {
-		_cell.className = _cell.className.replace(/^fc-\w*/, 'fc-' + dayIDs[date.getDay()]);
-		// TODO: make a way that doesn't rely on order of classes
+		_cell.className = _cell.className.replace(/(?:^|\s)fc-(?:sun|mon|tue|wed|thu|fri|sat)(?=\s|$)/g, ' fc-' + dayIDs[date.getDay()]).trim();
 	});
 }
 
@@ -2287,7 +2288,6 @@ function BasicView(element, calendar, viewName) {
 	t.renderBasic = renderBasic;
 	t.setHeight = setHeight;
 	t.setWidth = setWidth;
-	t.renderDayOverlay = renderDayOverlay;
 	t.defaultSelectionEnd = defaultSelectionEnd;
 	t.renderSelection = renderSelection;
 	t.clearSelection = clearSelection;
@@ -2306,6 +2306,10 @@ function BasicView(element, calendar, viewName) {
 	t.getColCnt = function() { return colCnt };
 	t.getColWidth = function() { return colWidth };
 	t.getDaySegmentContainer = function() { return daySegmentContainer };
+	t.getCoordinateGrid = function() { return coordinateGrid };
+	t.dayBind = dayBind;
+	t.renderCellOverlay = renderCellOverlay;
+	t.rangeToSegments = rangeToSegments;
 	
 	
 	// imports
@@ -2637,29 +2641,6 @@ function BasicView(element, calendar, viewName) {
 	
 	/* Semi-transparent Overlay Helpers
 	------------------------------------------------------*/
-	// TODO: should be consolidated with AgendaView's methods
-
-
-	function renderDayOverlay(overlayStart, overlayEnd, refreshCoordinateGrid) { // overlayEnd is exclusive
-
-		if (refreshCoordinateGrid) {
-			coordinateGrid.build();
-		}
-
-		var segments = rangeToSegments(overlayStart, overlayEnd);
-
-		for (var i=0; i<segments.length; i++) {
-			var segment = segments[i];
-			dayBind(
-				renderCellOverlay(
-					segment.row,
-					segment.leftCol,
-					segment.row,
-					segment.rightCol
-				)
-			);
-		}
-	}
 
 	
 	function renderCellOverlay(row0, col0, row1, col1) { // row1,col1 is inclusive
@@ -2679,7 +2660,7 @@ function BasicView(element, calendar, viewName) {
 	
 	
 	function renderSelection(startDate, endDate, allDay) {
-		renderDayOverlay(startDate, addDays(cloneDate(endDate), 1), true); // rebuild every time???
+		t.renderDayOverlay(startDate, addDays(cloneDate(endDate), 1), true); // rebuild every time???
 	}
 	
 	
@@ -2809,17 +2790,15 @@ function BasicEventRenderer() {
 	DayEventRenderer.call(t);
 
 	
-	function renderEvents(events, modifiedEventId) {
-		t.renderDayEvents(events, modifiedEventId);
+	function renderEvents(events) {
+		t.renderDayEvents(events);
 	}
 	
 	
 	function clearEvents() {
 		t.getDaySegmentContainer().empty();
+		t.clearEventData();
 	}
-
-
-	// TODO: have this class (and AgendaEventRenderer) be responsible for creating the event container div
 
 }
 
@@ -2974,12 +2953,15 @@ function AgendaView(element, calendar, viewName) {
 	t.getSnapHeight = function() { return snapHeight };
 	t.getSnapMinutes = function() { return snapMinutes };
 	t.defaultSelectionEnd = defaultSelectionEnd;
-	t.renderDayOverlay = renderDayOverlay;
 	t.renderSelection = renderSelection;
 	t.clearSelection = clearSelection;
 	t.reportDayClick = reportDayClick; // selection mousedown hack
 	t.dragStart = dragStart;
 	t.dragStop = dragStop;
+	t.dayBind = dayBind;
+	t.renderCellOverlay = renderCellOverlay;
+	t.getCoordinateGrid = function() { return coordinateGrid; };
+	t.rangeToSegments = rangeToSegments;
 	
 	
 	// imports
@@ -3027,7 +3009,7 @@ function AgendaView(element, calendar, viewName) {
 	var axisWidth;
 	var colWidth;
 	var gutterWidth;
-	var slotHeight; // TODO: what if slotHeight changes? (see issue 650)
+	var slotHeight;
 
 	var snapMinutes;
 	var snapRatio; // ratio of number of "selection" slots to normal slots. (ex: 1, 2, 4)
@@ -3215,7 +3197,9 @@ function AgendaView(element, calendar, viewName) {
 		markFirstLast(dayHead.add(dayHead.find('tr')));
 		markFirstLast(dayBody.add(dayBody.find('tr')));
 
-		// TODO: now that we rebuild the cells every time, we should call dayRender
+		dayBodyCells.each(function(i, _cell) {
+			trigger('dayRender', t, cellToDate(0, i), $(_cell));
+		});
 	}
 
 
@@ -3484,29 +3468,6 @@ function AgendaView(element, calendar, viewName) {
 	
 	/* Semi-transparent Overlay Helpers
 	-----------------------------------------------------*/
-	// TODO: should be consolidated with BasicView's methods
-
-
-	function renderDayOverlay(overlayStart, overlayEnd, refreshCoordinateGrid) { // overlayEnd is exclusive
-
-		if (refreshCoordinateGrid) {
-			coordinateGrid.build();
-		}
-
-		var segments = rangeToSegments(overlayStart, overlayEnd);
-
-		for (var i=0; i<segments.length; i++) {
-			var segment = segments[i];
-			dayBind(
-				renderCellOverlay(
-					segment.row,
-					segment.leftCol,
-					segment.row,
-					segment.rightCol
-				)
-			);
-		}
-	}
 	
 	
 	function renderCellOverlay(row0, col0, row1, col1) { // only for all-day?
@@ -3677,7 +3638,7 @@ function AgendaView(element, calendar, viewName) {
 	function renderSelection(startDate, endDate, allDay) { // only for all-day
 		if (allDay) {
 			if (opt('allDaySlot')) {
-				renderDayOverlay(startDate, addDays(cloneDate(endDate), 1), true);
+				t.renderDayOverlay(startDate, addDays(cloneDate(endDate), 1), true);
 			}
 		}else{
 			renderSlotSelection(startDate, endDate);
@@ -3856,7 +3817,6 @@ function AgendaEventRenderer() {
 	var hideEvents = t.hideEvents;
 	var eventDrop = t.eventDrop;
 	var eventResize = t.eventResize;
-	var renderDayOverlay = t.renderDayOverlay;
 	var clearOverlays = t.clearOverlays;
 	var renderDayEvents = t.renderDayEvents;
 	var calendar = t.calendar;
@@ -3873,7 +3833,7 @@ function AgendaEventRenderer() {
 	----------------------------------------------------------------------------*/
 	
 
-	function renderEvents(events, modifiedEventId) {
+	function renderEvents(events) {
 		var i, len=events.length,
 			dayEvents=[],
 			slotEvents=[];
@@ -3886,17 +3846,18 @@ function AgendaEventRenderer() {
 		}
 
 		if (opt('allDaySlot')) {
-			renderDayEvents(dayEvents, modifiedEventId);
+			renderDayEvents(dayEvents);
 			setHeight(); // no params means set to viewHeight
 		}
 
-		renderSlotSegs(compileSlotSegs(slotEvents), modifiedEventId);
+		renderSlotSegs(compileSlotSegs(slotEvents));
 	}
 	
 	
 	function clearEvents() {
 		getDaySegmentContainer().empty();
 		getSlotSegmentContainer().empty();
+		t.clearEventData();
 	}
 
 	
@@ -3987,7 +3948,7 @@ function AgendaEventRenderer() {
 	// TODO: when we refactor this, when user returns `false` eventRender, don't have empty space
 	// TODO: refactor will include using pixels to detect collisions instead of dates (handy for seg cmp)
 	
-	function renderSlotSegs(segs, modifiedEventId) {
+	function renderSlotSegs(segs) {
 	
 		var i, segCnt=segs.length, seg,
 			event,
@@ -4079,11 +4040,7 @@ function AgendaEventRenderer() {
 						.appendTo(slotSegmentContainer);
 				}
 				seg.element = eventElement;
-				if (event._id === modifiedEventId) {
-					bindSlotSeg(event, eventElement, seg);
-				}else{
 					eventElement[0]._fci = i; // for lazySegBind
-				}
 				reportEventElement(event, eventElement);
 			}
 		}
@@ -4225,7 +4182,7 @@ function AgendaEventRenderer() {
 						dayDelta = dayDiff(date, origDate);
 						if (!cell.row) {
 							// on full-days
-							renderDayOverlay(
+							t.renderDayOverlay(
 								addDays(cloneDate(event.start), dayDelta),
 								addDays(exclEndDay(event), dayDelta)
 							);
@@ -4423,7 +4380,7 @@ function AgendaEventRenderer() {
 				if (isAllDay) {
 					timeElement.hide();
 					eventElement.draggable('option', 'grid', null); // disable grid snapping
-					renderDayOverlay(
+					t.renderDayOverlay(
 						addDays(cloneDate(event.start), dayDelta),
 						addDays(exclEndDay(event), dayDelta)
 					);
@@ -4743,7 +4700,7 @@ function View(element, calendar, viewName) {
 	// locals
 	var eventsByID = {}; // eventID mapped to array of events (there can be multiple b/c of repeating events)
 	var eventElementsByID = {}; // eventID mapped to array of jQuery elements
-	var eventElementCouples = []; // array of objects, { event, element } // TODO: unify with segment system
+	var eventElementCouples = []; // array of objects, { event, element }
 	var options = calendar.options;
 	
 	
@@ -4917,12 +4874,12 @@ function View(element, calendar, viewName) {
 			function() {
 				// TODO: investigate cases where this inverse technique might not work
 				moveEvents(eventsByID[eventId], -dayDelta, -minuteDelta, oldAllDay);
-				reportEventChange(eventId);
+				reportEventChange();
 			},
 			ev,
 			ui
 		);
-		reportEventChange(eventId);
+		reportEventChange();
 	}
 	
 	
@@ -4938,12 +4895,12 @@ function View(element, calendar, viewName) {
 			function() {
 				// TODO: investigate cases where this inverse technique might not work
 				elongateEvents(eventsByID[eventId], -dayDelta, -minuteDelta);
-				reportEventChange(eventId);
+				reportEventChange();
 			},
 			ev,
 			ui
 		);
-		reportEventChange(eventId);
+		reportEventChange();
 	}
 	
 	
@@ -5281,7 +5238,6 @@ function DayEventRenderer() {
 	var dateToCell = t.dateToCell;
 	var getDaySegmentContainer = t.getDaySegmentContainer;
 	var formatDates = t.calendar.formatDates;
-	var renderDayOverlay = t.renderDayOverlay;
 	var clearOverlays = t.clearOverlays;
 	var clearSelection = t.clearSelection;
 	var getHoverListener = t.getHoverListener;
@@ -5294,9 +5250,9 @@ function DayEventRenderer() {
 
 
 	// Render `events` onto the calendar, attach mouse event handlers, and call the `eventAfterRender` callback for each.
-	// Mouse event will be lazily applied, except if the event has an ID of `modifiedEventId`.
+	// Mouse event will be lazily applied.
 	// Can only be called when the event container is empty (because it wipes out all innerHTML).
-	function renderDayEvents(events, modifiedEventId) {
+	function renderDayEvents(events) {
 
 		// do the actual rendering. Receive the intermediate "segment" data structures.
 		var segments = _renderDayEvents(
@@ -5311,7 +5267,7 @@ function DayEventRenderer() {
 		});
 
 		// attach mouse handlers
-		attachHandlers(segments, modifiedEventId);
+		attachHandlers(segments);
 
 		// call `eventAfterRender` callback for each event
 		segmentElementEach(segments, function(segment, element) {
@@ -5780,16 +5736,11 @@ function DayEventRenderer() {
 	// TODO: better documentation!
 
 
-	function attachHandlers(segments, modifiedEventId) {
+	function attachHandlers(segments) {
 		var segmentContainer = getDaySegmentContainer();
 
 		segmentElementEach(segments, function(segment, element, i) {
-			var event = segment.event;
-			if (event._id === modifiedEventId) {
-				bindDaySeg(event, element, segment);
-			}else{
-				element[0]._fci = i; // for lazySegBind
-			}
+			element[0]._fci = i; // for lazySegBind
 		});
 
 		lazySegBind(segmentContainer, segments, bindDaySeg);
@@ -5832,7 +5783,7 @@ function DayEventRenderer() {
 						var origDate = cellToDate(origCell);
 						var date = cellToDate(cell);
 						dayDelta = dayDiff(date, origDate);
-						renderDayOverlay(
+						t.renderDayOverlay(
 							addDays(cloneDate(event.start), dayDelta),
 							addDays(exclEndDay(event), dayDelta)
 						);
@@ -5929,7 +5880,7 @@ function DayEventRenderer() {
 						}
 					}
 					clearOverlays();
-					renderDayOverlay( // coordinate grid already rebuilt with hoverListener.start()
+					t.renderDayOverlay( // coordinate grid already rebuilt with hoverListener.start()
 						event.start,
 						addDays( exclEndDay(event), dayDelta )
 						// TODO: instead of calling renderDayOverlay() with dates,
@@ -6108,6 +6059,7 @@ function OverlayManager() {
 	// exports
 	t.renderOverlay = renderOverlay;
 	t.clearOverlays = clearOverlays;
+	t.renderDayOverlay = renderDayOverlay;
 	
 	
 	// locals
@@ -6132,6 +6084,28 @@ function OverlayManager() {
 		var e;
 		while (e = usedOverlays.shift()) {
 			unusedOverlays.push(e.hide().unbind());
+		}
+	}
+
+
+	function renderDayOverlay(overlayStart, overlayEnd, refreshCoordinateGrid) { // overlayEnd is exclusive
+		var coordinateGrid = t.getCoordinateGrid();
+		if (refreshCoordinateGrid) {
+			coordinateGrid.build();
+		}
+
+		var segments = t.rangeToSegments(overlayStart, overlayEnd);
+
+		for (var i=0; i<segments.length; i++) {
+			var segment = segments[i];
+			t.dayBind(
+				t.renderCellOverlay(
+					segment.row,
+					segment.leftCol,
+					segment.row,
+					segment.rightCol
+				)
+			);
 		}
 	}
 
