@@ -425,14 +425,20 @@ if (!function_exists('analyzeProject')) {
         $project['icon'] = 'devicon-plain:wordpress';
         $project['color'] = 'primary';
         $project['is_wordpress'] = true;
-        
-        // Quick look for WordPress favicon
-        $commonPaths = ['/wp-content/uploads/favicon.ico', '/favicon.ico', '/favicon.png'];
-        foreach ($commonPaths as $relPath) {
-            if (file_exists($path . $relPath)) {
-                $project['favicon'] = $name . $relPath;
-                break;
+
+        // Quick look for WordPress favicon with fallback chain: .ico → .png → default
+        $commonPaths = [['/wp-content/uploads/favicon.ico', '/wp-content/uploads/favicon.png'], ['/favicon.ico', '/favicon.png'], ['/favicon.png']];
+        foreach ($commonPaths as $pathSet) {
+            foreach ($pathSet as $relPath) {
+                if (file_exists($path . $relPath)) {
+                    $project['favicon'] = $name . $relPath;
+                    break 2;
+                }
             }
+        }
+        // Fallback to default asset if no favicon found
+        if (empty($project['favicon'])) {
+            $project['favicon'] = 'assets/images/favicon/favicon-32x32.png';
         }
     }
     // Check for Laravel
@@ -440,7 +446,10 @@ if (!function_exists('analyzeProject')) {
         $project['platform'] = 'Laravel';
         $project['icon'] = 'devicon-plain:laravel';
         $project['color'] = 'danger';
+        // Try favicon.ico first, then favicon.png
         if (file_exists($path . '/public/favicon.ico')) $project['favicon'] = $name . '/public/favicon.ico';
+        elseif (file_exists($path . '/public/favicon.png')) $project['favicon'] = $name . '/public/favicon.png';
+        else $project['favicon'] = 'assets/images/favicon/favicon-32x32.png';
     }
     // Check for Drupal
     elseif (file_exists($path . '/core/lib/Drupal.php') || file_exists($path . '/autoload.php')) {
@@ -477,7 +486,10 @@ if (!function_exists('analyzeProject')) {
         $project['platform'] = 'Static HTML';
         $project['icon'] = 'devicon-plain:html5';
         $project['color'] = 'warning';
+        // Try favicon.ico first, then favicon.png, then default
         if (file_exists($path . '/favicon.ico')) $project['favicon'] = $name . '/favicon.ico';
+        elseif (file_exists($path . '/favicon.png')) $project['favicon'] = $name . '/favicon.png';
+        else $project['favicon'] = 'assets/images/favicon/favicon-32x32.png';
     }
     // Check for Node.js
     elseif (file_exists($path . '/package.json') && !file_exists($path . '/composer.json')) {
@@ -490,7 +502,10 @@ if (!function_exists('analyzeProject')) {
         $project['platform'] = 'PHP';
         $project['icon'] = 'devicon-plain:php';
         $project['color'] = 'primary';
+        // Try favicon.ico first, then favicon.png, then default
         if (file_exists($path . '/favicon.ico')) $project['favicon'] = $name . '/favicon.ico';
+        elseif (file_exists($path . '/favicon.png')) $project['favicon'] = $name . '/favicon.png';
+        else $project['favicon'] = 'assets/images/favicon/favicon-32x32.png';
     }
     
     // Check for Git branch and status (optimized: only branch for now if it's slow)

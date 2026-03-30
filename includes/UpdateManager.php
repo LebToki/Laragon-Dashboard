@@ -700,9 +700,9 @@ if (!class_exists('UpdateManager')) {
                         $errorCount++;
                     }
                 }
-                
+
                 error_log("UpdateManager: File replacement completed. Replaced: {$replacedCount}, Skipped: {$skippedCount}, Errors: {$errorCount}");
-                
+
                 if ($errorCount > 0) {
                     error_log("UpdateManager: Warning: {$errorCount} files failed to replace");
                 }
@@ -711,7 +711,131 @@ if (!class_exists('UpdateManager')) {
                 throw $e;
             }
         }
-        
+
+        /**
+         * Auto-update: Pull latest files from GitHub repository
+         * Downloads and replaces files while preserving user data
+         *
+         * @return array Result with success status and details
+         */
+        public function autoUpdateFromRepo() {
+            try {
+                error_log("UpdateManager: Starting auto-update from GitHub repository");
+
+                // Download latest zip from main branch
+                $zipUrl = "https://github.com/{$this->githubRepo}/archive/refs/heads/main.zip";
+                $zipPath = $this->tempDir . '/latest.zip';
+
+                // Download zip file
+                $zipContent = @file_get_contents($zipUrl);
+                if (!$zipContent) {
+                    return ['success' => false, 'error' => 'Failed to download update package'];
+                }
+
+                if (!@file_put_contents($zipPath, $zipContent)) {
+                    return ['success' => false, 'error' => 'Failed to save update package'];
+                }
+
+                // Extract zip
+                $zip = new \ZipArchive();
+                if ($zip->open($zipPath) !== true) {
+                    return ['success' => false, 'error' => 'Failed to open update package'];
+                }
+
+                // Extract to temp directory
+                $extractDir = $this->tempDir . '/extracted';
+                if (is_dir($extractDir)) {
+                    $this->deleteDirectory($extractDir);
+                }
+                @mkdir($extractDir, 0755, true);
+
+                $zip->extractTo($extractDir);
+                $zip->close();
+                @unlink($zipPath);
+
+                // Find extracted folder (usually repo-name-branch)
+                $files = scandir($extractDir);
+                $sourceFolder = null;
+                foreach ($files as $file) {
+                    if ($file !== '.' && $file !== '..' && is_dir($extractDir . '/' . $file)) {
+                        $sourceFolder = $extractDir . '/' . $file;
+                        break;
+                    }
+                }
+
+                if (!$sourceFolder) {
+                    return ['success' => false, 'error' => 'Update package structure invalid'];
+                }
+
+                // Copy files while preserving user data
+                $preservePaths = [
+                    'data/',
+                    'cache/',
+                    'logs/',
+                    'uploaded/',
+                    '.env',
+                    'config.local.php'
+                ];
+
+                $this->copyUpdateFiles($sourceFolder, $this->appRoot, $preservePaths);
+
+                // Cleanup
+                $this->deleteDirectory($extractDir);
+
+                error_log("UpdateManager: Auto-update completed successfully");
+
+                return [
+                    'success' => true,
+                    'message' => 'Successfully updated to latest version',
+                    'timestamp' => date('Y-m-d H:i:s')
+                ];
+
+            } catch (Exception $e) {
+                error_log("UpdateManager: Auto-update failed: " . $e->getMessage());
+                return ['success' => false, 'error' => $e->getMessage()];
+            }
+        }
+
+        /**
+         * Copy files from update source to destination
+         * Skips preserved paths
+         */
+        private function copyUpdateFiles($source, $dest, $preserve = []) {
+            $iterator = new \RecursiveIteratorIterator(
+                new \RecursiveDirectoryIterator($source, \RecursiveDirectoryIterator::SKIP_DOTS)
+            );
+
+            foreach ($iterator as $item) {
+                $relativePath = str_replace($source . DIRECTORY_SEPARATOR, '', $item->getPathname());
+                $relativePath = str_replace('\\', '/', $relativePath);
+
+                // Skip preserved paths
+                $skip = false;
+                foreach ($preserve as $preservePath) {
+                    if (strpos($relativePath, $preservePath) === 0) {
+                        $skip = true;
+                        break;
+                    }
+                }
+
+                if ($skip) continue;
+
+                $destPath = $dest . '/' . $relativePath;
+
+                if ($item->isDir()) {
+                    if (!is_dir($destPath)) {
+                        @mkdir($destPath, 0755, true);
+                    }
+                } else {
+                    $destDir = dirname($destPath);
+                    if (!is_dir($destDir)) {
+                        @mkdir($destDir, 0755, true);
+                    }
+                    @copy($item->getPathname(), $destPath);
+                }
+            }
+        }
+
         /**
          * Delete directory recursively
          */
@@ -719,7 +843,7 @@ if (!class_exists('UpdateManager')) {
             if (!is_dir($dir)) {
                 return;
             }
-            
+
             $files = array_diff(scandir($dir), ['.', '..']);
             foreach ($files as $file) {
                 $path = $dir . '/' . $file;

@@ -132,7 +132,7 @@ $GLOBALS['navbarAssetsImageUrl'] = $assetsImageUrl;
 
 <!-- Plugins Hub Dropdown -->
 <div class="dropdown">
-    <button class="has-indicator w-40-px h-40-px bg-neutral-200 rounded-circle d-flex justify-content-center align-items-center" type="button" data-bs-toggle="dropdown" id="plugins-btn" aria-label="Plugins" title="Plugins Hub">
+    <button class="has-indicator w-40-px h-40-px bg-neutral-200 rounded-circle d-flex justify-content-center align-items-center" type="button" id="plugins-btn" aria-label="Plugins" title="Plugins Hub" onclick="window.location.href='index.php?page=plugins'">
         <iconify-icon icon="iconoir:puzzle" class="text-primary-light text-xl"></iconify-icon>
         <span class="indicator bg-danger-main" id="plugin-update-indicator" style="display: none;"></span>
     </button>
@@ -149,7 +149,7 @@ $GLOBALS['navbarAssetsImageUrl'] = $assetsImageUrl;
             </div>
         </div>
         <div class="text-center py-12 px-16">
-           <a href="javascript:void(0)" onclick="window.openPluginHub()" class="text-primary-600 fw-semibold text-md">Open Plugin Hub</a>
+           <a href="index.php?page=plugins" class="text-primary-600 fw-semibold text-md">Open Plugin Hub</a>
         </div>
     </div>
 </div><!-- Plugins dropdown end -->
