@@ -375,8 +375,9 @@ document.addEventListener('DOMContentLoaded', function() {
     let currentTunnelUrl = null;
     let contextMenuProject = null;
     
-    const TUNNEL_API = 'api/tunnel.php';
-    const PROJECTS_API = 'api/projects.php';
+    const TUNNEL_API = window.apiBase + '/tunnel.php';
+    const PROJECTS_API = window.apiBase + '/projects.php';
+    const DELETE_API = window.apiBase + '/delete_project.php';
     
     // Context menu handling
     window.showProjectContextMenu = function(event, projectName) {
@@ -670,7 +671,7 @@ document.addEventListener('DOMContentLoaded', function() {
         formData.append('project', projectName);
         formData.append('csrf_token', window.csrfToken);
         
-        fetch('api/delete_project.php', {
+        fetch(DELETE_API, {
             method: 'POST',
             body: formData
         })
@@ -713,7 +714,7 @@ document.addEventListener('DOMContentLoaded', function() {
         formData.append('delete_database', deleteDatabase ? '1' : '0');
         formData.append('csrf_token', window.csrfToken);
         
-        fetch('api/delete_project.php', {
+        fetch(DELETE_API, {
             method: 'POST',
             body: formData
         })

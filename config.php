@@ -116,99 +116,61 @@ if (!defined('CACHE_ROOT')) {
 
 // URL Path Definitions (relative to web root)
 if (!defined('BASE_URL')) {
-    // Determine base URL - this must work correctly for routing scenarios
     $basePath = '';
     
-    // Method 1: Use SCRIPT_NAME (most reliable - always reflects the actual script being executed)
-    // When accessing via index.php?page=projects, SCRIPT_NAME is /Laragon-Dashboard/index.php
-    // When accessing pages/projects.php directly, SCRIPT_NAME is /Laragon-Dashboard/pages/projects.php
-    // When accessing via custom domain (laragon-dashboard.local), SCRIPT_NAME is /index.php
-    // When using PHP built-in server with -t ., SCRIPT_NAME is /index.php and DOCUMENT_ROOT is the dashboard dir
     $scriptName = $_SERVER['SCRIPT_NAME'] ?? $_SERVER['PHP_SELF'] ?? '';
     $docRoot = $_SERVER['DOCUMENT_ROOT'] ?? '';
     $scriptFile = $_SERVER['SCRIPT_FILENAME'] ?? __FILE__;
     
-    // Check if we're using PHP built-in server with dashboard as document root
-    // In this case, DOCUMENT_ROOT will be the dashboard directory itself
     $appRootNormalized = str_replace('\\', '/', rtrim(APP_ROOT, '/\\'));
     $docRootNormalized = str_replace('\\', '/', rtrim($docRoot, '/\\'));
     
-    if ($docRootNormalized === $appRootNormalized) {
-        // PHP built-in server with -t . (dashboard is document root)
-        // BASE_URL should be empty since we're at root
-        $basePath = '';
-    } else if (!empty($scriptName)) {
-        $basePath = dirname($scriptName);
-        // Normalize: dirname('/Laragon-Dashboard/index.php') = '/Laragon-Dashboard'
-        // dirname('/index.php') = '/' or '.'
-        // For custom domains, if script is in subdirectory, preserve it
+    // Method 1: Calculate from SCRIPT_FILENAME vs DOCUMENT_ROOT
+    // This is the most reliable — works regardless of how the URL is structured
+    if (!empty($docRoot) && !empty($scriptFile)) {
+        $scriptFileNorm = str_replace('\\', '/', $scriptFile);
+        $docRootNorm = str_replace('\\', '/', rtrim($docRoot, '/\\'));
+        
+        if (strpos($scriptFileNorm, $docRootNorm) === 0) {
+            $relativeDir = dirname(substr($scriptFileNorm, strlen($docRootNorm)));
+            if ($relativeDir !== '.' && $relativeDir !== '/' && $relativeDir !== '\\') {
+                $basePath = str_replace('\\', '/', $relativeDir);
+            }
+        }
+    }
+    
+    // Method 2: Fallback to SCRIPT_NAME dirname
+    if (empty($basePath) && !empty($scriptName)) {
+        $basePath = dirname(str_replace('\\', '/', $scriptName));
         if ($basePath === '.' || $basePath === '/' || $basePath === '\\') {
             $basePath = '';
         }
     }
     
-    // Method 2: Fallback - use REQUEST_URI to detect subdirectory
-    if (empty($basePath) || $basePath === '') {
+    // Method 3: Fallback to REQUEST_URI path analysis
+    if (empty($basePath)) {
         $requestUri = $_SERVER['REQUEST_URI'] ?? '';
         if (!empty($requestUri)) {
-            // Remove query string
             $requestPath = parse_url($requestUri, PHP_URL_PATH);
-            // Get directory part
-            $basePath = dirname($requestPath);
-            if ($basePath === '.' || $basePath === '/' || $basePath === '\\') {
-                $basePath = '';
-            }
-        }
-    }
-    
-    // Method 3: Detect from document root if dashboard is in a known subdirectory
-    if (empty($basePath) || $basePath === '') {
-        $docRoot = $_SERVER['DOCUMENT_ROOT'] ?? '';
-        $scriptFile = $_SERVER['SCRIPT_FILENAME'] ?? __FILE__;
-        
-        // If script is in a subdirectory of document root, calculate the path
-        if (!empty($docRoot) && !empty($scriptFile)) {
-            $docRoot = str_replace('\\', '/', rtrim($docRoot, '/\\'));
-            $scriptFile = str_replace('\\', '/', $scriptFile);
-            
-            // Check if script is inside document root
-            if (strpos($scriptFile, $docRoot) === 0) {
-                $relativePath = substr($scriptFile, strlen($docRoot));
-                $relativeDir = dirname($relativePath);
-                
-                // For D:\Dev_Sites\Laragon-Dashboard, relativeDir should be /Laragon-Dashboard
-                if ($relativeDir !== '.' && $relativeDir !== '/' && $relativeDir !== '\\') {
-                    $basePath = $relativeDir;
-                } else {
-                    // If we're at root level but in a subdirectory, check if Laragon-Dashboard exists
-                    // This handles cases where document root is D:\Dev_Sites and script is in Laragon-Dashboard subfolder
-                    if (strpos(strtolower($docRoot), 'dev_sites') !== false) {
-                        // Check if we're in Laragon-Dashboard folder
-                        $scriptDir = dirname($scriptFile);
-                        if (strpos(strtolower($scriptDir), 'laragon-dashboard') !== false) {
-                            // Extract Laragon-Dashboard from path
-                            $parts = explode('Laragon-Dashboard', $scriptDir);
-                            if (!empty($parts)) {
-                                $before = str_replace('\\', '/', $parts[0]);
-                                $before = str_replace($docRoot, '', $before);
-                                $basePath = $before . '/Laragon-Dashboard';
-                                $basePath = str_replace('//', '/', $basePath);
-                            }
-                        }
-                    }
+            // Walk up the path until we find a directory that contains index.php
+            $parts = explode('/', trim($requestPath, '/'));
+            array_pop($parts); // Remove filename
+            while (!empty($parts)) {
+                $testPath = $docRootNormalized . '/' . implode('/', $parts) . '/index.php';
+                if (file_exists($testPath)) {
+                    $basePath = '/' . implode('/', $parts);
+                    break;
                 }
+                array_pop($parts);
             }
         }
     }
     
-    // Normalize path separators
+    // Normalize
     $basePath = str_replace('\\', '/', $basePath);
-    
-    // Final normalization - ensure proper format
     if ($basePath === '/' || $basePath === '\\' || $basePath === '.' || $basePath === '') {
         $basePath = '';
     } else {
-        // Remove trailing slash and ensure it starts with /
         $basePath = rtrim($basePath, '/');
         if (substr($basePath, 0, 1) !== '/') {
             $basePath = '/' . $basePath;

@@ -940,7 +940,7 @@ function confirmDeleteProject(projectName) {
     formData.append('project', projectName);
     formData.append('csrf_token', window.csrfToken);
     
-    fetch('api/delete_project.php', {
+    fetch(window.apiBase + '/delete_project.php', {
         method: 'POST',
         body: formData
     })

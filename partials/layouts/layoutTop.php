@@ -28,6 +28,8 @@ include $headPath;
 <script>
     // Global CSRF token for AJAX requests
     window.csrfToken = "<?php echo getCSRFToken(); ?>";
+    // Global API base URL - works correctly in subdirectory access
+    window.apiBase = "<?php echo defined('BASE_URL') && BASE_URL ? BASE_URL : ''; ?>/api";
 </script>
 
 <body>

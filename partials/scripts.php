@@ -379,7 +379,7 @@ if (substr($assetsUrl, 0, 1) !== '/') {
         const projectList = document.getElementById('project-list');
         const projectCount = document.getElementById('project-count');
         const baseUrl = '<?php echo defined("BASE_URL") ? BASE_URL : ""; ?>';
-        const assetsImageUrl = '<?php echo defined("ASSETS_URL") ? ASSETS_URL . "/images" : "/Laragon-Dashboard/assets/images"; ?>';
+        const assetsImageUrl = baseUrl !== '' ? baseUrl + '/assets/images' : '/assets/images';
         
         if (!searchInput || !searchResults || !projectList) {
             return; // Elements not found
