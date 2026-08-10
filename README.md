@@ -95,7 +95,7 @@ This release transforms Laragon from a simple WAMP alternative into a comprehens
 ### Current Status (as of November 2025)
 - **Windows**: ✅ Fully supported (primary platform)
 - **macOS**: ❌ Not supported by Laragon (Windows-only)
-- **Linux**: ❌ Not supported by Laragon (Windows-only)
+- **Linux**: ❌ Not supported by Laragon (Windows-only) Look into the Linux Port, [Nucleus](https://github.com/LebToki/Nucleus)
 
 ### Cross-Platform Research
 Laragon is currently Windows-only. For future cross-platform support, the dashboard architecture is designed to:
