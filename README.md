@@ -7,9 +7,11 @@ Version 4.0.5 aims to be a comprehensive MAMP competitor on Windows, replicating
 
 "The best Windows development environment just got better. Welcome to the future of local development."
 
+---
 
-I am leaving the future of Laragon-Dashboard's minor revisions to the community. I strongly encourage anyone interested to clone the repository, fork it, and push your updates to keep the project alive for Windows users.
+Please note that I am leaving the future of Laragon-Dashboard's minor revisions to the community. I strongly encourage anyone interested to clone the repository, fork it, and push your updates to keep the project alive for Windows users.
 
+---
 
 [![Version](https://img.shields.io/badge/version-4.0.5-blue.svg)](https://github.com/LebToki/Laragon-Dashboard)
 [![PHP](https://img.shields.io/badge/PHP-7.4%2B-green.svg)](https://php.net)
