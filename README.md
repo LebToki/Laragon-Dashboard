@@ -42,20 +42,21 @@ Please note that I am leaving the future of Laragon-Dashboard's minor revisions 
 
 ---
 
-A Key Suggestion: Look to Nucleus
-In parallel with my move to Linux, I have been developing a new project called [Nucleus](https://github.com/LebToki/Nucleus)  . Think of it as the spiritual successor and Linux-native evolution of Laragon-Dashboard.
+**A Key Suggestion: Look to Nucleus**
+In parallel with my move to Linux, I have been developing a new project called [Nucleus](https://github.com/LebToki/Nucleus) . Think of it as the spiritual successor and Linux-native evolution of Laragon-Dashboard.
 
-It is built from the ground up for Linux environments (ZorinOS, Ubuntu, Mint) and addresses many of the architectural issues found in the Windows version. Unlike Laragon-Dashboard, Nucleus is completely independent and not tied to any external project's roadmap.
+It is built from the ground up for Linux environments (ZorinOS, Ubuntu, Mint) and addresses many of the architectural issues found in the Windows version.
 
 I highly recommend you and other contributors look at the refinements made in Nucleus and consider adapting them back to Laragon-Dashboard.
 
 Here are some key areas where Nucleus's approach could be particularly useful for fixing issues like #124 and improving the overall project:
 
-Improved Authentication Logic: Nucleus has a more robust authentication system that correctly differentiates between local and remote access.
+- Improved Authentication Logic: Nucleus has a more robust authentication system that correctly differentiates between local and remote access.
 
-Modular Architecture: The core logic for services and security is decoupled from the UI, making it easier to patch and extend.
+- Modular Architecture: The core logic for services and security is decoupled from the UI, making it easier to patch and extend.
 
-Modern Linux-Native Stack: It uses systemd for service management, which is the standard on modern Linux, and avoids the Windows-specific quirks that cause issues like the one you encountered.
+- Modern Linux-Native Stack: It uses systemd for service management, which is the standard on modern Linux, and avoids the Windows-specific quirks that cause issues like the one you encountered.
+
 
 ---
 
@@ -65,7 +66,7 @@ Modern Linux-Native Stack: It uses systemd for service management, which is the 
 - **Version**: 4.0.5
 - **Author**: Tarek Tarabichi
 - **Company**: 2TInteractive (2tinteractive.com)
-- **Project Start**: Early 2024
+- **Project Start**: Mid 2023 / Evolved Early 2024
 - **GitHub**: https://github.com/LebToki/Laragon-Dashboard
 - **License**: MIT
 - **Goal**: MAMP competitor for Windows OS (with potential future cross-platform support)
