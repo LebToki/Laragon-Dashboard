@@ -174,7 +174,7 @@ Laragon has always been the fastest, most lightweight development environment fo
 - Content Security Policy, SQL injection protection
 
 ### 🌍 Multi-language Support
-- 8 languages — English, German, Spanish, French, Indonesian, Portuguese, Tagalog, Arabic
+- 10 languages — English, German, Spanish, French, Dansk, Norwegian, Indonesian, Portuguese, Tagalog, Arabic
 
 ---
 
