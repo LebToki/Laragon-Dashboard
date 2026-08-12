@@ -1,22 +1,54 @@
 # Security Policy
 
-## Security Features
+## Supported Versions
 
-The Laragon Dashboard includes several security features to protect your development environment:
-
-- **CSRF Protection**: All forms protected with CSRF tokens.
-- **XSS Prevention**: All user inputs sanitized.
-- **SQL Injection Protection**: Prepared statements used throughout.
-- **Rate Limiting**: Prevents brute force attacks.
-- **Secure Headers**: Comprehensive HTTP security headers including:
-    - `X-Frame-Options: DENY`
-    - `X-Content-Type-Options: nosniff`
-    - `X-XSS-Protection: 1; mode=block`
-    - `Strict-Transport-Security` (HTTPS only)
-    - `Content-Security-Policy`
-    - `Referrer-Policy: strict-origin-when-cross-origin`
-- **File Upload Security**: Restricted file types and sizes.
+| Version | Supported | Platform |
+|---------|-----------|----------|
+| 4.0.5   | ✅        | Windows  |
+| 4.0.6   | ✅        | Windows  |
+| Nucleus (latest) | ✅ | Linux |
 
 ## Reporting a Vulnerability
 
-If you discover a security vulnerability within Laragon Dashboard, please send an e-mail to Tarek Tarabichi via [2tinteractive.com](https://2tinteractive.com). All security vulnerabilities will be promptly addressed.
+If you discover a security vulnerability in Laragon Dashboard or Nucleus, please report it responsibly.
+
+**DO NOT** open a public GitHub issue for security vulnerabilities.
+
+### How to Report
+
+1. **Email**: Send details to security@2tinteractive.com
+2. **GitHub**: Use [GitHub Security Advisories](https://github.com/LebToki/Laragon-Dashboard/security/advisories/new) (private)
+
+### What to Include
+
+- Description of the vulnerability
+- Steps to reproduce
+- Potential impact
+- Suggested fix (if any)
+
+### Response Timeline
+
+- **Acknowledgment**: Within 48 hours
+- **Assessment**: Within 7 days
+- **Fix timeline**: Depends on severity — critical fixes within 48 hours of confirmation
+
+### Disclosure Policy
+
+- We follow coordinated disclosure
+- We ask that you do not publicly disclose the vulnerability before we have had a chance to address it
+- We will credit reporters in the changelog (unless you prefer to remain anonymous)
+
+## Security Features
+
+- CSRF token protection on all forms
+- HTTP security headers (X-Frame-Options, CSP, HSTS, etc.)
+- Rate limiting on authentication endpoints
+- Input sanitization (XSS prevention)
+- SQL injection protection (prepared statements)
+- Secure session management (HTTPOnly cookies)
+- File upload restrictions
+
+## Linux Users
+
+For the Linux-native version (Nucleus), please report security issues at:
+https://github.com/LebToki/Nucleus/security/advisories/new

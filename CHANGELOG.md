@@ -2,6 +2,25 @@
 
 All notable changes to this project will be documented in this file.
 
+## [4.0.6] - 2026-08-12
+
+### Changed
+- README rewritten to position [Nucleus](https://github.com/LebToki/Nucleus) as the Linux-native spiritual successor
+- Added macOS beta interest call for community feedback
+- Platform support table updated: Windows ✅, Linux ✅ (Nucleus), macOS 🔜
+
+### Removed
+- Removed 9 test_ files from repository root (test_run, test_updatemanager, test_plugins, test_ignore, test_list_ignored, test_get_ignored, test_auth, test_fatal, test_redeclare)
+
+### Added
+- SECURITY.md with responsible disclosure policy
+
+### Notes
+- Active development has moved to [Nucleus](https://github.com/LebToki/Nucleus) for Linux
+- Windows release remains fully supported at v4.0.5
+- Community contributions for Windows fixes still welcome
+
+
 ## [4.0.5] - 2026-03-17 
 
 ## What's Changed

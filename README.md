@@ -1,27 +1,42 @@
 # 🚀 Laragon Dashboard
 
-We're thrilled to announce the release of Laragon Dashboard 4.0.5, a complete reimagining of local development environment management for Windows. This isn't just an update, it's a quantum leap forward in how you interact with your Laragon setup.
+A modern, feature-rich web-based dashboard for managing local development environments. Born on Windows, now evolved for Linux through [Nucleus](https://github.com/LebToki/Nucleus).
 
-Laragon Dashboard is a modern, feature-rich web-based dashboard for managing Laragon development environment. 
-Version 4.0.5 aims to be a comprehensive MAMP competitor on Windows, replicating Laragon control panel functionality in a modern, themed web interface.
-
-"The best Windows development environment just got better. Welcome to the future of local development."
+Version 4.0.5 — the final Windows release. The journey continues on Linux.
 
 ---
 
-Please note that I am leaving the future of Laragon-Dashboard's minor revisions to the community. I strongly encourage anyone interested to clone the repository, fork it, and push your updates to keep the project alive for Windows users.
+## 📖 The Story
+
+Laragon Dashboard started as a passion project in 2023 — a modern web interface to replace Laragon's native control panel on Windows. It grew into a comprehensive MAMP competitor with service management, database browsing, project discovery, email management, server monitoring, and even an AI-powered code editor plugin.
+
+**Then I moved to Linux.**
+
+Rather than abandon this project, I built [**Nucleus**](https://github.com/LebToki/Nucleus) — the spiritual successor. Nucleus takes everything learned from Laragon Dashboard and rebuilds it from the ground up for Linux (ZorinOS, Ubuntu, Mint) using systemd, native service management, and a modular architecture.
+
+**This repository remains the canonical Windows release.** All future development happens in Nucleus. If you're on Windows, this is still your dashboard. If you're on Linux, Nucleus is waiting.
+
+---
+
+## 🖥️ Platform Support
+
+| Platform | Status | Project |
+|----------|--------|---------|
+| **Windows** | ✅ Fully supported | This repo (Laragon Dashboard) |
+| **Linux** | ✅ Native | [Nucleus](https://github.com/LebToki/Nucleus) — the spiritual successor |
+| **macOS** | 🔜 Beta interest? | [Open an issue](https://github.com/LebToki/Laragon-Dashboard/issues) if you'd like to beta-test a macOS port |
+
+> **macOS users:** If there's enough interest from beta-testers, we'll port Nucleus's architecture to macOS. The modular design (systemd → launchd, native service bridges) makes this feasible. Drop a comment on the issues page if you're interested.
 
 ---
 
 [![Version](https://img.shields.io/badge/version-4.0.5-blue.svg)](https://github.com/LebToki/Laragon-Dashboard)
 [![PHP](https://img.shields.io/badge/PHP-7.4%2B-green.svg)](https://php.net)
 [![Bootstrap](https://img.shields.io/badge/Bootstrap-5.3.2-purple.svg)](https://getbootstrap.com)
-[![Platform](https://img.shields.io/badge/platform-windows-lightgrey.svg)]()
+[![Windows](https://img.shields.io/badge/platform-windows-0078D6.svg)]()
+[![Linux](https://img.shields.io/badge/Linux-Nucleus-FCC624.svg)](https://github.com/LebToki/Nucleus)
 [![License](https://img.shields.io/badge/license-MIT-orange.svg)](LICENSE)
 [![GitHub](https://img.shields.io/github/stars/LebToki/Laragon-Dashboard?style=social)](https://github.com/LebToki/Laragon-Dashboard)
-
-[![Buy Me A Coffee](https://img.shields.io/badge/Buy%20Me%20A%20Coffee-Donate-yellow?style=for-the-badge&logo=buy-me-a-coffee)](https://buymeacoffee.com/LebToki)
-[![Donate via Paypal](https://img.shields.io/badge/Donate%20with%20Paypal-Donate-blue?style=for-the-badge&logo=paypal)](https://www.paypal.com/donate/?hosted_button_id=TEEJNYQJA9B6U)
 
 <p align="center">
   <img src="https://img.shields.io/github/stars/LebToki/Laragon-Dashboard?style=for-the-badge" alt="Stars" />
@@ -30,6 +45,7 @@ Please note that I am leaving the future of Laragon-Dashboard's minor revisions 
 </p>
 
 ![Laragon Dashboard](assets/images/og_banner.png)
+
 ---
 
 ## ✨ Screenshots
@@ -37,26 +53,24 @@ Please note that I am leaving the future of Laragon-Dashboard's minor revisions 
 <img width="1899" height="913" alt="Dashboard" src="https://github.com/user-attachments/assets/3c26a59d-fd56-4129-ad6b-2b94851622ba" />
 <img width="1898" height="915" alt="Projects" src="https://github.com/user-attachments/assets/299063cd-6d35-4441-9daf-12646a94d141" />
 <img width="1915" height="915" alt="Databases" src="https://github.com/user-attachments/assets/a9902815-fcb6-4435-875e-05ed61cf132f" />
-<img width="1892" height="905" alt="Services" src="https://github.com/user-attachments/assets/7897a08a-e58c-44e1-b350-2d26cd9aae77" />
+<img width="1892" height="905" alt="Services" src="https://github.com/user-attachments/assets/7897a08a-e58c-4f42-861d-2338f7f2e075" />
 <img width="1902" height="909" alt="Server Vitals" src="https://github.com/user-attachments/assets/c57dcd21-f318-4f42-861d-2338f7f2e075" />
 
 ---
 
-**A Key Suggestion: Look to Nucleus**
-In parallel with my move to Linux, I have been developing a new project called [Nucleus](https://github.com/LebToki/Nucleus) . Think of it as the spiritual successor and Linux-native evolution of Laragon-Dashboard.
+## 🔮 Look to Nucleus
 
-It is built from the ground up for Linux environments (ZorinOS, Ubuntu, Mint) and addresses many of the architectural issues found in the Windows version.
+[Nucleus](https://github.com/LebToki/Nucleus) is the Linux-native evolution of Laragon Dashboard. It's built from the ground up for Linux environments and addresses architectural limitations found in the Windows version.
 
-I highly recommend you and other contributors look at the refinements made in Nucleus and consider adapting them back to Laragon-Dashboard.
+**Key improvements in Nucleus:**
 
-Here are some key areas where Nucleus's approach could be particularly useful for fixing issues like #124 and improving the overall project:
+- **systemd-native service management** — no Windows `sc` command hacks, proper Linux service control
+- **Modular architecture** — core logic decoupled from UI, easier to patch and extend
+- **Improved authentication** — robust local/remote access differentiation
+- **Real process management** — proper PID tracking, signal handling, graceful shutdowns
+- **No Electron bloat** — pure web technology, zero memory overhead (same philosophy, Linux-native execution)
 
-- Improved Authentication Logic: Nucleus has a more robust authentication system that correctly differentiates between local and remote access.
-
-- Modular Architecture: The core logic for services and security is decoupled from the UI, making it easier to patch and extend.
-
-- Modern Linux-Native Stack: It uses systemd for service management, which is the standard on modern Linux, and avoids the Windows-specific quirks that cause issues like the one you encountered.
-
+**If you're a contributor or fork maintainer:** I highly recommend studying Nucleus's approach and adapting its refinements back to Laragon Dashboard. The architectural patterns are transferable.
 
 ---
 
@@ -68,860 +82,294 @@ Here are some key areas where Nucleus's approach could be particularly useful fo
 - **Company**: 2TInteractive (2tinteractive.com)
 - **Project Start**: Mid 2023 / Evolved Early 2024
 - **GitHub**: https://github.com/LebToki/Laragon-Dashboard
+- **Linux Successor**: https://github.com/LebToki/Nucleus
 - **License**: MIT
-- **Goal**: MAMP competitor for Windows OS (with potential future cross-platform support)
+- **Goal**: MAMP competitor for Windows OS → evolved into cross-platform dev environment management
 
 ---
 
 ## 💡 Why This Matters
-Laragon has always been the fastest, most lightweight development environment for Windows. With version 4.0.5 of the dashboard, we're bringing that same philosophy to the web interface:
 
-- No Electron bloat – Pure web technology, zero memory overhead
-- **Instant Startup** – Access your dashboard immediately via localhost.
-- **Seamless Auth** – Local Auto-Authorization pre-authorizes sessions from `127.0.0.1`.
-- **Integrated Environment** – Direct bridge between web UI and Laragon services.
-- Native feel – WebSocket updates make it feel like a desktop app
-- Extensible – Plugin system for custom tools and integrations
+Laragon has always been the fastest, most lightweight development environment for Windows. This dashboard brings that same philosophy to the web interface:
 
-## 🎉 Join the Revolution
-This release transforms Laragon from a simple WAMP alternative into a comprehensive development ecosystem that rivals (and surpasses) MAMP on macOS. Whether you're a Laravel artisan, WordPress developer, or Symfony specialist, this dashboard will change how you work.
-
--> Download now from the official repository or update through Laragon's built-in tools.
+- **No Electron bloat** — Pure web technology, zero memory overhead
+- **Instant Startup** — Access your dashboard immediately via localhost
+- **Seamless Auth** — Local Auto-Authorization pre-authorizes sessions from `127.0.0.1`
+- **Integrated Environment** — Direct bridge between web UI and Laragon services
+- **Native feel** — WebSocket updates make it feel like a desktop app
+- **Extensible** — Plugin system for custom tools and integrations
 
 ---
-
-## 🌍 Platform Support
-
-### Current Status (as of November 2025)
-- **Windows**: ✅ Fully supported (primary platform)
-- **macOS**: ❌ Not supported by Laragon (Windows-only)
-- **Linux**: ❌ Not supported by Laragon (Windows-only) Look into the Linux Port, [Nucleus](https://github.com/LebToki/Nucleus)
-
-### Cross-Platform Research
-Laragon is currently Windows-only. For future cross-platform support, the dashboard architecture is designed to:
-- Abstract platform-specific operations (service management, file paths, etc.)
-- Support multiple backend environments (Laragon on Windows, MAMP/XAMPP on macOS/Linux)
-- Detect and adapt to the host platform
-- Provide platform-specific features when available
-
-**Potential Future Platforms**:
-- **macOS**: Could integrate with MAMP, Laravel Valet, or Docker
-- **Linux**: Could integrate with LAMP stack, Docker, or platform-specific tools
 
 ## ✨ Features
 
 ### 🎛️ Service Management
-- **Start/Stop/Restart Services** - Apache, MySQL, Nginx, Redis, Memcached, MongoDB, PostgreSQL, Mailpit
-- **Service Status Monitoring** - Real-time status display
-- **Port Monitoring** - View all listening ports on your system
-- **Service Version Detection** - Automatic version detection
-- **Windows Service Control** - Full Windows service management via `sc` commands
-- **Process-Based Services** - Support for non-Windows services (Nginx, Mailpit)
+- Start/Stop/Restart services — Apache, MySQL, Nginx, Redis, Memcached, MongoDB, PostgreSQL, Mailpit
+- Real-time status monitoring and port detection
+- Automatic service version detection
+- Windows Service Control via `sc` commands
+- Process-based services support (Nginx, Mailpit)
 
 ### 📁 Project Management
-- **Project Discovery** - Automatically list projects from `www` directory
-- **Framework Detection** - WordPress, Laravel, Drupal, CodeIgniter, Symfony, CakePHP, Joomla
-- **Project Search/Filter** - Quick search and filtering capabilities
-- **Quick Access Links** - Direct links to project admin panels
-- **Framework-Specific Icons** - Visual identification of project types
-- **Project Actions Menu** - 3-dot dropdown menu for quick actions (Ignore Project)
-- **Smart WP Admin Button** - Only displays for WordPress projects, hides automatically for others
-- **Project Ignoring** - Hide projects from the list via dropdown menu or right-click context menu
+- Automatic project discovery from `www` directory
+- Framework detection — WordPress, Laravel, Drupal, CodeIgniter, Symfony, CakePHP, Joomla
+- Search/filter, quick access links, framework-specific icons
+- Project actions menu with ignore functionality
+- Smart WP Admin button (auto-hides for non-WordPress projects)
 
 ### 🗄️ Database Management
-- **Universal Database Browser** - Browse all databases with real-time size calculations.
-- **Table Explorer & Schema Viewer** - Deep-dive into table structures, row counts, indices, and constraints.
-- **Safe SQL Query Runner** - Execute SELECT queries with a result grid (Safe Read-Only mode).
-- **Engine & Collation Tracking** - Monitor storage engines and character sets at a glance.
-- **Modular Backend** - Powered by a high-performance `Databases.php` core class.
+- Universal database browser with real-time size calculations
+- Table explorer with schema viewer, row counts, indices, constraints
+- Safe SQL query runner (read-only mode)
+- Engine & collation tracking
 
 ### 📧 Email Management (Mailpit)
-- **Smart Email Viewer** - Integrated viewer for Laragon's sendmail output.
-- **Logs as HTML Rendering** - **NEW**: Automagically transforms raw log emails into searchable, color-coded HTML tables.
-- **Mailpit Sync** - Seamless integration with Mailpit for real-time local email monitoring.
-- **Email Statistics** - Comprehensive breakdown of email volume and unique senders.
-- **Bulk Operations** - Advanced search, filter, and management of local mail.
+- Integrated email viewer for Laragon's sendmail output
+- Raw log to HTML transformation with searchable, color-coded tables
+- Mailpit sync for real-time local email monitoring
+- Email statistics and bulk operations
 
 ### 📊 Server Monitoring
-- **Real-time Vitals** - CPU, memory, and disk usage monitoring
-- **PHP Memory Tracking** - Monitor PHP memory usage and limits
-- **Multi-drive Support** - Track disk usage across all drives
-- **Visual Charts** - Interactive charts using Chart.js
-- **Windows Compatible** - Optimized for Windows/Laragon environment
+- Real-time CPU, memory, and disk usage charts
+- PHP memory tracking
+- Multi-drive support
+- Interactive Chart.js visualizations
 
 ### 📋 Log Viewer
-- **Multi-Log Support** - View Apache, PHP, MySQL, and Dashboard logs
-- **Configurable Display** - Adjust number of lines to display (10-1000)
-- **Log Management** - Clear log files with one click
-- **Auto-Detection** - Automatically finds available log files
-- **Terminal-Style Display** - Easy-to-read log format
+- Multi-log support (Apache, PHP, MySQL, Dashboard)
+- Configurable display (10-1000 lines)
+- One-click log clearing
+- Terminal-style display
 
 ### 🛠️ Quick Tools
-- **Cache Management** - Clear application and framework caches
-- **Database Optimization** - Optimize all tables in a database
-- **Git Integration** - Check Git status for projects
-- **Composer Commands** - Install, update, dump-autoload, clear-cache
-- **NPM Commands** - Install, update, run build/dev/prod
-- **PHP Info** - Quick access to PHP configuration
-- **SMTP Configuration Fix** - Automatically configure PHP to use Mailpit SMTP instead of sendmail.exe
+- Cache management, database optimization
+- Git integration, Composer/NPM commands
+- PHP info viewer
+- SMTP configuration fix (auto-configure PHP for Mailpit)
 
 ### 💾 Backup & Export
-- **Full Project Backup** - Backup projects with database
-- **Configurable Options** - Include/exclude vendor, cache directories
-- **Recent Backups List** - View and manage backup history
-- **Download Backups** - Easy backup retrieval
-- **ZIP Compression** - Efficient backup storage
+- Full project backup with database
+- Configurable options (include/exclude vendor, cache)
+- Recent backups list with download
+- ZIP compression
 
 ### 🔄 Update Management
-- **GitHub-Integrated Updates** - Automatic checks against the latest releases.
-- **Visual Progress** - Real-time download and installation feedback.
-- **Safety First** - Automated backup of the current installation before any update.
+- GitHub-integrated update checks
+- Real-time download/install progress
+- Automated backup before updates
 
 ### 🤖 AI Integration (Beta)
-- **BYOK AI Agent** - **NEW**: Integrated glassmorphic chat widget for project scaffolding, troubleshooting, and code assistance.
-- **System Context Bridge** - Secure backend API providing real-time environment data to the agent.
+- BYOK AI Agent — glassmorphic chat widget for scaffolding, troubleshooting, code assistance
+- System context bridge for real-time environment data
 
-## 🔌 Plugin System (New in 4.0.4+)
+### 🔌 Plugin System (4.0.4+)
+- **CodePilot** — AI-powered code editor with multi-provider support (Ollama, DeepSeek, Gemini, OpenAI, Anthropic, etc.)
+- Monaco Editor (VS Code engine), full file browser
+- One-click install from GitHub
+- Auto-updates, enable/disable toggles
 
-Laragon Dashboard now features a powerful plugin system that allows you to extend functionality with third-party tools and integrations.
-
-### 🎯 Available Plugins
-
-#### 🤖 **CodePilot** - AI-Powered Code Editor
-- **Multi-provider AI support**: Ollama, DeepSeek, Gemini, HuggingFace, OpenAI, Anthropic, Qwen, MiniMax
-- **Project manager** with 7 starter templates
-- **AI Studio** for image generation
-- **Monaco Editor** (VS Code engine)
-- **Full file browser** and editor
-- **One-click installation** from GitHub
-
-### 🚀 Installing Plugins
-
-1. Click the **puzzle icon** in the navbar
-2. Click **"Open Plugin Hub"**
-3. Browse available plugins
-4. Click **"Install"** on any plugin
-
-### 🔧 Plugin Management
-
-- **Auto-updates**: Plugins check for updates automatically
-- **One-click updates**: Update plugins with a single click
-- **Easy uninstallation**: Remove plugins completely
-- **Enable/disable**: Toggle plugins without uninstalling
-
-### 🛠️ For Developers: Creating Plugins
-
-Plugins are distributed as GitHub releases with `.zip` archives. To create a plugin:
-
-1. Create a GitHub repository with your plugin
-2. Add a `plugin.json` manifest file
-3. Create releases with `.zip` archives
-4. Add your plugin to the available plugins list
-
-### 📁 Plugin Structure
-```
-plugins/
-├── codepilot/          # Plugin directory
-│   ├── public/         # Web-accessible files
-│   ├── src/            # Source code
-│   └── plugin.json     # Plugin manifest
-└── ...
-
-data/plugins/
-└── registry.json      # Installed plugins registry
-```
-
-### 🔄 Automatic Updates
-
-Plugins automatically check for updates from GitHub and notify you when new versions are available.
-
----
-
-### 🔒 Security Features
-- **CSRF Protection** - Secure token-based protection
-- **Security Headers** - Comprehensive HTTP security headers
-- **Rate Limiting** - Prevent abuse and brute force attacks
-- **Input Sanitization** - XSS and injection protection
-- **Secure Sessions** - HTTPOnly and secure cookie settings
-- **Content Security Policy** - Advanced CSP implementation
-- **SQL Injection Protection** - Prepared statements throughout
+### 🔒 Security
+- CSRF protection, security headers, rate limiting
+- Input sanitization, secure sessions
+- Content Security Policy, SQL injection protection
 
 ### 🌍 Multi-language Support
-- **8 Languages** - English, German, Spanish, French, Indonesian, Portuguese, Tagalog, Arabic
-- **Easy Language Switching** - Quick language selector
-- **Consistent Translation System** - Organized translation files
-- **Module-Based Translations** - Translations organized by feature
+- 8 languages — English, German, Spanish, French, Indonesian, Portuguese, Tagalog, Arabic
+
+---
 
 ## 🛠️ Installation
 
 ### Prerequisites
-
 - **Laragon** development environment installed
-- **PHP 7.4+** with required extensions:
-  - `json`
-  - `mbstring`
-  - `openssl`
-  - `pdo_mysql`
-- **MySQL/MariaDB** server
-- **Web server** (Apache/Nginx)
+- PHP 7.4+ with extensions: `json`, `mbstring`, `openssl`, `pdo_mysql`
+- MySQL/MariaDB server
+- Web server (Apache/Nginx)
 
 ### Quick Setup
 
 #### Option 1: Download ZIP (Recommended)
-
-1. **Download the latest release** from the [Releases page](https://github.com/LebToki/Laragon-Dashboard/releases)
-
-2. **Extract the zip file** to your Laragon `www` directory:
-   ```
-   C:\laragon\www\Laragon-Dashboard\
-   ```
-
-3. **Edit Laragon's root index.php** (located at `C:\laragon\www\index.php`)
-   
-   Replace the existing content with this redirect:
+1. Download from [Releases page](https://github.com/LebToki/Laragon-Dashboard/releases)
+2. Extract to `C:\laragon\www\Laragon-Dashboard\`
+3. Edit `C:\laragon\www\index.php`:
    ```php
    <?php
    header('Location: /Laragon-Dashboard/');
    exit;
    ?>
    ```
-
-4. **Access Dashboard**
-   ```
-   http://localhost/
-   ```
-   or directly:
-   ```
-   http://localhost/Laragon-Dashboard/
-   ```
+4. Access at `http://localhost/`
 
 #### Option 2: Git Clone
-
-1. **Clone the repository**
-   ```bash
-   git clone https://github.com/LebToki/Laragon-Dashboard.git
-   cd Laragon-Dashboard
-   ```
-
-2. **Move to Laragon www directory**
-   ```bash
-   # Move Laragon-Dashboard folder to www
-   move Laragon-Dashboard C:\laragon\www\Laragon-Dashboard
-   ```
-
-3. **Edit Laragon's root index.php** (located at `C:\laragon\www\index.php`)
-   
-   Replace the existing content with this redirect:
-   ```php
-   <?php
-   header('Location: /Laragon-Dashboard/');
-   exit;
-   ?>
-   ```
-
-4. **Access Dashboard**
-   ```
-   http://localhost/
-   ```
-   or directly:
-   ```
-   http://localhost/Laragon-Dashboard/
-   ```
-
-### Configuration
-
-The dashboard auto-detects Laragon installation paths. Edit `config.php` to customize:
-
-```php
-// Auto-detected values (no manual configuration needed)
-$LARAGON_ROOT = getLaragonRoot(); // Auto-detect from common paths
-SENDMAIL_OUTPUT_DIR = getLaragonSendmailDir(); // C:/laragon/bin/sendmail/output/
-DOMAIN_SUFFIX = getLaragonDomainSuffix(); // .local
-APP_VERSION = getAppVersion(); // From Git or VERSION file
-
-// MySQL Configuration (defaults)
-MYSQL_HOST = 'localhost'
-MYSQL_USER = 'root'
-MYSQL_PASSWORD = ''
-
-// Application Settings
-APP_NAME = 'Laragon Dashboard'
-APP_DEBUG = false  // Debug banner is DISABLED by default (line 38)
-APP_ENV = 'production'  // development, staging, production (line 41)
-SESSION_TIMEOUT = 3600
-MAX_LOGIN_ATTEMPTS = 5
-
-// Time and Date Format (optional overrides)
-TIME_FORMAT = null  // null = auto-detect, '12' = 12-hour, '24' = 24-hour
-DATE_FORMAT = null  // null = auto-detect, or custom format like 'Y-m-d', 'm/d/Y'
+```bash
+git clone https://github.com/LebToki/Laragon-Dashboard.git
+move Laragon-Dashboard C:\laragon\www\Laragon-Dashboard
 ```
 
-**Important Notes:**
+### Configuration
+The dashboard auto-detects Laragon paths. Edit `config.php` to customize:
+```php
+$LARAGON_ROOT = getLaragonRoot();          // Auto-detect
+MYSQL_HOST = 'localhost';
+MYSQL_USER = 'root';
+MYSQL_PASSWORD = '';
+APP_NAME = 'Laragon Dashboard';
+APP_DEBUG = false;                         // Disabled by default
+APP_ENV = 'production';
+```
 
-- **Debug Banner**: The debug banner is **disabled by default** (`APP_DEBUG = false` on line 38). You won't see it unless you enable it for troubleshooting. Only enable it if you're experiencing CSS loading issues, asset path problems, or need to debug routing/URL issues. You can also enable it via the Preferences page.
-
-- **Environment**: The dashboard runs in `production` mode by default (`APP_ENV = 'production'` on line 41). This ensures optimal performance and security. Change to `development` only if you need additional debugging features.
-
-- **Time/Date Format**: Time and date formats are auto-detected from your system locale. You can override them in `config.php` or via the Preferences page.
-
-**Laragon Path Auto-Detection Order:**
-1. `LARAGON_ROOT` environment variable
-2. Common paths: `C:/laragon`, `D:/laragon`, `E:/laragon`
-3. Detect from `DOCUMENT_ROOT` (if contains 'laragon')
-4. Default fallback: `C:/laragon`
-
-**Important Setup Note:**
-- The root `index.php` file at `C:\laragon\www\index.php` should redirect to the dashboard
-- This allows accessing the dashboard via `http://localhost/` instead of `http://localhost/Laragon-Dashboard/`
-- If you prefer direct access, you can skip modifying the root `index.php` and access the dashboard directly at `http://localhost/Laragon-Dashboard/`
+---
 
 ## 📁 Project Structure
 
 ```
 Laragon-Dashboard/
-├── api/                    # API endpoints
-│   ├── services.php        # Services management API
-│   ├── databases.php       # Database management API
-│   ├── vitals.php         # Server monitoring API
-│   ├── logs.php           # Log viewer API
-│   ├── tools.php          # Quick tools API
-│   ├── backup.php         # Backup API
-│   ├── update.php         # Update API
-│   └── mailpit.php        # Email management API
-├── assets/                 # Application assets
-│   ├── css/               # Stylesheets
-│   ├── js/                # JavaScript files
-│   ├── images/            # Images and icons
-│   └── fonts/             # Web fonts
-├── i18n/                  # Internationalization
-│   ├── common/            # Common translations
-│   ├── dashboard/         # Dashboard translations
-│   ├── projects/          # Projects translations
-│   └── ...                # Module-specific translations
-├── includes/               # Helper classes
-│   ├── Router.php         # Routing system
-│   ├── UpdateManager.php  # Update management
-│   ├── AdminerModule.php  # Database admin integration
-│   ├── ConfigMigrator.php # Configuration migration
-│   └── helpers.php        # Helper functions
-├── pages/                  # Page templates
-│   ├── dashboard.php      # Main dashboard
-│   ├── projects.php       # Projects page
-│   ├── services.php       # Services page
-│   ├── databases.php     # Databases page
-│   ├── mailbox.php       # Email client
-│   ├── vitals.php        # Server monitoring
-│   ├── logs.php          # Log viewer
-│   └── tools.php         # Quick tools
-├── partials/               # Layout partials
-│   ├── layouts/          # Layout templates
-│   │   ├── layoutTop.php # Top layout (header, sidebar, navbar)
-│   │   └── layoutBottom.php # Bottom layout (footer, scripts)
-│   ├── head.php          # Meta tags, CSS includes
-│   ├── sidebar.php       # Navigation sidebar
-│   ├── navbar.php        # Top navigation bar
-│   ├── footer.php        # Footer content
-│   └── scripts.php       # JavaScript includes
-├── devfiles/              # Development files
-│   ├── KNOWLEDGE_BASE.md # Knowledge base documentation
-│   ├── TESTING_CHECKLIST.md # Testing guidelines
-│   └── ...               # Other dev documentation
-├── config.php            # Main configuration
-├── index.php             # Entry point and router
-└── README.md             # This file
+├── api/                    # API endpoints (services, databases, vitals, logs, tools, backup, update, mailpit)
+├── assets/                 # CSS, JS, images, fonts
+├── i18n/                   # Internationalization (8 languages)
+├── includes/               # Router, UpdateManager, AdminerModule, ConfigMigrator, helpers
+├── pages/                  # Page templates (dashboard, projects, services, databases, mailbox, vitals, logs, tools)
+├── partials/               # Layout partials (layouts, head, sidebar, navbar, footer, scripts)
+├── devfiles/               # Knowledge base, testing checklist, dev docs
+├── config.php              # Main configuration
+├── index.php               # Entry point and router
+└── README.md               # This file
 ```
 
 ---
 
 ## 🎯 Usage
 
-### Dashboard Overview
+- **Dashboard** — Server info, project list, framework detection, quick access
+- **Services** — Start/stop/restart, real-time status, port monitoring
+- **Projects** — Browse, search, filter, framework detection, admin links
+- **Databases** — Browse, explore tables, run SELECT queries, optimize
+- **Mailbox** — Email stats, search, read, delete, export
+- **Server Vitals** — CPU/memory/disk charts, PHP memory tracking
+- **Logs** — Multi-log viewer, configurable lines, clear logs
+- **Tools** — Cache, database optimization, Git, Composer, NPM, PHP info
 
-The main dashboard provides:
-- **Server Information** - PHP version, MySQL status, web server details
-- **Project Management** - List and manage your development projects
-- **Framework Detection** - Automatic detection of WordPress, Laravel, Drupal, etc.
-- **Quick Access** - Direct links to project admin panels
+---
 
-### Service Management
+## 🔌 API Endpoints
 
-Control Laragon services via the "Services" tab:
-- Start, stop, or restart services (Apache, MySQL, Nginx, Redis, Memcached, MongoDB, PostgreSQL, Mailpit)
-- View real-time status of all services
-- Monitor listening ports
-- Quick service actions
-
-### Project Management
-
-Access projects via the "Projects" tab:
-- View all projects in your `www` directory
-- Search and filter projects
-- See framework detection results
-- Quick access to project admin panels
-
-### Database Management
-
-Access database tools via the "Databases" tab:
-- Browse all available databases and their sizes
-- Explore table structures, row counts, and sizes
-- Run SELECT queries safely (read-only)
-- Optimize database tables
-
-### Email Management
-
-Access the email client via the "Mailbox" tab:
-- View email statistics (total, daily, weekly, unique senders)
-- Search and filter emails
-- Read full email content
-- Delete individual or bulk emails
-- Export email data
-
-### Server Monitoring
-
-Monitor your server via the "Server Vitals" tab:
-- Real-time charts for CPU, memory, and disk usage
-- PHP memory usage tracking
-- Multi-drive disk space monitoring
-- Performance metrics
-
-### Log Viewer
-
-View logs via the "Logs" tab:
-- Multiple log types (Apache, PHP, MySQL, Dashboard)
-- Configurable line count (10-1000)
-- Clear log files when needed
-- Terminal-style display
-
-### Quick Tools
-
-Access developer tools via the "Tools" tab:
-- Cache management (clear application and framework caches)
-- Database optimization
-- Git status check
-- Composer and NPM commands
-- PHP info viewer
-
-## 🔧 API Endpoints
-
-All APIs return JSON responses and follow a consistent pattern:
-
-### Services API
 ```
-GET /api/services.php?action=status
-GET /api/services.php?action=start&service=Apache
-GET /api/services.php?action=stop&service=MySQL
-GET /api/services.php?action=restart&service=Nginx
-GET /api/services.php?action=get_ports
-```
+# Services
+GET  /api/services.php?action=status
+GET  /api/services.php?action=start&service=Apache
+POST /api/services.php?action=stop&service=MySQL
 
-### Database API
-```
-GET /api/databases.php?action=list_databases
-GET /api/databases.php?action=get_tables&database=dbname
-GET /api/databases.php?action=get_table_structure&database=dbname&table=tablename
-GET /api/databases.php?action=get_database_size&database=dbname
+# Databases
+GET  /api/databases.php?action=list_databases
+GET  /api/databases.php?action=get_tables&database=dbname
 POST /api/databases.php?action=execute_query
-```
 
-### Server Vitals API
-```
-GET /api/vitals.php
-```
-Returns JSON with server statistics (uptime, CPU, memory, disk usage, PHP memory info).
+# Server Vitals
+GET  /api/vitals.php
 
-### Log Viewer API
-```
-GET /api/logs.php?action=list_logs
-GET /api/logs.php?action=read_log&path=logpath&lines=100
-GET /api/logs.php?action=clear_log&path=logpath
-```
+# Logs
+GET  /api/logs.php?action=list_logs
+GET  /api/logs.php?action=read_log&path=logpath&lines=100
 
-### Quick Tools API
-```
-POST /api/tools.php (action: clear_cache)
-POST /api/tools.php (action: optimize_database, database: dbname)
-POST /api/tools.php (action: composer_command, project_path: path, command: install)
-POST /api/tools.php (action: npm_command, project_path: path, command: install)
-POST /api/tools.php (action: git_status, project_path: path)
-GET /api/tools.php?action=php_info
-```
+# Tools
+POST /api/tools.php (actions: clear_cache, optimize_database, composer_command, npm_command, git_status)
+GET  /api/tools.php?action=php_info
 
-### Backup API
-```
-GET /api/backup.php?action=list
+# Backup
+GET  /api/backup.php?action=list
 POST /api/backup.php?action=create
-POST /api/backup.php?action=delete&backup_id=id
+
+# Update
+GET  /api/update.php?action=check
+POST /api/update.php?action=download&install
 ```
 
-### Update API
-```
-GET /api/update.php?action=check
-POST /api/update.php?action=download
-POST /api/update.php?action=install
-```
+---
 
 ## 🚀 Production Deployment
 
-### Prerequisites
-- PHP 7.4 or higher
-- Laravel (or any PHP web server like Apache/Nginx)
-- HTTPS enabled (recommended for production)
-
 ### Security Configuration
-
-Before deploying to production, please configure the following security settings in `config.php`:
-
-#### 1. Enable Authentication
-
-The dashboard now requires authentication by default. Make sure to set a strong password:
-
-```php
-// In config.php
-define('AUTH_ENABLED', true);
-
-// Set a strong password (recommended: use environment variable)
-define('ADMIN_PASSWORD', getenv('LARAGON_DASHBOARD_PASSWORD') ?: 'YourStrongPassword123!');
-```
-
-**Best Practice:** Use environment variables instead of hardcoding passwords:
-```bash
-# Set environment variable
-set LARAGON_DASHBOARD_PASSWORD=YourStrongPassword123!
-```
-
-#### 2. Configure HTTPS (Recommended)
-
-Uncomment the HTTPS redirect in `.htaccess`:
-```apache
-# .htaccess
-RewriteCond %{HTTPS} off
-RewriteCond %{HTTP:X-Forwarded-Proto} !https
-RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [R=301,L]
-```
-
-#### 3. Production Settings
-
-The following settings are recommended for production:
-
 ```php
 // config.php
-define('APP_DEBUG', false);        // Disable debug mode
-define('APP_ENV', 'production');   // Set environment
-define('SECURITY_HEADERS_ENABLED', true);  // Enable security headers
+define('AUTH_ENABLED', true);
+define('ADMIN_PASSWORD', getenv('LARAGON_DASHBOARD_PASSWORD') ?: 'YourStrongPassword123!');
+define('APP_DEBUG', false);
+define('APP_ENV', 'production');
+define('SECURITY_HEADERS_ENABLED', true);
 ```
-
-### Quick Production Setup
-
-1. **Clone the repository:**
-```bash
-git clone https://github.com/LebToki/Laragon-Dashboard.git
-cd Laragon-Dashboard
-```
-
-2. **Checkout production branch:**
-```bash
-git checkout production
-```
-
-3. **Configure security:**
-   - Edit `config.php` and set a strong admin password
-   - Or set `LARAGON_DASHBOARD_PASSWORD` environment variable
-
-4. **Configure HTTPS:**
-   - Uncomment HTTPS redirect in `.htaccess`
-   - Or configure SSL in your web server
-
-5. **Access the dashboard:**
-   - Navigate to your deployed URL
-   - Login with your configured password
 
 ### Environment Variables
+| Variable | Description | Default |
+|----------|-------------|---------|
+| `LARAGON_DASHBOARD_PASSWORD` | Admin password | (must be set) |
+| `LARAGON_ROOT` | Laragon installation path | Auto-detected |
 
-| Variable                     | Description               | Default              |
-|------------------------------|---------------------------|----------------------|
-| `LARAGON_DASHBOARD_PASSWORD` | Admin password            | (none - must be set) |
-| `LARAGON_ROOT`               | Laragon installation path | Auto-detected        |
-
-## 🛡️ Security
-
-### Security Features
-
-- **CSRF Protection** - All forms protected with CSRF tokens
-- **XSS Prevention** - All user inputs sanitized
-- **SQL Injection Protection** - Prepared statements used throughout
-- **Rate Limiting** - Prevents brute force attacks
-- **Secure Headers** - Comprehensive HTTP security headers
-- **File Upload Security** - Restricted file types and sizes
-
-### Security Headers
-
-- `X-Frame-Options: DENY`
-- `X-Content-Type-Options: nosniff`
-- `X-XSS-Protection: 1; mode=block`
-- `Strict-Transport-Security` (HTTPS only)
-- `Content-Security-Policy`
-- `Referrer-Policy: strict-origin-when-cross-origin`
-
-## 🎨 Customization
-
-### 🎨 Theme System
-The dashboard leverages Bootstrap 5's theming capabilities with a custom CSS layer. 
-You can easily customize the look and feel by modifying these CSS variables:
-
-```css
-/* Main color scheme */
-:root {
-  --primary-color: #0d6efd;
-  --secondary-color: #6c757d;
-  --success-color: #198754;
-  --danger-color: #dc3545;
-  --warning-color: #ffc107;
-  --info-color: #0dcaf0;
-}
-
-### Language Files
-
-Add new languages by creating JSON files in `i18n/[module]/[language].json`:
-
-```json
-{
-  "title": "Welcome to the Laragon Dashboard",
-  "header": "My Development Server",
-  "servers_tab": "Servers",
-  "inbox_tab": "Mailbox",
-  "vitals_tab": "Server's Vitals"
-}
-```
+---
 
 ## 🐛 Troubleshooting
 
 ### Diagnostic Tool
-
-If you're experiencing issues with path detection, CSS loading, or 404 errors, use the built-in diagnostic tool:
-
-1. **Access the diagnostic page**:
-   ```
-   http://localhost/Laragon-Dashboard/diagnostic.php
-   ```
-   or
-   ```
-   http://laragon-dashboard.local/diagnostic.php
-   ```
-
-2. **Review the output** - The tool will show:
-   - Server configuration and paths
-   - Laragon detection status
-   - File system checks
-   - Asset path verification
-   - URL access tests
-
-3. **Share results** - If you need help, share the diagnostic output for faster troubleshooting
+Access `http://localhost/Laragon-Dashboard/diagnostic.php` for:
+- Server configuration and paths
+- Laragon detection status
+- File system checks
+- Asset path verification
 
 ### Common Issues
+- **404 Errors** — Run diagnostic tool, verify Apache document root
+- **CSS/JS not loading** — Check browser console, verify `ASSETS_URL`, clear cache
+- **Laragon not detected** — Use diagnostic tool, manually set path in Preferences
+- **Email not loading** — Check `SENDMAIL_OUTPUT_DIR` path
+- **Database issues** — Verify MySQL credentials, ensure service running
 
-**404 Errors:**
-- Run the diagnostic tool to identify path issues
-- Verify Apache's document root matches your setup
-- Check that `.htaccess` file exists and is readable
-- Ensure `index.php` is accessible directly
-
-**CSS/JS Not Loading:**
-- Check browser console (F12) for 404 errors on assets
-- Verify `ASSETS_URL` is correctly calculated (use diagnostic tool)
-- Clear browser cache and hard refresh (Ctrl+F5)
-- Ensure assets directory exists and is readable
-
-**Laragon Not Detected:**
-- Use the diagnostic tool to verify detection
-- Manually set Laragon path in Preferences if auto-detection fails
-- Check that `laragon.exe` and `usr/laragon.ini` exist in Laragon root
-- Verify file permissions allow PHP to read Laragon directory
-
-**Email not loading:**
-- Check `SENDMAIL_OUTPUT_DIR` path in config.php
-- Ensure directory exists and is readable
-- Verify Laragon sendmail configuration
-
-**Server vitals not working:**
-- Ensure PHP has necessary permissions
-- Check if required PHP extensions are loaded
-- Verify disk paths are accessible
-
-**Database connection issues:**
-- Verify MySQL credentials in config.php
-- Ensure MySQL service is running
-- Check firewall settings
-
-**Performance issues:**
-- Enable caching in config.php
-- Check log files for errors
-- Monitor memory usage
-
-### Debug Banner
-
-**The debug banner is disabled by default** and you won't see it unless you enable it. This is intentional - it's only needed when troubleshooting issues.
-
-**To enable the debug banner:**
-
-1. **Via Preferences** (Recommended):
-   - Go to **Preferences** page
-   - Under **Debug Settings**, check "Show Debug Banner"
-   - Save preferences
-
-2. **Via config.php**:
-   ```php
-   // In config.php (line 38)
-   define('APP_DEBUG', true); // Only enable if troubleshooting
-   ```
-
-**When to enable it:**
-- If you're experiencing CSS loading issues
-- If assets (images, JS, CSS) aren't loading correctly
-- If you need to troubleshoot path detection problems
-- If you're debugging routing or URL issues
-
-**What it shows:**
-- Base URL and Assets URL
-- Document root path
-- Laragon root detection
-- Current script path
-- Server variables
-
-**Note**: The debug banner is controlled by `APP_DEBUG` in `config.php` (line 38) and can also be toggled via user preferences. It's set to `false` by default for a clean user experience.
-
-## 📈 Performance
-
-### Optimization Features
-
-- **File-based Caching** - Reduces database queries
-- **Lazy Loading** - Loads content as needed
-- **Minified Assets** - Optimized CSS and JavaScript
-- **Compressed Responses** - Reduced bandwidth usage
-- **Database Connection Pooling** - Efficient database usage
-
-### Monitoring
-
-- **Execution Time Tracking** - Monitor page load times
-- **Memory Usage Monitoring** - Track memory consumption
-- **Cache Statistics** - Monitor cache hit rates
-- **Error Logging** - Track and analyze errors
-
-## 🔄 Framework Detection
-
-The dashboard automatically detects frameworks in your projects:
-
-1. **WordPress** - Checks for `wp-config.php`
-2. **Laravel** - Checks for `artisan` file
-3. **Drupal** - Checks for `sites/default/settings.php`
-4. **CodeIgniter** - Checks for `application/config/config.php`
-5. **Symfony** - Checks for `app/AppKernel.php` or `symfony.lock`
-6. **CakePHP** - Checks for `config/app.php`
-7. **Joomla** - Checks for `configuration.php`
+---
 
 ## 🤝 Contributing
 
-We welcome contributions! Please see our [Contributing Guidelines](CONTRIBUTING.md) for details.
+Contributions welcome! See [CONTRIBUTING.md](CONTRIBUTING.md).
 
-### Development Setup
+**For Windows fixes:** PRs against this repo are welcome.
+**For new features:** Consider contributing to [Nucleus](https://github.com/LebToki/Nucleus) instead — that's where active development happens.
 
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Add tests if applicable
-5. Submit a pull request
-
-### Code Standards
-
-- Follow PSR-12 coding standards
-- Add comprehensive comments
-- Include error handling
-- Test on multiple PHP versions
-- No inline JavaScript in PHP files (all JS in separate files)
-- Use template partials for layout consistency
+---
 
 ## 📄 License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+MIT License — see [LICENSE](LICENSE).
 
 ## 🙏 Acknowledgments
 
-- **Laragon Team** - For the excellent development environment
-- **Bootstrap Team** - For the amazing CSS framework
-- **Chart.js Team** - For the beautiful charting library
-- **Contributors** - All the amazing people who contributed to this project
+- **Laragon Team** — For the excellent development environment
+- **Bootstrap Team** — For the amazing CSS framework
+- **Chart.js Team** — For the beautiful charting library
+- **All contributors** — Thank you for making this project what it is
+
+---
 
 ## 📞 Support
 
-- **Documentation** - Check this README and the [Knowledge Base](devfiles/KNOWLEDGE_BASE.md)
-- **Issues** - Report bugs via [GitHub Issues](https://github.com/LebToki/Laragon-Dashboard/issues)
-- **Discussions** - Join our [GitHub Discussions](https://github.com/LebToki/Laragon-Dashboard/discussions)
+- **Documentation**: This README + [Knowledge Base](devfiles/KNOWLEDGE_BASE.md)
+- **Issues**: [GitHub Issues](https://github.com/LebToki/Laragon-Dashboard/issues)
+- **Discussions**: [GitHub Discussions](https://github.com/LebToki/Laragon-Dashboard/discussions)
+- **Linux version**: [Nucleus](https://github.com/LebToki/Nucleus)
+
+---
 
 ## 🔄 Changelog
 
 See [CHANGELOG.md](CHANGELOG.md) for detailed version history.
 
-## [4.0.4] - 2026-03-17
+### [4.0.5] - 2026-03-17
+- 50+ PRs merged (testing, optimization, security fixes)
+- Path traversal fix in Backup API (critical)
+- Missing authentication fix in Update API
+- File encoding fixes + PHPUnit migration
+- Git pull support in update manager
+- CodePilot plugin installation support
+- Ignored projects state persistence
+- Comprehensive test coverage additions
 
-## What's Changed
-* refactor: utilize Security::checkAuth and update Router authentication by @LebToki in https://github.com/LebToki/Laragon-Dashboard/pull/47
-* performance: consolidate shell executions for service and system vitals by @LebToki in https://github.com/LebToki/Laragon-Dashboard/pull/48
-* 🧹 chore: remove unused getDiskInfo and formatBytes methods by @LebToki in https://github.com/LebToki/Laragon-Dashboard/pull/49
-* 🧹 [Code Health] Remove unused getDiskInfo and formatBytes methods from System class by @LebToki in https://github.com/LebToki/Laragon-Dashboard/pull/50
-* 🧹 Remove unused scanForLaragonInstallations from config.php by @LebToki in https://github.com/LebToki/Laragon-Dashboard/pull/54
-* 🧪 [Testing Improvement] Add tests for Services::stop() method by @LebToki in https://github.com/LebToki/Laragon-Dashboard/pull/55
-* Fix false-positive TODO in full-calendar.js by @LebToki in https://github.com/LebToki/Laragon-Dashboard/pull/56
-* 🧪 Test System::getDiskInfo() by @LebToki in https://github.com/LebToki/Laragon-Dashboard/pull/57
-* Remove architectural TODO from vendored full-calendar.js by @LebToki in https://github.com/LebToki/Laragon-Dashboard/pull/73
-* ⚡ Optimize disk space WMI query in vitals API by @LebToki in https://github.com/LebToki/Laragon-Dashboard/pull/76
-* 🧪 Add tests for UpdateManager::checkForUpdates by @LebToki in https://github.com/LebToki/Laragon-Dashboard/pull/75
-* 🧪 Add tests for findFile() depth constraint by @LebToki in https://github.com/LebToki/Laragon-Dashboard/pull/74
-* ⚡ Optimize git branch and status checks in project scanner by @LebToki in https://github.com/LebToki/Laragon-Dashboard/pull/77
-* Fix: trigger dayRender in AgendaView buildDayTable by @LebToki in https://github.com/LebToki/Laragon-Dashboard/pull/78
-* ⚡ Consolidate service status query execution and fix boundary matching by @LebToki in https://github.com/LebToki/Laragon-Dashboard/pull/80
-* 🧪 Add PHPUnit test suite for getServicesStatus by @LebToki in https://github.com/LebToki/Laragon-Dashboard/pull/79
-* 🧹 [Code Health] Refactor `getServerVitals` in `api/vitals.php` by @LebToki in https://github.com/LebToki/Laragon-Dashboard/pull/82
-* 🧪 Add test for Cache::set() by @LebToki in https://github.com/LebToki/Laragon-Dashboard/pull/83
-* Fix: Address TODO in full-calendar.css using opacity by @LebToki in https://github.com/LebToki/Laragon-Dashboard/pull/81
-* 🧪 Add tests for Security::verifyCSRFToken() error paths by @LebToki in https://github.com/LebToki/Laragon-Dashboard/pull/72
-* Remove TODOs from vendored full-calendar.js by @LebToki in https://github.com/LebToki/Laragon-Dashboard/pull/53
-* Remove TODO in full-calendar.js by @LebToki in https://github.com/LebToki/Laragon-Dashboard/pull/68
-* Clarify isAuthenticated method in Router by @LebToki in https://github.com/LebToki/Laragon-Dashboard/pull/71
-* chore: clear TODO in vendored full-calendar.js by @LebToki in https://github.com/LebToki/Laragon-Dashboard/pull/60
-* 🧪 Add tests for formatLogToHtml error handling by @LebToki in https://github.com/LebToki/Laragon-Dashboard/pull/84
-* 🧪 Add tests for AdminerModule::isInstalled() by @LebToki in https://github.com/LebToki/Laragon-Dashboard/pull/51
-* Fix missing start date handling in full-calendar.js by @LebToki in https://github.com/LebToki/Laragon-Dashboard/pull/69
-* 🧪 Test Databases::drop() method by @LebToki in https://github.com/LebToki/Laragon-Dashboard/pull/70
-* 🧪 [testing improvement] Add test coverage for Logs::read() method by @LebToki in https://github.com/LebToki/Laragon-Dashboard/pull/67
-* 🧪 Add unit tests for Databases::list() by @LebToki in https://github.com/LebToki/Laragon-Dashboard/pull/61
-* 🧪 Implement tests for getLaragonRoot() by @LebToki in https://github.com/LebToki/Laragon-Dashboard/pull/85
-* Fix: prevent parseDate from returning invalid Date objects in full-calendar.js by @LebToki in https://github.com/LebToki/Laragon-Dashboard/pull/63
-* 🧪 Add tests for createProject in helpers.php by @LebToki in https://github.com/LebToki/Laragon-Dashboard/pull/66
-* 🧪 Add unit tests for load_translations in i18n.php by @LebToki in https://github.com/LebToki/Laragon-Dashboard/pull/64
-* 🧪 [Testing] Add test suite for Router::resolve method by @LebToki in https://github.com/LebToki/Laragon-Dashboard/pull/58
-* chore: Remove memory leak TODO from vendored full-calendar.js by @LebToki in https://github.com/LebToki/Laragon-Dashboard/pull/52
-* 🧪 Add comprehensive tests for Services management and system commands by @LebToki in https://github.com/LebToki/Laragon-Dashboard/pull/59
-* 🧪 test: implement comprehensive tests for ConfigMigrator by @LebToki in https://github.com/LebToki/Laragon-Dashboard/pull/62
-* 🧪 Add tests for Security::generateCSRFToken() by @LebToki in https://github.com/LebToki/Laragon-Dashboard/pull/65
-* Fix: add .fc-today to <th> to highlight current day by @LebToki in https://github.com/LebToki/Laragon-Dashboard/pull/86
-* 🧹 [Code Health] Disable authentication check in Router for stack dashboard experience by @LebToki in https://github.com/LebToki/Laragon-Dashboard/pull/88
-* Refactor full-calendar.js to remove modifiedEventID early binding hack by @LebToki in https://github.com/LebToki/Laragon-Dashboard/pull/87
-* chore: remove invalid TODO comment from full-calendar.js by @LebToki in https://github.com/LebToki/Laragon-Dashboard/pull/89
-* Fix duplicated code for event classNames in full-calendar.js by @LebToki in https://github.com/LebToki/Laragon-Dashboard/pull/90
-* feat: support git pull in update manager by @LebToki in https://github.com/LebToki/Laragon-Dashboard/pull/91
-* Unify clearEvents in full-calendar.js by @LebToki in https://github.com/LebToki/Laragon-Dashboard/pull/93
-* Refactor: Consolidate renderDayOverlay in FullCalendar by @LebToki in https://github.com/LebToki/Laragon-Dashboard/pull/92
-* 🎨 Palette: Add ARIA labels to navigation buttons by @LebToki in https://github.com/LebToki/Laragon-Dashboard/pull/94
-* ⚡ Bolt: Optimize getDiskUsage using native PHP functions by @LebToki in https://github.com/LebToki/Laragon-Dashboard/pull/95
-* 🛡️ Sentinel: [CRITICAL] Fix Path Traversal in Backup API by @LebToki in https://github.com/LebToki/Laragon-Dashboard/pull/96
-* style: Override fc-event-bg with a better selector by @LebToki in https://github.com/LebToki/Laragon-Dashboard/pull/98
-* Fix order-dependent class replacement in full-calendar setDayID by @LebToki in https://github.com/LebToki/Laragon-Dashboard/pull/97
-* Fix missing authentication in Update API by @LebToki in https://github.com/LebToki/Laragon-Dashboard/pull/99
-* Fix file encodings and migrate custom tests to PHPUnit by @LebToki in https://github.com/LebToki/Laragon-Dashboard/pull/100
-* Fix "ignore project" and save ignored state to main configuration by @LebToki in https://github.com/LebToki/Laragon-Dashboard/pull/101
-* 🧪 Test Security::verifyCSRFToken() error path by @LebToki in https://github.com/LebToki/Laragon-Dashboard/pull/102
-* Support CodePilot installation and update tests by @LebToki in https://github.com/LebToki/Laragon-Dashboard/pull/103
-- **UPDATED**: Version number to 4.0.5
-
+---
 
 **Made with ❤️ for the Laragon community**
 
@@ -931,31 +379,16 @@ See [CHANGELOG.md](CHANGELOG.md) for detailed version history.
 
 ## ☕ Support the Project
 
-If you find Laragon Dashboard helpful and want to support its ongoing development, consider buying me a coffee or donating via PayPal! Your support helps keep the project active and enables the creation of more advanced features.
-
 [![Buy Me A Coffee](https://img.shields.io/badge/Buy%20Me%20A%20Coffee-Donate-yellow?style=for-the-badge&logo=buy-me-a-coffee)](https://buymeacoffee.com/LebToki)
 [![Donate via Paypal](https://img.shields.io/badge/Donate%20with%20Paypal-Donate-blue?style=for-the-badge&logo=paypal)](https://www.paypal.com/donate/?hosted_button_id=TEEJNYQJA9B6U)
 
 ---
 
-## 💼 Professional Services & Premium Solutions
+## 💼 Professional Services
 
-### 🚀 2TInteractive - Your Development Partner
+**2TInteractive** offers custom development, premium dashboard solutions, and consulting services.
 
-Looking for **custom development**, **premium solutions**, or **professional services**?
-
-**2TInteractive** offers:
-
-- **Custom Web Development** - Tailored solutions for your business needs
-- **Premium Dashboard Solutions** - Enterprise-grade dashboard and admin panel development
-- **Laragon Dashboard Customization** - Custom features, integrations, and modifications
-- **Full-Stack Development** - Modern web applications with cutting-edge technologies
-- **Consulting Services** - Expert guidance for your development projects
-- **Maintenance & Support** - Ongoing support and updates for your applications
-
-**Visit us**: [https://2tinteractive.com](https://2tinteractive.com)
-
-**Contact**: For inquiries about premium solutions, custom development, or professional services, please visit our website or reach out through our contact channels.
+**Visit**: https://2tinteractive.com
 
 ---
 
