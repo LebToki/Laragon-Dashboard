@@ -1,7 +1,7 @@
 <?php
 /**
  * Laragon Dashboard - Helper Functions
- * Version: 4.0.3
+ * Version: 4.0.7
  * Provides utility functions for the dashboard
  */
 
@@ -417,6 +417,7 @@ if (!function_exists('analyzeProject')) {
         'git_branch' => null,
         'git_status' => null,
         'favicon' => null,
+        'profile' => null,
     ];
     
     // Check for WordPress
@@ -535,6 +536,24 @@ if (!function_exists('analyzeProject')) {
         // '--untracked-files=no' makes it significantly faster for large repositories.
         $status = @shell_exec('cd ' . escapeshellarg($path) . ' && git status --porcelain --untracked-files=no 2>&1');
         $project['git_status'] = !empty(trim((string)$status)) ? 'modified' : 'clean';
+    }
+    
+    // Load per-project profile if it exists
+    $profileFile = $path . '/.nucleus/profile.json';
+    if (file_exists($profileFile)) {
+        $profileContent = @file_get_contents($profileFile);
+        if ($profileContent) {
+            $profile = json_decode($profileContent, true);
+            if (is_array($profile)) {
+                $project['profile'] = $profile;
+                // Apply profile defaults if not set
+                if (!isset($project['profile']['web'])) $project['profile']['web'] = ['engine' => 'apache', 'version' => null];
+                if (!isset($project['profile']['php'])) $project['profile']['php'] = ['version' => null];
+                if (!isset($project['profile']['db'])) $project['profile']['db'] = ['engine' => 'mysql', 'version' => null];
+                if (!isset($project['profile']['cache'])) $project['profile']['cache'] = ['engine' => 'none', 'version' => null, 'enabled' => false];
+                if (!isset($project['profile']['ssl'])) $project['profile']['ssl'] = ['self_signed' => false, 'enabled' => false];
+            }
+        }
     }
     
     return $project;
@@ -1462,6 +1481,83 @@ if (!function_exists('get_client_ip')) {
             }
         }
         
-        return $_SERVER['REMOTE_ADDR'] ?? '0.0.0.0';
+return $_SERVER['REMOTE_ADDR'] ?? '0.0.0.0';
+}
+
+/**
+ * Generate self-signed SSL certificate for a project
+ */
+if (!function_exists('generateProjectSSL')) {
+    function generateProjectSSL($projectName, $webroot) {
+        $sslDir = dirname(__DIR__) . '/ssl';
+        $certDir = $sslDir . '/projects';
+        
+        // Create SSL directory for projects if it doesn't exist
+        if (!is_dir($certDir)) {
+            @mkdir($certDir, 0755, true);
+        }
+        
+        $certPath = $certDir . '/' . $projectName . '.crt';
+        $keyPath = $certDir . '/' . $projectName . '.key';
+        
+        // Check if certificate already exists
+        if (file_exists($certPath) && file_exists($keyPath)) {
+            return [
+                'success' => true,
+                'certificate' => $certPath,
+                'key' => $keyPath,
+                'message' => 'SSL certificate already exists'
+            ];
+        }
+        
+        // Generate self-signed SSL certificate using OpenSSL
+        $dn = [
+            'countryName' => 'US',
+            'stateOrProvinceName' => 'Development',
+            'localityName' => 'Local',
+            'organizationName' => 'Laragon Dashboard',
+            'commonName' => $projectName . '.local'
+        ];
+        
+        $dnString = '';
+        foreach ($dn as $key => $value) {
+            $dnString .= '/' . $key . '=' . $value . ' ';
+        }
+        
+        $dnString = trim($dnString);
+        
+        // Generate private key
+        $keyCmd = 'openssl genrsa -out ' . escapeshellarg($keyPath) . ' 2048 2>&1';
+        $keyOutput = @shell_exec($keyCmd);
+        if ($keyOutput && strpos($keyOutput, 'ERROR') !== false) {
+            return [
+                'success' => false,
+                'error' => 'Failed to generate private key: ' . trim($keyOutput)
+            ];
+        }
+        
+        // Generate self-signed certificate
+        $certCmd = 'openssl req -new -x509 -key ' . escapeshellarg($keyPath) . 
+                   ' -out ' . escapeshellarg($certPath) . 
+                   ' -days 365 -subj "' . $dnString . '" 2>&1';
+        $certOutput = @shell_exec($certCmd);
+        if ($certOutput && strpos($certOutput, 'ERROR') !== false) {
+            return [
+                'success' => false,
+                'error' => 'Failed to generate certificate: ' . trim($certOutput)
+            ];
+        }
+        
+        // Set proper permissions
+        @chmod($keyPath, 0600);
+        @chmod($certPath, 0644);
+        
+        return [
+            'success' => true,
+            'certificate' => $certPath,
+            'key' => $keyPath,
+            'message' => 'SSL certificate generated successfully'
+        ];
     }
+}
 }
