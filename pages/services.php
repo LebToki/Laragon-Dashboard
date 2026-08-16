@@ -1,7 +1,7 @@
 <?php
 /**
  * Laragon Dashboard - Services Page
- * Version: 3.0.0
+ * Version: 4.0.7
  * Description: Service management with port configuration
  */
 
@@ -219,50 +219,11 @@ include __DIR__ . '/../partials/layouts/layoutTop.php';
                                     </thead>
                                     <tbody id="services-list">
                                         <?php
-                                        // Consolidate Windows service queries for efficiency
-                                        $scCommands = [];
-                                        foreach ($installedServices as $service) {
-                                            if ($service['type'] === 'windows_service') {
-                                                $scCommands[] = 'sc query "' . $service['service_name'] . '"';
-                                            }
-                                        }
-                                        $scOutput = '';
-                                        if (!empty($scCommands)) {
-                                            $scOutput = @shell_exec(implode(' & ', $scCommands) . ' 2>&1');
-                                        }
-
-                                        foreach ($installedServices as $key => $service):
-                                            // Check service status directly
-                                            $status = 'unknown';
-                                            $runningPorts = [];
-                                            
-                                            if ($service['type'] === 'windows_service') {
-                                                if ($scOutput) {
-                                                    // Match the specific service's output block and check its state without crossing service boundaries
-                                                    if (preg_match('/SERVICE_NAME:\s*' . preg_quote($service['service_name'], '/') . '\s+(?:(?!SERVICE_NAME:).)*?STATE\s+:\s+\d+\s+RUNNING/is', $scOutput)) {
-                                                        $status = 'running';
-                                                        $runningPorts[] = $service['port'];
-                                                        if ($service['ssl_port']) {
-                                                            $runningPorts[] = $service['ssl_port'];
-                                                        }
-                                                    } elseif (preg_match('/SERVICE_NAME:\s*' . preg_quote($service['service_name'], '/') . '\s+(?:(?!SERVICE_NAME:).)*?STATE\s+:\s+\d+\s+STOPPED/is', $scOutput)) {
-                                                        $status = 'stopped';
-                                                    }
-                                                }
-                                            } else {
-                                                // Process-based services
-                                                $processName = strtolower($service['service_name']) . '.exe';
-                                                $output = @shell_exec('tasklist /FI "IMAGENAME eq ' . $processName . '" 2>&1');
-                                                if ($output && stripos($output, $processName) !== false) {
-                                                    $status = 'running';
-                                                    $runningPorts[] = $service['port'];
-                                                    if ($service['ssl_port']) {
-                                                        $runningPorts[] = $service['ssl_port'];
-                                                    }
-                                                } else {
-                                                    $status = 'stopped';
-                                                }
-                                            }
+// Check service status using cross-platform functions
+foreach ($installedServices as $key => $service):
+    // Check service status using cross-platform functions
+    $status = isServiceRunning($key) ? 'running' : 'stopped';
+    $runningPorts = [];
                                             
                                             // JavaScript will refresh status via API for real-time updates
                                             
