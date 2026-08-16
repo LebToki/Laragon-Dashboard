@@ -2,7 +2,7 @@
 
 A modern, feature-rich web-based dashboard for managing local development environments. Born on Windows, now evolved for Linux through [Nucleus](https://github.com/LebToki/Nucleus).
 
-Version 4.0.5 — the final Windows release. The journey continues on Linux.
+Version 4.0.7 — the latest Windows release with cross-platform enhancements. The journey continues on Linux.
 
 ---
 
@@ -18,6 +18,18 @@ Rather than abandon this project, I built [**Nucleus**](https://github.com/LebTo
 
 ---
 
+## 🎯 v4.0.7 New Features (Ported from Nucleus)
+
+This release brings Nucleus-inspired features to Laragon Dashboard:
+
+- **Cross-Platform Service Management** — Manage Apache, MySQL, Nginx, Redis, and more on both Windows and Linux
+- **Per-Project Profiles** — Configure `.nucleus/profile.json` per project with web engine, PHP version, database, cache, and SSL settings
+- **Self-Signed SSL** — Generate SSL certificates per project for local HTTPS development
+- **Tunnel Integration** — Expose local projects to the internet using LocalTunnel, Cloudflare, or ngrok
+- **Enhanced Nginx Support** — Full Nginx service management on Linux
+
+---
+
 ## 🖥️ Platform Support
 
 | Platform | Status | Project |
@@ -30,7 +42,7 @@ Rather than abandon this project, I built [**Nucleus**](https://github.com/LebTo
 
 ---
 
-[![Version](https://img.shields.io/badge/version-4.0.5-blue.svg)](https://github.com/LebToki/Laragon-Dashboard)
+[![Version](https://img.shields.io/badge/version-4.0.7-blue.svg)](https://github.com/LebToki/Laragon-Dashboard)
 [![PHP](https://img.shields.io/badge/PHP-7.4%2B-green.svg)](https://php.net)
 [![Bootstrap](https://img.shields.io/badge/Bootstrap-5.3.2-purple.svg)](https://getbootstrap.com)
 [![Windows](https://img.shields.io/badge/platform-windows-0078D6.svg)]()
@@ -77,7 +89,7 @@ Rather than abandon this project, I built [**Nucleus**](https://github.com/LebTo
 ## 📋 Project Information
 
 - **Project Name**: Laragon Dashboard
-- **Version**: 4.0.5
+- **Version**: 4.0.7
 - **Author**: Tarek Tarabichi
 - **Company**: 2TInteractive (2tinteractive.com)
 - **Project Start**: Mid 2023 / Evolved Early 2024
@@ -105,10 +117,12 @@ Laragon has always been the fastest, most lightweight development environment fo
 
 ### 🎛️ Service Management
 - Start/Stop/Restart services — Apache, MySQL, Nginx, Redis, Memcached, MongoDB, PostgreSQL, Mailpit
-- Real-time status monitoring and port detection
+- Real-time status monitoring and port detection (Windows `net/sc/query` / Linux `systemctl`)
 - Automatic service version detection
-- Windows Service Control via `sc` commands
+- Cross-platform service control (Windows + Linux)
 - Process-based services support (Nginx, Mailpit)
+- **v4.0.7:** Per-project profile configuration via `.nucleus/profile.json`
+- **v4.0.7:** Self-signed SSL certificate generation per project
 
 ### 📁 Project Management
 - Automatic project discovery from `www` directory
@@ -146,6 +160,7 @@ Laragon has always been the fastest, most lightweight development environment fo
 - Git integration, Composer/NPM commands
 - PHP info viewer
 - SMTP configuration fix (auto-configure PHP for Mailpit)
+- **v4.0.7:** Tunnel integration (LocalTunnel, Cloudflare, ngrok)
 
 ### 💾 Backup & Export
 - Full project backup with database
