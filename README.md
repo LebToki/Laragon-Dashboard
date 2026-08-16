@@ -374,16 +374,6 @@ MIT License — see [LICENSE](LICENSE).
 
 See [CHANGELOG.md](CHANGELOG.md) for detailed version history.
 
-### [4.0.5] - 2026-03-17
-- 50+ PRs merged (testing, optimization, security fixes)
-- Path traversal fix in Backup API (critical)
-- Missing authentication fix in Update API
-- File encoding fixes + PHPUnit migration
-- Git pull support in update manager
-- CodePilot plugin installation support
-- Ignored projects state persistence
-- Comprehensive test coverage additions
-
 ---
 
 **Made with ❤️ for the Laragon community**
