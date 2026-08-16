@@ -2,6 +2,29 @@
 
 All notable changes to this project will be documented in this file.
 
+## [4.0.7] - 2026-08-16
+
+### Added
+- Cross-platform service management: Windows (`net/sc/query/tasklist`) and Linux (`systemctl`) service control
+- Per-project profile configuration via `.nucleus/profile.json` (web engine, PHP version, DB, cache, SSL)
+- Self-signed SSL certificate generation per project using OpenSSL
+- Tunnel integration (LocalTunnel, Cloudflare, ngrok) from Tools page
+- Nginx service support with Linux process management
+- Updated Services class with cross-platform `isServiceRunning()`, `startService()`, `stopService()`, `isPortInUse()`, `getServiceResourceUsage()`
+- Project profile auto-detection during project scanning
+- Tunnel integration UI in Tools page with service selector, project selection, subdomain support
+- i18n strings for tunnel features (en.json, and other language files)
+
+### Changed
+- Services class refactored for cross-platform compatibility (Windows/Linux)
+- Services page updated to use new cross-platform service management functions
+- Tools page enhanced with tunnel integration section
+- Profile system integrated into project analysis
+
+### Fixed
+- PHP syntax errors in newly added files
+- Proper OS detection and command selection for Windows vs Linux
+
 ## [4.0.6] - 2026-08-12
 
 ### Changed
