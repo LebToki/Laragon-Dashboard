@@ -285,3 +285,49 @@
   border-color: var(--border-color);
   color: var(--text-primary-light);
 }
+
+/* --- content rows: align to content, not to the tallest card -----------
+   Bootstrap rows stretch every column to the row height, so a column holding
+   three cards padded the last one out while the neighbouring column ended
+   early. Columns now start at the top and size to their own cards.          */
+.dashboard-main-body .row { align-items: flex-start; }
+.dashboard-main-body .row > [class*="col-"] { display: block; }
+
+/* Consistent card rhythm regardless of which page built it. */
+.dashboard-main-body .card + .card { margin-top: 16px; }
+.dashboard-main-body .card-body { padding: 16px; }
+
+/* Action button rows: same height, same gap, aligned text. */
+.card .d-flex.flex-wrap.gap-2 > .btn,
+.card .d-flex.gap-2 > .btn {
+  min-height: 34px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+/* --- alerts on the dark surface ---------------------------------------
+   Bootstrap alerts ship light backgrounds; on the dark page they glare.
+   Tint them from the state colour instead.                                  */
+[data-theme=dark] .alert-warning {
+  background: rgba(224, 163, 62, .12);
+  border: 1px solid rgba(224, 163, 62, .35);
+  color: #e8bd6b;
+}
+[data-theme=dark] .alert-success {
+  background: rgba(47, 191, 113, .12);
+  border: 1px solid rgba(47, 191, 113, .35);
+  color: #5ad196;
+}
+[data-theme=dark] .alert-danger {
+  background: rgba(224, 90, 79, .12);
+  border: 1px solid rgba(224, 90, 79, .35);
+  color: #f0948b;
+}
+[data-theme=dark] .alert-info {
+  background: rgba(79, 156, 249, .12);
+  border: 1px solid rgba(79, 156, 249, .35);
+  color: #8cbdfb;
+}
+[data-theme=dark] .alert { color: var(--text-primary-light); }
