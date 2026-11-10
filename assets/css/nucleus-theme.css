@@ -82,3 +82,162 @@
   --primary-100: rgba(13, 27, 42, 0.08);
   --primary-50:  rgba(13, 27, 42, 0.05);
 }
+
+/* ============================================================================
+   Component skin — the 2ti-orchestrator language.
+   Applies on top of the existing structure: no widths, grid or spacing of the
+   page layout are redefined, only the surfaces of individual components.
+   ========================================================================= */
+
+/* --- buttons: quiet, no saturated fills -------------------------------- */
+.btn {
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: .01em;
+  box-shadow: none;
+}
+.btn-primary {
+  background: #c5a059;
+  border: 1px solid #c5a059;
+  color: #141a21;
+}
+.btn-primary:hover, .btn-primary:focus, .btn-primary:active {
+  background: #d2b071; border-color: #d2b071; color: #141a21;
+}
+.btn-success {
+  background: rgba(47, 191, 113, .12);
+  border: 1px solid rgba(47, 191, 113, .38);
+  color: #35c47c;
+}
+.btn-success:hover, .btn-success:focus, .btn-success:active {
+  background: rgba(47, 191, 113, .20); border-color: rgba(47, 191, 113, .55); color: #4ad48d;
+}
+.btn-danger {
+  background: rgba(224, 90, 79, .12);
+  border: 1px solid rgba(224, 90, 79, .38);
+  color: #e8776d;
+}
+.btn-danger:hover, .btn-danger:focus, .btn-danger:active {
+  background: rgba(224, 90, 79, .20); border-color: rgba(224, 90, 79, .55); color: #f08a80;
+}
+.btn-outline-primary {
+  background: transparent; border: 1px solid var(--neutral-300); color: var(--text-primary-light);
+}
+.btn-outline-primary:hover { background: var(--neutral-100); border-color: var(--neutral-400); color: var(--text-primary-light); }
+.btn-sm { font-size: 12px; padding: 6px 12px; }
+
+/* --- cards: tighter, flatter, thinner border --------------------------- */
+.card {
+  border-radius: 12px;
+  border: 1px solid var(--border-color);
+  box-shadow: none;
+}
+.card .card-header { border-bottom: 1px solid var(--border-color); background: transparent; }
+.card .card-title { font-size: 15px; letter-spacing: -.01em; }
+
+/* --- sidebar: dense rows, uppercase micro labels ----------------------- */
+.sidebar-menu-group-title {
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--neutral-500);
+  margin: 14px 0 6px;
+  padding: 0 10px;
+}
+[dir="ltr"] .sidebar-menu-group-title { text-transform: uppercase; letter-spacing: .12em; }
+[dir="rtl"] .sidebar-menu-group-title { letter-spacing: 0; }
+
+.sidebar-menu > li > a,
+.sidebar-menu .sidebar-submenu a {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  border-radius: 8px;
+  font-size: 13px;
+  color: var(--text-secondary-light);
+  transition: background .12s ease, color .12s ease;
+}
+.sidebar-menu > li > a:hover { background: var(--neutral-100); color: var(--text-primary-light); }
+.sidebar-menu > li > a.active,
+.sidebar-menu > li > a[aria-current="page"] {
+  background: var(--neutral-100);
+  color: var(--text-primary-light);
+  box-shadow: inset 2px 0 0 #c5a059;
+}
+
+/* --- tables: dense, uppercase header ----------------------------------- */
+.table thead th {
+  font-size: 10px;
+  letter-spacing: .10em;
+  color: var(--neutral-500);
+  border-bottom: 1px solid var(--border-color);
+}
+[dir="ltr"] .table thead th { text-transform: uppercase; }
+.table tbody td { border-color: var(--border-color); }
+
+/* --- micro label used by page headers and stat captions ---------------- */
+.text-sm.fw-medium, .text-sm.text-secondary-light { letter-spacing: .01em; }
+
+/* --- KPI tiles: flat surfaces, neutral icon discs ----------------------
+   WowDash paints each tile with a coloured gradient and a saturated disc.
+   Orchestrator keeps the surface neutral and lets one accent carry meaning,
+   so the tiles become flat surface and the icon disc goes neutral with a gold
+   glyph. Colour then only appears where it signals state.                    */
+.card.bg-gradient-start-1,
+.card.bg-gradient-start-2,
+.card.bg-gradient-start-3,
+.card.bg-gradient-start-4,
+.card.bg-gradient-start-5,
+.card.bg-gradient-start-6,
+.card.bg-gradient-start-7 {
+  background: var(--neutral-50) !important;
+  border: 1px solid var(--border-color) !important;
+}
+.card .rounded-circle {
+  background: var(--neutral-100) !important;
+  border: 1px solid var(--border-color);
+}
+.card .rounded-circle iconify-icon { color: #c5a059; }
+
+/* --- quiet info / primary-600 buttons --------------------------------- */
+.btn-info {
+  background: var(--neutral-100);
+  border: 1px solid var(--border-color);
+  color: var(--text-primary-light);
+}
+.btn-info:hover, .btn-info:focus, .btn-info:active {
+  background: var(--neutral-200); border-color: var(--neutral-300); color: var(--text-primary-light);
+}
+.btn-primary-600 {
+  background: rgba(197, 160, 89, .14);
+  border: 1px solid rgba(197, 160, 89, .38);
+  color: #d2b071;
+}
+.btn-primary-600:hover { background: rgba(197, 160, 89, .22); color: #ddc08c; }
+
+/* --- card headings: smaller than WowDash's 18px ----------------------- */
+.card h6 { font-size: 15px !important; letter-spacing: -.01em; }
+.card .border-top { border-color: var(--border-color) !important; }
+
+/* --- denser card body -------------------------------------------------- */
+.card .card-body { padding: 14px; }
+
+/* --- project card header: clear the absolute 3-dot menu ----------------
+   Each project card carries a menu button pinned to the card's top-left
+   (position-absolute top-0 start-0 ms-16 mt-16, 32px + 16px margin). The
+   platform label sat underneath it, so "Node.js" rendered as ".js" with the
+   button on top. Indent any sibling row that shares that corner; selector is
+   scoped to cards that actually contain the menu, so KPI tiles are untouched. */
+.card .card-body > .dropdown ~ .d-flex.align-items-center.justify-content-between {
+  padding-inline-start: 48px;
+  min-width: 0;
+}
+.card .card-body > .dropdown ~ .d-flex.align-items-center.justify-content-between > div {
+  min-width: 0;
+}
+.card .card-body > .dropdown ~ .d-flex.align-items-center.justify-content-between p {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
