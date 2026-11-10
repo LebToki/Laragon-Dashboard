@@ -331,3 +331,13 @@
   color: #8cbdfb;
 }
 [data-theme=dark] .alert { color: var(--text-primary-light); }
+
+/* --- theme toggle: inline SVG sizing/alignment ------------------------- */
+[data-theme-toggle="light-dark"] .theme-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 0;
+}
+[data-theme-toggle="light-dark"] .theme-icon svg { display: block; }
+[data-theme-toggle="light-dark"]:hover { color: var(--text-primary-light); }
