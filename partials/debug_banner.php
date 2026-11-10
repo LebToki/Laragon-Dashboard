@@ -41,7 +41,6 @@ $serverType = $isBuiltInServer ? 'PHP Built-in Server' : 'Apache/Nginx';
 $cssFiles = [
     'style.css' => defined('ASSETS_URL') ? ASSETS_URL . '/css/style.css' : '/assets/css/style.css',
     'bootstrap.min.css' => defined('ASSETS_URL') ? ASSETS_URL . '/css/lib/bootstrap.min.css' : '/assets/css/lib/bootstrap.min.css',
-    'remixicon.css' => defined('ASSETS_URL') ? ASSETS_URL . '/css/remixicon.css' : '/assets/css/remixicon.css',
 ];
 
 $cssStatus = [];

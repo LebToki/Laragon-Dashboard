@@ -51,7 +51,6 @@ if (substr($assetsUrl, 0, 1) !== '/') {
 <link rel="manifest" href="<?php echo $assetsUrl; ?>/images/favicon/site.webmanifest">
 <link rel="shortcut icon" href="<?php echo $assetsUrl; ?>/images/favicon/favicon.ico">
     <!-- remix icon font css  -->
-    <link rel="stylesheet" href="<?php echo $assetsUrl; ?>/css/remixicon.css">
     <!-- BootStrap css -->
     <link rel="stylesheet" href="<?php echo $assetsUrl; ?>/css/lib/bootstrap.min.css">
     <!-- Apex Chart css -->

@@ -35,7 +35,7 @@ if (!$data) {
 
 // CSRF check
 $csrfToken = $data['csrf_token'] ?? $_POST['csrf_token'] ?? $_SERVER['HTTP_X_CSRF_TOKEN'] ?? '';
-if (!validate_csrf_token($csrfToken)) {
+if (!verifyCSRFToken($csrfToken)) {
     http_response_code(403);
     echo json_encode(['success' => false, 'message' => 'CSRF token validation failed']);
     exit;
