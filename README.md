@@ -29,21 +29,8 @@ Version 4.1.0 aims to be a comprehensive MAMP competitor on Windows, replicating
 
 ## ✨ Screenshots
 
-<img width="1899" height="913" alt="Dashboard" src="https://github.com/user-attachments/assets/3c26a59d-fd56-4129-ad6b-2b94851622ba" />
-<img width="1898" height="915" alt="Projects" src="https://github.com/user-attachments/assets/299063cd-6d35-4441-9daf-12646a94d141" />
-<img width="1915" height="915" alt="Databases" src="https://github.com/user-attachments/assets/a9902815-fcb6-4435-875e-05ed61cf132f" />
-<img width="1892" height="905" alt="Services" src="https://github.com/user-attachments/assets/7897a08a-e58c-44e1-b350-2d26cd9aae77" />
-<img width="1902" height="909" alt="Server Vitals" src="https://github.com/user-attachments/assets/c57dcd21-f318-4f42-861d-2338f7f2e075" />
-<img width="1914" height="914" alt="Mailbox" src="https://github.com/user-attachments/assets/c7d6eb7d-3814-4bd4-970e-5ed56ed9bdb7" />
-<img width="1893" height="881" alt="Logs" src="https://github.com/user-attachments/assets/95e20f6e-5b13-4ace-a0c1-d297a1580a79" />
-<img width="1902" height="906" alt="Tools" src="https://github.com/user-attachments/assets/7e445d07-afde-4b9b-8d02-0a20e22808b6" />
-<img width="1914" height="916" alt="Backup" src="https://github.com/user-attachments/assets/58416b1f-e01b-4654-ad62-86a8ba8054bf" />
-<img width="1903" height="911" alt="Sites Enabled" src="https://github.com/user-attachments/assets/ad0568d1-af9a-4923-991f-5479f7bd8bed" />
-<img width="1895" height="912" alt="Server Configurations" src="https://github.com/user-attachments/assets/a5db0350-4b27-4795-a7ea-6ed0cb67c838" />
-<img width="1892" height="914" alt="preferences" src="https://github.com/user-attachments/assets/5e6667c6-5796-4e0d-bc5a-eb8af8ca2150" />
-<img width="1898" height="908" alt="Ignore Project From Listing" src="https://github.com/user-attachments/assets/400571a4-8771-4a65-82b8-ceeac31daa98" />
-<img width="1914" height="911" alt="Project Creation Wizard" src="https://github.com/user-attachments/assets/6fc31790-2aa0-48f3-8db7-06019d721139" />
-<img width="1908" height="911" alt="Share Project Online" src="https://github.com/user-attachments/assets/b2dc7c64-82f2-4b1f-9055-21ed1aedcc58" />
+<img width="1425" height="1249" alt="image" src="https://github.com/user-attachments/assets/f847232f-74f9-402b-8676-32858019f7fa" />
+
 
 ---
 
