@@ -1,10 +1,17 @@
 <?php
 /**
- * Laragon Dashboard - Update Manager
- * Handles automatic updates from GitHub while preserving user configuration
- * 
- * Version: 1.1.0
- * Enhanced with better error handling, logging, and version detection
+ * Update Manager — platform-agnostic core
+ * Handles automatic updates from the platform's GitHub repository while
+ * preserving user configuration.
+ *
+ * Product identity (product name, platform, update repository) is deliberately
+ * NOT defined here. It is read from platform.php at the application root, so
+ * this file stays byte-identical across Nucleus (Linux) and
+ * Laragon-Dashboard (Windows).
+ *
+ * If platform.php is missing or does not declare update_repo, the updater
+ * fails closed: it reports that no update source is configured rather than
+ * pulling from a guessed repository.
  */
 
 if (!class_exists('UpdateManager')) {
@@ -12,11 +19,14 @@ if (!class_exists('UpdateManager')) {
         private $appRoot;
         private $backupDir;
         private $tempDir;
-        private $githubRepo = 'LebToki/Laragon-Dashboard';
+        private $githubRepo = null;  // resolved from platform.php, never hardcoded
+        private $identity = null;
         private $githubApiUrl = 'https://api.github.com/repos';
         
         public function __construct() {
             $this->appRoot = defined('APP_ROOT') ? APP_ROOT : dirname(__DIR__);
+            $identity = $this->identity();
+            $this->githubRepo = isset($identity['update_repo']) ? $identity['update_repo'] : null;
             $this->backupDir = $this->appRoot . '/backups';
             $this->tempDir = $this->appRoot . '/temp/update';
             
@@ -30,6 +40,75 @@ if (!class_exists('UpdateManager')) {
         }
         
         /**
+         * Load platform identity from platform.php (cached).
+         *
+         * Shared core code must never assume a product. Every platform ships
+         * its own platform.php; this is the single port of difference.
+         *
+         * @return array
+         */
+        private function identity() {
+            if ($this->identity !== null) {
+                return $this->identity;
+            }
+
+            $this->identity = [];
+            $file = $this->appRoot . '/platform.php';
+            if (is_file($file)) {
+                $loaded = require $file;
+                if (is_array($loaded)) {
+                    $this->identity = $loaded;
+                }
+            }
+            return $this->identity;
+        }
+
+        /**
+         * Read the product a candidate package declares, or null if it declares none.
+         *
+         * @param string $dir
+         * @return string|null
+         */
+        private function declaredProduct($dir) {
+            $file = rtrim($dir, '/') . '/platform.php';
+            if (!is_file($file)) {
+                return null;
+            }
+            $loaded = require $file;
+            return (is_array($loaded) && isset($loaded['product'])) ? $loaded['product'] : null;
+        }
+
+        /**
+         * Does a candidate package belong to this product?
+         *
+         * Legacy packages carry no platform.php and are accepted; a package
+         * that declares a different product is rejected, so a Windows release
+         * can never be installed over a Linux dashboard (or the reverse).
+         *
+         * @param string $dir
+         * @return bool
+         */
+        private function candidateMatches($dir) {
+            $declared = $this->declaredProduct($dir);
+            if ($declared === null) {
+                return true;
+            }
+            $current = isset($this->identity()['product']) ? $this->identity()['product'] : null;
+            return $current !== null && $declared === $current;
+        }
+
+        /**
+         * Build a neutral User-Agent from the platform identity.
+         *
+         * @param string $suffix
+         * @return string
+         */
+        private function userAgent($suffix = '') {
+            $product = isset($this->identity()['product']) ? $this->identity()['product'] : 'dashboard';
+            return $product . ($suffix !== '' ? '-' . $suffix : '') . '/1.0';
+        }
+
+        /**
          * Check for available updates from GitHub
          * 
          * @return array Update information or false if no update available
@@ -41,6 +120,14 @@ if (!class_exists('UpdateManager')) {
                 $currentVersion = defined('APP_VERSION') ? APP_VERSION : '3.0.0';
             }
             
+            if (empty($this->githubRepo)) {
+                return [
+                    'available' => false,
+                    'current_version' => $currentVersion,
+                    'error' => 'Update source not configured: platform.php must declare update_repo',
+                ];
+            }
+
             try {
                 // Primary method: GitHub API
                 $url = "{$this->githubApiUrl}/{$this->githubRepo}/releases/latest";
@@ -83,9 +170,18 @@ if (!class_exists('UpdateManager')) {
                 }
                 
                 $updateAvailable = version_compare($latestVersion, $currentVersionNormalized, '>');
+                $repoBehind = version_compare($currentVersionNormalized, $latestVersion, '>');
+                
+                // Only advertise the update when it actually exists; otherwise the
+                // fallback release notes are misleading when the repo is stale.
+                if (!$updateAvailable) {
+                    $releaseNotes = '';
+                    $downloadUrl = null;
+                }
                 
                 return [
                     'available' => $updateAvailable,
+                    'repo_behind' => $repoBehind,
                     'current_version' => $currentVersion,
                     'latest_version' => $latestVersion,
                     'version' => $latestVersion,
@@ -104,7 +200,7 @@ if (!class_exists('UpdateManager')) {
             $ch = curl_init($url);
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
             curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-            curl_setopt($ch, CURLOPT_USERAGENT, 'Laragon-Dashboard/1.0');
+            curl_setopt($ch, CURLOPT_USERAGENT, $this->userAgent());
             curl_setopt($ch, CURLOPT_TIMEOUT, 10);
             
             $response = curl_exec($ch);
@@ -212,7 +308,7 @@ if (!class_exists('UpdateManager')) {
             curl_setopt($ch, CURLOPT_FILE, $fp);
             curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
             curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-            curl_setopt($ch, CURLOPT_USERAGENT, 'Laragon-Dashboard-Updater/1.0');
+            curl_setopt($ch, CURLOPT_USERAGENT, $this->userAgent('Updater'));
             curl_setopt($ch, CURLOPT_TIMEOUT, 300); // 5 minutes
             curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 30);
             
@@ -559,7 +655,7 @@ if (!class_exists('UpdateManager')) {
             
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
             curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-            curl_setopt($ch, CURLOPT_USERAGENT, 'Laragon-Dashboard/1.0');
+            curl_setopt($ch, CURLOPT_USERAGENT, $this->userAgent());
             curl_setopt($ch, CURLOPT_TIMEOUT, 30);
             curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 10);
             curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
@@ -616,18 +712,22 @@ if (!class_exists('UpdateManager')) {
          */
         private function findDashboardDirectory($extractPath) {
             // Check if root is the dashboard
-            if (file_exists($extractPath . '/config.php')) {
+            if (file_exists($extractPath . '/config.php') && $this->candidateMatches($extractPath)) {
                 return $extractPath;
             }
-            
-            // Look for Laragon-Dashboard directory
+
+            // Look for the dashboard directory inside the extracted archive
             $dirs = glob($extractPath . '/*', GLOB_ONLYDIR);
             foreach ($dirs as $dir) {
-                if (file_exists($dir . '/config.php')) {
+                if (!file_exists($dir . '/config.php')) {
+                    continue;
+                }
+                if ($this->candidateMatches($dir)) {
                     return $dir;
                 }
+                error_log('UpdateManager: rejecting package whose platform.php product differs: ' . $dir);
             }
-            
+
             return null;
         }
         
