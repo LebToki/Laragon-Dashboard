@@ -263,3 +263,25 @@
 /* Mini charts: the inline 50px clipped the donut; give them breathing room. */
 .card [id$="-chart-mini"] { height: 64px !important; overflow: hidden; }
 .card [id$="-chart-mini"] svg { overflow: visible; }
+
+/* --- light/dark compliance for Bootstrap surface utilities -------------
+   .bg-light / .bg-white are fixed light values. On the dark surface they
+   produced a white panel in the middle of the Mailbox page. Map them to the
+   theme surface so any component using them stays consistent.              */
+[data-theme=dark] .bg-light,
+[data-theme=dark] .bg-white,
+[data-theme=dark] .bg-white-gradient-light {
+  background: var(--neutral-100) !important;
+  color: var(--text-primary-light);
+}
+[data-theme=dark] .border,
+[data-theme=dark] .border-bottom,
+[data-theme=dark] .border-top {
+  border-color: var(--border-color) !important;
+}
+[data-theme=dark] .form-select,
+[data-theme=dark] .form-control {
+  background-color: var(--neutral-100);
+  border-color: var(--border-color);
+  color: var(--text-primary-light);
+}
