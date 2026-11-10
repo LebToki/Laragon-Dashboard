@@ -241,3 +241,25 @@
   text-overflow: ellipsis;
   white-space: nowrap;
 }
+
+/* --- Vitals: let tiles size to content, readable labels ---------------
+   Every stat tile is .card.h-100 inside a Bootstrap row, so a tile with two
+   lines got stretched to match the tallest one and showed a large empty area.
+   Height follows content instead, and the row keeps its own alignment.      */
+.card.h-100 { height: auto !important; }
+.card-body.p-20 { padding: 16px !important; }
+
+/* Bootstrap's text-muted is #6c757d - too dim on the dark surface. */
+.card .text-muted { color: var(--neutral-500) !important; }
+
+/* Hardware rows: "CPU Temp:" and its value were forced onto separate lines
+   by strong.d-block; keep label and value on one line. */
+.card p.text-sm > strong.d-block {
+  display: inline !important;
+  margin: 0 6px 0 0 !important;
+  font-weight: 600;
+}
+
+/* Mini charts: the inline 50px clipped the donut; give them breathing room. */
+.card [id$="-chart-mini"] { height: 64px !important; overflow: hidden; }
+.card [id$="-chart-mini"] svg { overflow: visible; }
