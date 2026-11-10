@@ -38,13 +38,30 @@ class Services {
     }
 
     /**
+     * Wait until a service reaches the expected running state.
+     *
+     * `sc` is asynchronous: it returns while the service is still
+     * START_PENDING/STOP_PENDING, so a fixed sleep(1) reports the wrong answer
+     * on slow machines (MySQL, Apache) and makes restart look broken.
+     */
+    private static function waitFor($name, $running, $timeoutSec = 20) {
+        $deadline = microtime(true) + $timeoutSec;
+        do {
+            if (self::isRunning($name) === $running) {
+                return true;
+            }
+            usleep(250000);
+        } while (microtime(true) < $deadline);
+        return false;
+    }
+
+    /**
      * Start a service
      */
     public static function start($name) {
         $realName = self::getRealName($name);
-        $output = @shell_exec('sc start "' . $realName . '" 2>&1');
-        sleep(1);
-        return self::isRunning($name);
+        @shell_exec('sc start "' . $realName . '" 2>&1');
+        return self::waitFor($name, true);
     }
 
     /**
@@ -52,9 +69,25 @@ class Services {
      */
     public static function stop($name) {
         $realName = self::getRealName($name);
-        $output = @shell_exec('sc stop "' . $realName . '" 2>&1');
-        sleep(1);
-        return !self::isRunning($name);
+        @shell_exec('sc stop "' . $realName . '" 2>&1');
+        return self::waitFor($name, false);
+    }
+
+    /**
+     * Restart a service: stop, wait for STOPPED, start, wait for RUNNING.
+     *
+     * There was no restart at all before - the API listed it as a destructive
+     * action but had no handler, so the request fell through to "Invalid
+     * action".
+     */
+    public static function restart($name) {
+        $realName = self::getRealName($name);
+        @shell_exec('sc stop "' . $realName . '" 2>&1');
+        if (!self::waitFor($name, false)) {
+            return false;
+        }
+        @shell_exec('sc start "' . $realName . '" 2>&1');
+        return self::waitFor($name, true);
     }
 
     /**

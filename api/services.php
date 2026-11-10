@@ -310,6 +310,24 @@ try {
             ob_end_flush();
             break;
             
+        case 'restart':
+            if (empty($serviceName)) {
+                throw new Exception('Service name required');
+            }
+
+            $result = \LaragonDashboard\Core\Services::restart($serviceName);
+            if ($result) {
+                \LaragonDashboard\Core\Cache::delete('service_status');
+            }
+            ob_clean();
+            echo json_encode([
+                'success' => $result,
+                'data' => null,
+                'error' => $result ? null : 'Failed to restart service'
+            ]);
+            ob_end_flush();
+            break;
+
         case 'reload':
             if ($serviceName !== 'Apache') {
                 throw new Exception('Only Apache can be reloaded');
