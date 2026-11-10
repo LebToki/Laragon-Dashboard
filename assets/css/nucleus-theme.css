@@ -1,0 +1,84 @@
+/* ============================================================================
+   Nucleus — 2ti palette overlay
+   Loaded AFTER style.css. Overrides only CSS custom properties, so the WowDash
+   layout, spacing and component structure stay exactly as they were; only the
+   palette moves to 2ti. No layout rule is redefined here on purpose: the last
+   attempt replaced the stylesheet wholesale and collapsed the grid.
+   ========================================================================= */
+
+/* ---- dark (default for Nucleus) ---------------------------------------- */
+[data-theme=dark] {
+  /* surfaces */
+  --bg-color: #0e131a;
+  --neutral-50:  #161d26;
+  --neutral-100: #1d2630;
+  --neutral-200: #2a3644;
+  --neutral-300: #3a4a5c;
+  --neutral-400: #71808f;
+  --neutral-500: #a2adba;
+  --neutral-600: #c9d2dc;
+  --neutral-700: #dde4ec;
+  --neutral-800: #e8edf3;
+  --neutral-900: #f2f6fa;
+
+  /* lines + text */
+  --border-color: #2a3644;
+  --text-primary-light: #e8edf3;
+  --text-secondary-light: #a2adba;
+  --input-bg: #1d2630;
+  --input-stroke: #2a3644;
+
+  /* accent: 2ti gold replaces the indigo primary */
+  --primary-600: #c5a059;
+  --primary-500: #d2b071;
+  --primary-400: #ddc08c;
+  --primary-100: rgba(197, 160, 89, 0.16);
+  --primary-50:  rgba(197, 160, 89, 0.10);
+  --primary-focus: rgba(197, 160, 89, 0.28);
+
+  /* states */
+  --success-600: #1e9e5a;
+  --success-500: #2fbf71;
+  --success-100: rgba(30, 158, 90, 0.16);
+  --success-50:  rgba(30, 158, 90, 0.10);
+  --warning-600: #b26a00;
+  --warning-500: #e0a33e;
+  --warning-100: rgba(178, 106, 0, 0.18);
+  --warning-50:  rgba(178, 106, 0, 0.10);
+  --danger-600: #c0392b;
+  --danger-500: #e05a4f;
+  --danger-100: rgba(192, 57, 43, 0.18);
+  --danger-50:  rgba(192, 57, 43, 0.10);
+  --info-600: #0d6efd;
+  --info-500: #4f9cf9;
+  --info-100: rgba(13, 110, 253, 0.16);
+  --info-50:  rgba(13, 110, 253, 0.10);
+
+  /* glass, matched to the card surface */
+  --glass-bg: rgba(22, 29, 38, 0.78);
+  --glass-border: rgba(255, 255, 255, 0.08);
+}
+
+/* ---- light ------------------------------------------------------------- */
+[data-theme=light] {
+  --bg-color: #f6f7f9;
+  --neutral-50:  #ffffff;
+  --neutral-100: #f0f2f5;
+  --neutral-200: #e3e6ea;
+  --neutral-300: #cfd5dc;
+  --neutral-400: #9aa5b1;
+  --neutral-500: #6b7480;
+  --neutral-600: #4b5563;
+  --neutral-700: #374151;
+  --neutral-800: #1f2937;
+  --neutral-900: #1d2733;
+
+  --border-color: #e3e6ea;
+  --text-primary-light: #1d2733;
+  --text-secondary-light: #6b7480;
+
+  --primary-600: #0d1b2a;
+  --primary-500: #1b3245;
+  --primary-100: rgba(13, 27, 42, 0.08);
+  --primary-50:  rgba(13, 27, 42, 0.05);
+}

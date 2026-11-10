@@ -84,4 +84,6 @@ if (substr($assetsUrl, 0, 1) !== '/') {
     <link rel="stylesheet" href="<?php echo $assetsUrl; ?>/css/lib/monochrome-mode.css">
     <!-- main css -->
     <link rel="stylesheet" href="<?php echo $assetsUrl; ?>/css/style.css">
+    <!-- 2ti palette overlay: variables only, no layout overrides -->
+    <link rel="stylesheet" href="<?php echo $assetsUrl; ?>/css/nucleus-theme.css">
 </head>

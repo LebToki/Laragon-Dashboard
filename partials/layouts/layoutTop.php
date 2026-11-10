@@ -1,7 +1,7 @@
 <?php
 // Get theme from cookie/localStorage (will be set by JavaScript)
 // Default to light if not set
-$currentTheme = $_COOKIE['theme'] ?? 'light';
+$currentTheme = $_COOKIE['theme'] ?? 'dark';
 
 // Get current language and direction for RTL support
 $currentLang = 'en';
